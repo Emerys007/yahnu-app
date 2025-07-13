@@ -75,7 +75,6 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t">
           <div className="text-center text-sm text-muted-foreground">
             <p>&copy; {new Date().getFullYear()} Yahnu. All rights reserved.</p>
-            <p className="mt-1">Made with passion and Look Time Life.</p>
           </div>
         </div>
       </div>
