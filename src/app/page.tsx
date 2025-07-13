@@ -2,6 +2,7 @@ import { HeroSection } from "@/components/landing/hero-section";
 import { MainNav } from "@/components/landing/main-nav";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Footer } from "@/components/landing/footer";
 
 export default function HomePage() {
   return (
@@ -50,11 +51,6 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-      <footer className="bg-background border-t">
-        <div className="container mx-auto py-6 text-center text-muted-foreground text-sm">
-          © {new Date().getFullYear()} Yahnu. All Rights Reserved.
-        </div>
-      </footer>
     </div>
   );
 }
