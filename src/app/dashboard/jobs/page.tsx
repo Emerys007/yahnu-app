@@ -1,3 +1,6 @@
+"use client"
+
+import { useState, useMemo } from 'react'
 import {
   Card,
   CardContent,
@@ -26,6 +29,7 @@ const jobListings = [
     company: "Innovate Inc.",
     location: "Remote",
     type: "Full-time",
+    workplace: "remote",
     tags: ["React", "TypeScript", "Next.js"],
   },
   {
@@ -33,6 +37,7 @@ const jobListings = [
     company: "DataDriven Co.",
     location: "New York, NY",
     type: "Full-time",
+    workplace: "on-site",
     tags: ["Agile", "Roadmap", "SaaS"],
   },
   {
@@ -40,6 +45,7 @@ const jobListings = [
     company: "Creative Solutions",
     location: "San Francisco, CA",
     type: "Contract",
+    workplace: "hybrid",
     tags: ["Figma", "User Research", "Prototyping"],
   },
   {
@@ -47,19 +53,69 @@ const jobListings = [
     company: "QuantumLeap",
     location: "Boston, MA",
     type: "Full-time",
+    workplace: "on-site",
     tags: ["Python", "Machine Learning", "SQL"],
   },
-   {
+  {
     title: "DevOps Engineer",
     company: "CloudNine",
     location: "Austin, TX",
     type: "Full-time",
+    workplace: "hybrid",
     tags: ["AWS", "Kubernetes", "CI/CD"],
+  },
+  {
+    title: "Frontend Developer",
+    company: "Innovate Inc.",
+    location: "Remote",
+    type: "Contract",
+    workplace: "remote",
+    tags: ["Vue", "JavaScript"],
   },
 ];
 
-
 export default function JobSearchPage() {
+  const [filters, setFilters] = useState({
+    keywords: "",
+    location: "",
+    type: "all",
+    workplace: {
+      remote: false,
+      onSite: false,
+      hybrid: false,
+    }
+  })
+
+  const handleFilterChange = (key: string, value: any) => {
+    setFilters(prev => ({ ...prev, [key]: value }))
+  }
+
+  const handleWorkplaceChange = (key: 'remote' | 'onSite' | 'hybrid') => {
+    setFilters(prev => ({
+      ...prev,
+      workplace: { ...prev.workplace, [key]: !prev.workplace[key] }
+    }))
+  }
+
+  const filteredJobs = useMemo(() => {
+    return jobListings.filter(job => {
+      const { keywords, location, type, workplace } = filters;
+      
+      const keywordsMatch = (job.title.toLowerCase().includes(keywords.toLowerCase()) || 
+                             job.tags.some(tag => tag.toLowerCase().includes(keywords.toLowerCase())) ||
+                             job.company.toLowerCase().includes(keywords.toLowerCase()));
+
+      const locationMatch = job.location.toLowerCase().includes(location.toLowerCase());
+
+      const typeMatch = type === 'all' || job.type === type;
+
+      const workplaceChoices = Object.entries(workplace).filter(([,v]) => v).map(([k]) => k.replace('onSite', 'on-site'));
+      const workplaceMatch = workplaceChoices.length === 0 || workplaceChoices.includes(job.workplace);
+
+      return keywordsMatch && locationMatch && typeMatch && workplaceMatch;
+    })
+  }, [filters]);
+
   return (
     <div className="grid md:grid-cols-[280px_1fr] gap-8 items-start">
       <Card className="sticky top-20">
@@ -72,64 +128,77 @@ export default function JobSearchPage() {
             <Label htmlFor="keywords">Keywords</Label>
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input id="keywords" placeholder="Job title, skills..." className="pl-8" />
+              <Input 
+                id="keywords" 
+                placeholder="Job title, skills..." 
+                className="pl-8" 
+                value={filters.keywords}
+                onChange={(e) => handleFilterChange('keywords', e.target.value)}
+              />
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="location">Location</Label>
              <div className="relative">
               <MapPin className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input id="location" placeholder="City, state, remote" className="pl-8" />
+              <Input 
+                id="location" 
+                placeholder="City, state, remote" 
+                className="pl-8"
+                value={filters.location}
+                onChange={(e) => handleFilterChange('location', e.target.value)}
+              />
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="job-type">Job Type</Label>
-            <Select>
+            <Select 
+              value={filters.type}
+              onValueChange={(value) => handleFilterChange('type', value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="All types" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="full-time">Full-time</SelectItem>
-                <SelectItem value="part-time">Part-time</SelectItem>
-                <SelectItem value="contract">Contract</SelectItem>
-                <SelectItem value="internship">Internship</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="Full-time">Full-time</SelectItem>
+                <SelectItem value="Part-time">Part-time</SelectItem>
+                <SelectItem value="Contract">Contract</SelectItem>
+                <SelectItem value="Internship">Internship</SelectItem>
               </SelectContent>
             </Select>
           </div>
            <div className="space-y-2 pt-2">
              <Label>Workplace</Label>
               <div className="flex items-center space-x-2">
-                <Checkbox id="remote" />
+                <Checkbox id="remote" checked={filters.workplace.remote} onCheckedChange={() => handleWorkplaceChange('remote')} />
                 <Label htmlFor="remote" className="font-normal">Remote</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox id="on-site" />
+                <Checkbox id="on-site" checked={filters.workplace.onSite} onCheckedChange={() => handleWorkplaceChange('onSite')} />
                 <Label htmlFor="on-site" className="font-normal">On-site</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox id="hybrid" />
+                <Checkbox id="hybrid" checked={filters.workplace.hybrid} onCheckedChange={() => handleWorkplaceChange('hybrid')} />
                 <Label htmlFor="hybrid" className="font-normal">Hybrid</Label>
               </div>
             </div>
         </CardContent>
-        <CardFooter>
-            <Button className="w-full">Apply Filters</Button>
-        </CardFooter>
       </Card>
 
       <div className="space-y-6">
         <div>
             <h1 className="text-3xl font-bold tracking-tight">Job Opportunities</h1>
-            <p className="text-muted-foreground mt-1">Showing {jobListings.length} results</p>
+            <p className="text-muted-foreground mt-1">Showing {filteredJobs.length} results</p>
         </div>
         <div className="space-y-4">
-          {jobListings.map((job, index) => (
+          {filteredJobs.length > 0 ? filteredJobs.map((job, index) => (
             <Card key={index}>
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-xl">{job.title}</CardTitle>
-                    <CardDescription className="mt-1 flex items-center gap-4">
+                    <CardTitle>{job.title}</CardTitle>
+                    <CardDescription className="mt-1 flex items-center gap-4 pt-1">
                       <span className="flex items-center gap-1.5"><Building className="h-4 w-4"/> {job.company}</span>
                       <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4"/> {job.location}</span>
                       <span className="flex items-center gap-1.5"><Briefcase className="h-4 w-4"/> {job.type}</span>
@@ -146,7 +215,14 @@ export default function JobSearchPage() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          )) : (
+            <Card>
+              <CardContent className="py-12 text-center">
+                  <p className="font-semibold">No jobs found</p>
+                  <p className="text-muted-foreground mt-2">Try adjusting your filters to find what you're looking for.</p>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

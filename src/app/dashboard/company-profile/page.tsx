@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -18,6 +19,24 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, PlusCircle, Trash2 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
+
 
 const companyProfileSchema = z.object({
   companyName: z.string().min(2, { message: "Company name must be at least 2 characters." }),
@@ -28,15 +47,20 @@ const companyProfileSchema = z.object({
 })
 
 const jobPostSchema = z.object({
-  title: z.string(),
-  location: z.string(),
-  type: z.string(),
+  title: z.string().min(1, "Title is required"),
+  location: z.string().min(1, "Location is required"),
+  type: z.string().min(1, "Type is required"),
 })
 
 export default function CompanyProfilePage() {
   const { toast } = useToast()
+  const [jobs, setJobs] = useState<z.infer<typeof jobPostSchema>[]>([
+    { title: "Software Engineer, Frontend", location: "Remote", type: "Full-time" },
+    { title: "Product Manager", location: "New York, NY", type: "Full-time" },
+  ])
+  const [isJobDialogOpen, setIsJobDialogOpen] = useState(false)
 
-  const form = useForm<z.infer<typeof companyProfileSchema>>({
+  const profileForm = useForm<z.infer<typeof companyProfileSchema>>({
     resolver: zodResolver(companyProfileSchema),
     defaultValues: {
       companyName: "Innovate Inc.",
@@ -44,6 +68,15 @@ export default function CompanyProfilePage() {
       location: "New York, NY",
       tagline: "Building the future of technology.",
       description: "Innovate Inc. is a leading technology firm dedicated to creating cutting-edge solutions that solve real-world problems. We are a team of passionate innovators, designers, and engineers committed to excellence.",
+    },
+  })
+
+  const jobForm = useForm<z.infer<typeof jobPostSchema>>({
+    resolver: zodResolver(jobPostSchema),
+    defaultValues: {
+      title: "",
+      location: "",
+      type: "",
     },
   })
   
@@ -54,11 +87,10 @@ export default function CompanyProfilePage() {
         title: "Logo Selected",
         description: `${file.name} is ready to be uploaded.`,
       });
-      // In a real app, you'd handle the upload here.
     }
   }
 
-  function onSubmit(values: z.infer<typeof companyProfileSchema>) {
+  function onProfileSubmit(values: z.infer<typeof companyProfileSchema>) {
     console.log(values)
     toast({
       title: "Company Profile Updated",
@@ -66,10 +98,26 @@ export default function CompanyProfilePage() {
     })
   }
 
-  const jobs: z.infer<typeof jobPostSchema>[] = [
-    { title: "Software Engineer, Frontend", location: "Remote", type: "Full-time" },
-    { title: "Product Manager", location: "New York, NY", type: "Full-time" },
-  ]
+  function onJobSubmit(values: z.infer<typeof jobPostSchema>) {
+    setJobs(prev => [...prev, values])
+    toast({
+      title: "Job Posted",
+      description: `The "${values.title}" position has been added.`,
+    })
+    jobForm.reset()
+    setIsJobDialogOpen(false)
+  }
+
+  function deleteJob(indexToDelete: number) {
+    const jobToDelete = jobs[indexToDelete]
+    setJobs(jobs.filter((_, index) => index !== indexToDelete))
+    toast({
+      title: "Job Removed",
+      description: `The "${jobToDelete.title}" position has been removed.`,
+      variant: "destructive"
+    })
+  }
+
 
   return (
     <div className="space-y-6">
@@ -95,8 +143,8 @@ export default function CompanyProfilePage() {
         </div>
       </div>
       
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid lg:grid-cols-3 gap-8 items-start">
+      <Form {...profileForm}>
+        <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="grid lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-2 space-y-8">
             <Card>
               <CardHeader>
@@ -105,7 +153,7 @@ export default function CompanyProfilePage() {
               </CardHeader>
               <CardContent className="grid md:grid-cols-2 gap-6">
                 <FormField
-                  control={form.control}
+                  control={profileForm.control}
                   name="companyName"
                   render={({ field }) => (
                     <FormItem>
@@ -116,7 +164,7 @@ export default function CompanyProfilePage() {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={profileForm.control}
                   name="website"
                   render={({ field }) => (
                     <FormItem>
@@ -127,7 +175,7 @@ export default function CompanyProfilePage() {
                   )}
                 />
                  <FormField
-                  control={form.control}
+                  control={profileForm.control}
                   name="location"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
@@ -138,7 +186,7 @@ export default function CompanyProfilePage() {
                   )}
                 />
                  <FormField
-                  control={form.control}
+                  control={profileForm.control}
                   name="tagline"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
@@ -149,7 +197,7 @@ export default function CompanyProfilePage() {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={profileForm.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
@@ -175,10 +223,76 @@ export default function CompanyProfilePage() {
                     <CardTitle>Job Postings</CardTitle>
                     <CardDescription>Manage your open positions.</CardDescription>
                 </div>
-                <Button size="icon" variant="outline">
-                    <PlusCircle className="h-4 w-4"/>
-                    <span className="sr-only">Add new job</span>
-                </Button>
+                <Dialog open={isJobDialogOpen} onOpenChange={setIsJobDialogOpen}>
+                    <DialogTrigger asChild>
+                         <Button size="icon" variant="outline">
+                            <PlusCircle className="h-4 w-4"/>
+                            <span className="sr-only">Add new job</span>
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <Form {...jobForm}>
+                            <form onSubmit={jobForm.handleSubmit(onJobSubmit)}>
+                                <DialogHeader>
+                                    <DialogTitle>Add New Job Posting</DialogTitle>
+                                    <DialogDescription>
+                                        Fill in the details for the new position.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                     <FormField
+                                        control={jobForm.control}
+                                        name="title"
+                                        render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Job Title</FormLabel>
+                                            <FormControl><Input placeholder="e.g. Software Engineer" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                        )}
+                                    />
+                                     <FormField
+                                        control={jobForm.control}
+                                        name="location"
+                                        render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Location</FormLabel>
+                                            <FormControl><Input placeholder="e.g. New York, NY" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={jobForm.control}
+                                        name="type"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Job Type</FormLabel>
+                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                    <SelectValue placeholder="Select a job type" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="Full-time">Full-time</SelectItem>
+                                                    <SelectItem value="Part-time">Part-time</SelectItem>
+                                                    <SelectItem value="Contract">Contract</SelectItem>
+                                                    <SelectItem value="Internship">Internship</SelectItem>
+                                                </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <DialogFooter>
+                                    <Button type="submit">Post Job</Button>
+                                </DialogFooter>
+                            </form>
+                        </Form>
+                    </DialogContent>
+                </Dialog>
               </CardHeader>
               <CardContent className="space-y-4">
                 {jobs.map((job, index) => (
@@ -187,7 +301,7 @@ export default function CompanyProfilePage() {
                           <p className="font-semibold">{job.title}</p>
                           <p className="text-sm text-muted-foreground">{job.location} &middot; {job.type}</p>
                       </div>
-                      <Button size="icon" variant="ghost" className="h-8 w-8">
+                      <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => deleteJob(index)}>
                           <Trash2 className="h-4 w-4 text-destructive"/>
                       </Button>
                   </div>
