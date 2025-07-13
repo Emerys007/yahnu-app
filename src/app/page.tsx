@@ -1,35 +1,33 @@
-import Image from 'next/image';
-import { LoginForm } from '@/components/auth/login-form';
-import { Logo } from '@/components/logo';
+import { HeroSection } from "@/components/landing/hero-section";
+import { MainNav } from "@/components/landing/main-nav";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-export default function LoginPage() {
+export default function HomePage() {
   return (
-    <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
-      <div className="hidden bg-primary/10 lg:flex flex-col items-center justify-center p-12">
-        <div className="flex items-center gap-4 mb-8">
-           <Logo className="h-12 w-12 text-primary" />
-           <h1 className="text-4xl font-bold text-primary">Yahnu</h1>
-        </div>
-        <Image
-          src="https://placehold.co/800x600.png"
-          alt="Yahnu Platform Showcase"
-          width="800"
-          height="600"
-          className="rounded-xl shadow-2xl"
-          data-ai-hint="graduates career"
-        />
-        <div className="mt-8 text-center max-w-lg">
-          <h2 className="text-3xl font-bold tracking-tight">Connect. Grow. Succeed.</h2>
-          <p className="mt-4 text-muted-foreground text-lg">
-            Your journey to the perfect career or the ideal candidate starts here.
-          </p>
-        </div>
-      </div>
-      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background">
-        <div className="w-full max-w-md space-y-8">
-            <LoginForm />
-        </div>
-      </div>
+    <div className="flex flex-col min-h-screen">
+      <MainNav />
+      <main className="flex-1">
+        <HeroSection />
+
+        <section className="py-20 text-center">
+            <h2 className="text-3xl font-bold tracking-tight">Ready to Get Started?</h2>
+            <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto">
+                Join Yahnu today and take the next step in your professional journey. Whether you're looking for a job, hiring new talent, or seeking partnerships, we have the tools for you.
+            </p>
+            <div className="mt-8 flex justify-center gap-4">
+                <Button size="lg" asChild>
+                    <Link href="/register">Sign Up Now</Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild>
+                    <Link href="/login">Login</Link>
+                </Button>
+            </div>
+        </section>
+      </main>
+      <footer className="bg-muted p-6 text-center text-muted-foreground text-sm">
+        © {new Date().getFullYear()} Yahnu. All Rights Reserved.
+      </footer>
     </div>
   );
 }
