@@ -46,6 +46,17 @@ export default function CompanyProfilePage() {
       description: "Innovate Inc. is a leading technology firm dedicated to creating cutting-edge solutions that solve real-world problems. We are a team of passionate innovators, designers, and engineers committed to excellence.",
     },
   })
+  
+  function handleLogoUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (file) {
+      toast({
+        title: "Logo Selected",
+        description: `${file.name} is ready to be uploaded.`,
+      });
+      // In a real app, you'd handle the upload here.
+    }
+  }
 
   function onSubmit(values: z.infer<typeof companyProfileSchema>) {
     console.log(values)
@@ -68,14 +79,18 @@ export default function CompanyProfilePage() {
             <p className="text-muted-foreground mt-1">Showcase your company to attract top talent.</p>
         </div>
         <div className="relative">
-            <Button>
-                <Upload className="mr-2 h-4 w-4" />
-                Upload Logo
+            <Button asChild>
+                <label htmlFor="logo-upload">
+                    <Upload className="mr-2 h-4 w-4" />
+                    Upload Logo
+                </label>
             </Button>
             <input
+                id="logo-upload"
                 type="file"
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                className="sr-only"
                 accept="image/*"
+                onChange={handleLogoUpload}
             />
         </div>
       </div>

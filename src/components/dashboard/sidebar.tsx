@@ -47,10 +47,11 @@ export function DashboardSidebar() {
     const isActive = pathname === item.href
 
     return (
-        <Link key={item.href} href={item.href}>
+        <Link key={item.href} href={item.href} legacyBehavior passHref>
           <Button
             variant={isActive ? "secondary" : "ghost"}
             className="w-full justify-start h-10"
+            as="a"
           >
             <item.icon className="mr-3 h-5 w-5" />
             {item.label}
