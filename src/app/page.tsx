@@ -7,6 +7,7 @@ import { Footer } from "@/components/landing/footer";
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
+      <MainNav />
       <main className="flex-1">
         <HeroSection />
 
