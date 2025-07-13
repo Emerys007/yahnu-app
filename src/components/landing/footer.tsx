@@ -4,7 +4,6 @@ import Link from "next/link"
 import { Facebook, Twitter, Linkedin, Mail, Phone } from "lucide-react"
 
 import { Logo } from "@/components/logo"
-import { Separator } from "@/components/ui/separator"
 
 export function Footer() {
   return (
@@ -12,7 +11,7 @@ export function Footer() {
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
-          <div className="md:col-span-2 lg:col-span-1">
+          <div className="lg:col-span-1">
             <div className="flex items-center gap-3">
               <Logo className="h-8 w-8 text-primary" />
               <span className="text-xl font-bold">Yahnu</span>
@@ -22,7 +21,7 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Links Columns */}
+          {/* Links Column */}
           <div>
             <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Platform</h3>
             <ul className="mt-4 space-y-2 text-sm">
@@ -33,15 +32,7 @@ export function Footer() {
             </ul>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Legal</h3>
-            <ul className="mt-4 space-y-2 text-sm">
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link></li>
-            </ul>
-          </div>
-          
-          {/* Contact and Socials */}
+          {/* Contact Section */}
           <div>
             <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Contact Us</h3>
              <ul className="mt-4 space-y-2 text-sm">
@@ -58,7 +49,11 @@ export function Footer() {
                   </a>
                 </li>
             </ul>
-            <h3 className="mt-6 text-sm font-semibold tracking-wider uppercase text-foreground">Follow Us</h3>
+          </div>
+          
+          {/* Socials Section */}
+          <div>
+            <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Follow Us</h3>
             <div className="mt-4 flex gap-4">
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
                 <span className="sr-only">Twitter</span>
