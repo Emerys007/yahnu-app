@@ -1,6 +1,7 @@
 import { DashboardHeader } from "@/components/dashboard/header";
 import { DashboardSidebar, SidebarProvider } from "@/components/dashboard/sidebar";
 import { Chatbot } from "@/components/chatbot";
+import { Footer } from "@/components/landing/footer";
 
 export default function DashboardLayout({
   children,
@@ -9,15 +10,18 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <div className="min-h-screen w-full flex">
-        <DashboardSidebar />
-        <div className="flex flex-col flex-1">
-          <DashboardHeader />
-          <main className="flex-1 p-4 md:p-8 lg:p-10 bg-background/95 dark:bg-muted/40 overflow-y-auto">
-            {children}
-          </main>
+      <div className="min-h-screen w-full flex flex-col">
+        <div className="flex flex-1">
+          <DashboardSidebar />
+          <div className="flex flex-col flex-1">
+            <DashboardHeader />
+            <main className="flex-1 p-4 md:p-8 lg:p-10 bg-background/95 dark:bg-muted/40 overflow-y-auto">
+              {children}
+            </main>
+          </div>
+          <Chatbot />
         </div>
-        <Chatbot />
+        <Footer />
       </div>
     </SidebarProvider>
   )

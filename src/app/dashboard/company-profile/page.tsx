@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -54,6 +55,7 @@ const jobPostSchema = z.object({
 
 export default function CompanyProfilePage() {
   const { toast } = useToast()
+  const [logoPreview, setLogoPreview] = useState<string | null>("https://placehold.co/600x400.png")
   const [jobs, setJobs] = useState<z.infer<typeof jobPostSchema>[]>([
     { title: "Software Engineer, Frontend", location: "Remote", type: "Full-time" },
     { title: "Product Manager", location: "New York, NY", type: "Full-time" },
@@ -83,6 +85,11 @@ export default function CompanyProfilePage() {
   function handleLogoUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogoPreview(reader.result as string)
+      };
+      reader.readAsDataURL(file);
       toast({
         title: "Logo Selected",
         description: `${file.name} is ready to be uploaded.`,
@@ -121,26 +128,9 @@ export default function CompanyProfilePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-start">
-        <div>
-            <h1 className="text-3xl font-bold tracking-tight">Company Profile</h1>
-            <p className="text-muted-foreground mt-1">Showcase your company to attract top talent.</p>
-        </div>
-        <div className="relative">
-            <Button asChild>
-                <label htmlFor="logo-upload">
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload Logo
-                </label>
-            </Button>
-            <input
-                id="logo-upload"
-                type="file"
-                className="sr-only"
-                accept="image/*"
-                onChange={handleLogoUpload}
-            />
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Company Profile</h1>
+        <p className="text-muted-foreground mt-1">Showcase your company to attract top talent.</p>
       </div>
       
       <Form {...profileForm}>
@@ -217,6 +207,42 @@ export default function CompanyProfilePage() {
           </div>
 
           <div className="lg:col-span-1 space-y-8">
+             <Card>
+                <CardHeader>
+                    <CardTitle>Company Logo</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center space-y-4">
+                    <div className="w-full h-48 relative rounded-lg overflow-hidden border">
+                        {logoPreview ? (
+                            <Image
+                                src={logoPreview}
+                                alt="Company logo preview"
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                className="object-cover"
+                            />
+                        ) : (
+                            <div className="w-full h-full bg-muted flex items-center justify-center">
+                                <p className="text-muted-foreground">Logo preview</p>
+                            </div>
+                        )}
+                    </div>
+                    <Button asChild variant="outline" className="w-full">
+                        <label htmlFor="logo-upload">
+                            <Upload className="mr-2 h-4 w-4" />
+                            Upload Logo
+                        </label>
+                    </Button>
+                    <input
+                        id="logo-upload"
+                        type="file"
+                        className="sr-only"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                    />
+                </CardContent>
+            </Card>
+
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
