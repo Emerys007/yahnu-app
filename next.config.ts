@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
-    // Allow SVGs
+    // Allow SVGs and local images
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",

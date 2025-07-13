@@ -22,7 +22,7 @@ const slides = [
     subtitle: "Explore thousands of job opportunities tailored for you in Côte d'Ivoire. Your next career move is just a click away.",
     buttonText: "Search for Jobs",
     buttonIcon: <Search className="mr-2 h-4 w-4" />,
-    imageUrl: "https://placehold.co/1920x1080.png",
+    imageUrl: "/images/dream-job.jpg",
     imageHint: "confident graduate future",
     href: "/jobs"
   },
@@ -32,7 +32,7 @@ const slides = [
     subtitle: "Access a diverse pool of talented graduates from top schools. Find the perfect fit for your company's culture and goals.",
     buttonText: "Post a Job Opening",
     buttonIcon: <PlusCircle className="mr-2 h-4 w-4" />,
-    imageUrl: "https://placehold.co/1920x1080.png",
+    imageUrl: "/images/uni-partnership.jpg",
     imageHint: "team collaboration office",
     href: "/company-profile"
   },
@@ -42,7 +42,7 @@ const slides = [
     subtitle: "Collaborate with leading academic institutions to shape the future of talent. Connect with the brightest minds and drive innovation.",
     buttonText: "Become a Partner",
     buttonIcon: <Handshake className="mr-2 h-4 w-4" />,
-    imageUrl: "https://placehold.co/1920x1080.png",
+    imageUrl: "/images/Industry.webp",
     imageHint: "academic industry partnership",
     href: "/register"
   },
