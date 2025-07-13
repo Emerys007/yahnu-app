@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -25,10 +26,10 @@ export function Footer() {
           <div>
             <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Platform</h3>
             <ul className="mt-4 space-y-2 text-sm">
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Jobs</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Companies</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Schools</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Blog</Link></li>
+              <li><Link href="/dashboard/jobs" className="text-muted-foreground hover:text-primary transition-colors">Jobs</Link></li>
+              <li><Link href="/companies" className="text-muted-foreground hover:text-primary transition-colors">Companies</Link></li>
+              <li><Link href="/schools" className="text-muted-foreground hover:text-primary transition-colors">Schools</Link></li>
+              <li><Link href="/blog" className="text-muted-foreground hover:text-primary transition-colors">Blog</Link></li>
             </ul>
           </div>
 
@@ -55,15 +56,15 @@ export function Footer() {
           <div>
             <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Follow Us</h3>
             <div className="mt-4 flex gap-4">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <span className="sr-only">Twitter</span>
                 <Twitter className="h-6 w-6" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <span className="sr-only">LinkedIn</span>
                 <Linkedin className="h-6 w-6" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <span className="sr-only">Facebook</span>
                 <Facebook className="h-6 w-6" />
               </a>

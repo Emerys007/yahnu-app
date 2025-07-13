@@ -55,7 +55,7 @@ const jobPostSchema = z.object({
 
 export default function CompanyProfilePage() {
   const { toast } = useToast()
-  const [logoPreview, setLogoPreview] = useState<string | null>("https://placehold.co/600x400.png")
+  const [logoPreview, setLogoPreview] = useState<string | null>(null)
   const [jobs, setJobs] = useState<z.infer<typeof jobPostSchema>[]>([
     { title: "Software Engineer, Frontend", location: "Remote", type: "Full-time" },
     { title: "Product Manager", location: "New York, NY", type: "Full-time" },
@@ -213,19 +213,13 @@ export default function CompanyProfilePage() {
                 </CardHeader>
                 <CardContent className="flex flex-col items-center space-y-4">
                     <div className="w-full h-48 relative rounded-lg overflow-hidden border">
-                        {logoPreview ? (
-                            <Image
-                                src={logoPreview}
-                                alt="Company logo preview"
-                                fill
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                className="object-cover"
-                            />
-                        ) : (
-                            <div className="w-full h-full bg-muted flex items-center justify-center">
-                                <p className="text-muted-foreground">Logo preview</p>
-                            </div>
-                        )}
+                        <Image
+                            src={logoPreview || "https://placehold.co/600x400.png"}
+                            alt="Company logo preview"
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-cover"
+                        />
                     </div>
                     <Button asChild variant="outline" className="w-full">
                         <label htmlFor="logo-upload">

@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -33,8 +34,8 @@ const navItems = [
 ];
 
 const helpAndSettingsItems = [
-    { href: "#", icon: LifeBuoy, label: "Support" },
-    { href: "#", icon: Settings, label: "Settings" },
+    { href: "/dashboard/settings", icon: LifeBuoy, label: "Support" },
+    { href: "/dashboard/settings", icon: Settings, label: "Settings" },
 ]
 
 type SidebarContextType = {
