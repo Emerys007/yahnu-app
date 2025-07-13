@@ -1,3 +1,4 @@
+import { FeaturesSection } from "@/components/landing/features-section";
 import { HeroSection } from "@/components/landing/hero-section";
 import { MainNav } from "@/components/landing/main-nav";
 import { Button } from "@/components/ui/button";
@@ -10,29 +11,7 @@ export default function HomePage() {
       <MainNav />
       <main className="flex-1">
         <HeroSection />
-
-        <section id="features" className="py-20 bg-background">
-          <div className="container mx-auto text-center">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Why Choose Yahnu?</h2>
-            <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-              We are dedicated to bridging the gap between talent and opportunity in Côte d'Ivoire.
-            </p>
-            <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="flex flex-col items-center p-6 border rounded-lg bg-card shadow-sm">
-                <h3 className="text-xl font-semibold">For Graduates</h3>
-                <p className="mt-2 text-muted-foreground">Discover exclusive job listings and launch your career with confidence.</p>
-              </div>
-              <div className="flex flex-col items-center p-6 border rounded-lg bg-card shadow-sm">
-                <h3 className="text-xl font-semibold">For Companies</h3>
-                <p className="mt-2 text-muted-foreground">Recruit top-tier talent from leading universities efficiently.</p>
-              </div>
-              <div className="flex flex-col items-center p-6 border rounded-lg bg-card shadow-sm">
-                <h3 className="text-xl font-semibold">For Schools</h3>
-                <p className="mt-2 text-muted-foreground">Forge impactful partnerships and enhance your graduates' prospects.</p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <FeaturesSection />
 
         <section className="py-20 bg-muted/40">
           <div className="container mx-auto text-center">
@@ -51,6 +30,7 @@ export default function HomePage() {
           </div>
         </section>
       </main>
+      <Footer />
     </div>
   );
 }
