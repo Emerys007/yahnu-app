@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { LoginForm } from '@/components/auth/login-form';
 import { Logo } from '@/components/logo';
 
@@ -6,10 +7,10 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       <div className="hidden bg-primary/10 lg:flex flex-col items-center justify-center p-12">
-        <div className="flex items-center gap-4 mb-8">
+        <Link href="/" className="flex items-center gap-4 mb-8">
            <Logo className="h-12 w-12 text-primary" />
            <h1 className="text-4xl font-bold text-primary">Yahnu</h1>
-        </div>
+        </Link>
         <Image
           src="https://placehold.co/800x600.png"
           alt="Yahnu Platform Showcase"

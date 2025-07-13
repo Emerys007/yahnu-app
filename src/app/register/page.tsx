@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { RegisterForm } from '@/components/auth/register-form';
 import { Logo } from '@/components/logo';
 
@@ -11,10 +12,10 @@ export default function RegisterPage() {
         </div>
       </div>
       <div className="hidden bg-primary/10 lg:flex flex-col items-center justify-center p-12 order-1 lg:order-2">
-        <div className="flex items-center gap-4 mb-8">
+        <Link href="/" className="flex items-center gap-4 mb-8">
            <Logo className="h-12 w-12 text-primary" />
            <h1 className="text-4xl font-bold text-primary">Yahnu</h1>
-        </div>
+        </Link>
         <Image
           src="https://placehold.co/800x600.png"
           alt="Yahnu Platform Showcase"
