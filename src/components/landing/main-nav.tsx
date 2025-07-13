@@ -49,7 +49,7 @@ export function MainNav() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        <div className="mr-auto flex items-center">
+        <div className="flex items-center">
           <Link href="/" className="mr-6 flex items-center gap-2">
             <Logo className="h-8 w-8 text-primary" />
             <div>
@@ -59,7 +59,10 @@ export function MainNav() {
               </p>
             </div>
           </Link>
-          <nav className="hidden md:flex md:items-center md:gap-6 text-sm">
+        </div>
+
+        <div className="ml-auto flex items-center gap-2">
+          <nav className="hidden md:flex md:items-center md:gap-6 text-sm mr-4">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -70,9 +73,7 @@ export function MainNav() {
               </Link>
             ))}
           </nav>
-        </div>
-
-        <div className="flex items-center gap-2">
+          
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex md:items-center md:gap-2">
             <Button variant="ghost" asChild>
