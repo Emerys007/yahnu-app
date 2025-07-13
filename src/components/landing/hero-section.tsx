@@ -71,9 +71,8 @@ export function HeroSection() {
                 <Image
                   src={slide.imageUrl}
                   alt={slide.headline}
-                  layout="fill"
-                  objectFit="cover"
-                  className="brightness-50"
+                  fill
+                  className="object-cover brightness-50"
                   data-ai-hint={slide.imageHint}
                   priority={index === 0}
                 />
