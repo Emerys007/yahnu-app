@@ -34,6 +34,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
@@ -81,7 +82,7 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
     
     const handleDelete = () => {
         onUserDelete(user.id);
-        toast({ title: t('User Deleted'), description: `${user.name} has been removed from the platform.`, variant: "destructive" });
+        toast({ title: t('User Deleted'), description: `${user.name} ${t('has been removed from the platform.')}`, variant: "destructive" });
         setIsDeleteDialogOpen(false);
         setIsManageOpen(false);
     }
