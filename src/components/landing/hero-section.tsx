@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -12,9 +13,11 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
 import { useLocalization } from "@/context/localization-context"
+import { cn } from "@/lib/utils"
 
 const getSlides = (t: (key: string) => string) => [
     {
@@ -56,9 +59,30 @@ export function HeroSection() {
   const { t } = useLocalization();
   const slides = getSlides(t);
 
+  const [api, setApi] = React.useState<CarouselApi>()
+  const [current, setCurrent] = React.useState(0)
+
+  React.useEffect(() => {
+    if (!api) {
+      return
+    }
+ 
+    setCurrent(api.selectedScrollSnap())
+ 
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap())
+    })
+  }, [api])
+
+  const scrollTo = React.useCallback(
+    (index: number) => api && api.scrollTo(index),
+    [api]
+  );
+
   return (
     <section className="relative w-full h-[70vh] md:h-[90vh] overflow-hidden">
       <Carousel
+        setApi={setApi}
         plugins={[plugin.current]}
         className="w-full h-full"
         onMouseEnter={plugin.current.stop}
@@ -116,6 +140,19 @@ export function HeroSection() {
         <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex h-12 w-12" />
         <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex h-12 w-12" />
       </Carousel>
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex md:hidden space-x-2">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => scrollTo(index)}
+            className={cn(
+              "h-2 w-2 rounded-full bg-white/50 transition-all duration-300",
+              current === index ? "w-4 bg-white" : "hover:bg-white/75"
+            )}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
     </section>
   )
 }
