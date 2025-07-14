@@ -35,6 +35,7 @@ export const Logo = (props: { className?: string }) => {
             sizes="100vw"
             className="w-full h-full"
             priority
+            unoptimized // Useful for SVGs that Next.js might not optimize well
         />
     </div>
   );
