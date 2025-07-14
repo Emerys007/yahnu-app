@@ -35,8 +35,8 @@ import { Separator } from "@/components/ui/separator";
 
 const navLinks = [
   { href: "/dashboard/jobs", label: "Jobs" },
-  { href: "#companies", label: "Companies" },
-  { href: "#schools", label: "Schools" },
+  { href: "/companies", label: "Companies" },
+  { href: "/schools", label: "Schools" },
   { href: "/blog", label: "Blog" },
 ];
 

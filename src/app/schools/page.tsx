@@ -1,8 +1,38 @@
 
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { GraduationCap, MapPin, ArrowRight } from "lucide-react";
+
+const schools = [
+  {
+    name: "Institut National Polytechnique Félix Houphouët-Boigny",
+    acronym: "INP-HB",
+    logoUrl: "/images/University.png",
+    location: "Yamoussoukro",
+    description: "A leading polytechnic institution in West Africa, known for its rigorous engineering and technology programs.",
+    slug: "inp-hb",
+  },
+  {
+    name: "Université Félix Houphouët-Boigny",
+    acronym: "UFHB",
+    logoUrl: "/images/LogoYahnu.png",
+    location: "Abidjan",
+    description: "The largest university in Côte d'Ivoire, offering a wide range of programs in sciences, arts, and humanities.",
+    slug: "ufhb",
+  },
+  {
+    name: "Groupe CSI Pôle Polytechnique",
+    acronym: "CSI",
+    logoUrl: "/images/Logo.png",
+    location: "Abidjan",
+    description: "A private university renowned for its focus on technology, engineering, and business management.",
+    slug: "csi",
+  },
+];
 
 export default function SchoolsPage() {
   return (
@@ -10,22 +40,42 @@ export default function SchoolsPage() {
       <MainNav />
       <main className="flex-1 container mx-auto py-12">
         <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold tracking-tight">Partner Schools</h1>
-            <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-                Explore our network of leading educational institutions.
+            <h1 className="text-5xl font-bold tracking-tight">Partner Universities</h1>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                Collaborating with the finest institutions to nurture the next generation of Ivorian leaders.
             </p>
         </div>
-        <Card>
-            <CardHeader>
-                <CardTitle>Coming Soon</CardTitle>
-                <CardDescription>Our school directory is under construction.</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center justify-center text-center py-20">
-                <GraduationCap className="h-16 w-16 text-muted-foreground mb-4"/>
-                <p className="text-lg font-semibold">We are building connections with top schools.</p>
-                <p className="text-muted-foreground mt-2">Check back soon to learn more about our academic partners and their programs.</p>
-            </CardContent>
-        </Card>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {schools.map((school) => (
+                 <Card key={school.slug} className="group flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <CardHeader className="p-0">
+                        <div className="relative w-full h-48 bg-muted">
+                             <Image
+                                src={school.logoUrl}
+                                alt={`${school.name} logo`}
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                className="object-contain p-4"
+                            />
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-6 flex flex-col flex-grow">
+                        <h2 className="text-xl font-bold">{school.acronym}</h2>
+                        <p className="text-sm text-muted-foreground flex-grow">{school.name}</p>
+                        <p className="mt-4 text-muted-foreground flex-grow">{school.description}</p>
+                        <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
+                            <MapPin className="h-4 w-4"/> {school.location}
+                        </div>
+                         <Button asChild className="mt-6 w-full">
+                            <Link href={`/schools/${school.slug}`}>
+                                Explore Programs <ArrowRight className="ml-2 h-4 w-4"/>
+                            </Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
       </main>
       <Footer />
     </div>

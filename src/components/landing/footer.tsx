@@ -10,9 +10,9 @@ export function Footer() {
   return (
     <footer className="bg-background border-t">
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
           {/* Brand Section */}
-          <div className="lg:col-span-1">
+          <div className="col-span-2 lg:col-span-1">
             <div className="flex items-center gap-3">
               <Logo className="h-8 w-8 text-primary" />
               <span className="text-xl font-bold">Yahnu</span>
@@ -22,7 +22,7 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Links Column */}
+          {/* Platform Links */}
           <div>
             <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Platform</h3>
             <ul className="mt-4 space-y-2 text-sm">
@@ -30,6 +30,15 @@ export function Footer() {
               <li><Link href="/companies" className="text-muted-foreground hover:text-primary transition-colors">Companies</Link></li>
               <li><Link href="/schools" className="text-muted-foreground hover:text-primary transition-colors">Schools</Link></li>
               <li><Link href="/blog" className="text-muted-foreground hover:text-primary transition-colors">Blog</Link></li>
+            </ul>
+          </div>
+          
+          {/* Legal Links */}
+          <div>
+            <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Legal</h3>
+            <ul className="mt-4 space-y-2 text-sm">
+              <li><Link href="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/terms-of-service" className="text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
 
@@ -53,7 +62,7 @@ export function Footer() {
           </div>
           
           {/* Socials Section */}
-          <div>
+          <div className="col-span-2 md:col-span-1">
             <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Follow Us</h3>
             <div className="mt-4 flex gap-4">
               <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">

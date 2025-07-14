@@ -24,7 +24,36 @@ const companies = [
     ],
     slug: "tech-solutions-abidjan",
   },
-  // Add more companies here
+  {
+    name: "AgriBiz Côte d'Ivoire",
+    tagline: "Sowing the seeds of progress.",
+    logoUrl: "/images/job-agronomist.jpg",
+    location: "Yamoussoukro, Côte d'Ivoire",
+    industry: "Agriculture",
+    website: "https://agribiz.ci",
+    description: "<p>AgriBiz Côte d'Ivoire is a leading agricultural firm dedicated to sustainable farming and food security. We leverage technology to optimize crop yields and improve the livelihoods of farmers.</p><p>Our vision is to create a vibrant and resilient agricultural sector in Côte d'Ivoire. We are looking for passionate individuals to join our team and make a difference.</p>",
+    jobs: [
+        { title: "Agronomist", type: "Full-time", location: "Yamoussoukro" },
+        { title: "Supply Chain Manager", type: "Full-time", location: "Abidjan" },
+        { title: "Data Analyst (Agriculture)", type: "Full-time", location: "Yamoussoukro" },
+    ],
+    slug: "agribiz-cote-divoire",
+    },
+    {
+    name: "Finance & Forte",
+    tagline: "Your trusted financial partner.",
+    logoUrl: "/images/LogoYahnu.png",
+    location: "Abidjan, Côte d'Ivoire",
+    industry: "Finance",
+    website: "https://financeforte.ci",
+    description: "<p>Finance & Forte is a premier investment bank and financial advisory firm in Abidjan. We provide a wide range of services to corporate and institutional clients.</p><p>Our team of experienced professionals is committed to delivering exceptional results for our clients. We are seeking talented individuals who are passionate about finance and want to build a rewarding career.</p>",
+    jobs: [
+        { title: "Financial Analyst", type: "Full-time", location: "Abidjan" },
+        { title: "Investment Banker", type: "Full-time", location: "Abidjan" },
+        { title: "Compliance Officer", type: "Full-time", location: "Abidjan" },
+    ],
+    slug: "finance-forte",
+    }
 ];
 
 export async function generateStaticParams() {
