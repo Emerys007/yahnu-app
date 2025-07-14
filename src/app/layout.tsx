@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 import { LocalizationProvider } from '@/context/localization-context';
+import { ScrollToTop } from '@/components/ui/scroll-to-top';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -38,6 +39,7 @@ export default function RootLayout({
               </div>
             </div>
             <Toaster />
+            <ScrollToTop />
           </ThemeProvider>
         </LocalizationProvider>
       </body>
