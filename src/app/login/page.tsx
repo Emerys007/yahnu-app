@@ -6,9 +6,14 @@ import Link from 'next/link';
 import { LoginForm } from '@/components/auth/login-form';
 import { Logo } from '@/components/logo';
 import { useLocalization } from '@/context/localization-context';
+import { useCountry } from '@/context/country-context';
+import { WaitlistForm } from '@/components/auth/waitlist-form';
 
 export default function LoginPage() {
   const { t } = useLocalization();
+  const { country } = useCountry();
+
+  const isLaunchCountry = country.code === 'CI';
 
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
@@ -37,7 +42,7 @@ export default function LoginPage() {
       </div>
       <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background">
         <div className="w-full max-w-md space-y-8">
-            <LoginForm />
+            {isLaunchCountry ? <LoginForm /> : <WaitlistForm />}
         </div>
       </div>
     </div>

@@ -108,5 +108,8 @@
     "Coming Soon to {country}": "Bientôt disponible en {country}",
     "Yahnu is not yet available in your country. Enter your email to be notified when we launch!": "Yahnu n'est pas encore disponible dans votre pays. Entrez votre e-mail pour être averti de notre lancement !",
     "Thank you! We will notify you when Yahnu is available in {country}.": "Merci ! Nous vous informerons lorsque Yahnu sera disponible en {country}.",
-    "Notify Me": "M'avertir"
+    "Notify Me": "M'avertir",
+    "You're on the list!": "Vous êtes sur la liste !",
+    "Go back to the homepage": "Retour à la page d'accueil",
+    "Select a country": "Sélectionnez un pays"
 }

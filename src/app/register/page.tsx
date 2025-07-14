@@ -6,15 +6,20 @@ import Link from 'next/link';
 import { RegisterForm } from '@/components/auth/register-form';
 import { Logo } from '@/components/logo';
 import { useLocalization } from '@/context/localization-context';
+import { useCountry } from '@/context/country-context';
+import { WaitlistForm } from '@/components/auth/waitlist-form';
 
 export default function RegisterPage() {
   const { t } = useLocalization();
+  const { country } = useCountry();
+
+  const isLaunchCountry = country.code === 'CI';
 
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background order-2 lg:order-1">
        <div className="w-full max-w-md space-y-8">
-           <RegisterForm />
+           {isLaunchCountry ? <RegisterForm /> : <WaitlistForm />}
        </div>
      </div>
       <div className="hidden bg-primary/10 lg:flex flex-col items-center justify-center p-12 order-1 lg:order-2">
