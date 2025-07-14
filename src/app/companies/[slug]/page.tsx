@@ -1,4 +1,6 @@
 
+"use client"
+
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import { notFound } from "next/navigation";
@@ -106,12 +108,6 @@ const companiesData = {
   ]
 };
 
-
-export async function generateStaticParams() {
-    return companiesData.en.map((company) => ({
-      slug: company.slug,
-    }));
-  }
 
 export default function CompanyPage({ params }: { params: { slug: string } }) {
   const { language, t } = useLocalization();

@@ -1,4 +1,6 @@
 
+"use client"
+
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import { notFound } from "next/navigation";
@@ -45,12 +47,6 @@ const postsData = {
   ]
 };
 
-
-export async function generateStaticParams() {
-  return postsData.en.map((post) => ({
-    slug: post.slug,
-  }));
-}
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const { language, t } = useLocalization();

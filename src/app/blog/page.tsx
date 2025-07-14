@@ -1,4 +1,6 @@
 
+"use client"
+
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import Link from "next/link";

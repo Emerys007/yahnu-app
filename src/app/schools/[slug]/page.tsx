@@ -1,4 +1,6 @@
 
+"use client"
+
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import { notFound } from "next/navigation";
@@ -48,12 +50,6 @@ const schoolsData = {
   ]
 };
 
-
-export async function generateStaticParams() {
-    return schoolsData.en.map((school) => ({
-      slug: school.slug,
-    }));
-  }
 
 export default function SchoolPage({ params }: { params: { slug: string } }) {
   const { language, t } = useLocalization();
