@@ -467,7 +467,7 @@
     "account has been": "le compte a été",
     "Oversee and manage the entire Yahnu platform.": "Superviser et gérer l'ensemble de la plateforme Yahnu.",
     "Overview": "Aperçu",
-    "User Management": "Gestion des utilisateurs",
+    "Manage Users": "Gérer les utilisateurs",
     "Total Users": "Utilisateurs totaux",
     "+180 this month": "+180 ce mois-ci",
     "Pending Registrations": "Inscriptions en attente",
@@ -509,14 +509,13 @@
     "Content Moderator": "Modérateur de contenu",
     "Support Staff": "Personnel de soutien",
     "Select role": "Sélectionner un rôle",
-    "Manage Users": "Gérer les utilisateurs",
     "Manage User": "Gérer l'utilisateur",
     "Update user status or remove them from the platform.": "Mettez à jour le statut des utilisateurs ou supprimez-les de la plateforme.",
     "Change Status": "Changer le statut",
     "Suspend": "Suspendre",
     "Delete User": "Supprimer l'utilisateur",
     "Are you absolutely sure?": "Êtes-vous absolument sûr ?",
-    "This action cannot be undone. This will permanently delete the user account and remove their data from our servers.": "Cette action est irréversible. Elle supprimera définitiveement le compte de l'utilisateur et ses données de nos serveurs.",
+    "This action cannot be undone. This will permanently delete the user account and remove their data from our servers.": "Cette action est irréversible. Elle supprimera définitivement le compte de l'utilisateur et ses données de nos serveurs.",
     "Cancel": "Annuler",
     "Yes, delete user": "Oui, supprimer l'utilisateur",
     "Status Updated": "Statut mis à jour",
@@ -532,5 +531,7 @@
     "The account for {name} has been created. Please securely share the following temporary password with them.": "Le compte pour {name} a été créé. Veuillez partager de manière sécurisée le mot de passe temporaire suivant avec lui/elle.",
     "Temporary Password": "Mot de passe temporaire",
     "Close": "Fermer",
-    "Contact Person Name": "Nom de la personne à contacter"
+    "Contact Person Name": "Nom de la personne à contacter",
+    "Manage Team": "Gérer l'équipe",
+    "Invite and manage users with administrative privileges.": "Invitez et gérez les utilisateurs dotés de privilèges administratifs."
 }

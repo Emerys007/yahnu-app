@@ -64,7 +64,8 @@ const getNavItems = (t: (key: string) => string, accountType: AccountType) => {
 
   const adminNav = [
     { href: "/dashboard/admin", icon: Shield, label: t('Overview') },
-    { href: "/dashboard/admin/user-management", icon: Users, label: t('User Management') },
+    { href: "/dashboard/admin/user-management", icon: Users, label: t('Manage Users') },
+    { href: "/dashboard/admin/manage-team", icon: Users2, label: t('Manage Team') },
     { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Analytics') },
   ];
   

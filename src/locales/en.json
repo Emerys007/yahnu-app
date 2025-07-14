@@ -467,7 +467,7 @@
     "account has been": "account has been",
     "Oversee and manage the entire Yahnu platform.": "Oversee and manage the entire Yahnu platform.",
     "Overview": "Overview",
-    "User Management": "User Management",
+    "Manage Users": "Manage Users",
     "Total Users": "Total Users",
     "+180 this month": "+180 this month",
     "Pending Registrations": "Pending Registrations",
@@ -509,7 +509,6 @@
     "Content Moderator": "Content Moderator",
     "Support Staff": "Support Staff",
     "Select role": "Select role",
-    "Manage Users": "Manage Users",
     "Manage User": "Manage User",
     "Update user status or remove them from the platform.": "Update user status or remove them from the platform.",
     "Change Status": "Change Status",
@@ -532,5 +531,7 @@
     "The account for {name} has been created. Please securely share the following temporary password with them.": "The account for {name} has been created. Please securely share the following temporary password with them.",
     "Temporary Password": "Temporary Password",
     "Close": "Close",
-    "Contact Person Name": "Contact Person Name"
+    "Contact Person Name": "Contact Person Name",
+    "Manage Team": "Manage Team",
+    "Invite and manage users with administrative privileges.": "Invite and manage users with administrative privileges."
 }
