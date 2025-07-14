@@ -13,9 +13,18 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { useLocalization } from "@/context/localization-context"
+import { useAuth } from "@/context/auth-context"
 
 export function UserNav() {
   const { t } = useLocalization();
+  const { role } = useAuth();
+
+  const roleName = {
+    'graduate': t('Graduate Account'),
+    'company': t('Company Account'),
+    'school': t('School Account'),
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -34,6 +43,10 @@ export function UserNav() {
               user@example.com
             </p>
           </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel className="font-normal text-xs text-muted-foreground">
+            {roleName[role]}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

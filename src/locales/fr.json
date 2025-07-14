@@ -1,3 +1,4 @@
+
 {
     "Jobs": "Emplois",
     "Companies": "Entreprises",
@@ -186,7 +187,7 @@
     "Logo Selected": "Logo sélectionné",
     "is ready to be uploaded.": "est prêt à être téléchargé.",
     "Company Profile Updated": "Profil de l'entreprise mis à jour",
-    "Your company's profile has been saved successfully.": "Le profil de votre entreprise a été enregistré avec succès.",
+    "Le profil de votre entreprise a été enregistré avec succès.": "Le profil de votre entreprise a été enregistré avec succès.",
     "Job Posted": "Offre d'emploi publiée",
     "The \"": "Le poste \"",
     "\" position has been added.": "\" a été ajouté.",
@@ -330,6 +331,9 @@
     "Direct access to a pre-vetted talent pool": "Accès direct à un vivier de talents présélectionnés",
     "AI-driven tools for efficient recruitment and profile building": "Outils basés sur l'IA pour un recrutement et une création de profil efficaces",
     "Strengthened ties between academia and industry": "Liens renforcés entre le monde universitaire et l'industrie",
-    "Enhanced career opportunities for graduates": "Opportunités de carrière améliorées pour les diplômés"
+    "Enhanced career opportunities for graduates": "Opportunités de carrière améliorées pour les diplômés",
+    "Switch Role": "Changer de rôle",
+    "Graduate Account": "Compte Diplômé",
+    "Company Account": "Compte Entreprise",
+    "School Account": "Compte École"
   }
-  

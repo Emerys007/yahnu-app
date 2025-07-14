@@ -16,22 +16,51 @@ import {
   BarChart3,
   LifeBuoy,
   Settings,
+  BookUser,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent } from "../ui/sheet";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 import { useLocalization } from "@/context/localization-context";
+import type { Role } from "@/context/auth-context";
+import { useAuth } from "@/context/auth-context";
 
-const getNavItems = (t: (key: string) => string) => [
-  { href: "/dashboard", icon: LayoutDashboard, label: t('Dashboard') },
-  { href: "/dashboard/profile", icon: User, label: t('Profile') },
-  { href: "/dashboard/jobs", icon: Briefcase, label: t('Job Search') },
-  { href: "/dashboard/company-profile", icon: Building, label: t('Company Profile') },
-  { type: "divider", label: t('AI Tools') },
-  { href: "/dashboard/assessments", icon: ClipboardCheck, label: t('Assessments') },
-  { href: "/dashboard/reports", icon: BarChart3, label: t('Reports') },
-];
+const getNavItems = (t: (key: string) => string, role: Role) => {
+  const baseNav = [
+    { href: "/dashboard", icon: LayoutDashboard, label: t('Dashboard') },
+  ];
+
+  const graduateNav = [
+    ...baseNav,
+    { href: "/dashboard/profile", icon: User, label: t('Profile') },
+    { href: "/dashboard/jobs", icon: Briefcase, label: t('Job Search') },
+  ];
+
+  const companyNav = [
+    ...baseNav,
+    { href: "/dashboard/company-profile", icon: Building, label: t('Company Profile') },
+    { type: "divider", label: t('AI Tools') },
+    { href: "/dashboard/assessments", icon: ClipboardCheck, label: t('Assessments') },
+    { href: "/dashboard/reports", icon: BarChart3, label: t('Reports') },
+  ];
+  
+  const schoolNav = [
+    ...baseNav,
+    { href: "/dashboard/reports", icon: BarChart3, label: t('Reports') },
+  ];
+
+  switch (role) {
+    case 'graduate':
+      return graduateNav;
+    case 'company':
+      return companyNav;
+    case 'school':
+      return schoolNav;
+    default:
+      return baseNav;
+  }
+}
 
 const getHelpAndSettingsItems = (t: (key: string) => string) => [
     { href: "/dashboard/support", icon: LifeBuoy, label: t('Support') },
@@ -74,8 +103,9 @@ export function DashboardSidebar() {
   const { isCollapsed } = useSidebar();
   const isMobile = useIsMobile();
   const { t } = useLocalization();
+  const { role } = useAuth();
 
-  const navItems = getNavItems(t);
+  const navItems = getNavItems(t, role);
   const helpAndSettingsItems = getHelpAndSettingsItems(t);
 
   const renderNavItem = (item: any, index: number) => {
