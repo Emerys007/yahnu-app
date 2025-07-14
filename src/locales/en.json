@@ -410,5 +410,15 @@
     "faq_q4": "Can I post jobs as a company?",
     "faq_a4": "Yes! On the 'Company Profile' page, you can manage your existing job postings and add new ones. These jobs will then be visible to all graduates on the platform.",
     "faq_q5": "How are job recommendations generated?",
-    "faq_a5": "Our system analyzes your skills, experience, and education listed in your profile and matches them against active job listings to provide you with the most relevant opportunities."
+    "faq_a5": "Our system analyzes your skills, experience, and education listed in your profile and matches them against active job listings to provide you with the most relevant opportunities.",
+    "School Profile": "School Profile",
+    "Basic information about your school.": "Basic information about your school.",
+    "Your University": "Your University",
+    "Main Campus Location": "Main Campus Location",
+    "City, Country": "City, Country",
+    "About Your School": "About Your School",
+    "Describe your school's history, mission, and strengths...": "Describe your school's history, mission, and strengths...",
+    "School Logo": "School Logo",
+    "School Profile Updated": "School Profile Updated",
+    "Your school's profile has been saved successfully.": "Your school's profile has been saved successfully."
   }

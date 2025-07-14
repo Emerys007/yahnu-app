@@ -13,16 +13,22 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { useLocalization } from "@/context/localization-context"
-import { useAuth } from "@/context/auth-context"
+import { useAuth, type Role } from "@/context/auth-context"
 
 export function UserNav() {
   const { t } = useLocalization();
   const { role } = useAuth();
 
-  const roleName = {
+  const roleName: Record<Role, string> = {
     'graduate': t('Graduate Account'),
     'company': t('Company Account'),
     'school': t('School Account'),
+  }
+  
+  const profileLink: Record<Role, string> = {
+      'graduate': '/dashboard/profile',
+      'company': '/dashboard/company-profile',
+      'school': '/dashboard/school-profile'
   }
 
   return (
@@ -51,7 +57,7 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/profile">{t('Profile')}</Link>
+            <Link href={profileLink[role]}>{t('Profile')}</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/dashboard/settings">{t('Settings')}</Link>

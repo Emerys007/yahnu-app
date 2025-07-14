@@ -410,5 +410,15 @@
     "faq_q4": "Puis-je publier des offres d'emploi en tant qu'entreprise ?",
     "faq_a4": "Oui ! Sur la page 'Profil de l'entreprise', vous pouvez gérer vos offres d'emploi existantes et en ajouter de nouvelles. Ces offres seront alors visibles par tous les diplômés sur la plateforme.",
     "faq_q5": "Comment sont générées les recommandations d'emploi ?",
-    "faq_a5": "Notre système analyse vos compétences, votre expérience et votre formation indiquées dans votre profil et les compare aux offres d'emploi actives pour vous proposer les opportunités les plus pertinentes."
+    "faq_a5": "Notre système analyse vos compétences, votre expérience et votre formation indiquées dans votre profil et les compare aux offres d'emploi actives pour vous proposer les opportunités les plus pertinentes.",
+    "School Profile": "Profil de l'école",
+    "Basic information about your school.": "Informations de base sur votre école.",
+    "Your University": "Votre Université",
+    "Main Campus Location": "Emplacement du campus principal",
+    "City, Country": "Ville, Pays",
+    "About Your School": "À propos de votre école",
+    "Describe your school's history, mission, and strengths...": "Décrivez l'histoire, la mission et les points forts de votre école...",
+    "School Logo": "Logo de l'école",
+    "School Profile Updated": "Profil de l'école mis à jour",
+    "Your school's profile has been saved successfully.": "Le profil de votre école a été enregistré avec succès."
   }

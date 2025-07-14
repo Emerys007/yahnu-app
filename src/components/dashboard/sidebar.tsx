@@ -16,6 +16,7 @@ import {
   BarChart3,
   LifeBuoy,
   Settings,
+  School,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -46,6 +47,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   
   const schoolNav = [
     ...baseNav,
+    { href: "/dashboard/school-profile", icon: School, label: t('School Profile')},
     { href: "/dashboard/reports", icon: BarChart3, label: t('Reports') },
   ];
   
