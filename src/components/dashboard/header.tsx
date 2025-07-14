@@ -14,7 +14,9 @@ import {
   Handshake,
   Check,
   X,
-  Shield
+  Shield,
+  School,
+  Building
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
