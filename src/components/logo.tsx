@@ -14,12 +14,12 @@ export const Logo = (props: { className?: string }) => {
     setMounted(true);
   }, []);
 
-  const src = resolvedTheme === 'dark' ? '/images/YahnuLogoDark.svg' : '/images/YahnuLogoLight.svg';
-
+  // Use a placeholder to prevent hydration mismatch and layout shift
   if (!mounted) {
-    // Render a placeholder to prevent layout shift and hydration errors
     return <div className={cn(props.className)} style={{ aspectRatio: '1 / 1' }} />;
   }
+  
+  const src = resolvedTheme === 'dark' ? '/images/YahnuLogoDark.svg' : '/images/YahnuLogoLight.svg';
 
   return (
     <div className={cn(props.className, "transition-opacity duration-300")}>
