@@ -1,11 +1,7 @@
 <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_405_2)">
-<path d="M50 0C22.3858 0 0 22.3858 0 50C0 77.6142 22.3858 100 50 100C77.6142 100 100 77.6142 100 50C100 22.3858 77.6142 0 50 0Z" fill="#F8FAFC"/>
-<path d="M56.25 28.125L43.75 43.75V28.125H34.375V71.875H43.75V56.25L56.25 71.875H65.625V28.125H56.25Z" fill="#0F172A"/>
-</g>
-<defs>
-<clipPath id="clip0_405_2">
-<rect width="100" height="100" fill="white"/>
-</clipPath>
-</defs>
+<rect width="100" height="100" rx="20" fill="hsl(var(--primary))"/>
+<path d="M25 25V75" stroke="hsl(var(--primary-foreground))" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M25 50H50" stroke="hsl(var(--primary-foreground))" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M50 25L75 75" stroke="hsl(var(--primary-foreground))" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M75 25L50 75" stroke="hsl(var(--primary-foreground))" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
