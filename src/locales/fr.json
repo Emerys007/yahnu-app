@@ -296,7 +296,7 @@
     "Partner Companies": "Entreprises partenaires",
     "3 new partnerships": "3 nouveaux partenariats",
     "Placement Rate": "Taux de placement",
-    "Up 5% from last year": "En hausse de 5% par rapport à l'année dernière",
+    "En hausse de 5% par rapport à l'année dernière": "En hausse de 5% par rapport à l'année dernière",
     "Graduate Placement Trends": "Tendances de placement des diplômés",
     "Number of graduates placed in jobs over the last 6 months.": "Nombre de diplômés placés dans des emplois au cours des 6 derniers mois.",
     "January": "Janvier",
@@ -494,7 +494,23 @@
     "Invite New Administrator": "Inviter un nouvel administrateur",
     "New admin's email": "E-mail du nouvel administrateur",
     "Invite Sent": "Invitation envoyée",
-    "An invitation has been sent to the new administrator's email.": "Une invitation a été envoyée à l'e-mail du nouvel administrateur."
+    "An invitation has been sent to the new administrator's email.": "Une invitation a été envoyée à l'e-mail du nouvel administrateur.",
+    "Admin Overview": "Aperçu de l'administration",
+    "Manage all user accounts across the platform.": "Gérez tous les comptes utilisateurs de la plateforme.",
+    "All Users": "Tous les utilisateurs",
+    "Add School": "Ajouter une école",
+    "Add Company": "Ajouter une entreprise",
+    "Add a new School": "Ajouter une nouvelle école",
+    "Manually create a new school account. The account will be active immediately.": "Créez manuellement un nouveau compte d'école. Le compte sera actif immédiatement.",
+    "Add a new Company": "Ajouter une nouvelle entreprise",
+    "Manually create a new company account. The account will be active immediately.": "Créez manuellement un nouveau compte d'entreprise. Le compte sera actif immédiatement.",
+    "Platform Analytics": "Analyses de la plateforme",
+    "High-level insights into platform usage and growth.": "Aperçus de haut niveau sur l'utilisation et la croissance de la plateforme.",
+    "Active Graduates": "Diplômés actifs",
+    "On the platform": "Sur la plateforme",
+    "User Distribution": "Répartition des utilisateurs",
+    "Breakdown of user types on the platform.": "Répartition des types d'utilisateurs sur la plateforme.",
+    "Content Moderator": "Modérateur de contenu",
+    "Support Staff": "Personnel de soutien",
+    "Select role": "Sélectionner un rôle"
 }
-
-    

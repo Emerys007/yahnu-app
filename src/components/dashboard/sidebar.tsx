@@ -21,7 +21,8 @@ import {
   Users2,
   Handshake,
   Shield,
-  UserCheck
+  UserCheck,
+  Users
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -62,8 +63,9 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   ];
 
   const adminNav = [
-    ...baseNav,
-    { href: "/dashboard/admin", icon: Shield, label: t('Admin Panel') },
+    { href: "/dashboard/admin", icon: Shield, label: t('Overview') },
+    { href: "/dashboard/admin/user-management", icon: Users, label: t('User Management') },
+    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Analytics') },
   ];
   
   const bottomNav = [

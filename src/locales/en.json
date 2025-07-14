@@ -494,7 +494,23 @@
     "Invite New Administrator": "Invite New Administrator",
     "New admin's email": "New admin's email",
     "Invite Sent": "Invite Sent",
-    "An invitation has been sent to the new administrator's email.": "An invitation has been sent to the new administrator's email."
+    "An invitation has been sent to the new administrator's email.": "An invitation has been sent to the new administrator's email.",
+    "Admin Overview": "Admin Overview",
+    "Manage all user accounts across the platform.": "Manage all user accounts across the platform.",
+    "All Users": "All Users",
+    "Add School": "Add School",
+    "Add Company": "Add Company",
+    "Add a new School": "Add a new School",
+    "Manually create a new school account. The account will be active immediately.": "Manually create a new school account. The account will be active immediately.",
+    "Add a new Company": "Add a new Company",
+    "Manually create a new company account. The account will be active immediately.": "Manually create a new company account. The account will be active immediately.",
+    "Platform Analytics": "Platform Analytics",
+    "High-level insights into platform usage and growth.": "High-level insights into platform usage and growth.",
+    "Active Graduates": "Active Graduates",
+    "On the platform": "On the platform",
+    "User Distribution": "User Distribution",
+    "Breakdown of user types on the platform.": "Breakdown of user types on the platform.",
+    "Content Moderator": "Content Moderator",
+    "Support Staff": "Support Staff",
+    "Select role": "Select role"
 }
-
-    
