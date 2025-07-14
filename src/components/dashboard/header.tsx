@@ -49,8 +49,8 @@ const getNotificationsByRole = (t: (key: string) => string, role: Role) => {
             { id: 2, icon: Briefcase, text: t("Your job post 'UI/UX Designer' has received 5 new views"), time: "30m ago", read: true },
         ],
         school: [
-            { id: 1, icon: Handshake, text: 'Tech Solutions Abidjan has requested a partnership', time: "1d ago", read: false },
-            { id: 2, icon: Briefcase, text: '5 graduates from your institution were hired this month', time: "2d ago", read: true },
+            { id: 1, icon: Handshake, text: t('Tech Solutions Abidjan has requested a partnership'), time: "1d ago", read: false },
+            { id: 2, icon: Briefcase, text: t('5 graduates from your institution were hired this month'), time: "2d ago", read: true },
         ],
         admin: [
             { id: 1, icon: Building, text: t('New company "Innovate Inc." requires approval'), time: "10m ago", read: false },

@@ -275,6 +275,7 @@
     "Graduate Account": "Compte Diplômé",
     "Company Account": "Compte Entreprise",
     "School Account": "Compte École",
+    "Admin Account": "Compte Admin",
     "Help & Settings": "Aide et paramètres",
     "Company Dashboard": "Tableau de bord de l'entreprise",
     "Manage your recruitment pipeline and find top talent.": "Gérez votre pipeline de recrutement et trouvez les meilleurs talents.",
@@ -424,12 +425,11 @@
     "You have already sent a request to this school.": "Vous avez déjà envoyé une demande à cette école.",
     "Mark all as read": "Marquer tout comme lu",
     "Admin": "Admin",
-    "Admin Account": "Compte Admin",
+    "Admin Panel": "Panneau d'administration",
     "School/University": "École/Université",
     "Select your school": "Sélectionnez votre école",
     "Graduate Management": "Gestion des diplômés",
     "Activate and manage graduate accounts from your institution.": "Activez et gérez les comptes des diplômés de votre institution.",
-    "Admin Panel": "Panneau d'administration",
     "Manage platform registrations and administrators.": "Gérer les inscriptions à la plateforme et les administrateurs.",
     "Pending Requests": "Demandes en attente",
     "Administrators": "Administrateurs",
@@ -468,6 +468,5 @@
     "activated": "activé",
     "deactivated": "désactivé",
     "Account pending": "Compte en attente",
-    "account has been": "le compte a été",
-    "pending": "en attente"
+    "account has been": "le compte a été"
 }

@@ -275,6 +275,7 @@
     "Graduate Account": "Graduate Account",
     "Company Account": "Company Account",
     "School Account": "School Account",
+    "Admin Account": "Admin Account",
     "Help & Settings": "Help & Settings",
     "Company Dashboard": "Company Dashboard",
     "Manage your recruitment pipeline and find top talent.": "Manage your recruitment pipeline and find top talent.",
@@ -424,12 +425,11 @@
     "You have already sent a request to this school.": "You have already sent a request to this school.",
     "Mark all as read": "Mark all as read",
     "Admin": "Admin",
-    "Admin Account": "Admin Account",
+    "Admin Panel": "Admin Panel",
     "School/University": "School/University",
     "Select your school": "Select your school",
     "Graduate Management": "Graduate Management",
     "Activate and manage graduate accounts from your institution.": "Activate and manage graduate accounts from your institution.",
-    "Admin Panel": "Admin Panel",
     "Manage platform registrations and administrators.": "Manage platform registrations and administrators.",
     "Pending Requests": "Pending Requests",
     "Administrators": "Administrators",
@@ -468,6 +468,5 @@
     "activated": "activated",
     "deactivated": "deactivated",
     "Account pending": "Account pending",
-    "account has been": "account has been",
-    "pending": "pending"
+    "account has been": "account has been"
 }
