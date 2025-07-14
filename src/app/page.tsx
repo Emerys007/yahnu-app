@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Footer } from "@/components/landing/footer";
 import { useLocalization } from "@/context/localization-context";
 import { ShieldCheck, Wand2, Handshake, TrendingUp } from "lucide-react";
+import { TestimonialsSection } from "@/components/landing/testimonials-section";
 
 const WhyChooseYahnu = () => {
   const { t } = useLocalization();
@@ -62,17 +63,18 @@ export default function HomePage() {
       <main className="flex-1">
         <HeroSection />
         <FeaturesSection />
+        <TestimonialsSection />
         <WhyChooseYahnu />
 
         <section className="py-20 bg-muted/40">
           <div className="container mx-auto text-center">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('Ready to Get Started?')}</h2>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('Ready to Join the Elite?')}</h2>
               <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto">
-                  {t('Join Yahnu today and take the next step in your professional journey. Whether you\'re looking for a job, hiring new talent, or seeking partnerships, we have the tools for you.')}
+                  {t("Create your account today and unlock a world of opportunities. Whether you're a graduate, a company, or a school, Yahnu is your gateway to success.")}
               </p>
               <div className="mt-8 flex justify-center">
                   <Button size="lg" asChild>
-                      <Link href="/register">{t('Sign Up Now')}</Link>
+                      <Link href="/register">{t('Get Started Now')}</Link>
                   </Button>
               </div>
           </div>

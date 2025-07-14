@@ -9,13 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Briefcase, MapPin, Building, ArrowRight } from "lucide-react";
 import { useLocalization } from "@/context/localization-context";
+import { Logo } from "@/components/logo";
 
 const companiesData = {
   en: [
     {
       name: "Tech Solutions Abidjan",
       tagline: "Innovating for a digital Africa.",
-      logoUrl: "/images/Logo.png",
       location: "Abidjan, Côte d'Ivoire",
       industry: "Information Technology",
       featuredJobs: [
@@ -28,7 +28,6 @@ const companiesData = {
       {
       name: "AgriBiz Côte d'Ivoire",
       tagline: "Sowing the seeds of progress.",
-      logoUrl: "/images/job-agronomist.jpg",
       location: "Yamoussoukro, Côte d'Ivoire",
       industry: "Agriculture",
       featuredJobs: [
@@ -41,7 +40,6 @@ const companiesData = {
     {
       name: "Finance & Forte",
       tagline: "Your trusted financial partner.",
-      logoUrl: "/images/LogoYahnu.png",
       location: "Abidjan, Côte d'Ivoire",
       industry: "Finance",
       featuredJobs: [
@@ -56,7 +54,6 @@ const companiesData = {
     {
       name: "Tech Solutions Abidjan",
       tagline: "Innover pour une Afrique numérique.",
-      logoUrl: "/images/Logo.png",
       location: "Abidjan, Côte d'Ivoire",
       industry: "Technologies de l'information",
       featuredJobs: [
@@ -69,7 +66,6 @@ const companiesData = {
       {
       name: "AgriBiz Côte d'Ivoire",
       tagline: "Semer les graines du progrès.",
-      logoUrl: "/images/job-agronomist.jpg",
       location: "Yamoussoukro, Côte d'Ivoire",
       industry: "Agriculture",
       featuredJobs: [
@@ -82,7 +78,6 @@ const companiesData = {
     {
       name: "Finance & Forte",
       tagline: "Votre partenaire financier de confiance.",
-      logoUrl: "/images/LogoYahnu.png",
       location: "Abidjan, Côte d'Ivoire",
       industry: "Finance",
       featuredJobs: [
@@ -114,15 +109,7 @@ export default function CompaniesPage() {
             {companies.map((company) => (
                  <Link href={`/companies/${company.slug}`} key={company.name} className="group block">
                     <Card className="flex flex-col md:flex-row items-center p-6 gap-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                        <div className="relative h-24 w-24 rounded-full overflow-hidden border-4 border-muted shrink-0">
-                            <Image
-                                src={company.logoUrl}
-                                alt={`${company.name} logo`}
-                                fill
-                                sizes="96px"
-                                className="object-cover"
-                            />
-                        </div>
+                        <Logo className="h-24 w-24 shrink-0" />
                         <div className="flex-grow text-center md:text-left">
                             <h2 className="text-2xl font-bold">{company.name}</h2>
                             <p className="text-muted-foreground italic">"{company.tagline}"</p>

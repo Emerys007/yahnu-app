@@ -13,25 +13,28 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import { Logo } from "@/components/logo"
 
 const testimonials = [
   {
     quote: "Yahnu revolutionized our hiring process. We found exceptional candidates who were a perfect fit for our company culture. It's an indispensable tool for any employer in Côte d'Ivoire.",
     name: "Aïssata Touré",
     title: "HR Manager, Tech Solutions Abidjan",
-    image: "/images/yahnu-logo.png",
   },
   {
     quote: "As a recent graduate, Yahnu was instrumental in my job search. The platform is intuitive, and the AI-powered recommendations were spot-on. I landed my dream job within weeks!",
     name: "Koffi N'Goran",
     title: "Software Engineer, Innovate Inc.",
-    image: "/images/yahnu-logo.png",
   },
   {
     quote: "Yahnu has been a game-changer for our university. It has strengthened our ties with the industry and significantly boosted our graduates' employment rates. We're proud to be a partner.",
     name: "Dr. Fatou Bamba",
     title: "Dean of Career Services, INP-HB",
-    image: "/images/yahnu-logo.png",
+  },
+  {
+    quote: "The quality of candidates we've found on Yahnu is unparalleled. The platform has become an essential part of our recruitment strategy.",
+    name: "Charles Koffi",
+    title: "CEO, AgriBiz Côte d'Ivoire",
   },
 ];
 
@@ -84,15 +87,7 @@ export function TestimonialsSection() {
                         "{testimonial.quote}"
                       </p>
                       <div className="flex items-center justify-center mt-6">
-                        <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4">
-                            <Image
-                                src={testimonial.image}
-                                alt={testimonial.name}
-                                fill
-                                sizes="48px"
-                                className="object-cover"
-                            />
-                        </div>
+                        <Logo className="h-12 w-12 mr-4" />
                         <div>
                             <p className="font-semibold">{testimonial.name}</p>
                             <p className="text-sm text-muted-foreground">{testimonial.title}</p>
