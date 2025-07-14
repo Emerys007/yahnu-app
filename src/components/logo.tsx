@@ -21,7 +21,7 @@ export const Logo = (props: { className?: string }) => {
   const src = country.logoUrl;
   
   return (
-    <div className={cn(props.className, "transition-opacity duration-300")}>
+    <div className={cn(props.className, "transition-opacity duration-300 text-primary")}>
         <Image 
             key={src}
             src={src} 
