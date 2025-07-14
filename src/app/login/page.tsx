@@ -17,6 +17,7 @@ export default function LoginPage() {
            <Logo className="h-12 w-12 text-primary" />
             <div>
               <h1 className="text-4xl font-bold text-primary">Yahnu</h1>
+              <p className="text-muted-foreground">{t('Your future starts here')}</p>
             </div>
         </Link>
         <Image

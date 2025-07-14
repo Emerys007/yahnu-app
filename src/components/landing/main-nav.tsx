@@ -5,8 +5,6 @@ import Link from "next/link";
 import {
   Menu,
   Languages,
-  Globe,
-  ChevronDown
 } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
@@ -23,7 +21,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { useLocalization } from "@/context/localization-context";
@@ -43,19 +40,18 @@ export function MainNav() {
   const { country, setCountry } = useCountry();
   const navLinks = getNavLinks(t);
 
-  const selectedCountry = allCountries.find(c => c.code === country.code);
-
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
-        <Link href="/" className="mr-6 flex items-center gap-2">
-            <Logo className="h-8 w-8 text-primary" />
+      <div className="container flex h-20 items-center">
+        <Link href="/" className="mr-6 flex items-center gap-3">
+            <Logo className="h-10 w-10 text-primary" />
             <div>
-              <span className="text-lg font-bold">Yahnu</span>
+              <p className="font-bold text-xl">Yahnu</p>
+              <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
             </div>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6 text-sm ml-auto mr-4">
+        <nav className="hidden md:flex items-center gap-6 text-sm">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -68,28 +64,35 @@ export function MainNav() {
         </nav>
         
         <div className="flex items-center gap-2 ml-auto">
-            {/* Country Dropdown */}
+            <div className="hidden md:flex items-center gap-2">
+                <Button variant="ghost" asChild>
+                  <Link href="/login">{t('Login')}</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/register">{t('Sign Up')}</Link>
+                </Button>
+            </div>
+            
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon">
+                    <Button variant="ghost" size="icon">
                         <Flag countryCode={country.code} />
                         <span className="sr-only">Select Country</span>
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 max-h-96 overflow-y-auto" align="end">
+                <DropdownMenuContent className="w-40 max-h-80 overflow-y-auto" align="end">
                     {allCountries.map((c) => (
                         <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
                             <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
-                            <span>{c.name.en} / {c.name.fr}</span>
+                            <span>{c.name.en}</span>
                         </DropdownMenuItem>
                     ))}
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Language Dropdown */}
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
+                  <Button variant="ghost" size="icon">
                     <Languages className="h-[1.2rem] w-[1.2rem]" />
                     <span className="sr-only">{t('Switch language')}</span>
                   </Button>
@@ -100,19 +103,8 @@ export function MainNav() {
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Theme Toggle */}
             <ThemeToggle />
             
-            <div className="hidden md:flex items-center gap-2">
-                <Button variant="ghost" asChild>
-                <Link href="/login">{t('Login')}</Link>
-                </Button>
-                <Button asChild>
-                <Link href="/register">{t('Sign Up')}</Link>
-                </Button>
-            </div>
-
-            {/* Mobile Navigation */}
             <div className="md:hidden">
               <Sheet>
                 <SheetTrigger asChild>
