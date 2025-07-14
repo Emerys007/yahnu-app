@@ -12,7 +12,7 @@ const getFeaturesData = (t: (key: string) => string) => ({
   graduates: {
     title: t('For Graduates'),
     icon: <GraduationCap className="h-8 w-8 mb-4 text-primary" />,
-    image: "/images/african-graduates.jpg",
+    image: "https://placehold.co/800x600.png",
     imageHint: "african graduate students",
     items: [
       {

@@ -1,4 +1,3 @@
-
 "use client"
 
 import { MainNav } from "@/components/landing/main-nav";
@@ -112,7 +111,7 @@ export default function CompaniesPage() {
 
         <div className="space-y-8">
             {companies.map((company) => (
-                <Card key={company.name} className="flex flex-col md:flex-row items-center p-6 gap-6 transition-shadow duration-300 hover:shadow-lg">
+                <Card key={company.name} className="flex flex-col md:flex-row items-center p-6 gap-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                     <div className="relative h-24 w-24 rounded-full overflow-hidden border-4 border-muted shrink-0">
                          <Image
                             src={company.logoUrl}

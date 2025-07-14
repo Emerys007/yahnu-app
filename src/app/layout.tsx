@@ -1,5 +1,5 @@
 import type {Metadata} from 'next';
-import { Inter } from 'next/font/google'
+import { Inter, Space_Grotesk } from 'next/font/google'
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from '@/components/theme-provider';
@@ -10,6 +10,11 @@ import { ScrollToTop } from '@/components/ui/scroll-to-top';
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+})
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-space-grotesk',
 })
 
 export const metadata: Metadata = {
@@ -23,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn(inter.variable)}>
+    <html lang="en" suppressHydrationWarning className={cn(inter.variable, spaceGrotesk.variable)}>
       <head />
       <body className="font-body antialiased" suppressHydrationWarning>
         <LocalizationProvider>
