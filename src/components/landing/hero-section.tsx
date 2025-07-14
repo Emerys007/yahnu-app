@@ -72,6 +72,7 @@ export function HeroSection() {
                   src={slide.imageUrl}
                   alt={slide.headline}
                   fill
+                  sizes="100vw"
                   className="object-cover brightness-[0.4]"
                   data-ai-hint={slide.imageHint}
                   priority={index === 0}
@@ -88,14 +89,18 @@ export function HeroSection() {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button size="lg" asChild className="text-base px-8 py-6">
                             <Link href={slide.href}>
-                                {slide.buttonIcon}
-                                {slide.buttonText}
+                                <>
+                                    {slide.buttonIcon}
+                                    {slide.buttonText}
+                                </>
                             </Link>
                         </Button>
                         <Button size="lg" variant="outline" className="text-base px-8 py-6 bg-transparent text-white border-white hover:bg-white hover:text-black" asChild>
                             <Link href="/register">
-                                Create an Account
-                                <ArrowRight className="ml-2 h-4 w-4" />
+                                <>
+                                    Create an Account
+                                    <ArrowRight className="ml-2 h-4 w-4" />
+                                </>
                             </Link>
                         </Button>
                     </div>

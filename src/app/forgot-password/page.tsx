@@ -18,7 +18,7 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen w-full flex items-center justify-center bg-muted/40 p-4">
       <div className="w-full max-w-sm">
         <div className="flex justify-center mb-6">
-            <Link href="/" aria-label="Back to home">
+            <Link href="/" aria-label="Back to home" legacyBehavior>
                  <Logo className="h-12 w-12 text-primary" />
             </Link>
         </div>
@@ -48,7 +48,7 @@ export default function ForgotPasswordPage() {
               <Link
                 href="/login"
                 className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors"
-              >
+                legacyBehavior>
                 <ChevronLeft className="h-4 w-4 mr-1"/>
                 Back to login
               </Link>

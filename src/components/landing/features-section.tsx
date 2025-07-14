@@ -11,7 +11,7 @@ const featuresData = {
   graduates: {
     title: "For Graduates",
     icon: <GraduationCap className="h-8 w-8 mb-4 text-primary" />,
-    image: "https://placehold.co/600x400.png",
+    image: "/images/feature-graduates.jpg",
     imageHint: "graduate profile",
     items: [
       {
@@ -31,7 +31,7 @@ const featuresData = {
   companies: {
     title: "For Companies",
     icon: <Briefcase className="h-8 w-8 mb-4 text-primary" />,
-    image: "https://placehold.co/600x400.png",
+    image: "/images/feature-companies.jpg",
     imageHint: "recruitment dashboard",
     items: [
       {
@@ -48,10 +48,10 @@ const featuresData = {
       },
     ],
   },
-  schools: {
-    title: "For Schools",
+  universities: {
+    title: "For Universities",
     icon: <Building className="h-8 w-8 mb-4 text-primary" />,
-    image: "https://placehold.co/600x400.png",
+    image: "/images/feature-universities.jpg",
     imageHint: "academic analytics",
     items: [
       {
@@ -110,7 +110,7 @@ export function FeaturesSection() {
     };
 
   return (
-    <section ref={ref} className="py-24 bg-secondary/50">
+    <section ref={ref} className="py-24 bg-secondary/50" id="features">
       <div className="container mx-auto">
         <motion.div 
             initial="hidden"
@@ -140,8 +140,8 @@ export function FeaturesSection() {
               <TabsTrigger value="companies">
                 <Briefcase className="mr-2 h-5 w-5" /> Companies
               </TabsTrigger>
-              <TabsTrigger value="schools">
-                <Building className="mr-2 h-5 w-5" /> Schools
+              <TabsTrigger value="universities">
+                <Building className="mr-2 h-5 w-5" /> Universities
               </TabsTrigger>
             </TabsList>
           </motion.div>
@@ -161,6 +161,7 @@ export function FeaturesSection() {
                         src={data.image}
                         alt={`${data.title} features`}
                         fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover"
                         data-ai-hint={data.imageHint}
                     />

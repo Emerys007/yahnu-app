@@ -1,15 +1,15 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function SettingsPage() {
+export default function SupportPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Settings</CardTitle>
-        <CardDescription>Manage your account settings.</CardDescription>
+        <CardTitle>Support</CardTitle>
+        <CardDescription>Get help and support.</CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Settings page content goes here.</p>
+        <p>Support page content goes here.</p>
       </CardContent>
     </Card>
   );

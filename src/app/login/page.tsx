@@ -7,7 +7,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       <div className="hidden bg-primary/10 lg:flex flex-col items-center justify-center p-12">
-        <Link href="/" className="flex items-center gap-4 mb-8">
+        <Link href="/" className="flex items-center gap-4 mb-8" legacyBehavior>
            <Logo className="h-12 w-12 text-primary" />
            <h1 className="text-4xl font-bold text-primary">Yahnu</h1>
         </Link>

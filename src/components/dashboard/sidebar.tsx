@@ -15,7 +15,6 @@ import {
   BarChart3,
   LifeBuoy,
   Settings,
-  PanelLeft,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -34,7 +33,7 @@ const navItems = [
 ];
 
 const helpAndSettingsItems = [
-    { href: "/dashboard/settings", icon: LifeBuoy, label: "Support" },
+    { href: "/dashboard/support", icon: LifeBuoy, label: "Support" },
     { href: "/dashboard/settings", icon: Settings, label: "Settings" },
 ]
 
@@ -93,18 +92,18 @@ export function DashboardSidebar() {
     );
 
     return (
-        <TooltipProvider key={item.href} delayDuration={0}>
+        <TooltipProvider key={item.label} delayDuration={0}>
           <Tooltip>
             <TooltipTrigger asChild>
-                <Link href={item.href} legacyBehavior passHref>
-                  <Button
-                    variant={isActive ? "secondary" : "ghost"}
-                    className={cn("w-full h-10", isCollapsed ? 'justify-center' : 'justify-start')}
-                    as="a"
-                  >
+                <Button
+                  variant={isActive ? "secondary" : "ghost"}
+                  className={cn("w-full h-10", isCollapsed ? 'justify-center' : 'justify-start')}
+                  asChild
+                >
+                  <Link href={item.href}>
                     {buttonContent}
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
             </TooltipTrigger>
             {isCollapsed && (
               <TooltipContent side="right">
