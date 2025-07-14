@@ -11,8 +11,8 @@ const featuresData = {
   graduates: {
     title: "For Graduates",
     icon: <GraduationCap className="h-8 w-8 mb-4 text-primary" />,
-    image: "/images/feature-graduates.jpg",
-    imageHint: "graduate profile",
+    image: "https://placehold.co/800x600.png",
+    imageHint: "african graduates",
     items: [
       {
         title: "AI-Powered Profile Builder",
@@ -31,7 +31,7 @@ const featuresData = {
   companies: {
     title: "For Companies",
     icon: <Briefcase className="h-8 w-8 mb-4 text-primary" />,
-    image: "/images/feature-companies.jpg",
+    image: "/images/IndustryPartnership.jpeg",
     imageHint: "recruitment dashboard",
     items: [
       {
@@ -48,10 +48,10 @@ const featuresData = {
       },
     ],
   },
-  universities: {
-    title: "For Universities",
+  schools: {
+    title: "For Schools",
     icon: <Building className="h-8 w-8 mb-4 text-primary" />,
-    image: "/images/feature-universities.jpg",
+    image: "/images/University.png",
     imageHint: "academic analytics",
     items: [
       {
@@ -140,8 +140,8 @@ export function FeaturesSection() {
               <TabsTrigger value="companies">
                 <Briefcase className="mr-2 h-5 w-5" /> Companies
               </TabsTrigger>
-              <TabsTrigger value="universities">
-                <Building className="mr-2 h-5 w-5" /> Universities
+              <TabsTrigger value="schools">
+                <Building className="mr-2 h-5 w-5" /> Schools
               </TabsTrigger>
             </TabsList>
           </motion.div>
