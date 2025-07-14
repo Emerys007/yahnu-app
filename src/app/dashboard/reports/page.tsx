@@ -20,6 +20,7 @@ import {
   ChartLegendContent
 } from "@/components/ui/chart"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { useLocalization } from "@/context/localization-context"
 
 
 const reportSchema = z.object({
@@ -28,6 +29,7 @@ const reportSchema = z.object({
 })
 
 export default function CustomReportPage() {
+  const { t } = useLocalization();
   const { toast } = useToast()
   const [isGenerating, setIsGenerating] = useState(false)
   const [report, setReport] = useState<CustomReportOutput | null>(null)
@@ -55,8 +57,8 @@ export default function CustomReportPage() {
     setReport(null)
     setChartData([])
     toast({
-      title: "Generating Report...",
-      description: "Our AI is crunching the numbers. This might take a moment.",
+      title: t('Generating Report...'),
+      description: t('Our AI is crunching the numbers. This might take a moment.'),
     })
 
     try {
@@ -71,14 +73,14 @@ export default function CustomReportPage() {
       }
 
       toast({
-        title: "Report Generated!",
-        description: "Your custom report is ready below.",
+        title: t('Report Generated!'),
+        description: t('Your custom report is ready below.'),
       })
     } catch (error) {
       console.error("Report generation failed:", error)
       toast({
-        title: "Generation Failed",
-        description: "There was a problem creating the report.",
+        title: t('Generation Failed'),
+        description: t('There was a problem creating the report.'),
         variant: "destructive",
       })
     } finally {
@@ -88,7 +90,7 @@ export default function CustomReportPage() {
 
   const chartConfig = {
     graduates: {
-      label: "Graduates",
+      label: t('Graduates'),
       color: "hsl(var(--primary))",
     },
   }
@@ -96,14 +98,14 @@ export default function CustomReportPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">AI Custom Report Builder</h1>
-        <p className="text-muted-foreground mt-1">Generate insightful reports and charts using natural language.</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('AI Custom Report Builder')}</h1>
+        <p className="text-muted-foreground mt-1">{t('Generate insightful reports and charts using natural language.')}</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Report Query</CardTitle>
-          <CardDescription>Describe the report you want to generate. You can optionally provide context about available data.</CardDescription>
+          <CardTitle>{t('Report Query')}</CardTitle>
+          <CardDescription>{t('Describe the report you want to generate. You can optionally provide context about available data.')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -113,9 +115,9 @@ export default function CustomReportPage() {
                 name="query"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Your Query</FormLabel>
+                    <FormLabel>{t('Your Query')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., 'Show me a pie chart of...' " {...field} />
+                      <Input placeholder={t("e.g., 'Show me a pie chart of...' ")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -126,9 +128,9 @@ export default function CustomReportPage() {
                 name="availableData"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Available Data (Optional)</FormLabel>
+                    <FormLabel>{t('Available Data (Optional)')}</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Describe the data you have available..." {...field} />
+                      <Textarea placeholder={t("Describe the data you have available...")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -138,12 +140,12 @@ export default function CustomReportPage() {
                 {isGenerating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating...
+                    {t('Generating...')}
                   </>
                 ) : (
                   <>
                     <Wand2 className="mr-2 h-4 w-4" />
-                    Generate Report
+                    {t('Generate Report')}
                   </>
                 )}
               </Button>
@@ -156,7 +158,7 @@ export default function CustomReportPage() {
         <div className="grid lg:grid-cols-2 gap-8">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><FileText /> Text Report</CardTitle>
+              <CardTitle className="flex items-center gap-2"><FileText /> {t('Text Report')}</CardTitle>
             </CardHeader>
             <CardContent className="prose dark:prose-invert max-w-none">
               <p>{report.report}</p>
@@ -164,9 +166,9 @@ export default function CustomReportPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><BarChart2 /> Visualization</CardTitle>
+              <CardTitle className="flex items-center gap-2"><BarChart2 /> {t('Visualization')}</CardTitle>
               <CardDescription>
-                {chartData.length > 0 ? "Visual representation of your data." : "No valid visualization data was generated."}
+                {chartData.length > 0 ? t('Visual representation of your data.') : t('No valid visualization data was generated.')}
               </CardDescription>
             </CardHeader>
             <CardContent>

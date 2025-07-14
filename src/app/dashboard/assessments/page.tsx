@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Wand2, BrainCircuit, UserCheck, Loader2 } from "lucide-react"
+import { useLocalization } from "@/context/localization-context"
 
 const assessmentSchema = z.object({
   jobDescription: z.string().min(50, { message: "Job description must be at least 50 characters." }),
@@ -29,6 +30,7 @@ const assessmentSchema = z.object({
 })
 
 export default function AssessmentGeneratorPage() {
+  const { t } = useLocalization();
   const { toast } = useToast()
   const [isGenerating, setIsGenerating] = useState(false)
   const [assessment, setAssessment] = useState<GenerateAssessmentOutput | null>(null)
@@ -47,22 +49,22 @@ export default function AssessmentGeneratorPage() {
     setIsGenerating(true)
     setAssessment(null)
     toast({
-      title: "Generating Assessment...",
-      description: "Our AI is crafting the perfect questions. Please wait.",
+      title: t('Generating Assessment...'),
+      description: t('Our AI is crafting the perfect questions. Please wait.'),
     })
 
     try {
       const result = await generateAssessment(values)
       setAssessment(result)
       toast({
-        title: "Assessment Generated!",
-        description: "Your custom assessment is ready below.",
+        title: t('Assessment Generated!'),
+        description: t('Your custom assessment is ready below.'),
       })
     } catch (error) {
       console.error("Assessment generation failed:", error)
       toast({
-        title: "Generation Failed",
-        description: "There was a problem creating the assessment.",
+        title: t('Generation Failed'),
+        description: t('There was a problem creating the assessment.'),
         variant: "destructive",
       })
     } finally {
@@ -73,14 +75,14 @@ export default function AssessmentGeneratorPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">AI Assessment Generator</h1>
-        <p className="text-muted-foreground mt-1">Create relevant skills assessments for any role.</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('AI Assessment Generator')}</h1>
+        <p className="text-muted-foreground mt-1">{t('Create relevant skills assessments for any role.')}</p>
       </div>
       
       <Card>
         <CardHeader>
-          <CardTitle>Assessment Details</CardTitle>
-          <CardDescription>Provide details about the job and your company to generate a tailored assessment.</CardDescription>
+          <CardTitle>{t('Assessment Details')}</CardTitle>
+          <CardDescription>{t('Provide details about the job and your company to generate a tailored assessment.')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -90,9 +92,9 @@ export default function AssessmentGeneratorPage() {
                 name="jobDescription"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Job Description</FormLabel>
+                    <FormLabel>{t('Job Description')}</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Paste the job description here..." rows={6} {...field} />
+                      <Textarea placeholder={t("Paste the job description here...")} rows={6} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -103,9 +105,9 @@ export default function AssessmentGeneratorPage() {
                 name="companyValues"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Company Values</FormLabel>
+                    <FormLabel>{t('Company Values')}</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="e.g., Innovation, Teamwork, Customer First..." rows={3} {...field} />
+                      <Textarea placeholder={t("e.g., Innovation, Teamwork, Customer First...")} rows={3} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -117,7 +119,7 @@ export default function AssessmentGeneratorPage() {
                   name="basicFitQuestions"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Number of "Basic Fit" Questions</FormLabel>
+                      <FormLabel>{t('Number of "Basic Fit" Questions')}</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>
@@ -130,7 +132,7 @@ export default function AssessmentGeneratorPage() {
                   name="cognitiveAptitudeQuestions"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Number of "Cognitive Aptitude" Questions</FormLabel>
+                      <FormLabel>{t('Number of "Cognitive Aptitude" Questions')}</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>
@@ -143,12 +145,12 @@ export default function AssessmentGeneratorPage() {
                 {isGenerating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating...
+                    {t('Generating...')}
                   </>
                 ) : (
                   <>
                     <Wand2 className="mr-2 h-4 w-4" />
-                    Generate Assessment
+                    {t('Generate Assessment')}
                   </>
                 )}
               </Button>
@@ -161,8 +163,8 @@ export default function AssessmentGeneratorPage() {
         <div className="grid md:grid-cols-2 gap-8">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><UserCheck /> Basic Fit Assessment</CardTitle>
-              <CardDescription>Assesses alignment with company values and role requirements.</CardDescription>
+              <CardTitle className="flex items-center gap-2"><UserCheck /> {t('Basic Fit Assessment')}</CardTitle>
+              <CardDescription>{t('Assesses alignment with company values and role requirements.')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-3 list-decimal list-inside">
@@ -172,8 +174,8 @@ export default function AssessmentGeneratorPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><BrainCircuit /> Cognitive Aptitude Assessment</CardTitle>
-              <CardDescription>Tests problem-solving and critical-thinking skills.</CardDescription>
+              <CardTitle className="flex items-center gap-2"><BrainCircuit /> {t('Cognitive Aptitude Assessment')}</CardTitle>
+              <CardDescription>{t('Tests problem-solving and critical-thinking skills.')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-3 list-decimal list-inside">

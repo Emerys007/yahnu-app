@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, PlusCircle, Trash2 } from "lucide-react"
+import { useLocalization } from "@/context/localization-context"
 
 const profileSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -30,6 +31,7 @@ const profileSchema = z.object({
 })
 
 export default function ProfilePage() {
+  const { t } = useLocalization();
   const { toast } = useToast()
   const [isParsing, setIsParsing] = useState(false)
 
@@ -60,8 +62,8 @@ export default function ProfilePage() {
 
     setIsParsing(true)
     toast({
-      title: "Parsing Resume...",
-      description: "Our AI is analyzing your resume. This may take a moment.",
+      title: t('Parsing Resume...'),
+      description: t('Our AI is analyzing your resume. This may take a moment.'),
     })
 
     try {
@@ -76,15 +78,15 @@ export default function ProfilePage() {
       form.setValue("skills", result.skills?.join(", ") || "")
 
       toast({
-        title: "Success!",
-        description: "Your profile has been pre-filled from your resume.",
+        title: t('Success!'),
+        description: t('Your profile has been pre-filled from your resume.'),
         variant: "default",
       })
     } catch (error) {
       console.error("Resume parsing failed:", error)
       toast({
-        title: "Uh oh! Something went wrong.",
-        description: "There was a problem with parsing your resume.",
+        title: t('Uh oh! Something went wrong.'),
+        description: t('There was a problem with parsing your resume.'),
         variant: "destructive",
       })
     } finally {
@@ -95,8 +97,8 @@ export default function ProfilePage() {
   function onSubmit(values: z.infer<typeof profileSchema>) {
     console.log(values)
     toast({
-      title: "Profile Updated",
-      description: "Your professional profile has been saved successfully.",
+      title: t('Profile Updated'),
+      description: t('Your professional profile has been saved successfully.'),
     })
   }
 
@@ -104,13 +106,13 @@ export default function ProfilePage() {
     <div className="space-y-6">
       <div className="flex justify-between items-start">
         <div>
-            <h1 className="text-3xl font-bold tracking-tight">Professional Profile</h1>
-            <p className="text-muted-foreground mt-1">Build and maintain your professional identity.</p>
+            <h1 className="text-3xl font-bold tracking-tight">{t('Professional Profile')}</h1>
+            <p className="text-muted-foreground mt-1">{t('Build and maintain your professional identity.')}</p>
         </div>
         <div className="relative">
             <Button disabled={isParsing}>
                 <Upload className="mr-2 h-4 w-4" />
-                {isParsing ? "Parsing..." : "Upload Resume"}
+                {isParsing ? t("Parsing...") : t("Upload Resume")}
             </Button>
             <input
                 type="file"
@@ -126,8 +128,8 @@ export default function ProfilePage() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <Card>
             <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
-              <CardDescription>This information will be visible on your public profile.</CardDescription>
+              <CardTitle>{t('Personal Information')}</CardTitle>
+              <CardDescription>{t('This information will be visible on your public profile.')}</CardDescription>
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 gap-6">
               <FormField
@@ -135,7 +137,7 @@ export default function ProfilePage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>{t('Full Name')}</FormLabel>
                     <FormControl>
                       <Input placeholder="John Doe" {...field} />
                     </FormControl>
@@ -148,7 +150,7 @@ export default function ProfilePage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email Address</FormLabel>
+                    <FormLabel>{t('Email Address')}</FormLabel>
                     <FormControl>
                       <Input placeholder="you@example.com" {...field} />
                     </FormControl>
@@ -161,7 +163,7 @@ export default function ProfilePage() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Number (Optional)</FormLabel>
+                    <FormLabel>{t('Phone Number (Optional)')}</FormLabel>
                     <FormControl>
                       <Input placeholder="(123) 456-7890" {...field} />
                     </FormControl>
@@ -174,8 +176,8 @@ export default function ProfilePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Work Experience</CardTitle>
-              <CardDescription>Detail your professional journey.</CardDescription>
+              <CardTitle>{t('Work Experience')}</CardTitle>
+              <CardDescription>{t('Detail your professional journey.')}</CardDescription>
             </CardHeader>
             <CardContent>
               <FormField
@@ -184,7 +186,7 @@ export default function ProfilePage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Textarea placeholder="Describe your work experience..." rows={10} {...field} />
+                      <Textarea placeholder={t("Describe your work experience...")} rows={10} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -196,8 +198,8 @@ export default function ProfilePage() {
           <div className="grid md:grid-cols-2 gap-8">
               <Card>
                 <CardHeader>
-                  <CardTitle>Education</CardTitle>
-                  <CardDescription>Your academic background.</CardDescription>
+                  <CardTitle>{t('Education')}</CardTitle>
+                  <CardDescription>{t('Your academic background.')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <FormField
@@ -206,7 +208,7 @@ export default function ProfilePage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Textarea placeholder="List your degrees and schools..." rows={5} {...field} />
+                          <Textarea placeholder={t("List your degrees and schools...")} rows={5} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -216,8 +218,8 @@ export default function ProfilePage() {
               </Card>
               <Card>
                 <CardHeader>
-                  <CardTitle>Skills</CardTitle>
-                  <CardDescription>Your key competencies.</CardDescription>
+                  <CardTitle>{t('Skills')}</CardTitle>
+                  <CardDescription>{t('Your key competencies.')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                    <FormField
@@ -226,7 +228,7 @@ export default function ProfilePage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Textarea placeholder="e.g., JavaScript, Product Management, ..." rows={5} {...field} />
+                          <Textarea placeholder={t("e.g., JavaScript, Product Management, ...")} rows={5} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -237,7 +239,7 @@ export default function ProfilePage() {
           </div>
           
           <div className="flex justify-end">
-            <Button type="submit">Save Profile</Button>
+            <Button type="submit">{t('Save Profile')}</Button>
           </div>
         </form>
       </Form>

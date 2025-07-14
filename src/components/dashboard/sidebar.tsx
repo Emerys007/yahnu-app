@@ -20,21 +20,21 @@ import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent } from "../ui/sheet";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "../ui/tooltip";
+import { useLocalization } from "@/context/localization-context";
 
-
-const navItems = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/dashboard/profile", icon: User, label: "Profile" },
-  { href: "/dashboard/jobs", icon: Briefcase, label: "Job Search" },
-  { href: "/dashboard/company-profile", icon: Building, label: "Company Profile" },
-  { type: "divider", label: "AI Tools" },
-  { href: "/dashboard/assessments", icon: ClipboardCheck, label: "Assessments" },
-  { href: "/dashboard/reports", icon: BarChart3, label: "Reports" },
+const getNavItems = (t: (key: string) => string) => [
+  { href: "/dashboard", icon: LayoutDashboard, label: t('Dashboard') },
+  { href: "/dashboard/profile", icon: User, label: t('Profile') },
+  { href: "/dashboard/jobs", icon: Briefcase, label: t('Job Search') },
+  { href: "/dashboard/company-profile", icon: Building, label: t('Company Profile') },
+  { type: "divider", label: t('AI Tools') },
+  { href: "/dashboard/assessments", icon: ClipboardCheck, label: t('Assessments') },
+  { href: "/dashboard/reports", icon: BarChart3, label: t('Reports') },
 ];
 
-const helpAndSettingsItems = [
-    { href: "/dashboard/support", icon: LifeBuoy, label: "Support" },
-    { href: "/dashboard/settings", icon: Settings, label: "Settings" },
+const getHelpAndSettingsItems = (t: (key: string) => string) => [
+    { href: "/dashboard/support", icon: LifeBuoy, label: t('Support') },
+    { href: "/dashboard/settings", icon: Settings, label: t('Settings') },
 ]
 
 type SidebarContextType = {
@@ -72,6 +72,10 @@ export function DashboardSidebar() {
   const pathname = usePathname()
   const { isCollapsed } = useSidebar();
   const isMobile = useIsMobile();
+  const { t } = useLocalization();
+
+  const navItems = getNavItems(t);
+  const helpAndSettingsItems = getHelpAndSettingsItems(t);
 
   const renderNavItem = (item: any, index: number) => {
     if (item.type === 'divider') {

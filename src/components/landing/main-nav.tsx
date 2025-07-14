@@ -32,16 +32,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
+import { useLocalization } from "@/context/localization-context";
 
-const navLinks = [
-  { href: "/dashboard/jobs", label: "Jobs" },
-  { href: "/companies", label: "Companies" },
-  { href: "/schools", label: "Schools" },
-  { href: "/blog", label: "Blog" },
+const getNavLinks = (t: (key: string) => string) => [
+  { href: "/dashboard/jobs", label: t("Jobs") },
+  { href: "/companies", label: t("Companies") },
+  { href: "/schools", label: t("Schools") },
+  { href: "/blog", label: t("Blog") },
 ];
 
 export function MainNav() {
   const { setTheme } = useTheme();
+  const { t, setLanguage } = useLocalization();
+  const navLinks = getNavLinks(t);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -51,7 +54,7 @@ export function MainNav() {
             <div>
               <span className="text-lg font-bold">Yahnu</span>
               <p className="text-xs text-muted-foreground">
-                Your future starts here
+                {t('Your future starts here')}
               </p>
             </div>
         </Link>
@@ -70,10 +73,10 @@ export function MainNav() {
         
         <div className="hidden md:flex items-center gap-2">
             <Button variant="ghost" asChild>
-              <Link href="/login">Login</Link>
+              <Link href="/login">{t('Login')}</Link>
             </Button>
             <Button asChild>
-              <Link href="/register">Sign Up</Link>
+              <Link href="/register">{t('Sign Up')}</Link>
             </Button>
         </div>
 
@@ -83,7 +86,7 @@ export function MainNav() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">
                 <MoreVertical className="h-4 w-4" />
-                <span className="sr-only">Settings</span>
+                <span className="sr-only">{t('Settings')}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -91,21 +94,21 @@ export function MainNav() {
                 <DropdownMenuSubTrigger>
                   <Sun className="h-4 w-4 mr-2 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                   <Moon className="absolute h-4 w-4 mr-2 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                  <span>Theme</span>
+                  <span>{t('Theme')}</span>
                 </DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent>
                     <DropdownMenuItem onClick={() => setTheme("light")}>
                       <Sun className="mr-2 h-4 w-4" />
-                      Light
+                      {t('Light')}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setTheme("dark")}>
                       <Moon className="mr-2 h-4 w-4" />
-                      Dark
+                      {t('Dark')}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setTheme("system")}>
                       <Monitor className="mr-2 h-4 w-4" />
-                      System
+                      {t('System')}
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
@@ -113,12 +116,12 @@ export function MainNav() {
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <Languages className="mr-2 h-4 w-4" />
-                  <span>Language</span>
+                  <span>{t('Language')}</span>
                 </DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent>
-                    <DropdownMenuItem>English</DropdownMenuItem>
-                    <DropdownMenuItem>Français</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setLanguage('fr')}>Français</DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
@@ -131,7 +134,7 @@ export function MainNav() {
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon">
                   <Menu className="h-5 w-5" />
-                  <span className="sr-only">Open menu</span>
+                  <span className="sr-only">{t('Open menu')}</span>
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[80%]">
@@ -167,7 +170,7 @@ export function MainNav() {
                         className="justify-start text-lg"
                         asChild
                       >
-                        <Link href="/login">Login</Link>
+                        <Link href="/login">{t('Login')}</Link>
                       </Button>
                     </SheetClose>
                     <SheetClose asChild>
@@ -175,7 +178,7 @@ export function MainNav() {
                         className="justify-start text-lg"
                         asChild
                       >
-                        <Link href="/register">Sign Up</Link>
+                        <Link href="/register">{t('Sign Up')}</Link>
                       </Button>
                     </SheetClose>
                   </div>

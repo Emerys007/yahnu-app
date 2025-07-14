@@ -2,12 +2,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { LoginForm } from '@/components/auth/login-form';
 import { Logo } from '@/components/logo';
+import { useLocalization } from '@/context/localization-context';
 
 export default function LoginPage() {
+  const { t } = useLocalization();
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       <div className="hidden bg-primary/10 lg:flex flex-col items-center justify-center p-12">
-        <Link href="/" className="flex items-center gap-4 mb-8" legacyBehavior>
+        <Link href="/" className="flex items-center gap-4 mb-8">
            <Logo className="h-12 w-12 text-primary" />
            <h1 className="text-4xl font-bold text-primary">Yahnu</h1>
         </Link>
@@ -20,9 +22,9 @@ export default function LoginPage() {
           data-ai-hint="graduates career"
         />
         <div className="mt-8 text-center max-w-lg">
-          <h2 className="text-3xl font-bold tracking-tight">Connect. Grow. Succeed.</h2>
+          <h2 className="text-3xl font-bold tracking-tight">{t('Connect. Grow. Succeed.')}</h2>
           <p className="mt-4 text-muted-foreground text-lg">
-            Your journey to the perfect career or the ideal candidate starts here.
+            {t('Your journey to the perfect career or the ideal candidate starts here.')}
           </p>
         </div>
       </div>

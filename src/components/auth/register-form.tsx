@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Logo } from "@/components/logo"
+import { useLocalization } from "@/context/localization-context"
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -33,25 +34,26 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export function RegisterForm() {
+  const { t } = useLocalization();
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
         <div className="flex justify-center mb-4 lg:hidden">
             <Logo className="h-12 w-12 text-primary" />
         </div>
-        <CardTitle className="text-2xl text-center">Create an Account</CardTitle>
+        <CardTitle className="text-2xl text-center">{t('Create an Account')}</CardTitle>
         <CardDescription className="text-center">
-          Enter your information to create an account
+          {t('Enter your information to create an account')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="full-name">Full name</Label>
+            <Label htmlFor="full-name">{t('Full name')}</Label>
             <Input id="full-name" placeholder="Max Robinson" required />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('Email')}</Label>
             <Input
               id="email"
               type="email"
@@ -60,34 +62,34 @@ export function RegisterForm() {
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('Password')}</Label>
             <Input id="password" type="password" />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="role">I am a...</Label>
+            <Label htmlFor="role">{t('I am a...')}</Label>
             <Select>
               <SelectTrigger>
-                <SelectValue placeholder="Select your role" />
+                <SelectValue placeholder={t('Select your role')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="graduate">Graduate</SelectItem>
-                <SelectItem value="company">Company</SelectItem>
-                <SelectItem value="school">School</SelectItem>
+                <SelectItem value="graduate">{t('Graduate')}</SelectItem>
+                <SelectItem value="company">{t('Company')}</SelectItem>
+                <SelectItem value="school">{t('School')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <Button type="submit" className="w-full" asChild>
-            <Link href="/dashboard">Create an account</Link>
+            <Link href="/dashboard">{t('Create an account')}</Link>
           </Button>
           <Button variant="outline" className="w-full">
              <GoogleIcon className="mr-2" />
-            Sign up with Google
+            {t('Sign up with Google')}
           </Button>
         </div>
         <div className="mt-4 text-center text-sm">
-          Already have an account?{" "}
+          {t('Already have an account?')}
           <Link href="/login" className="underline">
-            Sign in
+            {t('Sign in')}
           </Link>
         </div>
       </CardContent>

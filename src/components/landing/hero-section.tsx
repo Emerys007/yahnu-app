@@ -14,35 +14,36 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
+import { useLocalization } from "@/context/localization-context"
 
-const slides = [
+const getSlides = (t: (key: string) => string) => [
     {
         role: "Graduates",
-        headline: "Unlock Your Potential. Find Your Dream Job Today.",
-        subtitle: "Yahnu connects you with thousands of exclusive job opportunities in Côte d'Ivoire tailored to your unique skills and aspirations. Your future starts here.",
-        buttonText: "Explore Job Openings",
+        headline: t("Unlock Your Potential. Find Your Dream Job Today."),
+        subtitle: t("Yahnu connects you with thousands of exclusive job opportunities in Côte d'Ivoire tailored to your unique skills and aspirations. Your future starts here."),
+        buttonText: t("Explore Job Openings"),
         buttonIcon: <Search className="mr-2 h-4 w-4" />,
         imageUrl: "/images/dream-job.jpg",
         imageHint: "confident graduate looking towards the future",
-        href: "/jobs"
+        href: "/dashboard/jobs"
       },
       {
         role: "Companies",
-        headline: "Build a World-Class Team, Effortlessly.",
-        subtitle: "Tap into a curated network of exceptional graduates from premier institutions. Discover the perfect candidates to drive your company's growth and innovation.",
-        buttonText: "Find Top Talent",
+        headline: t("Build a World-Class Team, Effortlessly."),
+        subtitle: t("Tap into a curated network of exceptional graduates from premier institutions. Discover the perfect candidates to drive your company's growth and innovation."),
+        buttonText: t("Find Top Talent"),
         buttonIcon: <PlusCircle className="mr-2 h-4 w-4" />,
-        imageUrl: "/images/build-team.jpg",
+        imageUrl: "/images/uni-partnership.jpg",
         imageHint: "diverse team collaborating in a modern office",
-        href: "/company-profile"
+        href: "/dashboard/company-profile"
       },
       {
-        role: "Universities",
-        headline: "Shape the Future of Talent.",
-        subtitle: "Partner with leading companies to create a direct pipeline for your graduates. Enhance your curriculum, boost graduate employment, and elevate your institution's prestige.",
-        buttonText: "Forge Industry Partnerships",
+        role: "Schools",
+        headline: t("Shape the Future of Talent."),
+        subtitle: t("Partner with leading companies to create a direct pipeline for your graduates. Enhance your curriculum, boost graduate employment, and elevate your institution's prestige."),
+        buttonText: t("Forge Industry Partnerships"),
         buttonIcon: <Handshake className="mr-2 h-4 w-4" />,
-        imageUrl: "/images/uni-partnership.jpg",
+        imageUrl: "/images/Industry.webp",
         imageHint: "university building and a handshake representing partnership",
         href: "/register"
       },
@@ -52,6 +53,8 @@ export function HeroSection() {
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   )
+  const { t } = useLocalization();
+  const slides = getSlides(t);
 
   return (
     <section className="relative w-full h-[70vh] md:h-[90vh] overflow-hidden">
@@ -98,7 +101,7 @@ export function HeroSection() {
                         <Button size="lg" variant="outline" className="text-base px-8 py-6 bg-transparent text-white border-white hover:bg-white hover:text-black" asChild>
                             <Link href="/register">
                                 <>
-                                    Create an Account
+                                    {t('Create an Account')}
                                     <ArrowRight className="ml-2 h-4 w-4" />
                                 </>
                             </Link>

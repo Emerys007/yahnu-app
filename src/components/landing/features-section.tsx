@@ -6,69 +6,70 @@ import { motion, useInView } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { GraduationCap, Briefcase, Building } from "lucide-react"
+import { useLocalization } from "@/context/localization-context"
 
-const featuresData = {
+const getFeaturesData = (t: (key: string) => string) => ({
   graduates: {
-    title: "For Graduates",
+    title: t('For Graduates'),
     icon: <GraduationCap className="h-8 w-8 mb-4 text-primary" />,
-    image: "https://placehold.co/800x600.png",
-    imageHint: "african graduates",
+    image: "/images/african-graduates.jpg",
+    imageHint: "african graduate students",
     items: [
       {
-        title: "AI-Powered Profile Builder",
-        description: "Create a standout professional profile in minutes. Our AI helps you highlight your skills and experiences to attract top employers.",
+        title: t('AI-Powered Profile Builder'),
+        description: t('Create a standout professional profile in minutes. Our AI helps you highlight your skills and experiences to attract top employers.'),
       },
       {
-        title: "Personalized Job Matching",
-        description: "Receive job recommendations that align with your career goals and qualifications. Say goodbye to endless searching.",
+        title: t('Personalized Job Matching'),
+        description: t('Receive job recommendations that align with your career goals and qualifications. Say goodbye to endless searching.'),
       },
       {
-        title: "Skill Development Resources",
-        description: "Access a library of courses and assessments to enhance your skills and stay competitive in the job market.",
+        title: t('Skill Development Resources'),
+        description: t('Access a library of courses and assessments to enhance your skills and stay competitive in the job market.'),
       },
     ],
   },
   companies: {
-    title: "For Companies",
+    title: t('For Companies'),
     icon: <Briefcase className="h-8 w-8 mb-4 text-primary" />,
     image: "/images/IndustryPartnership.jpeg",
     imageHint: "recruitment dashboard",
     items: [
       {
-        title: "Targeted Talent Sourcing",
-        description: "Efficiently find qualified candidates from a pre-vetted pool of graduates from top schools.",
+        title: t('Targeted Talent Sourcing'),
+        description: t('Efficiently find qualified candidates from a pre-vetted pool of graduates from top schools.'),
       },
       {
-        title: "Streamlined Recruitment",
-        description: "Manage your entire hiring process, from posting jobs to scheduling interviews, all on one platform.",
+        title: t('Streamlined Recruitment'),
+        description: t('Manage your entire hiring process, from posting jobs to scheduling interviews, all on one platform.'),
       },
       {
-        title: "Data-Driven Insights",
-        description: "Gain valuable insights into the talent market and make informed hiring decisions with our analytics tools.",
+        title: t('Data-Driven Insights'),
+        description: t('Gain valuable insights into the talent market and make informed hiring decisions with our analytics tools.'),
       },
     ],
   },
   schools: {
-    title: "For Schools",
+    title: t('For Schools'),
     icon: <Building className="h-8 w-8 mb-4 text-primary" />,
     image: "/images/University.png",
     imageHint: "academic analytics",
     items: [
       {
-        title: "Strengthen Industry Ties",
-        description: "Forge strategic partnerships with leading companies to enhance your curriculum and create opportunities for your students.",
+        title: t('Strengthen Industry Ties'),
+        description: t('Forge strategic partnerships with leading companies to enhance your curriculum and create opportunities for your students.'),
       },
       {
-        title: "Boost Graduate Employability",
-        description: "Track and improve your graduates' employment outcomes with our comprehensive reporting and analytics.",
+        title: t('Boost Graduate Employability'),
+        description: t('Track and improve your graduates\' employment outcomes with our comprehensive reporting and analytics.'),
       },
       {
-        title: "Showcase Your Institution",
-        description: "Promote your school's programs and achievements to a wide audience of prospective students and corporate partners.",
+        title: t('Showcase Your Institution'),
+        description: t('Promote your school\'s programs and achievements to a wide audience of prospective students and corporate partners.'),
       },
     ],
   },
-}
+});
 
 function FeatureCard({ feature }: { feature: { title: string; description: string } }) {
     const ref = React.useRef(null);
@@ -100,9 +101,12 @@ function FeatureCard({ feature }: { feature: { title: string; description: strin
   }
 
 export function FeaturesSection() {
+    const { t } = useLocalization();
     const [activeTab, setActiveTab] = React.useState("graduates");
     const ref = React.useRef(null);
     const isInView = useInView(ref, { once: true, amount: 0.2 });
+
+    const featuresData = getFeaturesData(t);
   
     const imageVariants = {
       hidden: { opacity: 0, scale: 0.95 },
@@ -119,9 +123,9 @@ export function FeaturesSection() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
         >
-          <h2 className="text-4xl font-bold tracking-tight">Everything You Need to Succeed</h2>
+          <h2 className="text-4xl font-bold tracking-tight">{t('Everything You Need to Succeed')}</h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-            Yahnu is a comprehensive ecosystem designed to bridge the gap between education and employment. Explore the powerful features tailored for every user.
+            {t('Yahnu is a comprehensive ecosystem designed to bridge the gap between education and employment. Explore the powerful features tailored for every user.')}
           </p>
         </motion.div>
 
@@ -135,13 +139,13 @@ export function FeaturesSection() {
           >
             <TabsList className="grid w-full max-w-md grid-cols-3">
               <TabsTrigger value="graduates">
-                <GraduationCap className="mr-2 h-5 w-5" /> Graduates
+                <GraduationCap className="mr-2 h-5 w-5" /> {t('Graduates')}
               </TabsTrigger>
               <TabsTrigger value="companies">
-                <Briefcase className="mr-2 h-5 w-5" /> Companies
+                <Briefcase className="mr-2 h-5 w-5" /> {t('Companies')}
               </TabsTrigger>
               <TabsTrigger value="schools">
-                <Building className="mr-2 h-5 w-5" /> Schools
+                <Building className="mr-2 h-5 w-5" /> {t('Schools')}
               </TabsTrigger>
             </TabsList>
           </motion.div>

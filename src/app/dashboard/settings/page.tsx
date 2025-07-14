@@ -1,15 +1,17 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLocalization } from "@/context/localization-context";
 
 export default function SettingsPage() {
+  const { t } = useLocalization();
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Settings</CardTitle>
-        <CardDescription>Manage your account settings.</CardDescription>
+        <CardTitle>{t('Settings')}</CardTitle>
+        <CardDescription>{t('Manage your account settings.')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Settings page content goes here.</p>
+        <p>{t('Settings page content goes here.')}</p>
       </CardContent>
     </Card>
   );

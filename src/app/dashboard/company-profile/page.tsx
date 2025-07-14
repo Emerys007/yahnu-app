@@ -36,7 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Label } from "@/components/ui/label"
+import { useLocalization } from "@/context/localization-context"
 
 
 const companyProfileSchema = z.object({
@@ -54,6 +54,7 @@ const jobPostSchema = z.object({
 })
 
 export default function CompanyProfilePage() {
+  const { t } = useLocalization();
   const { toast } = useToast()
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
   const [jobs, setJobs] = useState<z.infer<typeof jobPostSchema>[]>([
@@ -91,8 +92,8 @@ export default function CompanyProfilePage() {
       };
       reader.readAsDataURL(file);
       toast({
-        title: "Logo Selected",
-        description: `${file.name} is ready to be uploaded.`,
+        title: t('Logo Selected'),
+        description: `${file.name} ${t('is ready to be uploaded.')}`,
       });
     }
   }
@@ -100,16 +101,16 @@ export default function CompanyProfilePage() {
   function onProfileSubmit(values: z.infer<typeof companyProfileSchema>) {
     console.log(values)
     toast({
-      title: "Company Profile Updated",
-      description: "Your company's profile has been saved successfully.",
+      title: t('Company Profile Updated'),
+      description: t("Your company's profile has been saved successfully."),
     })
   }
 
   function onJobSubmit(values: z.infer<typeof jobPostSchema>) {
     setJobs(prev => [...prev, values])
     toast({
-      title: "Job Posted",
-      description: `The "${values.title}" position has been added.`,
+      title: t('Job Posted'),
+      description: `${t('The "')}${values.title}${t('" position has been added.')}`,
     })
     jobForm.reset()
     setIsJobDialogOpen(false)
@@ -119,8 +120,8 @@ export default function CompanyProfilePage() {
     const jobToDelete = jobs[indexToDelete]
     setJobs(jobs.filter((_, index) => index !== indexToDelete))
     toast({
-      title: "Job Removed",
-      description: `The "${jobToDelete.title}" position has been removed.`,
+      title: t('Job Removed'),
+      description: `${t('The "')}${jobToDelete.title}${t('" position has been removed.')}`,
       variant: "destructive"
     })
   }
@@ -129,8 +130,8 @@ export default function CompanyProfilePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Company Profile</h1>
-        <p className="text-muted-foreground mt-1">Showcase your company to attract top talent.</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('Company Profile')}</h1>
+        <p className="text-muted-foreground mt-1">{t('Showcase your company to attract top talent.')}</p>
       </div>
       
       <Form {...profileForm}>
@@ -138,8 +139,8 @@ export default function CompanyProfilePage() {
           <div className="lg:col-span-2 space-y-8">
             <Card>
               <CardHeader>
-                <CardTitle>Company Details</CardTitle>
-                <CardDescription>Basic information about your organization.</CardDescription>
+                <CardTitle>{t('Company Details')}</CardTitle>
+                <CardDescription>{t('Basic information about your organization.')}</CardDescription>
               </CardHeader>
               <CardContent className="grid md:grid-cols-2 gap-6">
                 <FormField
@@ -147,8 +148,8 @@ export default function CompanyProfilePage() {
                   name="companyName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Company Name</FormLabel>
-                      <FormControl><Input placeholder="Your Company LLC" {...field} /></FormControl>
+                      <FormLabel>{t('Company Name')}</FormLabel>
+                      <FormControl><Input placeholder={t("Your Company LLC")} {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -158,7 +159,7 @@ export default function CompanyProfilePage() {
                   name="website"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Website</FormLabel>
+                      <FormLabel>{t('Website')}</FormLabel>
                       <FormControl><Input placeholder="https://yourcompany.com" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
@@ -169,8 +170,8 @@ export default function CompanyProfilePage() {
                   name="location"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel>Headquarters</FormLabel>
-                      <FormControl><Input placeholder="City, State/Country" {...field} /></FormControl>
+                      <FormLabel>{t('Headquarters')}</FormLabel>
+                      <FormControl><Input placeholder={t("City, State/Country")} {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -180,8 +181,8 @@ export default function CompanyProfilePage() {
                   name="tagline"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel>Tagline</FormLabel>
-                      <FormControl><Input placeholder="A short, catchy phrase for your company." {...field} /></FormControl>
+                      <FormLabel>{t('Tagline')}</FormLabel>
+                      <FormControl><Input placeholder={t("A short, catchy phrase for your company.")} {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -191,9 +192,9 @@ export default function CompanyProfilePage() {
                   name="description"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel>About Your Company</FormLabel>
+                      <FormLabel>{t('About Your Company')}</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Describe your company's mission, vision, and culture..." rows={8} {...field} />
+                        <Textarea placeholder={t("Describe your company's mission, vision, and culture...")} rows={8} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -202,14 +203,14 @@ export default function CompanyProfilePage() {
               </CardContent>
             </Card>
             <div className="flex justify-end">
-              <Button type="submit">Save Changes</Button>
+              <Button type="submit">{t('Save Changes')}</Button>
             </div>
           </div>
 
           <div className="lg:col-span-1 space-y-8">
              <Card>
                 <CardHeader>
-                    <CardTitle>Company Logo</CardTitle>
+                    <CardTitle>{t('Company Logo')}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center space-y-4">
                     <div className="w-full h-48 relative rounded-lg overflow-hidden border">
@@ -224,7 +225,7 @@ export default function CompanyProfilePage() {
                     <Button asChild variant="outline" className="w-full">
                         <label htmlFor="logo-upload">
                             <Upload className="mr-2 h-4 w-4" />
-                            Upload Logo
+                            {t('Upload Logo')}
                         </label>
                     </Button>
                     <input
@@ -240,23 +241,23 @@ export default function CompanyProfilePage() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                    <CardTitle>Job Postings</CardTitle>
-                    <CardDescription>Manage your open positions.</CardDescription>
+                    <CardTitle>{t('Job Postings')}</CardTitle>
+                    <CardDescription>{t('Manage your open positions.')}</CardDescription>
                 </div>
                 <Dialog open={isJobDialogOpen} onOpenChange={setIsJobDialogOpen}>
                     <DialogTrigger asChild>
                          <Button size="icon" variant="outline">
                             <PlusCircle className="h-4 w-4"/>
-                            <span className="sr-only">Add new job</span>
+                            <span className="sr-only">{t('Add new job')}</span>
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                         <Form {...jobForm}>
                             <form onSubmit={jobForm.handleSubmit(onJobSubmit)}>
                                 <DialogHeader>
-                                    <DialogTitle>Add New Job Posting</DialogTitle>
+                                    <DialogTitle>{t('Add New Job Posting')}</DialogTitle>
                                     <DialogDescription>
-                                        Fill in the details for the new position.
+                                        {t('Fill in the details for the new position.')}
                                     </DialogDescription>
                                 </DialogHeader>
                                 <div className="grid gap-4 py-4">
@@ -265,8 +266,8 @@ export default function CompanyProfilePage() {
                                         name="title"
                                         render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Job Title</FormLabel>
-                                            <FormControl><Input placeholder="e.g. Software Engineer" {...field} /></FormControl>
+                                            <FormLabel>{t('Job Title')}</FormLabel>
+                                            <FormControl><Input placeholder={t("e.g. Software Engineer")} {...field} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
                                         )}
@@ -276,8 +277,8 @@ export default function CompanyProfilePage() {
                                         name="location"
                                         render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Location</FormLabel>
-                                            <FormControl><Input placeholder="e.g. New York, NY" {...field} /></FormControl>
+                                            <FormLabel>{t('Location')}</FormLabel>
+                                            <FormControl><Input placeholder={t("e.g. New York, NY")} {...field} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
                                         )}
@@ -287,18 +288,18 @@ export default function CompanyProfilePage() {
                                         name="type"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Job Type</FormLabel>
+                                                <FormLabel>{t('Job Type')}</FormLabel>
                                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                    <SelectValue placeholder="Select a job type" />
+                                                    <SelectValue placeholder={t('Select a job type')} />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="Full-time">Full-time</SelectItem>
-                                                    <SelectItem value="Part-time">Part-time</SelectItem>
-                                                    <SelectItem value="Contract">Contract</SelectItem>
-                                                    <SelectItem value="Internship">Internship</SelectItem>
+                                                    <SelectItem value="Full-time">{t('Full-time')}</SelectItem>
+                                                    <SelectItem value="Part-time">{t('Part-time')}</SelectItem>
+                                                    <SelectItem value="Contract">{t('Contract')}</SelectItem>
+                                                    <SelectItem value="Internship">{t('Internship')}</SelectItem>
                                                 </SelectContent>
                                                 </Select>
                                                 <FormMessage />
@@ -307,7 +308,7 @@ export default function CompanyProfilePage() {
                                     />
                                 </div>
                                 <DialogFooter>
-                                    <Button type="submit">Post Job</Button>
+                                    <Button type="submit">{t('Post Job')}</Button>
                                 </DialogFooter>
                             </form>
                         </Form>
@@ -319,7 +320,7 @@ export default function CompanyProfilePage() {
                   <div key={index} className="flex items-start justify-between p-3 rounded-lg border bg-background">
                       <div>
                           <p className="font-semibold">{job.title}</p>
-                          <p className="text-sm text-muted-foreground">{job.location} &middot; {job.type}</p>
+                          <p className="text-sm text-muted-foreground">{job.location} &middot; {t(job.type)}</p>
                       </div>
                       <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => deleteJob(index)}>
                           <Trash2 className="h-4 w-4 text-destructive"/>
@@ -327,7 +328,7 @@ export default function CompanyProfilePage() {
                   </div>
                 ))}
                 {jobs.length === 0 && (
-                    <p className="text-sm text-muted-foreground text-center py-4">No active job postings.</p>
+                    <p className="text-sm text-muted-foreground text-center py-4">{t('No active job postings.')}</p>
                 )}
               </CardContent>
             </Card>

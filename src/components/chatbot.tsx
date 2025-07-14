@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Bot, MessageSquare, Send, X, Loader2 } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { useLocalization } from "@/context/localization-context"
 
 type Message = {
   id: number
@@ -18,6 +19,7 @@ type Message = {
 }
 
 export function Chatbot() {
+  const { t } = useLocalization();
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, text: "Hello! How can I help you today?", sender: "bot" }
@@ -55,6 +57,10 @@ export function Chatbot() {
     }
   }, [messages])
 
+  useEffect(() => {
+    setMessages([{ id: 1, text: t('Hello! How can I help you today?'), sender: 'bot' }]);
+  }, [t]);
+
   return (
     <>
       <AnimatePresence>
@@ -74,7 +80,7 @@ export function Chatbot() {
                       <Bot />
                     </AvatarFallback>
                   </Avatar>
-                  <CardTitle>Yahnu Assistant</CardTitle>
+                  <CardTitle>{t('Yahnu Assistant')}</CardTitle>
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
                     <X className="h-4 w-4" />
@@ -135,7 +141,7 @@ export function Chatbot() {
                   <Input
                     value={input}
                     onChange={e => setInput(e.target.value)}
-                    placeholder="Type a message..."
+                    placeholder={t('Type a message...')}
                   />
                   <Button type="submit" size="icon" disabled={isTyping}>
                     <Send className="h-4 w-4" />

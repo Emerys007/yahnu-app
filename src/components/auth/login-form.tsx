@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Logo } from "@/components/logo"
+import { useLocalization } from "@/context/localization-context"
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -26,21 +27,22 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export function LoginForm() {
+  const { t } = useLocalization();
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
         <div className="flex justify-center mb-4 lg:hidden">
             <Logo className="h-12 w-12 text-primary" />
         </div>
-        <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
+        <CardTitle className="text-2xl text-center">{t('Welcome Back')}</CardTitle>
         <CardDescription className="text-center">
-          Enter your email below to login to your account
+          {t('Enter your email below to login to your account')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('Email')}</Label>
             <Input
               id="email"
               type="email"
@@ -50,28 +52,28 @@ export function LoginForm() {
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('Password')}</Label>
               <Link
                 href="/forgot-password"
                 className="ml-auto inline-block text-sm underline"
               >
-                Forgot your password?
+                {t('Forgot your password?')}
               </Link>
             </div>
             <Input id="password" type="password" required />
           </div>
           <Button type="submit" className="w-full" asChild>
-            <Link href="/dashboard">Login</Link>
+            <Link href="/dashboard">{t('Login')}</Link>
           </Button>
           <Button variant="outline" className="w-full">
             <GoogleIcon className="mr-2" />
-            Login with Google
+            {t('Login with Google')}
           </Button>
         </div>
         <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
+          {t('Don\'t have an account?')}
           <Link href="/register" className="underline">
-            Sign up
+            {t('Sign up')}
           </Link>
         </div>
       </CardContent>
