@@ -3,6 +3,7 @@
 
 import { useState, useMemo } from 'react'
 import Image from "next/image"
+import Link from "next/link"
 import {
   Card,
   CardContent,
@@ -21,18 +22,18 @@ import { useLocalization } from '@/context/localization-context'
 
 const graduatesData = {
   en: [
-    { name: "Amina Diallo", school: "INP-HB", field: "Computer Science", skills: ["React", "TypeScript", "Node.js"], available: true },
-    { name: "Ben Traoré", school: "UFHB", field: "Business Administration", skills: ["Marketing", "Project Management"], available: false },
-    { name: "Chloe Dubois", school: "Groupe CSI", field: "Electrical Engineering", skills: ["AutoCAD", "PLC", "Matlab"], available: true },
-    { name: "David Kone", school: "INP-HB", field: "Agronomy", skills: ["Crop Science", "Soil Analysis"], available: true },
-    { name: "Elise Fofana", school: "UFHB", field: "Finance", skills: ["Financial Modeling", "Excel"], available: true },
+    { name: "Amina Diallo", slug: "amina-diallo", school: "INP-HB", field: "Computer Science", skills: ["React", "TypeScript", "Node.js"], available: true },
+    { name: "Ben Traoré", slug: "ben-traore", school: "UFHB", field: "Business Administration", skills: ["Marketing", "Project Management"], available: false },
+    { name: "Chloe Dubois", slug: "chloe-dubois", school: "Groupe CSI", field: "Electrical Engineering", skills: ["AutoCAD", "PLC", "Matlab"], available: true },
+    { name: "David Kone", slug: "david-kone", school: "INP-HB", field: "Agronomy", skills: ["Crop Science", "Soil Analysis"], available: true },
+    { name: "Elise Fofana", slug: "elise-fofana", school: "UFHB", field: "Finance", skills: ["Financial Modeling", "Excel"], available: true },
   ],
   fr: [
-    { name: "Amina Diallo", school: "INP-HB", field: "Génie Informatique", skills: ["React", "TypeScript", "Node.js"], available: true },
-    { name: "Ben Traoré", school: "UFHB", field: "Administration des affaires", skills: ["Marketing", "Gestion de projet"], available: false },
-    { name: "Chloe Dubois", school: "Groupe CSI", field: "Génie Électrique", skills: ["AutoCAD", "PLC", "Matlab"], available: true },
-    { name: "David Kone", school: "INP-HB", field: "Agronomie", skills: ["Science des cultures", "Analyse de sol"], available: true },
-    { name: "Elise Fofana", school: "UFHB", field: "Finance", skills: ["Modélisation financière", "Excel"], available: true },
+    { name: "Amina Diallo", slug: "amina-diallo", school: "INP-HB", field: "Génie Informatique", skills: ["React", "TypeScript", "Node.js"], available: true },
+    { name: "Ben Traoré", slug: "ben-traore", school: "UFHB", field: "Administration des affaires", skills: ["Marketing", "Gestion de projet"], available: false },
+    { name: "Chloe Dubois", slug: "chloe-dubois", school: "Groupe CSI", field: "Génie Électrique", skills: ["AutoCAD", "PLC", "Matlab"], available: true },
+    { name: "David Kone", slug: "david-kone", school: "INP-HB", field: "Agronomie", skills: ["Science des cultures", "Analyse de sol"], available: true },
+    { name: "Elise Fofana", slug: "elise-fofana", school: "UFHB", field: "Finance", skills: ["Modélisation financière", "Excel"], available: true },
   ]
 };
 
@@ -108,7 +109,7 @@ export default function TalentPoolPage() {
         </div>
         <div className="grid lg:grid-cols-2 gap-6">
           {filteredGraduates.length > 0 ? filteredGraduates.map((grad) => (
-            <Card key={grad.name}>
+            <Card key={grad.name} className="flex flex-col">
               <CardHeader>
                 <div className="flex items-center gap-4">
                     <Image src="https://placehold.co/100x100.png" alt={grad.name} width={64} height={64} className="rounded-full" />
@@ -121,7 +122,7 @@ export default function TalentPoolPage() {
                     </div>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex-grow">
                  <h4 className="font-semibold text-sm mb-2">{t('Top Skills')}</h4>
                 <div className="flex flex-wrap gap-2">
                   {grad.skills.map((skill) => (
@@ -130,7 +131,9 @@ export default function TalentPoolPage() {
                 </div>
               </CardContent>
               <CardFooter>
-                 <Button className="w-full">{t('View Full Profile')}</Button>
+                 <Button className="w-full" asChild>
+                    <Link href={`/dashboard/talent-pool/${grad.slug}`}>{t('View Full Profile')}</Link>
+                 </Button>
               </CardFooter>
             </Card>
           )) : (
