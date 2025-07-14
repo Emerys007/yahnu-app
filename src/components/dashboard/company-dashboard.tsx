@@ -26,8 +26,8 @@ export function CompanyDashboard() {
 
   const quickActions = [
       { title: t('Post a New Job'), href: '/dashboard/company-profile', icon: PlusCircle },
-      { title: t('Create an Assessment'), href: '/dashboard/assessments', icon: ClipboardCheck },
-      { title: t('View Talent Pool'), href: '#', icon: Users },
+      { title: t('View Talent Pool'), href: '/dashboard/talent-pool', icon: Users },
+      { title: t('Track Applications'), href: '/dashboard/applications', icon: ClipboardCheck },
   ]
 
   const containerVariants = {
@@ -113,7 +113,7 @@ export function CompanyDashboard() {
                          <Button asChild variant="outline" className="w-full h-24 flex-col justify-center gap-2 text-base">
                             <Link href={action.href}>
                                 <action.icon className="h-6 w-6" />
-                                <span>{action.title}</span>
+                                <span>{t(action.title)}</span>
                             </Link>
                         </Button>
                     </motion.div>

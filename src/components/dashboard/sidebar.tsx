@@ -17,6 +17,8 @@ import {
   LifeBuoy,
   Settings,
   School,
+  FileText,
+  Users2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -35,20 +37,22 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     ...baseNav,
     { href: "/dashboard/profile", icon: User, label: t('Profile') },
     { href: "/dashboard/jobs", icon: Briefcase, label: t('Job Search') },
+    { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
   ];
 
   const companyNav = [
     ...baseNav,
     { href: "/dashboard/company-profile", icon: Building, label: t('Company Profile') },
+    { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
+    { href: "/dashboard/talent-pool", icon: Users2, label: t('Talent Pool') },
     { type: "divider", label: t('AI Tools') },
     { href: "/dashboard/assessments", icon: ClipboardCheck, label: t('Assessments') },
-    { href: "/dashboard/reports", icon: BarChart3, label: t('Reports') },
   ];
   
   const schoolNav = [
     ...baseNav,
     { href: "/dashboard/school-profile", icon: School, label: t('School Profile')},
-    { href: "/dashboard/reports", icon: BarChart3, label: t('Reports') },
+    { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
   ];
   
   const bottomNav = [

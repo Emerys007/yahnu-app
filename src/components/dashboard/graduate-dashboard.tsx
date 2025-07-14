@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Briefcase, User, Building, ArrowUpRight } from "lucide-react"
+import { Briefcase, User, Building, ArrowUpRight, FileText } from "lucide-react"
 import Link from "next/link"
 import { useLocalization } from "@/context/localization-context"
 import { motion } from "framer-motion"
@@ -21,13 +21,14 @@ export function GraduateDashboard() {
   const stats = [
     { title: t('Profile Completion'), value: 75, suffix: '%', icon: User, description: t('Complete your profile to stand out') },
     { title: t('Job Applications'), value: 12, icon: Briefcase, description: t('+2 in the last 7 days') },
-    { title: t('Companies Viewed'), value: 34, icon: Building, description: t('Explore more company profiles') },
+    { title: t('Application Views'), value: 34, icon: Building, description: t('by companies this week') },
   ];
 
-  const recommendations = [
-      { title: t('Software Engineer at TechCorp'), location: 'San Francisco, CA' },
-      { title: t('Product Manager at Innovate Inc.'), location: 'Remote' }
-  ]
+  const quickActions = [
+    { title: t('Update My Profile'), href: '/dashboard/profile', icon: User },
+    { title: t('Search for Jobs'), href: '/dashboard/jobs', icon: Briefcase },
+    { title: t('Track My Applications'), href: '/dashboard/applications', icon: FileText },
+]
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -97,26 +98,24 @@ export function GraduateDashboard() {
       >
         <Card>
             <CardHeader>
-            <CardTitle>{t('Recommended For You')}</CardTitle>
-            <CardDescription>{t('Based on your profile and activity, here are some opportunities you might like.')}</CardDescription>
+            <CardTitle>{t('Quick Actions')}</CardTitle>
+            <CardDescription>{t('Get started with common tasks quickly.')}</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-                {recommendations.map((rec, index) => (
+            <CardContent className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {quickActions.map((action, index) => (
                     <motion.div 
                         key={index}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.5 + index * 0.1 }}
+                        whileHover={{ scale: 1.05 }}
                     >
-                        <div className="flex items-center justify-between p-4 rounded-lg border transition-all duration-300 hover:bg-muted/50 hover:shadow-inner">
-                            <div>
-                                <h3 className="font-semibold">{rec.title}</h3>
-                                <p className="text-sm text-muted-foreground">{rec.location}</p>
-                            </div>
-                            <Button asChild variant="secondary" size="sm">
-                                <Link href="/dashboard/jobs">{t('View')} <ArrowUpRight className="h-4 w-4 ml-2" /></Link>
-                            </Button>
-                        </div>
+                         <Button asChild variant="outline" className="w-full h-24 flex-col justify-center gap-2 text-base">
+                            <Link href={action.href}>
+                                <action.icon className="h-6 w-6" />
+                                <span>{t(action.title)}</span>
+                            </Link>
+                        </Button>
                     </motion.div>
                 ))}
             </CardContent>

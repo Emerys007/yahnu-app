@@ -1,18 +1,10 @@
 
 "use client"
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { generateCustomReport, type CustomReportOutput } from "@/ai/flows/custom-report-builder"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { useToast } from "@/hooks/use-toast"
+import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Wand2, Loader2, FileText, BarChart2 } from "lucide-react"
-import { Textarea } from "@/components/ui/textarea"
+import { CountUp } from "@/components/ui/count-up"
+import { BarChart3, TrendingUp, Users, Building } from "lucide-react"
 import {
   ChartContainer,
   ChartTooltip,
@@ -20,180 +12,112 @@ import {
   ChartLegend,
   ChartLegendContent
 } from "@/components/ui/chart"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
-import { useLocalization } from "@/context/localization-context"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Pie, PieChart } from "recharts"
 
+const analyticsData = {
+    totalHires: 132,
+    avgTimeToHire: 28, // days
+    topCompanies: [
+        { company: "Tech Solutions Abidjan", hires: 45 },
+        { company: "AgriBiz Côte d'Ivoire", hires: 32 },
+        { company: "Finance & Forte", hires: 25 },
+        { company: "Innovate Inc.", hires: 20 },
+        { company: "Creative Solutions", hires: 10 },
+    ],
+    hiresByIndustry: [
+        { name: "IT", value: 60, fill: "var(--color-it)" },
+        { name: "Finance", value: 35, fill: "var(--color-finance)" },
+        { name: "Agriculture", value: 32, fill: "var(--color-agriculture)" },
+        { name: "Other", value: 5, fill: "var(--color-other)" },
+    ]
+}
 
-const reportSchema = z.object({
-  query: z.string().min(10, { message: "Query must be at least 10 characters long." }),
-  availableData: z.string().optional(),
-})
+const chartConfig = {
+    it: { label: "IT", color: "hsl(var(--chart-1))" },
+    finance: { label: "Finance", color: "hsl(var(--chart-2))" },
+    agriculture: { label: "Agriculture", color: "hsl(var(--chart-3))" },
+    other: { label: "Other", color: "hsl(var(--chart-4))" },
+    hires: { label: "Hires", color: "hsl(var(--primary))" }
+}
 
-export default function CustomReportPage() {
+export default function AnalyticsPage() {
   const { t } = useLocalization();
-  const { toast } = useToast()
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [report, setReport] = useState<CustomReportOutput | null>(null)
-  const [chartData, setChartData] = useState<any[]>([]);
-
-  const form = useForm<z.infer<typeof reportSchema>>({
-    resolver: zodResolver(reportSchema),
-    defaultValues: {
-      query: "Show me a bar chart of graduates by field of study.",
-      availableData: "A list of 500 graduate profiles, including fields of study: Computer Science (150), Business (120), Engineering (100), Arts & Humanities (80), Sciences (50)."
-    },
-  })
-
-  const tryParseJson = (jsonString: string) => {
-    try {
-      const data = JSON.parse(jsonString);
-      return Array.isArray(data) ? data : null;
-    } catch (e) {
-      return null;
-    }
-  };
-
-  async function onSubmit(values: z.infer<typeof reportSchema>) {
-    setIsGenerating(true)
-    setReport(null)
-    setChartData([])
-    toast({
-      title: t('Generating Report...'),
-      description: t('Our AI is crunching the numbers. This might take a moment.'),
-    })
-
-    try {
-      const result = await generateCustomReport(values)
-      setReport(result)
-
-      if(result.visualizationData) {
-        const parsedData = tryParseJson(result.visualizationData);
-        if(parsedData) {
-            setChartData(parsedData);
-        }
-      }
-
-      toast({
-        title: t('Report Generated!'),
-        description: t('Your custom report is ready below.'),
-      })
-    } catch (error) {
-      console.error("Report generation failed:", error)
-      toast({
-        title: t('Generation Failed'),
-        description: t('There was a problem creating the report.'),
-        variant: "destructive",
-      })
-    } finally {
-      setIsGenerating(false)
-    }
-  }
-
-  const chartConfig = {
-    graduates: {
-      label: t('Graduates'),
-      color: "hsl(var(--primary))",
-    },
-  }
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('AI Custom Report Builder')}</h1>
-        <p className="text-muted-foreground mt-1">{t('Generate insightful reports and charts using natural language.')}</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('Graduate Placement Analytics')}</h1>
+        <p className="text-muted-foreground mt-1">{t('Insights into the success of your graduates in the job market.')}</p>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('Report Query')}</CardTitle>
-          <CardDescription>{t('Describe the report you want to generate. You can optionally provide context about available data.')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="query"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('Your Query')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={t("e.g., 'Show me a pie chart of...' ")} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="availableData"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('Available Data (Optional)')}</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder={t("Describe the data you have available...")} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" disabled={isGenerating}>
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('Generating...')}
-                  </>
-                ) : (
-                  <>
-                    <Wand2 className="mr-2 h-4 w-4" />
-                    {t('Generate Report')}
-                  </>
-                )}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-
-      {report && (
-        <div className="grid lg:grid-cols-2 gap-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><FileText /> {t('Text Report')}</CardTitle>
-            </CardHeader>
-            <CardContent className="prose dark:prose-invert max-w-none">
-              <p>{report.report}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><BarChart2 /> {t('Visualization')}</CardTitle>
-              <CardDescription>
-                {chartData.length > 0 ? t('Visual representation of your data.') : t('No valid visualization data was generated.')}
-              </CardDescription>
+      
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{t('Total Graduates Hired')}</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {chartData.length > 0 && (
-                 <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-                  <BarChart accessibilityLayer data={chartData}>
-                    <CartesianGrid vertical={false} />
-                    <XAxis
-                      dataKey="name"
-                      tickLine={false}
-                      tickMargin={10}
-                      axisLine={false}
-                    />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <ChartLegend content={<ChartLegendContent />} />
-                    <Bar dataKey="graduates" fill="var(--color-graduates)" radius={4} />
-                  </BarChart>
-                </ChartContainer>
-              )}
+                <div className="text-2xl font-bold"><CountUp end={analyticsData.totalHires} /></div>
+                <p className="text-xs text-muted-foreground">{t('+10% from last quarter')}</p>
             </CardContent>
-          </Card>
-        </div>
-      )}
+        </Card>
+         <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{t('Avg. Time to Hire')}</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold"><CountUp end={analyticsData.avgTimeToHire} suffix={t(" days")} /></div>
+                <p className="text-xs text-muted-foreground">{t('Down from 32 days last quarter')}</p>
+            </CardContent>
+        </Card>
+         <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{t('Top Partner Company')}</CardTitle>
+                <Building className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{analyticsData.topCompanies[0].company}</div>
+                <p className="text-xs text-muted-foreground">{t('{count} hires this year', { count: analyticsData.topCompanies[0].hires })}</p>
+            </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid lg:grid-cols-5 gap-6">
+        <Card className="lg:col-span-3">
+            <CardHeader>
+                <CardTitle>{t('Top Hiring Companies')}</CardTitle>
+                <CardDescription>{t('Companies that have hired the most graduates from your institution.')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                 <ChartContainer config={{ hires: { label: t('Hires'), color: 'hsl(var(--primary))' } }} className="min-h-[300px] w-full">
+                    <BarChart layout="vertical" accessibilityLayer data={analyticsData.topCompanies}>
+                        <CartesianGrid horizontal={false} />
+                        <YAxis dataKey="company" type="category" tickLine={false} tickMargin={10} axisLine={false} width={150} />
+                        <XAxis dataKey="hires" type="number" hide />
+                        <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                        <Bar dataKey="hires" fill="var(--color-hires)" radius={4} />
+                    </BarChart>
+                </ChartContainer>
+            </CardContent>
+        </Card>
+        <Card className="lg:col-span-2">
+            <CardHeader>
+                <CardTitle>{t('Hires by Industry')}</CardTitle>
+                <CardDescription>{t('Distribution of graduate placements across different industries.')}</CardDescription>
+            </CardHeader>
+            <CardContent className="flex justify-center">
+                 <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+                    <PieChart>
+                        <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                        <Pie data={analyticsData.hiresByIndustry} dataKey="value" nameKey="name" innerRadius={50} />
+                        <ChartLegend content={<ChartLegendContent nameKey="name" />} />
+                    </PieChart>
+                </ChartContainer>
+            </CardContent>
+        </Card>
+      </div>
+
     </div>
   )
 }
