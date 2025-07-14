@@ -70,12 +70,9 @@ export default function HomePage() {
               <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto">
                   {t('Join Yahnu today and take the next step in your professional journey. Whether you\'re looking for a job, hiring new talent, or seeking partnerships, we have the tools for you.')}
               </p>
-              <div className="mt-8 flex justify-center gap-4">
+              <div className="mt-8 flex justify-center">
                   <Button size="lg" asChild>
                       <Link href="/register">{t('Sign Up Now')}</Link>
-                  </Button>
-                  <Button size="lg" variant="outline" asChild>
-                      <Link href="/login">{t('Explore Platform')}</Link>
                   </Button>
               </div>
           </div>
