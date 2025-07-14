@@ -5,9 +5,11 @@ import * as React from 'react';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { useCountry } from '@/context/country-context';
 
 export const Logo = (props: { className?: string }) => {
   const { resolvedTheme } = useTheme();
+  const { country } = useCountry();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -19,13 +21,15 @@ export const Logo = (props: { className?: string }) => {
     return <div className={cn(props.className)} style={{ aspectRatio: '1 / 1' }} />;
   }
   
-  const src = resolvedTheme === 'dark' ? '/images/YahnuLogoDark.svg' : '/images/YahnuLogoLight.svg';
-
+  const theme = resolvedTheme === 'dark' ? 'dark' : 'light';
+  const src = `/images/Country Maps/${country.theme}-${theme}.svg`;
+  
   return (
     <div className={cn(props.className, "transition-opacity duration-300")}>
         <Image 
+            key={src} // Add key to force re-render on src change
             src={src} 
-            alt="Yahnu Logo" 
+            alt={`${country.name.en} map logo`} 
             width={100}
             height={100}
             sizes="100vw"

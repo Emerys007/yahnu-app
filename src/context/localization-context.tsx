@@ -4,18 +4,21 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 import en from '@/locales/en.json';
 import fr from '@/locales/fr.json';
+import { useCountry } from './country-context';
 
 const translations: { [key: string]: any } = { en, fr };
 
 type LocalizationContextType = {
   language: string;
   setLanguage: (language: string) => void;
-  t: (key: string) => string;
+  t: (key: string, values?: { [key: string]: string | number }) => string;
+  countryName: string;
 };
 
 const LocalizationContext = createContext<LocalizationContextType | undefined>(undefined);
 
 export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
+  const { country } = useCountry();
   const [language, setLanguage] = useState('en');
 
   useEffect(() => {
@@ -32,12 +35,23 @@ export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const t = (key: string): string => {
-    return translations[language]?.[key] || key;
+  const countryName = language === 'fr' ? country.name.fr : country.name.en;
+
+  const t = (key: string, values?: { [key: string]: string | number }): string => {
+    let translation = translations[language]?.[key] || key;
+    if (values) {
+        Object.keys(values).forEach(valueKey => {
+            const regex = new RegExp(`{${valueKey}}`, 'g');
+            translation = translation.replace(regex, String(values[valueKey]));
+        });
+    }
+    // Always replace country placeholder
+    translation = translation.replace(/{country}/g, countryName);
+    return translation;
   };
 
   return (
-    <LocalizationContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
+    <LocalizationContext.Provider value={{ language, setLanguage: handleSetLanguage, t, countryName }}>
       {children}
     </LocalizationContext.Provider>
   );
@@ -46,13 +60,20 @@ export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
 export const useLocalization = (): LocalizationContextType => {
   const context = useContext(LocalizationContext);
   if (context === undefined) {
-    // This fallback allows components to render on the server
-    // even if they can't get the "real" context.
-    // The text will be re-rendered on the client with the correct language.
     return {
       language: 'en',
       setLanguage: () => {},
-      t: (key: string) => key,
+      t: (key: string, values?: { [key: string]: string | number }) => {
+          let translation = key;
+          if (values) {
+              Object.keys(values).forEach(valueKey => {
+                  const regex = new RegExp(`{${valueKey}}`, 'g');
+                  translation = translation.replace(regex, String(values[valueKey]));
+              });
+          }
+          return translation.replace(/{country}/g, "this country");
+      },
+      countryName: "this country",
     };
   }
   return context;

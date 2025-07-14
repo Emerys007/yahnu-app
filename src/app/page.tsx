@@ -66,7 +66,7 @@ const WhyChooseYahnu = () => {
         >
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('Why Choose Yahnu?')}</h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-            {t('We provide a comprehensive solution to bridge the gap between education and employment in Côte d\'Ivoire.')}
+            {t('We provide a comprehensive solution to bridge the gap between education and employment in {country}.')}
           </p>
         </motion.div>
         <motion.div 

@@ -13,10 +13,11 @@ const postsData = {
     {
       slug: "unlocking-potential-the-yahnu-story",
       title: "Unlocking Potential: The Yahnu Story",
-      description: "Discover the mission and vision behind Yahnu and how we're bridging the gap between education and employment in Côte d'Ivoire.",
+      description: "Discover the mission and vision behind Yahnu and how we're bridging the gap between education and employment in {country}.",
       author: "Dr. Evelyn Reed",
       date: "2023-10-26",
-      imageUrl: "/images/yahnu-logo.png",
+      imageUrl: "https://placehold.co/1200x400.png",
+      imageHint: "diverse group of students graduating",
       content: `
         <p class="lead mb-8 text-xl text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris.</p>
         <p class="mb-6">Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
@@ -31,10 +32,11 @@ const postsData = {
       {
       slug: "unlocking-potential-the-yahnu-story",
       title: "Libérer le potentiel : L'histoire de Yahnu",
-      description: "Découvrez la mission et la vision de Yahnu et comment nous comblons le fossé entre l'éducation et l'emploi en Côte d'Ivoire.",
+      description: "Découvrez la mission et la vision de Yahnu et comment nous comblons le fossé entre l'éducation et l'emploi en {country}.",
       author: "Dr. Evelyn Reed",
       date: "2023-10-26",
-      imageUrl: "/images/yahnu-logo.png",
+      imageUrl: "https://placehold.co/1200x400.png",
+      imageHint: "diverse group of students graduating",
       content: `
         <p class="lead mb-8 text-xl text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris.</p>
         <p class="mb-6">Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
@@ -69,11 +71,12 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
               fill
               className="object-cover rounded-lg"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              data-ai-hint={post.imageHint}
             />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight">{post.title}</h1>
+          <h1 className="text-4xl font-bold tracking-tight">{t(post.title)}</h1>
           <p className="text-muted-foreground">{t('By')} {post.author} on {post.date}</p>
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          <div dangerouslySetInnerHTML={{ __html: t(post.content) }} />
         </article>
       </main>
       <Footer />

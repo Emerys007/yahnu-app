@@ -16,7 +16,8 @@ const companiesData = {
     {
       name: "Tech Solutions Abidjan",
       tagline: "Innovating for a digital Africa.",
-      logoUrl: "/images/Logo.png",
+      logoUrl: "https://placehold.co/200x200.png",
+      logoHint: "modern tech company logo",
       location: "Abidjan, Côte d'Ivoire",
       industry: "Information Technology",
       website: "https://techsolutions.ci",
@@ -31,7 +32,8 @@ const companiesData = {
     {
       name: "AgriBiz Côte d'Ivoire",
       tagline: "Sowing the seeds of progress.",
-      logoUrl: "/images/job-agronomist.jpg",
+      logoUrl: "https://placehold.co/200x200.png",
+      logoHint: "agriculture tech logo",
       location: "Yamoussoukro, Côte d'Ivoire",
       industry: "Agriculture",
       website: "https://agribiz.ci",
@@ -46,7 +48,8 @@ const companiesData = {
       {
       name: "Finance & Forte",
       tagline: "Your trusted financial partner.",
-      logoUrl: "/images/LogoYahnu.png",
+      logoUrl: "https://placehold.co/200x200.png",
+      logoHint: "financial firm logo",
       location: "Abidjan, Côte d'Ivoire",
       industry: "Finance",
       website: "https://financeforte.ci",
@@ -63,7 +66,8 @@ const companiesData = {
     {
       name: "Tech Solutions Abidjan",
       tagline: "Innover pour une Afrique numérique.",
-      logoUrl: "/images/Logo.png",
+      logoUrl: "https://placehold.co/200x200.png",
+      logoHint: "modern tech company logo",
       location: "Abidjan, Côte d'Ivoire",
       industry: "Technologies de l'information",
       website: "https://techsolutions.ci",
@@ -78,7 +82,8 @@ const companiesData = {
     {
       name: "AgriBiz Côte d'Ivoire",
       tagline: "Semer les graines du progrès.",
-      logoUrl: "/images/job-agronomist.jpg",
+      logoUrl: "https://placehold.co/200x200.png",
+      logoHint: "agriculture tech logo",
       location: "Yamoussoukro, Côte d'Ivoire",
       industry: "Agriculture",
       website: "https://agribiz.ci",
@@ -93,7 +98,8 @@ const companiesData = {
       {
       name: "Finance & Forte",
       tagline: "Votre partenaire financier de confiance.",
-      logoUrl: "/images/LogoYahnu.png",
+      logoUrl: "https://placehold.co/200x200.png",
+      logoHint: "financial firm logo",
       location: "Abidjan, Côte d'Ivoire",
       industry: "Finance",
       website: "https://financeforte.ci",
@@ -142,6 +148,7 @@ export default function CompanyPage({ params }: { params: { slug: string } }) {
                             fill
                             sizes="128px"
                             className="object-cover"
+                            data-ai-hint={company.logoHint}
                         />
                     </div>
                     <div>

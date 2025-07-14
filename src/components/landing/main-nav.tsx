@@ -9,6 +9,8 @@ import {
   Monitor,
   Sun,
   Moon,
+  Globe,
+  ChevronDown
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Logo } from "@/components/logo";
@@ -30,9 +32,12 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { useLocalization } from "@/context/localization-context";
+import { useCountry, allCountries } from "@/context/country-context";
+import { Flag } from "../flag";
 
 const getNavLinks = (t: (key: string) => string) => [
   { href: "/dashboard/jobs", label: t("Jobs") },
@@ -43,8 +48,11 @@ const getNavLinks = (t: (key: string) => string) => [
 
 export function MainNav() {
   const { setTheme } = useTheme();
-  const { t, setLanguage } = useLocalization();
+  const { t, language, setLanguage } = useLocalization();
+  const { country, setCountry } = useCountry();
   const navLinks = getNavLinks(t);
+
+  const selectedCountry = allCountries.find(c => c.code === country.code);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -53,9 +61,6 @@ export function MainNav() {
             <Logo className="h-8 w-8 text-primary" />
             <div>
               <span className="text-lg font-bold">Yahnu</span>
-              <p className="text-xs text-muted-foreground">
-                {t('Your future starts here')}
-              </p>
             </div>
         </Link>
 
@@ -81,51 +86,25 @@ export function MainNav() {
         </div>
 
         <div className="flex items-center gap-2 ml-auto md:ml-0">
-          {/* Settings Dropdown */}
+          {/* Country Dropdown */}
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <MoreVertical className="h-4 w-4" />
-                <span className="sr-only">{t('Settings')}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                  <Sun className="h-4 w-4 mr-2 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                  <Moon className="absolute h-4 w-4 mr-2 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                  <span>{t('Theme')}</span>
-                </DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                  <DropdownMenuSubContent>
-                    <DropdownMenuItem onClick={() => setTheme("light")}>
-                      <Sun className="mr-2 h-4 w-4" />
-                      {t('Light')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTheme("dark")}>
-                      <Moon className="mr-2 h-4 w-4" />
-                      {t('Dark')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTheme("system")}>
-                      <Monitor className="mr-2 h-4 w-4" />
-                      {t('System')}
-                    </DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-              </DropdownMenuSub>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                  <Languages className="mr-2 h-4 w-4" />
-                  <span>{t('Language')}</span>
-                </DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                  <DropdownMenuSubContent>
-                    <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setLanguage('fr')}>Français</DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-              </DropdownMenuSub>
-            </DropdownMenuContent>
+              <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="w-full justify-start text-left font-normal">
+                      <div className="flex items-center gap-2">
+                        <Flag countryCode={country.code} className="h-4 w-4" />
+                        <span>{language === 'fr' ? selectedCountry?.name.fr : selectedCountry?.name.en}</span>
+                        <ChevronDown className="h-4 w-4 opacity-50" />
+                      </div>
+                  </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56 max-h-96 overflow-y-auto" align="end">
+                  {allCountries.map((c) => (
+                      <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
+                          <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
+                          <span>{language === 'fr' ? c.name.fr : c.name.en}</span>
+                      </DropdownMenuItem>
+                  ))}
+              </DropdownMenuContent>
           </DropdownMenu>
 
           {/* Mobile Navigation */}

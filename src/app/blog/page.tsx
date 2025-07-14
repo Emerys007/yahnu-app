@@ -15,10 +15,11 @@ const postsData = {
     {
       slug: "unlocking-potential-the-yahnu-story",
       title: "Unlocking Potential: The Yahnu Story",
-      description: "Discover the mission and vision behind Yahnu and how we're bridging the gap between education and employment in Côte d'Ivoire.",
+      description: "Discover the mission and vision behind Yahnu and how we're bridging the gap between education and employment in {country}.",
       author: "Dr. Evelyn Reed",
       date: "2023-10-26",
-      imageUrl: "/images/yahnu-logo.png",
+      imageUrl: "https://placehold.co/800x600.png",
+      imageHint: "yahnu brand logo with abstract background"
     },
       {
       slug: "top-5-in-demand-skills-for-graduates",
@@ -26,7 +27,8 @@ const postsData = {
       description: "Stay ahead of the curve. We analyze the current job market to bring you the most sought-after skills by top companies.",
       author: "John Carter",
       date: "2023-11-05",
-      imageUrl: "/images/job-data-scientist.jpg",
+      imageUrl: "https://placehold.co/800x600.png",
+      imageHint: "data scientist analyzing charts"
     },
     {
       slug: "crafting-the-perfect-resume",
@@ -34,7 +36,8 @@ const postsData = {
       description: "Your resume is your first impression. Learn how to tailor your resume to land your dream job in the tech industry.",
       author: "Emily Chen",
       date: "2023-11-12",
-      imageUrl: "/images/dream-job.jpg",
+      imageUrl: "https://placehold.co/800x600.png",
+      imageHint: "professional resume on a desk"
     },
     {
       slug: "the-power-of-university-industry-partnerships",
@@ -42,17 +45,19 @@ const postsData = {
       description: "Explore how collaborations between schools and companies are shaping the future of talent and innovation.",
       author: "David Lee",
       date: "2023-11-20",
-      imageUrl: "/images/uni-partnership.jpg",
+      imageUrl: "https://placehold.co/800x600.png",
+      imageHint: "handshake between business person and academic"
     },
   ],
   fr: [
     {
       slug: "unlocking-potential-the-yahnu-story",
       title: "Libérer le potentiel : L'histoire de Yahnu",
-      description: "Découvrez la mission et la vision de Yahnu et comment nous comblons le fossé entre l'éducation et l'emploi en Côte d'Ivoire.",
+      description: "Découvrez la mission et la vision de Yahnu et comment nous comblons le fossé entre l'éducation et l'emploi en {country}.",
       author: "Dr. Evelyn Reed",
       date: "2023-10-26",
-      imageUrl: "/images/yahnu-logo.png",
+      imageUrl: "https://placehold.co/800x600.png",
+      imageHint: "yahnu brand logo with abstract background"
     },
     {
       slug: "top-5-in-demand-skills-for-graduates",
@@ -60,7 +65,8 @@ const postsData = {
       description: "Gardez une longueur d'avance. Nous analysons le marché du travail actuel pour vous présenter les compétences les plus recherchées par les grandes entreprises.",
       author: "John Carter",
       date: "2023-11-05",
-      imageUrl: "/images/job-data-scientist.jpg",
+      imageUrl: "https://placehold.co/800x600.png",
+      imageHint: "data scientist analyzing charts"
     },
     {
       slug: "crafting-the-perfect-resume",
@@ -68,7 +74,8 @@ const postsData = {
       description: "Votre CV est votre première impression. Apprenez à adapter votre CV pour décrocher l'emploi de vos rêves dans l'industrie technologique.",
       author: "Emily Chen",
       date: "2023-11-12",
-      imageUrl: "/images/dream-job.jpg",
+      imageUrl: "https://placehold.co/800x600.png",
+      imageHint: "professional resume on a desk"
     },
     {
       slug: "the-power-of-university-industry-partnerships",
@@ -76,7 +83,8 @@ const postsData = {
       description: "Découvrez comment les collaborations entre les écoles et les entreprises façonnent l'avenir des talents et de l'innovation.",
       author: "David Lee",
       date: "2023-11-20",
-      imageUrl: "/images/uni-partnership.jpg",
+      imageUrl: "https://placehold.co/800x600.png",
+      imageHint: "handshake between business person and academic"
     },
   ]
 };
@@ -93,7 +101,7 @@ export default function BlogPage() {
         <div className="text-center mb-12">
             <h1 className="text-5xl font-bold tracking-tight">{t('Yahnu Insights')}</h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t('Your premier source for career advice, industry trends, and success stories in the Ivorian professional landscape.')}
+                {t('Your premier source for career advice, industry trends, and success stories in the {country} professional landscape.')}
             </p>
         </div>
 
@@ -109,12 +117,13 @@ export default function BlogPage() {
                                 fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 className="object-cover"
+                                data-ai-hint={post.imageHint}
                             />
                            </div>
                         </CardHeader>
                         <CardContent className="p-6">
-                            <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-                            <p className="text-muted-foreground mb-4 text-sm">{post.description}</p>
+                            <h2 className="text-xl font-semibold mb-2">{t(post.title)}</h2>
+                            <p className="text-muted-foreground mb-4 text-sm">{t(post.description)}</p>
                             <div className="flex items-center justify-between text-sm text-muted-foreground">
                                 <span>{t('By')} {post.author}</span>
                                 <span>{post.date}</span>

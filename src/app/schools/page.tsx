@@ -15,7 +15,8 @@ const schoolsData = {
     {
       name: "Institut National Polytechnique Félix Houphouët-Boigny",
       acronym: "INP-HB",
-      logoUrl: "/images/University.png",
+      logoUrl: "https://placehold.co/400x300.png",
+      logoHint: "university campus building",
       location: "Yamoussoukro",
       description: "A leading polytechnic institution in West Africa, known for its rigorous engineering and technology programs.",
       slug: "inp-hb",
@@ -23,7 +24,8 @@ const schoolsData = {
     {
       name: "Université Félix Houphouët-Boigny",
       acronym: "UFHB",
-      logoUrl: "/images/LogoYahnu.png",
+      logoUrl: "https://placehold.co/400x300.png",
+      logoHint: "modern university library",
       location: "Abidjan",
       description: "The largest university in Côte d'Ivoire, offering a wide range of programs in sciences, arts, and humanities.",
       slug: "ufhb",
@@ -31,7 +33,8 @@ const schoolsData = {
     {
       name: "Groupe CSI Pôle Polytechnique",
       acronym: "CSI",
-      logoUrl: "/images/Logo.png",
+      logoUrl: "https://placehold.co/400x300.png",
+      logoHint: "students collaborating on project",
       location: "Abidjan",
       description: "A private university renowned for its focus on technology, engineering, and business management.",
       slug: "csi",
@@ -41,7 +44,8 @@ const schoolsData = {
     {
       name: "Institut National Polytechnique Félix Houphouët-Boigny",
       acronym: "INP-HB",
-      logoUrl: "/images/University.png",
+      logoUrl: "https://placehold.co/400x300.png",
+      logoHint: "university campus building",
       location: "Yamoussoukro",
       description: "Une institution polytechnique de premier plan en Afrique de l'Ouest, connue pour ses programmes rigoureux en ingénierie et technologie.",
       slug: "inp-hb",
@@ -49,7 +53,8 @@ const schoolsData = {
     {
       name: "Université Félix Houphouët-Boigny",
       acronym: "UFHB",
-      logoUrl: "/images/LogoYahnu.png",
+      logoUrl: "https://placehold.co/400x300.png",
+      logoHint: "modern university library",
       location: "Abidjan",
       description: "La plus grande université de Côte d'Ivoire, offrant une large gamme de programmes en sciences, arts et sciences humaines.",
       slug: "ufhb",
@@ -57,7 +62,8 @@ const schoolsData = {
     {
       name: "Groupe CSI Pôle Polytechnique",
       acronym: "CSI",
-      logoUrl: "/images/Logo.png",
+      logoUrl: "https://placehold.co/400x300.png",
+      logoHint: "students collaborating on project",
       location: "Abidjan",
       description: "Une université privée réputée pour son accent sur la technologie, l'ingénierie et la gestion des affaires.",
       slug: "csi",
@@ -77,7 +83,7 @@ export default function SchoolsPage() {
         <div className="text-center mb-12">
             <h1 className="text-5xl font-bold tracking-tight">{t('Partner Schools')}</h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t('Collaborating with the finest institutions to nurture the next generation of Ivorian leaders.')}
+                {t("Collaborating with the finest institutions to nurture the next generation of {country} leaders.")}
             </p>
         </div>
 
@@ -93,6 +99,7 @@ export default function SchoolsPage() {
                                     fill
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                     className="object-contain p-8"
+                                    data-ai-hint={school.logoHint}
                                 />
                             </div>
                         </CardHeader>

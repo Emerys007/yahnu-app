@@ -10,33 +10,25 @@
     --card-foreground: 224 71.4% 4.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 71.4% 4.1%;
-    --primary: 220 81% 51%;
+    --primary: 34 90% 50%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 215 27.9% 93.5%;
+    --secondary: 34 90% 95%;
     --secondary-foreground: 224 71.4% 4.1%;
     --muted: 215 27.9% 93.5%;
     --muted-foreground: 223 6.7% 41.8%;
-    --accent: 215 27.9% 93.5%;
+    --accent: 34 90% 90%;
     --accent-foreground: 224 71.4% 4.1%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 215 20.2% 80.2%;
     --input: 215 20.2% 85.2%;
-    --ring: 220 81% 51%;
+    --ring: 34 90% 50%;
     --radius: 0.8rem;
-    --chart-1: 220 81% 51%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
+    --chart-1: 34 90% 50%;
+    --chart-2: 142 71% 45%;
+    --chart-3: 220 81% 51%;
     --chart-4: 280 70% 60%;
     --chart-5: 340 75% 50%;
-    --sidebar-background: 222 83% 98%;
-    --sidebar-foreground: 224 71.4% 4.1%;
-    --sidebar-primary: 220 81% 51%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 100%;
-    --sidebar-accent-foreground: 224 71.4% 4.1%;
-    --sidebar-border: 215 20.2% 85.2%;
-    --sidebar-ring: 220 81% 51%;
   }
 
   .dark {
@@ -46,32 +38,144 @@
     --card-foreground: 210 20% 98%;
     --popover: 222 47.4% 11.2%;
     --popover-foreground: 210 20% 98%;
-    --primary: 217 91.2% 59.8%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 217 32.6% 17.5%;
+    --primary: 34 90% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 34 90% 15%;
     --secondary-foreground: 210 20% 98%;
     --muted: 217 32.6% 17.5%;
     --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 217 32.6% 17.5%;
+    --accent: 34 90% 20%;
     --accent-foreground: 210 20% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 217 32.6% 17.5%;
     --input: 217 32.6% 17.5%;
-    --ring: 217 91.2% 59.8%;
-    --chart-1: 217 91.2% 59.8%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
+    --ring: 34 90% 55%;
+    --chart-1: 34 90% 55%;
+    --chart-2: 142 71% 45%;
+    --chart-3: 220 81% 51%;
     --chart-4: 280 70% 60%;
     --chart-5: 340 75% 50%;
-    --sidebar-background: 222 47.4% 9.2%;
-    --sidebar-foreground: 210 20% 98%;
-    --sidebar-primary: 217 91.2% 59.8%;
-    --sidebar-primary-foreground: 210 20% 98%;
-    --sidebar-accent: 217 32.6% 15.5%;
-    --sidebar-accent-foreground: 210 20% 98%;
-    --sidebar-border: 217 32.6% 17.5%;
-    --sidebar-ring: 217 91.2% 59.8%;
+  }
+
+  [data-theme='ivory-coast'] {
+    --primary: 34 90% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 34 90% 95%;
+    --accent: 34 90% 90%;
+    --ring: 34 90% 50%;
+    --chart-1: 34 90% 50%;
+    --chart-2: 142 71% 45%;
+  }
+
+  [data-theme='ivory-coast'].dark {
+    --primary: 34 90% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 34 90% 15%;
+    --accent: 34 90% 20%;
+    --ring: 34 90% 55%;
+    --chart-1: 34 90% 55%;
+    --chart-2: 142 71% 45%;
+  }
+
+  [data-theme='ghana-gold'] {
+    --primary: 45 100% 51%;
+    --primary-foreground: 224 71.4% 4.1%;
+    --secondary: 45 100% 95%;
+    --accent: 45 100% 90%;
+    --ring: 45 100% 51%;
+    --chart-1: 45 100% 51%;
+    --chart-2: 122 39% 49%;
+  }
+
+  [data-theme='ghana-gold'].dark {
+    --primary: 45 100% 51%;
+    --primary-foreground: 224 71.4% 4.1%;
+    --secondary: 45 100% 10%;
+    --accent: 45 100% 15%;
+    --ring: 45 100% 51%;
+    --chart-1: 45 100% 51%;
+    --chart-2: 122 39% 49%;
+  }
+
+  [data-theme='nigeria-green'] {
+    --primary: 122 60% 35%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 122 60% 95%;
+    --accent: 122 60% 90%;
+    --ring: 122 60% 35%;
+    --chart-1: 122 60% 35%;
+    --chart-2: 0 0% 50%;
+  }
+
+  [data-theme='nigeria-green'].dark {
+    --primary: 122 60% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 122 60% 10%;
+    --accent: 122 60% 15%;
+    --ring: 122 60% 45%;
+    --chart-1: 122 60% 45%;
+    --chart-2: 0 0% 80%;
+  }
+
+  [data-theme='senegal-sun'] {
+    --primary: 48 100% 50%;
+    --primary-foreground: 224 71.4% 4.1%;
+    --secondary: 48 100% 95%;
+    --accent: 48 100% 90%;
+    --ring: 48 100% 50%;
+    --chart-1: 48 100% 50%;
+    --chart-2: 122 39% 49%;
+  }
+
+  [data-theme='senegal-sun'].dark {
+    --primary: 48 100% 50%;
+    --primary-foreground: 224 71.4% 4.1%;
+    --secondary: 48 100% 10%;
+    --accent: 48 100% 15%;
+    --ring: 48 100% 50%;
+    --chart-1: 48 100% 50%;
+    --chart-2: 122 39% 49%;
+  }
+
+  [data-theme='cameroon-unity'] {
+    --primary: 122 39% 49%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 122 39% 95%;
+    --accent: 122 39% 90%;
+    --ring: 122 39% 49%;
+    --chart-1: 122 39% 49%;
+    --chart-2: 0 84% 60%;
+  }
+
+  [data-theme='cameroon-unity'].dark {
+    --primary: 122 39% 59%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 122 39% 10%;
+    --accent: 122 39% 15%;
+    --ring: 122 39% 59%;
+    --chart-1: 122 39% 59%;
+    --chart-2: 0 84% 70%;
+  }
+
+  [data-theme='drc-cobalt'] {
+    --primary: 220 81% 51%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 81% 95%;
+    --accent: 220 81% 90%;
+    --ring: 220 81% 51%;
+    --chart-1: 220 81% 51%;
+    --chart-2: 45 100% 51%;
+  }
+
+  [data-theme='drc-cobalt'].dark {
+    --primary: 217 91% 59%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 91% 15%;
+    --accent: 217 91% 20%;
+    --ring: 217 91% 59%;
+    --chart-1: 217 91% 59%;
+    --chart-2: 45 100% 51%;
   }
 }
 

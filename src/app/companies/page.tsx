@@ -101,7 +101,7 @@ export default function CompaniesPage() {
         <div className="text-center mb-12">
             <h1 className="text-5xl font-bold tracking-tight">{t('Featured Companies')}</h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t("Discover leading companies in Côte d'Ivoire that are hiring top talent. Your next career opportunity awaits.")}
+                {t("Discover leading companies in {country} that are hiring top talent. Your next career opportunity awaits.")}
             </p>
         </div>
 
@@ -109,7 +109,9 @@ export default function CompaniesPage() {
             {companies.map((company) => (
                  <Link href={`/companies/${company.slug}`} key={company.name} className="group block">
                     <Card className="flex flex-col md:flex-row items-center p-6 gap-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                        <Logo className="h-24 w-24 shrink-0" />
+                        <div className="relative h-24 w-24 shrink-0">
+                           <Image src="https://placehold.co/100x100.png" alt={`${company.name} Logo`} width={100} height={100} className="rounded-lg object-cover" />
+                        </div>
                         <div className="flex-grow text-center md:text-left">
                             <h2 className="text-2xl font-bold">{company.name}</h2>
                             <p className="text-muted-foreground italic">"{company.tagline}"</p>

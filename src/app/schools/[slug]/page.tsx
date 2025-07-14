@@ -17,7 +17,8 @@ const schoolsData = {
     {
       name: "Institut National Polytechnique Félix Houphouët-Boigny",
       acronym: "INP-HB",
-      logoUrl: "/images/University.png",
+      logoUrl: "https://placehold.co/400x300.png",
+      logoHint: "university main building",
       location: "Yamoussoukro",
       website: "https://www.inphb.ci",
       description: "<p>The INP-HB is a public polytechnic institution in Yamoussoukro, Côte d'Ivoire. It was founded in 1996 and is one of the most prestigious engineering schools in West Africa.</p><p>The institute offers a wide range of programs in engineering, technology, and applied sciences. It is known for its strong ties with industry and its commitment to research and innovation.</p>",
@@ -35,7 +36,8 @@ const schoolsData = {
     {
       name: "Institut National Polytechnique Félix Houphouët-Boigny",
       acronym: "INP-HB",
-      logoUrl: "/images/University.png",
+      logoUrl: "https://placehold.co/400x300.png",
+      logoHint: "university main building",
       location: "Yamoussoukro",
       website: "https://www.inphb.ci",
       description: "<p>L'INP-HB est une institution polytechnique publique à Yamoussoukro, Côte d'Ivoire. Elle a été fondée en 1996 et est l'une des écoles d'ingénieurs les plus prestigieuses d'Afrique de l'Ouest.</p><p>L'institut propose une large gamme de programmes en ingénierie, technologie et sciences appliquées. Il est reconnu pour ses liens étroits avec l'industrie et son engagement en faveur de la recherche et de l'innovation.</p>",
@@ -88,7 +90,8 @@ export default function SchoolPage({ params }: { params: { slug: string } }) {
                                 alt={`${school.name} logo`}
                                 fill
                                 sizes="128px"
-                                className="object-contain"
+                                className="object-contain p-4"
+                                data-ai-hint={school.logoHint}
                             />
                         </div>
                         <div>
