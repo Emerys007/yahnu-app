@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Footer } from "@/components/landing/footer";
 import { useLocalization } from "@/context/localization-context";
 import { ShieldCheck, Wand2, Handshake, TrendingUp } from "lucide-react";
+import { motion } from "framer-motion";
 
 const WhyChooseYahnu = () => {
   const { t } = useLocalization();
@@ -31,24 +32,63 @@ const WhyChooseYahnu = () => {
       title: t('Enhanced career opportunities for graduates'),
     },
   ];
+  
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    },
+  };
 
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto">
-        <div className="text-center mb-12">
+        <motion.div 
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.5 }}
+        >
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('Why Choose Yahnu?')}</h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
             {t('We provide a comprehensive solution to bridge the gap between education and employment in Côte d\'Ivoire.')}
           </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        </motion.div>
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {benefits.map((benefit, index) => (
-            <div key={index} className="text-center p-6 bg-secondary/50 rounded-lg">
+            <motion.div
+              key={index}
+              className="text-center p-6 bg-secondary/50 rounded-lg"
+              variants={cardVariants}
+              whileHover={{ scale: 1.05, y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)" }}
+              transition={{ duration: 0.2 }}
+            >
               {benefit.icon}
               <h3 className="text-lg font-semibold">{benefit.title}</h3>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   )
