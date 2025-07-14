@@ -53,8 +53,8 @@ export function MainNav() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center">
-        <Link href="/" className="mr-6 flex items-center gap-3">
-            <Logo className="h-10 w-10" />
+        <Link href="/" className="mr-6 flex items-center gap-2">
+            <Logo className="h-12 w-12" />
             <div>
               <p className="font-bold text-xl">Yahnu</p>
               <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
