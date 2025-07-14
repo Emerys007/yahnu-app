@@ -6,7 +6,7 @@ import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Crown, Trash2, UserPlus, Users } from "lucide-react"
+import { Crown, Trash2, UserPlus, Users, Link as LinkIcon, Copy } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Input } from "@/components/ui/input"
@@ -17,6 +17,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 type AdminUser = {
   id: number
@@ -34,6 +42,8 @@ export default function ManageTeamPage() {
     const { t } = useLocalization();
     const { toast } = useToast();
     const [admins, setAdmins] = useState<AdminUser[]>(initialAdmins);
+    const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
+    const [inviteLink, setInviteLink] = useState("");
 
     const handleDeleteAdmin = (id: number) => {
         const adminToDelete = admins.find(a => a.id === id);
@@ -53,10 +63,18 @@ export default function ManageTeamPage() {
     }
 
     const handleInviteAdmin = () => {
+        const uniqueToken = Math.random().toString(36).substring(2, 15);
+        const newInviteLink = `https://yahnu.ci/register?invite=${uniqueToken}`;
+        setInviteLink(newInviteLink);
+        setIsInviteDialogOpen(true);
+    }
+
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(inviteLink);
         toast({
-            title: t("Invite Sent"),
-            description: t("An invitation has been sent to the new administrator's email.")
-        })
+            title: t('Link Copied'),
+            description: t('The invite link has been copied to your clipboard.'),
+        });
     }
 
     return (
@@ -124,6 +142,34 @@ export default function ManageTeamPage() {
                     </Table>
                 </CardContent>
             </Card>
+
+            <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('Administrator Invitation Link')}</DialogTitle>
+                        <DialogDescription>{t('Share this link with the new administrator to allow them to register.')}</DialogDescription>
+                    </DialogHeader>
+                    <div className="flex items-center space-x-2 mt-4">
+                        <div className="grid flex-1 gap-2">
+                            <Label htmlFor="link" className="sr-only">
+                                {t('Link')}
+                            </Label>
+                            <Input
+                                id="link"
+                                defaultValue={inviteLink}
+                                readOnly
+                            />
+                        </div>
+                        <Button type="submit" size="sm" className="px-3" onClick={copyToClipboard}>
+                            <span className="sr-only">{t('Copy')}</span>
+                            <Copy className="h-4 w-4" />
+                        </Button>
+                    </div>
+                    <DialogFooter className="mt-4">
+                        <Button variant="outline" onClick={() => setIsInviteDialogOpen(false)}>{t('Close')}</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

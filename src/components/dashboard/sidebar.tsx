@@ -22,7 +22,8 @@ import {
   Handshake,
   Shield,
   UserCheck,
-  Users
+  Users,
+  BrainCircuit
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -67,6 +68,7 @@ const getNavItems = (t: (key: string) => string, accountType: AccountType) => {
     { href: "/dashboard/admin/user-management", icon: Users, label: t('Manage Users') },
     { href: "/dashboard/admin/manage-team", icon: Users2, label: t('Manage Team') },
     { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Analytics') },
+    { href: "/dashboard/admin/reports", icon: BrainCircuit, label: t('Custom Reports') },
   ];
   
   const bottomNav = [
