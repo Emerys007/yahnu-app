@@ -82,32 +82,34 @@ export default function SchoolsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {schools.map((school) => (
-                 <Card key={school.slug} className="group flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <CardHeader className="p-0">
-                        <div className="relative w-full h-48 bg-muted">
-                             <Image
-                                src={school.logoUrl}
-                                alt={`${school.name} logo`}
-                                fill
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                className="object-contain p-4"
-                            />
-                        </div>
-                    </CardHeader>
-                    <CardContent className="p-6 flex flex-col flex-grow">
-                        <h2 className="text-xl font-bold">{school.acronym}</h2>
-                        <p className="text-sm text-muted-foreground flex-grow">{school.name}</p>
-                        <p className="mt-4 text-muted-foreground flex-grow">{school.description}</p>
-                        <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
-                            <MapPin className="h-4 w-4"/> {school.location}
-                        </div>
-                         <Button asChild className="mt-6 w-full">
-                            <Link href={`/schools/${school.slug}`}>
-                                {t('Explore Programs')} <ArrowRight className="ml-2 h-4 w-4"/>
-                            </Link>
-                        </Button>
-                    </CardContent>
-                </Card>
+                <Link href={`/schools/${school.slug}`} key={school.slug} className="group block">
+                     <Card className="group flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full">
+                        <CardHeader className="p-0">
+                            <div className="relative w-full h-48 bg-muted">
+                                <Image
+                                    src={school.logoUrl}
+                                    alt={`${school.name} logo`}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    className="object-contain p-8"
+                                />
+                            </div>
+                        </CardHeader>
+                        <CardContent className="p-6 flex flex-col flex-grow">
+                            <h2 className="text-xl font-bold">{school.acronym}</h2>
+                            <p className="text-sm text-muted-foreground flex-grow">{school.name}</p>
+                            <p className="mt-4 text-muted-foreground flex-grow">{school.description}</p>
+                            <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
+                                <MapPin className="h-4 w-4"/> {school.location}
+                            </div>
+                             <Button asChild className="mt-6 w-full">
+                                <div className="flex items-center justify-center">
+                                    {t('Explore Programs')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"/>
+                                </div>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </Link>
             ))}
         </div>
       </main>

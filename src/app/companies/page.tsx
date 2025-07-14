@@ -111,43 +111,43 @@ export default function CompaniesPage() {
 
         <div className="space-y-8">
             {companies.map((company) => (
-                <Card key={company.name} className="flex flex-col md:flex-row items-center p-6 gap-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <div className="relative h-24 w-24 rounded-full overflow-hidden border-4 border-muted shrink-0">
-                         <Image
-                            src={company.logoUrl}
-                            alt={`${company.name} logo`}
-                            fill
-                            sizes="96px"
-                            className="object-cover"
-                        />
-                    </div>
-                    <div className="flex-grow text-center md:text-left">
-                        <h2 className="text-2xl font-bold">{company.name}</h2>
-                        <p className="text-muted-foreground italic">"{company.tagline}"</p>
-                        <div className="flex items-center justify-center md:justify-start gap-4 mt-2 text-sm text-muted-foreground">
-                            <span className="flex items-center gap-1"><Building className="h-4 w-4"/> {company.industry}</span>
-                            <span className="flex items-center gap-1"><MapPin className="h-4 w-4"/> {company.location}</span>
+                 <Link href={`/companies/${company.slug}`} key={company.name} className="group block">
+                    <Card className="flex flex-col md:flex-row items-center p-6 gap-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                        <div className="relative h-24 w-24 rounded-full overflow-hidden border-4 border-muted shrink-0">
+                            <Image
+                                src={company.logoUrl}
+                                alt={`${company.name} logo`}
+                                fill
+                                sizes="96px"
+                                className="object-cover"
+                            />
                         </div>
-                    </div>
-                    <div className="w-full md:w-1/3 text-center md:text-left">
-                        <h3 className="font-semibold mb-2 text-primary">{t('Featured Positions')}:</h3>
-                        <ul className="space-y-1 text-sm">
-                            {company.featuredJobs.map((job) => (
-                                <li key={job} className="flex items-center gap-2">
-                                    <Briefcase className="h-4 w-4 text-muted-foreground"/> 
-                                    <span>{job}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div className="self-center">
-                        <Button asChild>
-                            <Link href={`/companies/${company.slug}`}>
-                                {t('View Profile')} <ArrowRight className="ml-2 h-4 w-4"/>
-                            </Link>
-                        </Button>
-                    </div>
-                </Card>
+                        <div className="flex-grow text-center md:text-left">
+                            <h2 className="text-2xl font-bold">{company.name}</h2>
+                            <p className="text-muted-foreground italic">"{company.tagline}"</p>
+                            <div className="flex items-center justify-center md:justify-start gap-4 mt-2 text-sm text-muted-foreground">
+                                <span className="flex items-center gap-1"><Building className="h-4 w-4"/> {company.industry}</span>
+                                <span className="flex items-center gap-1"><MapPin className="h-4 w-4"/> {company.location}</span>
+                            </div>
+                        </div>
+                        <div className="w-full md:w-1/3 text-center md:text-left">
+                            <h3 className="font-semibold mb-2 text-primary">{t('Featured Positions')}:</h3>
+                            <ul className="space-y-1 text-sm">
+                                {company.featuredJobs.map((job) => (
+                                    <li key={job} className="flex items-center gap-2">
+                                        <Briefcase className="h-4 w-4 text-muted-foreground"/> 
+                                        <span>{job}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="self-center">
+                            <Button>
+                                {t('View Profile')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"/>
+                            </Button>
+                        </div>
+                    </Card>
+                 </Link>
             ))}
         </div>
       </main>

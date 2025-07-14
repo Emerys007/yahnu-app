@@ -26,7 +26,7 @@ export function DashboardHeader() {
   const { t, setLanguage } = useLocalization();
   
   return (
-    <header className="flex h-16 items-center gap-4 border-b bg-card px-4 md:px-6 sticky top-0 z-30">
+    <header className="flex h-16 items-center gap-4 border-b bg-card px-4 md:px-6 sticky top-0 z-30 shrink-0">
         <Button
             variant="ghost"
             size="icon"
@@ -45,19 +45,17 @@ export function DashboardHeader() {
             <PanelLeft className="h-5 w-5" />
             <span className="sr-only">{t('Toggle navigation menu')}</span>
           </Button>
-      {/* Search Bar */}
-      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <form className="ml-auto flex-1 sm:flex-initial">
+      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 justify-end">
+        <form className="flex-1 sm:flex-initial max-w-sm">
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder={t('Search...')}
-              className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
+              className="pl-8 w-full"
             />
           </div>
         </form>
-        {/* Language Switcher */}
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">
@@ -70,9 +68,7 @@ export function DashboardHeader() {
               <DropdownMenuItem onClick={() => setLanguage('fr')}>Français</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        {/* Theme Toggle */}
         <ThemeToggle />
-        {/* User Menu */}
         <UserNav />
       </div>
     </header>

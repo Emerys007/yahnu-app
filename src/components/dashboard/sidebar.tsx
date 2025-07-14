@@ -4,6 +4,7 @@
 import Link from "next/link"
 import React from 'react';
 import { usePathname } from "next/navigation"
+import { AnimatePresence, motion } from "framer-motion"
 import { Logo } from "@/components/logo"
 import { cn } from "@/lib/utils"
 import {
@@ -80,9 +81,14 @@ export function DashboardSidebar() {
   const renderNavItem = (item: any, index: number) => {
     if (item.type === 'divider') {
         return (
-             <div key={`divider-${index}`} className={cn("px-3 py-2", isCollapsed && "px-1")}>
-                {isCollapsed ? <hr className="my-2 border-t border-muted-foreground/20" /> : <h2 className="text-xs font-semibold tracking-wider uppercase text-muted-foreground">{item.label}</h2>}
-            </div>
+             <motion.div 
+                key={`divider-${index}`} 
+                className={cn("px-3 py-2", isCollapsed && "px-1 my-2")}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, transition: { delay: index * 0.05 } }}
+            >
+                {isCollapsed ? <hr className="border-t border-muted-foreground/20" /> : <h2 className="text-xs font-semibold tracking-wider uppercase text-muted-foreground">{item.label}</h2>}
+            </motion.div>
         )
     }
 
@@ -90,24 +96,43 @@ export function DashboardSidebar() {
 
     const buttonContent = (
       <>
-        <item.icon className={cn("h-5 w-5", isCollapsed && "mx-auto")} />
-        <span className={cn("ml-3", isCollapsed && "hidden")}>{item.label}</span>
+        <item.icon className={cn("h-5 w-5 shrink-0", isCollapsed && "mx-auto")} />
+        <span className={cn("ml-3 whitespace-nowrap", isCollapsed && "hidden")}>{item.label}</span>
       </>
     );
 
     return (
-        <TooltipProvider key={item.label} delayDuration={0}>
+        <TooltipProvider key={item.href} delayDuration={0}>
           <Tooltip>
             <TooltipTrigger asChild>
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0, transition: { delay: index * 0.05 } }}
+                    className="relative"
+                >
                 <Button
-                  variant={isActive ? "secondary" : "ghost"}
-                  className={cn("w-full h-10", isCollapsed ? 'justify-center' : 'justify-start')}
+                  variant="ghost"
+                  className={cn(
+                      "w-full h-10 text-base font-normal", 
+                      isCollapsed ? 'justify-center' : 'justify-start',
+                      isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                    )}
                   asChild
                 >
                   <Link href={item.href}>
-                    {buttonContent}
+                    {isActive && !isCollapsed && (
+                        <motion.div 
+                            layoutId="sidebar-active-bg"
+                            className="absolute inset-0 bg-primary/10 rounded-lg"
+                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                         />
+                    )}
+                    <div className="relative z-10 flex items-center">
+                        {buttonContent}
+                    </div>
                   </Link>
                 </Button>
+                </motion.div>
             </TooltipTrigger>
             {isCollapsed && (
               <TooltipContent side="right">
@@ -121,13 +146,15 @@ export function DashboardSidebar() {
 
   const sidebarContent = (
     <>
-      <div className="flex items-center h-16 px-6 border-b gap-3 shrink-0">
+      <div className={cn("flex items-center h-16 px-6 border-b gap-3 shrink-0", isCollapsed && "px-0 justify-center")}>
           <Logo className={cn("h-8 w-8 text-primary transition-all", isCollapsed && "h-8 w-8")} />
           <h1 className={cn("text-xl font-bold transition-opacity duration-200", isCollapsed && "opacity-0 hidden")}>Yahnu</h1>
       </div>
-      <nav className="flex-1 px-4 py-4 space-y-1">
-          {navItems.map(renderNavItem)}
-      </nav>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        <nav className="flex-1 px-4 py-4 space-y-1">
+            {navItems.map(renderNavItem)}
+        </nav>
+      </div>
       <div className="mt-auto p-4 space-y-1 border-t">
             {helpAndSettingsItems.map(renderNavItem)}
       </div>
@@ -137,7 +164,7 @@ export function DashboardSidebar() {
   if (isMobile) {
     return (
       <Sheet open={!isCollapsed} onOpenChange={useSidebar().toggleSidebar}>
-        <SheetContent side="left" className="p-0 w-64">
+        <SheetContent side="left" className="p-0 w-72">
            <div className="flex flex-col h-full">
             {sidebarContent}
            </div>
@@ -147,7 +174,7 @@ export function DashboardSidebar() {
   }
 
   return (
-    <div className={cn("hidden lg:flex lg:flex-col border-r bg-card transition-all duration-300", isCollapsed ? "w-20" : "w-64")}>
+    <div className={cn("hidden lg:flex lg:flex-col border-r bg-card transition-all duration-300 ease-in-out", isCollapsed ? "w-20" : "w-72")}>
         <div className="flex flex-col flex-grow">
            {sidebarContent}
         </div>
