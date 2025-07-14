@@ -17,28 +17,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { AccountType } from "./user-management/page"
 
 type AdminUser = {
   id: number
   name: string
   email: string
-  role: "Admin" | "Super Admin" | "Content Moderator" | "Support Staff"
+  accountType: "Admin" | "Super Admin" | "Content Moderator" | "Support Staff"
 }
 
 const allUsers = [
-    { id: 3, name: "Innovate Inc.", email: "contact@innovate.inc", role: "Company", status: "pending", date: "2023-10-23" },
-    { id: 4, name: "Prestige University", email: "contact@prestige.edu", role: "School", status: "active", date: "2023-10-22" },
+    { id: 3, name: "Innovate Inc.", email: "contact@innovate.inc", accountType: "Company", status: "pending", date: "2023-10-23" },
+    { id: 4, name: "Prestige University", email: "contact@prestige.edu", accountType: "School", status: "active", date: "2023-10-22" },
 ];
 
 const initialAdmins: AdminUser[] = [
-  { id: 1, name: "Dr. Evelyn Reed", email: "e.reed@yahnu.ci", role: "Super Admin" },
-  { id: 2, name: "John Carter", email: "j.carter@yahnu.ci", role: "Admin" },
+  { id: 1, name: "Dr. Evelyn Reed", email: "e.reed@yahnu.ci", accountType: "Super Admin" },
+  { id: 2, name: "John Carter", email: "j.carter@yahnu.ci", accountType: "Admin" },
 ]
 
 const RegistrationRequests = () => {
     const { t } = useLocalization();
     const { toast } = useToast();
-    const [requests, setRequests] = useState(allUsers.filter(u => u.status === 'pending' && u.role !== 'Graduate'));
+    const [requests, setRequests] = useState(allUsers.filter(u => u.status === 'pending' && u.accountType !== 'Graduate'));
 
     const handleRequest = (id: number, action: "approve" | "reject") => {
         const request = requests.find(r => r.id === id)
@@ -72,8 +73,8 @@ const RegistrationRequests = () => {
                                 <TableCell className="font-medium">{req.name}</TableCell>
                                 <TableCell>
                                     <Badge variant="outline" className="gap-1">
-                                        {req.role === 'Company' ? <Building className="h-3 w-3" /> : <School className="h-3 w-3" />}
-                                        {t(req.role)}
+                                        {req.accountType === 'Company' ? <Building className="h-3 w-3" /> : <School className="h-3 w-3" />}
+                                        {t(req.accountType)}
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="text-right space-x-2">
@@ -101,7 +102,7 @@ const AdminManagement = () => {
 
     const handleDeleteAdmin = (id: number) => {
         const adminToDelete = admins.find(a => a.id === id);
-        if (adminToDelete?.role === 'Super Admin') {
+        if (adminToDelete?.accountType === 'Super Admin') {
             toast({
                 title: t('Action Forbidden'),
                 description: t('The Super Admin account cannot be deleted.'),
@@ -152,7 +153,7 @@ const AdminManagement = () => {
                         <TableRow>
                             <TableHead>{t('Name')}</TableHead>
                             <TableHead>{t('Email')}</TableHead>
-                            <TableHead>{t('Role')}</TableHead>
+                            <TableHead>{t('Account Type')}</TableHead>
                             <TableHead className="text-right">{t('Actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -162,13 +163,13 @@ const AdminManagement = () => {
                                 <TableCell className="font-medium">{admin.name}</TableCell>
                                 <TableCell>{admin.email}</TableCell>
                                 <TableCell>
-                                    <Badge variant={admin.role === 'Super Admin' ? 'default' : 'secondary'}>
-                                        {admin.role === 'Super Admin' && <Crown className="mr-1 h-3 w-3" />}
-                                        {t(admin.role)}
+                                    <Badge variant={admin.accountType === 'Super Admin' ? 'default' : 'secondary'}>
+                                        {admin.accountType === 'Super Admin' && <Crown className="mr-1 h-3 w-3" />}
+                                        {t(admin.accountType)}
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <Button size="icon" variant="ghost" onClick={() => handleDeleteAdmin(admin.id)} disabled={admin.role === 'Super Admin'}>
+                                    <Button size="icon" variant="ghost" onClick={() => handleDeleteAdmin(admin.id)} disabled={admin.accountType === 'Super Admin'}>
                                         <Trash2 className="h-4 w-4 text-destructive" />
                                     </Button>
                                 </TableCell>

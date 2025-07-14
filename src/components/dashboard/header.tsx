@@ -34,11 +34,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useSidebar } from "./sidebar"
 import { useLocalization } from "@/context/localization-context"
-import { useAuth, type Role } from "@/context/auth-context"
+import { useAuth, type AccountType } from "@/context/auth-context"
 import { cn } from "@/lib/utils"
 
 
-const getNotificationsByRole = (t: (key: string) => string, role: Role) => {
+const getNotificationsByRole = (t: (key: string) => string, accountType: AccountType) => {
     const baseNotifications = {
         graduate: [
             { id: 1, icon: Briefcase, text: t('New job matching your profile: Software Engineer at TechCorp'), time: "5m ago", read: false },
@@ -58,20 +58,20 @@ const getNotificationsByRole = (t: (key: string) => string, role: Role) => {
         ]
     };
 
-    return baseNotifications[role] || [];
+    return baseNotifications[accountType] || [];
 };
 
 export function DashboardHeader() {
   const { toggleSidebar } = useSidebar();
   const { t, setLanguage } = useLocalization();
-  const { role, setRole } = useAuth();
+  const { accountType } = useAuth();
   
-  const [notifications, setNotifications] = React.useState(getNotificationsByRole(t, role));
+  const [notifications, setNotifications] = React.useState(getNotificationsByRole(t, accountType));
   const unreadCount = notifications.filter(n => !n.read).length;
   
   React.useEffect(() => {
-    setNotifications(getNotificationsByRole(t, role));
-  }, [role, t]);
+    setNotifications(getNotificationsByRole(t, accountType));
+  }, [accountType, t]);
   
   const handleRead = (id: number) => {
     setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
@@ -112,23 +112,7 @@ export function DashboardHeader() {
             />
           </div>
         </form>
-         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Users className="h-[1.2rem] w-[1.2rem]" />
-                <span className="sr-only">{t('Switch Role')}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{t('Switch Role')}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setRole('graduate')}>{t('Graduate')}</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setRole('company')}>{t('Company')}</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setRole('school')}>{t('School')}</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setRole('admin')}>{t('Admin')}</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
+        
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon" className="relative">
@@ -185,5 +169,3 @@ export function DashboardHeader() {
     </header>
   )
 }
-
-    

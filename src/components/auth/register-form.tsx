@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select"
 import { Logo } from "@/components/logo"
 import { useLocalization } from "@/context/localization-context"
-import type { Role } from "@/context/auth-context"
+import type { AccountType } from "@/context/auth-context"
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -38,10 +38,10 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function RegisterForm() {
   const { t } = useLocalization();
-  const [role, setRole] = React.useState<Role | ''>('');
+  const [accountType, setAccountType] = React.useState<AccountType | ''>('');
 
-  const handleRoleChange = (value: string) => {
-    setRole(value as Role);
+  const handleAccountTypeChange = (value: string) => {
+    setAccountType(value as AccountType);
   };
   
   return (
@@ -58,10 +58,10 @@ export function RegisterForm() {
       <CardContent>
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="role">{t('I am a...')}</Label>
-            <Select onValueChange={handleRoleChange}>
-              <SelectTrigger>
-                <SelectValue placeholder={t('Select your role')} />
+            <Label htmlFor="account-type">{t('I am a...')}</Label>
+            <Select onValueChange={handleAccountTypeChange}>
+              <SelectTrigger id="account-type">
+                <SelectValue placeholder={t('Select your account type')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="graduate">{t('Graduate')}</SelectItem>
@@ -70,26 +70,26 @@ export function RegisterForm() {
               </SelectContent>
             </Select>
           </div>
-          {role && (
+          {accountType && (
             <>
               <div className="grid gap-2">
-                <Label htmlFor="full-name">{t('Full name')}</Label>
+                <Label htmlFor="full-name">{accountType === 'graduate' ? t('Full name') : t('Contact Person Name')}</Label>
                 <Input id="full-name" placeholder="Max Robinson" required />
               </div>
 
-              {role === 'company' && (
+              {accountType === 'company' && (
                   <div className="grid gap-2">
                       <Label htmlFor="company-name">{t('Company Name')}</Label>
                       <Input id="company-name" placeholder="Innovate Inc." required />
                   </div>
               )}
-              {role === 'school' && (
+              {accountType === 'school' && (
                   <div className="grid gap-2">
                       <Label htmlFor="school-name">{t('School Name')}</Label>
                       <Input id="school-name" placeholder="Prestige University" required />
                   </div>
               )}
-               {role === 'graduate' && (
+               {accountType === 'graduate' && (
                   <div className="grid gap-2">
                       <Label htmlFor="graduate-school">{t('School/University')}</Label>
                        <Select>

@@ -13,20 +13,20 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { useLocalization } from "@/context/localization-context"
-import { useAuth, type Role } from "@/context/auth-context"
+import { useAuth, type AccountType } from "@/context/auth-context"
 
 export function UserNav() {
   const { t } = useLocalization();
-  const { role } = useAuth();
+  const { accountType } = useAuth();
 
-  const roleName: Record<Role, string> = {
+  const accountTypeName: Record<AccountType, string> = {
     'graduate': t('Graduate Account'),
     'company': t('Company Account'),
     'school': t('School Account'),
     'admin': t('Admin Account'),
   }
 
-  const profileLink: Record<Role, string> = {
+  const profileLink: Record<AccountType, string> = {
     'graduate': '/dashboard/profile',
     'company': '/dashboard/company-profile',
     'school': '/dashboard/school-profile',
@@ -54,12 +54,12 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuLabel className="font-normal text-xs text-muted-foreground">
-            {roleName[role]}
+            {accountTypeName[accountType]}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href={profileLink[role]}>{t('Profile')}</Link>
+            <Link href={profileLink[accountType]}>{t('Profile')}</Link>
           </DropdownMenuItem>
            <DropdownMenuItem asChild>
             <Link href="/dashboard/settings">{t('Settings')}</Link>

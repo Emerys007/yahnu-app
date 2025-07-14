@@ -29,10 +29,10 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent } from "../ui/sheet";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 import { useLocalization } from "@/context/localization-context";
-import type { Role } from "@/context/auth-context";
+import type { AccountType } from "@/context/auth-context";
 import { useAuth } from "@/context/auth-context";
 
-const getNavItems = (t: (key: string) => string, role: Role) => {
+const getNavItems = (t: (key: string) => string, accountType: AccountType) => {
   const baseNav = [
     { href: "/dashboard", icon: LayoutDashboard, label: t('Dashboard') },
   ];
@@ -74,7 +74,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
       { href: "/dashboard/support", icon: LifeBuoy, label: t('Support') },
   ]
 
-  switch (role) {
+  switch (accountType) {
     case 'graduate':
       return [...graduateNav, ...bottomNav];
     case 'company':
@@ -124,9 +124,9 @@ export function DashboardSidebar() {
   const { isCollapsed } = useSidebar();
   const isMobile = useIsMobile();
   const { t } = useLocalization();
-  const { role } = useAuth();
+  const { accountType } = useAuth();
 
-  const navItems = getNavItems(t, role);
+  const navItems = getNavItems(t, accountType);
 
   const renderNavItem = (item: any, index: number) => {
     if (item.type === 'divider') {
