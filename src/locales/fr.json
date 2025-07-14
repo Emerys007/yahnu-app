@@ -512,5 +512,24 @@
     "Breakdown of user types on the platform.": "Répartition des types d'utilisateurs sur la plateforme.",
     "Content Moderator": "Modérateur de contenu",
     "Support Staff": "Personnel de soutien",
-    "Select role": "Sélectionner un rôle"
+    "Select role": "Sélectionner un rôle",
+    "Manage Users": "Gérer les utilisateurs",
+    "Manage User": "Gérer l'utilisateur",
+    "Update user roles, status, or remove them from the platform.": "Mettez à jour les rôles, le statut ou supprimez les utilisateurs de la plateforme.",
+    "Change Role": "Changer le rôle",
+    "Select a role": "Sélectionner un rôle",
+    "Save Role": "Enregistrer le rôle",
+    "Change Status": "Changer le statut",
+    "Suspend": "Suspendre",
+    "Delete User": "Supprimer l'utilisateur",
+    "Are you absolutely sure?": "Êtes-vous absolument sûr ?",
+    "This action cannot be undone. This will permanently delete the user account and remove their data from our servers.": "Cette action est irréversible. Elle supprimera définitivement le compte de l'utilisateur et ses données de nos serveurs.",
+    "Cancel": "Annuler",
+    "Yes, delete user": "Oui, supprimer l'utilisateur",
+    "Status Updated": "Statut mis à jour",
+    "Role Updated": "Rôle mis à jour",
+    "User Deleted": "Utilisateur supprimé",
+    "has been removed from the platform.": "a été supprimé(e) de la plateforme."
 }
+
+    

@@ -512,5 +512,24 @@
     "Breakdown of user types on the platform.": "Breakdown of user types on the platform.",
     "Content Moderator": "Content Moderator",
     "Support Staff": "Support Staff",
-    "Select role": "Select role"
+    "Select role": "Select role",
+    "Manage Users": "Manage Users",
+    "Manage User": "Manage User",
+    "Update user roles, status, or remove them from the platform.": "Update user roles, status, or remove them from the platform.",
+    "Change Role": "Change Role",
+    "Select a role": "Select a role",
+    "Save Role": "Save Role",
+    "Change Status": "Change Status",
+    "Suspend": "Suspend",
+    "Delete User": "Delete User",
+    "Are you absolutely sure?": "Are you absolutely sure?",
+    "This action cannot be undone. This will permanently delete the user account and remove their data from our servers.": "This action cannot be undone. This will permanently delete the user account and remove their data from our servers.",
+    "Cancel": "Cancel",
+    "Yes, delete user": "Yes, delete user",
+    "Status Updated": "Status Updated",
+    "Role Updated": "Role Updated",
+    "User Deleted": "User Deleted",
+    "has been removed from the platform.": "has been removed from the platform."
 }
+
+    
