@@ -1,8 +1,10 @@
+
 "use client"
 
 import * as React from 'react';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
+import { cn } from '@/lib/utils';
 
 export const Logo = (props: { className?: string }) => {
   const { resolvedTheme } = useTheme();
@@ -16,16 +18,17 @@ export const Logo = (props: { className?: string }) => {
 
   if (!mounted) {
     // Render a placeholder to prevent layout shift and hydration errors
-    return <div className={props.className} style={{ aspectRatio: '1 / 1' }} />;
+    return <div className={cn(props.className)} style={{ aspectRatio: '1 / 1' }} />;
   }
 
   return (
-    <div className={props.className}>
+    <div className={cn(props.className, "transition-opacity duration-300")}>
         <Image 
             src={src} 
             alt="Yahnu Logo" 
-            width={100} 
+            width={100}
             height={100}
+            sizes="100vw"
             className="w-full h-full"
             priority
         />
