@@ -6,9 +6,17 @@ import Link from 'next/link';
 import { LoginForm } from '@/components/auth/login-form';
 import { Logo } from '@/components/logo';
 import { useLocalization } from '@/context/localization-context';
+import React, { useState, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function LoginPage() {
   const { t } = useLocalization();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       <div className="hidden bg-primary/10 lg:flex flex-col items-center justify-center p-12">
@@ -33,7 +41,13 @@ export default function LoginPage() {
       </div>
       <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background">
         <div className="w-full max-w-md space-y-8">
-            <LoginForm />
+            {isClient ? (
+              <LoginForm />
+            ) : (
+              <div className="w-full max-w-sm mx-auto">
+                <Skeleton className="h-[480px] w-full" />
+              </div>
+            )}
         </div>
       </div>
     </div>
