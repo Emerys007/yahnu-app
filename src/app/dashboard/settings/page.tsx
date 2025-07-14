@@ -10,36 +10,44 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2 } from "lucide-react"
+import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, SchoolIcon } from "lucide-react"
+
+// #region Shared Settings
+const UserAccountSettings = () => {
+    const { t } = useLocalization();
+    return (
+        <Card>
+            <CardHeader>
+              <CardTitle>{t('Account Information')}</CardTitle>
+              <CardDescription>{t('Manage your personal and login details.')}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label htmlFor="name">{t('Full Name')}</Label>
+                  <Input id="name" defaultValue="John Doe" />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="email">{t('Email Address')}</Label>
+                  <Input id="email" type="email" defaultValue="user@example.com" />
+                </div>
+              </div>
+              <Button variant="outline">{t('Change Password')}</Button>
+            </CardContent>
+        </Card>
+    )
+}
+// #endregion
 
 // #region Graduate Settings
 const GraduateSettings = () => {
   const { t } = useLocalization()
   return (
     <div className="space-y-8">
+      <UserAccountSettings />
       <Card>
         <CardHeader>
-          <CardTitle>{t('Account Information')}</CardTitle>
-          <CardDescription>{t('Manage your personal and login details.')}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <Label htmlFor="name">{t('Full Name')}</Label>
-              <Input id="name" defaultValue="John Doe" />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="email">{t('Email Address')}</Label>
-              <Input id="email" type="email" defaultValue="user@example.com" />
-            </div>
-          </div>
-          <Button variant="outline">{t('Change Password')}</Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('Profile Settings')}</CardTitle>
+          <CardTitle>{t('Profile Visibility')}</CardTitle>
           <CardDescription>{t('Control the visibility of your professional profile.')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -86,23 +94,7 @@ const CompanySettings = () => {
     const { t } = useLocalization();
     return (
         <div className="space-y-8">
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t('Organization Settings')}</CardTitle>
-                    <CardDescription>{t('Manage your company\'s public profile and branding.')}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="space-y-1">
-                        <Label htmlFor="company-name">{t('Company Name')}</Label>
-                        <Input id="company-name" defaultValue="Innovate Inc." />
-                    </div>
-                     <div className="space-y-1">
-                        <Label htmlFor="company-website">{t('Website')}</Label>
-                        <Input id="company-website" defaultValue="https://innovate.inc" />
-                    </div>
-                </CardContent>
-            </Card>
-
+            <UserAccountSettings />
             <Card>
                 <CardHeader>
                     <CardTitle>{t('Team Members')}</CardTitle>
@@ -144,22 +136,7 @@ const SchoolSettings = () => {
     const { t } = useLocalization();
     return (
         <div className="space-y-8">
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t('Institution Profile')}</CardTitle>
-                    <CardDescription>{t('Manage your school\'s public information.')}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="space-y-1">
-                        <Label htmlFor="school-name">{t('School Name')}</Label>
-                        <Input id="school-name" defaultValue="Institut National Polytechnique Félix Houphouët-Boigny" />
-                    </div>
-                     <div className="space-y-1">
-                        <Label htmlFor="school-website">{t('Website')}</Label>
-                        <Input id="school-website" defaultValue="https://www.inphb.ci" />
-                    </div>
-                </CardContent>
-            </Card>
+            <UserAccountSettings />
              <Card>
                 <CardHeader>
                     <CardTitle>{t('Key Contacts')}</CardTitle>
@@ -173,6 +150,15 @@ const SchoolSettings = () => {
                      <div className="space-y-1">
                         <Label htmlFor="contact-email">{t('Contact Email')}</Label>
                         <Input id="contact-email" type="email" defaultValue="partnerships@inphb.ci" />
+                    </div>
+                     <div className="flex items-center justify-between rounded-lg border p-4 mt-4">
+                        <div className="space-y-0.5">
+                        <Label className="text-base">{t('Partnership Requests')}</Label>
+                        <p className="text-sm text-muted-foreground">
+                            {t('Receive email notifications for new company partnership requests.')}
+                        </p>
+                        </div>
+                        <Switch defaultChecked />
                     </div>
                 </CardContent>
             </Card>
@@ -190,16 +176,16 @@ const settingsComponents: Record<Role, React.ComponentType> = {
 
 const pageConfig: Record<Role, { icon: React.ElementType; title: string; description: string }> = {
     graduate: { icon: User, title: 'Your Settings', description: 'Manage your personal account details, profile visibility, and notifications.' },
-    company: { icon: Building, title: 'Company Settings', description: 'Manage your organization settings, team members, and billing.' },
-    school: { icon: Building, title: 'School Settings', description: 'Manage your institution\'s public profile and primary contacts.' },
+    company: { icon: Building, title: 'Company Settings', description: 'Manage your personal account, team members, and billing.' },
+    school: { icon: SchoolIcon, title: 'School Settings', description: 'Manage your personal account and institution contacts.' },
 }
 
 export default function SettingsPage() {
   const { role } = useAuth()
   const { t } = useLocalization()
 
-  const ActiveSettingsComponent = settingsComponents[role]
-  const { icon: Icon, title, description } = pageConfig[role];
+  const ActiveSettingsComponent = settingsComponents[role] || GraduateSettings;
+  const { icon: Icon, title, description } = pageConfig[role] || pageConfig.graduate;
 
   return (
     <div className="space-y-8">
