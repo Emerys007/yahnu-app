@@ -1,3 +1,4 @@
+
 "use client"
 
 import { MainNav } from "@/components/landing/main-nav";
@@ -102,11 +103,13 @@ export default function SchoolsPage() {
                             <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
                                 <MapPin className="h-4 w-4"/> {school.location}
                             </div>
-                             <Button asChild className="mt-6 w-full">
-                                <div className="flex items-center justify-center">
-                                    {t('Explore Programs')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"/>
-                                </div>
-                            </Button>
+                             <div className="mt-6 flex-grow flex items-end">
+                                <Button asChild className="w-full">
+                                    <div className="flex items-center justify-center">
+                                        {t('Explore Programs')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"/>
+                                    </div>
+                                </Button>
+                             </div>
                         </CardContent>
                     </Card>
                 </Link>

@@ -1,3 +1,4 @@
+
 "use client"
 
 import { MainNav } from "@/components/landing/main-nav";
@@ -125,7 +126,7 @@ export default function CompaniesPage() {
                         <div className="flex-grow text-center md:text-left">
                             <h2 className="text-2xl font-bold">{company.name}</h2>
                             <p className="text-muted-foreground italic">"{company.tagline}"</p>
-                            <div className="flex items-center justify-center md:justify-start gap-4 mt-2 text-sm text-muted-foreground">
+                            <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 mt-2 text-sm text-muted-foreground">
                                 <span className="flex items-center gap-1"><Building className="h-4 w-4"/> {company.industry}</span>
                                 <span className="flex items-center gap-1"><MapPin className="h-4 w-4"/> {company.location}</span>
                             </div>
@@ -134,14 +135,14 @@ export default function CompaniesPage() {
                             <h3 className="font-semibold mb-2 text-primary">{t('Featured Positions')}:</h3>
                             <ul className="space-y-1 text-sm">
                                 {company.featuredJobs.map((job) => (
-                                    <li key={job} className="flex items-center gap-2">
+                                    <li key={job} className="flex items-center gap-2 justify-center md:justify-start">
                                         <Briefcase className="h-4 w-4 text-muted-foreground"/> 
                                         <span>{job}</span>
                                     </li>
                                 ))}
                             </ul>
                         </div>
-                        <div className="self-center">
+                        <div className="self-center mt-4 md:mt-0">
                             <Button>
                                 {t('View Profile')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"/>
                             </Button>

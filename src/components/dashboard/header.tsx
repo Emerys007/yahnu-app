@@ -1,3 +1,4 @@
+
 "use client"
 import Link from "next/link"
 import {
@@ -46,13 +47,13 @@ export function DashboardHeader() {
             <span className="sr-only">{t('Toggle navigation menu')}</span>
           </Button>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 justify-end">
-        <form className="flex-1 sm:flex-initial max-w-sm">
+        <form className="ml-auto hidden sm:flex-initial">
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder={t('Search...')}
-              className="pl-8 w-full"
+              className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
             />
           </div>
         </form>

@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -8,6 +9,11 @@ export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
+    // Client-side only check
+    if (typeof window === 'undefined') {
+        return;
+    }
+
     const checkDevice = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     };

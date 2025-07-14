@@ -32,7 +32,9 @@ export function LoginForm() {
     <Card className="mx-auto max-w-sm">
       <CardHeader>
         <div className="flex justify-center mb-4 lg:hidden">
-            <Logo className="h-12 w-12 text-primary" />
+            <Link href="/" aria-label="Back to home">
+              <Logo className="h-12 w-12 text-primary" />
+            </Link>
         </div>
         <CardTitle className="text-2xl text-center">{t('Welcome Back')}</CardTitle>
         <CardDescription className="text-center">
@@ -72,7 +74,7 @@ export function LoginForm() {
         </div>
         <div className="mt-4 text-center text-sm">
           {t('Don\'t have an account?')}
-          <Link href="/register" className="underline">
+          <Link href="/register" className="underline ml-1">
             {t('Sign up')}
           </Link>
         </div>
