@@ -1,5 +1,7 @@
+
 "use client"
 
+import React from 'react'
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
@@ -21,6 +23,7 @@ import {
 } from "@/components/ui/select"
 import { Logo } from "@/components/logo"
 import { useLocalization } from "@/context/localization-context"
+import type { Role } from "@/context/auth-context"
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -35,6 +38,12 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function RegisterForm() {
   const { t } = useLocalization();
+  const [role, setRole] = React.useState<Role | ''>('');
+
+  const handleRoleChange = (value: string) => {
+    setRole(value as Role);
+  };
+  
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
@@ -49,25 +58,8 @@ export function RegisterForm() {
       <CardContent>
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="full-name">{t('Full name')}</Label>
-            <Input id="full-name" placeholder="Max Robinson" required />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="email">{t('Email')}</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="password">{t('Password')}</Label>
-            <Input id="password" type="password" />
-          </div>
-          <div className="grid gap-2">
             <Label htmlFor="role">{t('I am a...')}</Label>
-            <Select>
+            <Select onValueChange={handleRoleChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('Select your role')} />
               </SelectTrigger>
@@ -78,17 +70,77 @@ export function RegisterForm() {
               </SelectContent>
             </Select>
           </div>
-          <Button type="submit" className="w-full" asChild>
-            <Link href="/dashboard">{t('Create an account')}</Link>
-          </Button>
-          <Button variant="outline" className="w-full">
-             <GoogleIcon className="mr-2" />
-            {t('Sign up with Google')}
-          </Button>
+          {role && (
+            <>
+              <div className="grid gap-2">
+                <Label htmlFor="full-name">{t('Full name')}</Label>
+                <Input id="full-name" placeholder="Max Robinson" required />
+              </div>
+
+              {role === 'company' && (
+                  <div className="grid gap-2">
+                      <Label htmlFor="company-name">{t('Company Name')}</Label>
+                      <Input id="company-name" placeholder="Innovate Inc." required />
+                  </div>
+              )}
+              {role === 'school' && (
+                  <div className="grid gap-2">
+                      <Label htmlFor="school-name">{t('School Name')}</Label>
+                      <Input id="school-name" placeholder="Prestige University" required />
+                  </div>
+              )}
+               {role === 'graduate' && (
+                  <div className="grid gap-2">
+                      <Label htmlFor="graduate-school">{t('School/University')}</Label>
+                       <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder={t('Select your school')} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="inphb">INP-HB</SelectItem>
+                            <SelectItem value="ufhb">UFHB</SelectItem>
+                            <SelectItem value="csi">Groupe CSI</SelectItem>
+                          </SelectContent>
+                        </Select>
+                  </div>
+              )}
+
+              <div className="grid gap-2">
+                <Label htmlFor="email">{t('Email')}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="password">{t('Password')}</Label>
+                <Input id="password" type="password" />
+              </div>
+              
+              <Button type="submit" className="w-full" asChild>
+                <Link href="/login">{t('Create an account')}</Link>
+              </Button>
+              <div className="relative my-2">
+                <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">OR</span>
+                </div>
+              </div>
+              <Button variant="outline" className="w-full">
+                 <GoogleIcon className="mr-2" />
+                {t('Sign up with Google')}
+              </Button>
+            </>
+          )}
+
         </div>
         <div className="mt-4 text-center text-sm">
           {t('Already have an account?')}
-          <Link href="/login" className="underline">
+          <Link href="/login" className="underline ml-1">
             {t('Sign in')}
           </Link>
         </div>

@@ -3,7 +3,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type Role = 'graduate' | 'company' | 'school';
+export type Role = 'graduate' | 'company' | 'school' | 'admin';
 
 type AuthContextType = {
   role: Role;

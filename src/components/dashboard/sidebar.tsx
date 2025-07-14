@@ -19,7 +19,9 @@ import {
   School,
   FileText,
   Users2,
-  Handshake
+  Handshake,
+  Shield,
+  UserCheck
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -54,8 +56,14 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   const schoolNav = [
     ...baseNav,
     { href: "/dashboard/school-profile", icon: School, label: t('School Profile')},
+    { href: "/dashboard/graduate-management", icon: UserCheck, label: t('Graduate Management')},
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
+  ];
+
+  const adminNav = [
+    ...baseNav,
+    { href: "/dashboard/admin", icon: Shield, label: t('Admin Panel') },
   ];
   
   const bottomNav = [
@@ -71,6 +79,8 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
       return [...companyNav, ...bottomNav];
     case 'school':
       return [...schoolNav, ...bottomNav];
+    case 'admin':
+      return [...adminNav, ...bottomNav];
     default:
       return [...baseNav, ...bottomNav];
   }

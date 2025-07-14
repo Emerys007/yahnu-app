@@ -23,6 +23,14 @@ export function UserNav() {
     'graduate': t('Graduate Account'),
     'company': t('Company Account'),
     'school': t('School Account'),
+    'admin': t('Admin Account'),
+  }
+
+  const profileLink: Record<Role, string> = {
+    'graduate': '/dashboard/profile',
+    'company': '/dashboard/company-profile',
+    'school': '/dashboard/school-profile',
+    'admin': '/dashboard/settings',
   }
 
   return (
@@ -51,7 +59,10 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/settings">{t('Profile Settings')}</Link>
+            <Link href={profileLink[role]}>{t('Profile')}</Link>
+          </DropdownMenuItem>
+           <DropdownMenuItem asChild>
+            <Link href="/dashboard/settings">{t('Settings')}</Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
