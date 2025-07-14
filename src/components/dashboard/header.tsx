@@ -13,7 +13,8 @@ import {
   UserCheck,
   Handshake,
   Check,
-  X
+  X,
+  Shield
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -50,8 +51,8 @@ const getNotificationsByRole = (t: (key: string) => string, role: Role) => {
             { id: 2, icon: Briefcase, text: '5 graduates from your institution were hired this month', time: "2d ago", read: true },
         ],
         admin: [
-            { id: 1, icon: Briefcase, text: t('New company "Innovate Inc." requires approval'), time: "10m ago", read: false },
-            { id: 2, icon: UserCheck, text: t('New school "Prestige University" requires approval'), time: "1h ago", read: false },
+            { id: 1, icon: Building, text: t('New company "Innovate Inc." requires approval'), time: "10m ago", read: false },
+            { id: 2, icon: School, text: t('New school "Prestige University" requires approval'), time: "1h ago", read: false },
         ]
     };
 
@@ -145,7 +146,7 @@ export function DashboardHeader() {
                     notifications.map((item) => (
                          <DropdownMenuItem key={item.id} className="flex items-start gap-3" onClick={() => handleRead(item.id)}>
                             {!item.read && <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />}
-                            <item.icon className={cn("h-4 w-4 mt-1 text-muted-foreground", item.read && "ml-3")} />
+                            <item.icon className={cn("h-4 w-4 mt-1 text-muted-foreground", item.read && "ml-[14px]")} />
                             <div className="flex-1">
                                 <p className="text-sm font-medium whitespace-normal">{item.text}</p>
                                 <p className="text-xs text-muted-foreground">{item.time}</p>
