@@ -4,7 +4,7 @@
 import Link from "next/link"
 import React from 'react';
 import { usePathname } from "next/navigation"
-import { AnimatePresence, motion } from "framer-motion"
+import { motion } from "framer-motion"
 import { Logo } from "@/components/logo"
 import { cn } from "@/lib/utils"
 import {
@@ -16,7 +16,6 @@ import {
   BarChart3,
   LifeBuoy,
   Settings,
-  BookUser,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -49,23 +48,24 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     ...baseNav,
     { href: "/dashboard/reports", icon: BarChart3, label: t('Reports') },
   ];
+  
+  const bottomNav = [
+      { type: "divider", label: t('Help & Settings')},
+      { href: "/dashboard/settings", icon: Settings, label: t('Settings') },
+      { href: "/dashboard/support", icon: LifeBuoy, label: t('Support') },
+  ]
 
   switch (role) {
     case 'graduate':
-      return graduateNav;
+      return [...graduateNav, ...bottomNav];
     case 'company':
-      return companyNav;
+      return [...companyNav, ...bottomNav];
     case 'school':
-      return schoolNav;
+      return [...schoolNav, ...bottomNav];
     default:
-      return baseNav;
+      return [...baseNav, ...bottomNav];
   }
 }
-
-const getHelpAndSettingsItems = (t: (key: string) => string) => [
-    { href: "/dashboard/support", icon: LifeBuoy, label: t('Support') },
-    { href: "/dashboard/settings", icon: Settings, label: t('Settings') },
-]
 
 type SidebarContextType = {
   isCollapsed: boolean;
@@ -106,7 +106,6 @@ export function DashboardSidebar() {
   const { role } = useAuth();
 
   const navItems = getNavItems(t, role);
-  const helpAndSettingsItems = getHelpAndSettingsItems(t);
 
   const renderNavItem = (item: any, index: number) => {
     if (item.type === 'divider') {
@@ -184,9 +183,6 @@ export function DashboardSidebar() {
         <nav className="flex-1 px-4 py-4 space-y-1">
             {navItems.map(renderNavItem)}
         </nav>
-      </div>
-      <div className="mt-auto p-4 space-y-1 border-t">
-            {helpAndSettingsItems.map(renderNavItem)}
       </div>
     </>
   );
