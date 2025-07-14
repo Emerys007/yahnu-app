@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { User, Mail, Phone, GraduationCap, University, Briefcase, Award, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 const graduatesData = {
   en: [
@@ -36,6 +37,42 @@ const graduatesData = {
       experience: "Marketing Intern at Finance & Forte. Assisted in market research and creating marketing campaigns. Managed social media accounts and analyzed engagement metrics.",
       education: "Bachelor's Degree in Business Administration, UFHB (2023)",
     },
+    { 
+      name: "Chloe Dubois", 
+      slug: "chloe-dubois",
+      school: "Groupe CSI", 
+      field: "Electrical Engineering", 
+      email: "chloe.dubois@example.com",
+      phone: "+225 03 04 05 06 07",
+      skills: ["AutoCAD", "PLC", "Matlab", "Circuit Design", "Power Systems"], 
+      available: true,
+      experience: "Intern at Ivoirienne d'Électricité. Assisted in the design and maintenance of electrical grids. Conducted simulations using Matlab.",
+      education: "Bachelor's Degree in Electrical Engineering, Groupe CSI (2023)",
+    },
+    { 
+      name: "David Kone", 
+      slug: "david-kone",
+      school: "INP-HB", 
+      field: "Agronomy", 
+      email: "david.kone@example.com",
+      phone: "+225 04 05 06 07 08",
+      skills: ["Crop Science", "Soil Analysis", "Pest Management", "GIS", "Sustainable Agriculture"], 
+      available: true,
+      experience: "Field Agronomist at AgriBiz Côte d'Ivoire. Conducted soil and crop analysis to improve yield. Implemented sustainable farming practices.",
+      education: "Master's Degree in Agronomy, INP-HB (2021)",
+    },
+    { 
+      name: "Elise Fofana", 
+      slug: "elise-fofana",
+      school: "UFHB", 
+      field: "Finance", 
+      email: "elise.fofana@example.com",
+      phone: "+225 05 06 07 08 09",
+      skills: ["Financial Modeling", "Excel", "Valuation", "Risk Analysis", "Bloomberg Terminal"], 
+      available: true,
+      experience: "Financial Analyst at Finance & Forte. Developed financial models for investment valuation. Conducted market research and risk analysis.",
+      education: "Master's Degree in Finance, UFHB (2022)",
+    },
   ],
   fr: [
     { 
@@ -61,6 +98,42 @@ const graduatesData = {
       available: false,
       experience: "Stagiaire en marketing chez Finance & Forte. A assisté à la recherche de marché et à la création de campagnes marketing. A géré les comptes de médias sociaux et analysé les métriques d'engagement.",
       education: "Licence en Administration des Affaires, UFHB (2023)",
+    },
+    { 
+      name: "Chloe Dubois", 
+      slug: "chloe-dubois",
+      school: "Groupe CSI", 
+      field: "Génie Électrique", 
+      email: "chloe.dubois@example.com",
+      phone: "+225 03 04 05 06 07",
+      skills: ["AutoCAD", "API", "Matlab", "Conception de circuits", "Systèmes d'alimentation"], 
+      available: true,
+      experience: "Stagiaire à l'Ivoirienne d'Électricité. A participé à la conception et à la maintenance des réseaux électriques. A réalisé des simulations avec Matlab.",
+      education: "Licence en Génie Électrique, Groupe CSI (2023)",
+    },
+    { 
+      name: "David Kone", 
+      slug: "david-kone",
+      school: "INP-HB", 
+      field: "Agronomie", 
+      email: "david.kone@example.com",
+      phone: "+225 04 05 06 07 08",
+      skills: ["Phytotechnie", "Analyse de sol", "Lutte antiparasitaire", "SIG", "Agriculture durable"], 
+      available: true,
+      experience: "Agronome de terrain chez AgriBiz Côte d'Ivoire. A effectué des analyses de sol et de culture pour améliorer le rendement. A mis en œuvre des pratiques agricoles durables.",
+      education: "Master en Agronomie, INP-HB (2021)",
+    },
+    { 
+      name: "Elise Fofana", 
+      slug: "elise-fofana",
+      school: "UFHB", 
+      field: "Finance", 
+      email: "elise.fofana@example.com",
+      phone: "+225 05 06 07 08 09",
+      skills: ["Modélisation financière", "Excel", "Évaluation", "Analyse des risques", "Terminal Bloomberg"], 
+      available: true,
+      experience: "Analyste financier chez Finance & Forte. A développé des modèles financiers pour l'évaluation des investissements. A effectué des études de marché et des analyses de risques.",
+      education: "Master en Finance, UFHB (2022)",
     },
   ]
 };
