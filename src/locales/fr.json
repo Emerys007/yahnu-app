@@ -302,12 +302,10 @@
     "means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.": "désigne la personne physique qui accède ou utilise le service, ou la société ou autre entité juridique au nom de laquelle cette personne accède ou utilise le service, selon le cas.",
     "Collecting and Using Your Personal Data": "Collecte et utilisation de vos données personnelles",
     "Types of Data Collected": "Types de données collectées",
-    "Personal Data": "Données personnelles",
     "While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:": "Lors de l'utilisation de notre service, nous pouvons vous demander de nous fournir certaines informations personnellement identifiables qui peuvent être utilisées pour vous contacter ou vous identifier. Les informations personnellement identifiables peuvent inclure, sans s'y limiter :",
     "Email address": "Adresse e-mail",
     "First name and last name": "Prénom et nom",
     "Phone number": "Numéro de téléphone",
-    "Usage Data": "Données d'utilisation",
     "Use of Your Personal Data": "Utilisation de vos données personnelles",
     "The Company may use Personal Data for the following purposes:": "La société peut utiliser les données personnelles aux fins suivantes :",
     "To provide and maintain our Service, including to monitor the usage of our Service.": "Fournir et maintenir notre service, y compris pour surveiller l'utilisation de notre service.",
@@ -424,5 +422,9 @@
     "Your school's profile has been saved successfully.": "Le profil de votre école a été enregistré avec succès.",
     "Profile Settings": "Paramètres du profil",
     "Receive email notifications for new company partnership requests.": "Recevoir des notifications par e-mail pour les nouvelles demandes de partenariat d'entreprise.",
-    "Partnership Requests": "Demandes de partenariat"
+    "Partnership Requests": "Demandes de partenariat",
+    "Request Partnership": "Demander un partenariat",
+    "Request Sent": "Demande envoyée",
+    "Your partnership request to": "Votre demande de partenariat à",
+    "has been sent.": "a été envoyée."
   }

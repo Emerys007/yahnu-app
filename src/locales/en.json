@@ -302,12 +302,10 @@
     "means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.": "means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.",
     "Collecting and Using Your Personal Data": "Collecting and Using Your Personal Data",
     "Types of Data Collected": "Types of Data Collected",
-    "Personal Data": "Personal Data",
     "While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:": "While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:",
     "Email address": "Email address",
     "First name and last name": "First name and last name",
     "Phone number": "Phone number",
-    "Usage Data": "Usage Data",
     "Use of Your Personal Data": "Use of Your Personal Data",
     "The Company may use Personal Data for the following purposes:": "The Company may use Personal Data for the following purposes:",
     "To provide and maintain our Service, including to monitor the usage of our Service.": "To provide and maintain our Service, including to monitor the usage of our Service.",
@@ -424,5 +422,9 @@
     "Your school's profile has been saved successfully.": "Your school's profile has been saved successfully.",
     "Profile Settings": "Profile Settings",
     "Receive email notifications for new company partnership requests.": "Receive email notifications for new company partnership requests.",
-    "Partnership Requests": "Partnership Requests"
+    "Partnership Requests": "Partnership Requests",
+    "Request Partnership": "Request Partnership",
+    "Request Sent": "Request Sent",
+    "Your partnership request to": "Your partnership request to",
+    "has been sent.": "has been sent."
   }

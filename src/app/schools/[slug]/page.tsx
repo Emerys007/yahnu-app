@@ -7,8 +7,9 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe } from "lucide-react";
+import { MapPin, Globe, Handshake } from "lucide-react";
 import { useLocalization } from "@/context/localization-context";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock Data
 const schoolsData = {
@@ -53,11 +54,19 @@ const schoolsData = {
 
 export default function SchoolPage({ params }: { params: { slug: string } }) {
   const { language, t } = useLocalization();
+  const { toast } = useToast();
   const schools = schoolsData[language as keyof typeof schoolsData] || schoolsData.en;
   const school = schools.find((s) => s.slug === params.slug);
 
   if (!school) {
     notFound();
+  }
+  
+  const handleRequestPartnership = () => {
+    toast({
+        title: t('Request Sent'),
+        description: `${t('Your partnership request to')} ${school.name} ${t('has been sent.')}`
+    })
   }
 
   return (
@@ -71,20 +80,26 @@ export default function SchoolPage({ params }: { params: { slug: string } }) {
                  </div>
             </CardHeader>
             <CardContent className="p-6 md:p-8 -mt-20">
-                <div className="flex items-end gap-6">
-                    <div className="relative h-32 w-32 rounded-full overflow-hidden border-8 border-background shrink-0">
-                         <Image
-                            src={school.logoUrl}
-                            alt={`${school.name} logo`}
-                            fill
-                            sizes="128px"
-                            className="object-contain"
-                        />
+                <div className="flex flex-col md:flex-row items-start justify-between gap-4">
+                    <div className="flex items-end gap-6">
+                        <div className="relative h-32 w-32 rounded-full overflow-hidden border-8 border-background shrink-0">
+                             <Image
+                                src={school.logoUrl}
+                                alt={`${school.name} logo`}
+                                fill
+                                sizes="128px"
+                                className="object-contain"
+                            />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl md:text-4xl font-bold">{school.acronym}</h1>
+                            <p className="text-muted-foreground text-lg">{school.name}</p>
+                        </div>
                     </div>
-                    <div>
-                        <h1 className="text-3xl md:text-4xl font-bold">{school.acronym}</h1>
-                        <p className="text-muted-foreground text-lg">{school.name}</p>
-                    </div>
+                     <Button onClick={handleRequestPartnership} className="shrink-0 w-full md:w-auto">
+                        <Handshake className="mr-2 h-4 w-4" />
+                        {t('Request Partnership')}
+                    </Button>
                 </div>
                 
                 <div className="grid md:grid-cols-3 gap-8 mt-8">
