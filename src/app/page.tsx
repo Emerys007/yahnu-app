@@ -9,7 +9,6 @@ import Link from "next/link";
 import { Footer } from "@/components/landing/footer";
 import { useLocalization } from "@/context/localization-context";
 import { ShieldCheck, Wand2, Handshake, TrendingUp } from "lucide-react";
-import { TestimonialsSection } from "@/components/landing/testimonials-section";
 
 const WhyChooseYahnu = () => {
   const { t } = useLocalization();
@@ -63,7 +62,6 @@ export default function HomePage() {
       <main className="flex-1">
         <HeroSection />
         <FeaturesSection />
-        <TestimonialsSection />
         <WhyChooseYahnu />
 
         <section className="py-20 bg-muted/40">
