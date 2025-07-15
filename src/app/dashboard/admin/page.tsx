@@ -9,9 +9,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Shield, Building, School, Check, X } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
-import { AccountType } from "./user-management/page"
+import { UserStatus } from "@/context/auth-context"
 
-const allUsers = [
+type User = {
+  id: number
+  name: string
+  email: string
+  accountType: "Company" | "School" | "Graduate" | "Admin"
+  status: UserStatus
+  date: string
+}
+
+const allUsers: User[] = [
     { id: 3, name: "Innovate Inc.", email: "contact@innovate.inc", accountType: "Company", status: "pending", date: "2023-10-23" },
     { id: 4, name: "Prestige University", email: "contact@prestige.edu", accountType: "School", status: "active", date: "2023-10-22" },
 ];

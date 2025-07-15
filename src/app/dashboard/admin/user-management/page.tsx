@@ -42,27 +42,25 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-
-export type AccountType = "Company" | "School" | "Graduate" | "Admin"
-export type UserStatus = "active" | "pending" | "suspended"
+import { type Role, type UserStatus } from "@/context/auth-context"
 
 type User = {
   id: number
   name: string
   email: string
-  accountType: AccountType
+  accountType: Role
   status: UserStatus
   date: string
 }
 
 const allUsers: User[] = [
-    { id: 1, name: "Amina Diallo", email: "amina.d@example.com", accountType: "Graduate", status: "pending", date: "2023-10-25" },
-    { id: 2, name: "Ben Traoré", email: "ben.t@example.com", accountType: "Graduate", status: "active", date: "2023-10-24" },
-    { id: 3, name: "Innovate Inc.", email: "contact@innovate.inc", accountType: "Company", status: "pending", date: "2023-10-23" },
-    { id: 4, name: "Prestige University", email: "contact@prestige.edu", accountType: "School", status: "active", date: "2023-10-22" },
-    { id: 5, name: "Global Tech", email: "hr@global.tech", accountType: "Company", status: "active", date: "2023-10-21" },
-    { id: 6, name: "Moussa Diarra", email: "moussa.d@example.com", accountType: "Graduate", status: "suspended", date: "2023-10-20" },
-    { id: 7, name: "Dr. Evelyn Reed", email: "e.reed@yahnu.ci", accountType: "Admin", status: "active", date: "2023-01-15" },
+    { id: 1, name: "Amina Diallo", email: "amina.d@example.com", accountType: "graduate", status: "pending", date: "2023-10-25" },
+    { id: 2, name: "Ben Traoré", email: "ben.t@example.com", accountType: "graduate", status: "active", date: "2023-10-24" },
+    { id: 3, name: "Innovate Inc.", email: "contact@innovate.inc", accountType: "company", status: "pending", date: "2023-10-23" },
+    { id: 4, name: "Prestige University", email: "contact@prestige.edu", accountType: "school", status: "active", date: "2023-10-22" },
+    { id: 5, name: "Global Tech", email: "hr@global.tech", accountType: "company", status: "active", date: "2023-10-21" },
+    { id: 6, name: "Moussa Diarra", email: "moussa.d@example.com", accountType: "graduate", status: "suspended", date: "2023-10-20" },
+    { id: 7, name: "Dr. Evelyn Reed", email: "e.reed@yahnu.ci", accountType: "admin", status: "active", date: "2023-01-15" },
 ];
 
 const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; onUserUpdate: (user: User) => void; onUserDelete: (userId: number) => void; }) => {
@@ -106,7 +104,7 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
                 <DialogFooter>
                     <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                         <AlertDialogTrigger asChild>
-                            <Button variant="destructive" disabled={user.accountType === "Admin"}><Trash2 className="mr-2 h-4 w-4" />{t('Delete User')}</Button>
+                            <Button variant="destructive" disabled={user.accountType === "admin"}><Trash2 className="mr-2 h-4 w-4" />{t('Delete User')}</Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
@@ -147,7 +145,7 @@ const AddSchoolDialog = ({ onAdd }: { onAdd: (user: User) => void }) => {
             id: Date.now(),
             name: values.name,
             email: values.email,
-            accountType: "School",
+            accountType: "school",
             status: "active",
             date: new Date().toISOString().split('T')[0],
         }
@@ -235,7 +233,7 @@ const AddCompanyDialog = ({ onAdd }: { onAdd: (user: User) => void }) => {
             id: Date.now(),
             name: values.name,
             email: values.email,
-            accountType: "Company",
+            accountType: "company",
             status: "active",
             date: new Date().toISOString().split('T')[0],
         }
@@ -382,10 +380,10 @@ export default function ManageUsersPage() {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">{t('All Account Types')}</SelectItem>
-                                <SelectItem value="Graduate">{t('Graduate')}</SelectItem>
-                                <SelectItem value="Company">{t('Company')}</SelectItem>
-                                <SelectItem value="School">{t('School')}</SelectItem>
-                                <SelectItem value="Admin">{t('Admin')}</SelectItem>
+                                <SelectItem value="graduate">{t('Graduate')}</SelectItem>
+                                <SelectItem value="company">{t('Company')}</SelectItem>
+                                <SelectItem value="school">{t('School')}</SelectItem>
+                                <SelectItem value="admin">{t('Admin')}</SelectItem>
                             </SelectContent>
                         </Select>
                          <Select value={filters.status} onValueChange={(v) => handleFilterChange('status', v)}>
@@ -419,10 +417,10 @@ export default function ManageUsersPage() {
                                     </TableCell>
                                     <TableCell>
                                          <Badge variant="outline" className="gap-1">
-                                            {user.accountType === 'Company' && <Building className="h-3 w-3" />}
-                                            {user.accountType === 'School' && <School className="h-3 w-3" />}
-                                            {user.accountType === 'Graduate' && <Users className="h-3 w-3" />}
-                                            {user.accountType === 'Admin' && <VenetianMask className="h-3 w-3" />}
+                                            {user.accountType === 'company' && <Building className="h-3 w-3" />}
+                                            {user.accountType === 'school' && <School className="h-3 w-3" />}
+                                            {user.accountType === 'graduate' && <Users className="h-3 w-3" />}
+                                            {user.accountType === 'admin' && <VenetianMask className="h-3 w-3" />}
                                             {t(user.accountType)}
                                         </Badge>
                                     </TableCell>

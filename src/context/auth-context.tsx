@@ -3,7 +3,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { app } from '@/lib/firebase'; // Ensure your firebase config is correctly exported from here
 
 const auth = getAuth(app);
@@ -11,12 +11,14 @@ const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
 export type Role = 'graduate' | 'company' | 'school' | 'admin';
+export type UserStatus = 'pending' | 'active' | 'suspended';
 
 export interface UserProfile {
   uid: string;
   email: string | null;
   name?: string;
   role: Role;
+  status: UserStatus;
   firstName?: string;
   lastName?: string;
   schoolId?: string;
@@ -29,7 +31,7 @@ interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
   role: Role;
-  signUp: (profile: Omit<UserProfile, 'uid'>, password: string) => Promise<void>;
+  signUp: (profile: Omit<UserProfile, 'uid' | 'status'>, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
@@ -67,10 +69,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (firebaseUser) {
         const userProfile = await fetchUserDocument(firebaseUser);
          if (userProfile) {
-          setUser(userProfile);
+          if (userProfile.role === 'graduate' && userProfile.status === 'pending') {
+            setUser(null);
+            await firebaseSignOut(auth);
+          } else {
+            setUser(userProfile);
+          }
         } else {
            console.warn("User document not found for UID:", firebaseUser.uid);
-           setUser({ uid: firebaseUser.uid, email: firebaseUser.email, role: 'graduate' }); // Fallback
+           setUser(null);
+           await firebaseSignOut(auth);
         }
       } else {
         setUser(null);
@@ -82,78 +90,82 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const createUserDocument = async (firebaseUser: FirebaseUser, profile: Omit<UserProfile, 'uid' | 'email'>, email: string) => {
     const userDocRef = doc(db, "users", firebaseUser.uid);
+    
+    // Graduates start as pending, others are active by default
+    const status: UserStatus = profile.role === 'graduate' ? 'pending' : 'active';
+    
     await setDoc(userDocRef, {
         ...profile,
         uid: firebaseUser.uid,
         email: email, // ensure email from auth is stored
+        status: status,
         createdAt: new Date(),
     });
+
+    return status;
   }
 
-  const signUp = async (profile: Omit<UserProfile, 'uid'>, password: string) => {
+  const signUp = async (profile: Omit<UserProfile, 'uid' | 'status'>, password: string) => {
     if (!profile.email) throw new Error("Email is required for sign up.");
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, profile.email, password);
-      const firebaseUser = userCredential.user;
-      const { email, ...profileData } = profile;
-      await createUserDocument(firebaseUser, profileData, firebaseUser.email!);
-      const userProfile = await fetchUserDocument(firebaseUser);
-      if(userProfile) setUser(userProfile);
-
-    } catch (error) {
-      console.error("Error signing up:", error);
-      throw error;
+    
+    const userCredential = await createUserWithEmailAndPassword(auth, profile.email, password);
+    const firebaseUser = userCredential.user;
+    const { email, ...profileData } = profile;
+    const status = await createUserDocument(firebaseUser, profileData, firebaseUser.email!);
+    
+    // Don't auto-login pending graduates
+    if (status === 'pending') {
+        await firebaseSignOut(auth);
+    } else {
+        const userProfile = await fetchUserDocument(firebaseUser);
+        if(userProfile) setUser(userProfile);
     }
   };
 
   const signIn = async (email: string, password: string) => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const userProfile = await fetchUserDocument(userCredential.user);
-      if (userProfile) setUser(userProfile);
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userProfile = await fetchUserDocument(userCredential.user);
 
-    } catch (error) {
-      console.error("Error signing in:", error);
-      throw error;
+    if (userProfile?.role === 'graduate' && userProfile.status === 'pending') {
+        await firebaseSignOut(auth);
+        throw new Error("Your account is pending approval by your school's administrator.");
     }
+    
+    if (userProfile) setUser(userProfile);
   };
 
   const signInWithGoogle = async () => {
-    try {
-        const result = await signInWithPopup(auth, googleProvider);
-        const firebaseUser = result.user;
-        const userDocRef = doc(db, "users", firebaseUser.uid);
-        const userDoc = await getDoc(userDocRef);
+    const result = await signInWithPopup(auth, googleProvider);
+    const firebaseUser = result.user;
+    const userDocRef = doc(db, "users", firebaseUser.uid);
+    let userDoc = await getDoc(userDocRef);
 
-        if (!userDoc.exists()) {
-            // New user via Google
-            const [firstName, ...lastName] = (firebaseUser.displayName || "").split(" ");
-            const profile: Omit<UserProfile, 'uid' | 'email'> = {
-                name: firebaseUser.displayName,
-                firstName,
-                lastName: lastName.join(" "),
-                role: 'graduate', // Default role for Google sign-ups
-            };
-            await createUserDocument(firebaseUser, profile, firebaseUser.email!);
-        }
-        
-        const userProfile = await fetchUserDocument(firebaseUser);
-        if (userProfile) setUser(userProfile);
-    } catch (error) {
-        console.error("Error signing in with Google:", error);
-        throw error;
+    if (!userDoc.exists()) {
+        const [firstName, ...lastName] = (firebaseUser.displayName || "").split(" ");
+        const profile: Omit<UserProfile, 'uid' | 'email' | 'status'> = {
+            name: firebaseUser.displayName || "Google User",
+            firstName,
+            lastName: lastName.join(" "),
+            role: 'graduate', 
+        };
+        await createUserDocument(firebaseUser, profile, firebaseUser.email!);
+        userDoc = await getDoc(userDocRef); // Re-fetch the doc after creation
     }
+    
+    const userProfile = userDoc.data() as UserProfile;
+    
+    if (userProfile?.role === 'graduate' && userProfile.status === 'pending') {
+        await firebaseSignOut(auth);
+        throw new Error("Your account is pending approval. Please contact your school's administrator.");
+    }
+    
+    if (userProfile) setUser(userProfile);
   };
 
 
   const signOut = async () => {
-    try {
-      await firebaseSignOut(auth);
-      setUser(null);
-    } catch (error) {
-      console.error("Error signing out:", error);
-      throw error;
-    }
+    await firebaseSignOut(auth);
+    setUser(null);
   };
 
   const value = {

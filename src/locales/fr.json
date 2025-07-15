@@ -307,7 +307,20 @@
     "School Address": "Adresse de l'école",
     "Coming Soon!": "Bientôt disponible !",
     "We are working hard to bring Yahnu companies to {country}. Stay tuned!": "Nous travaillons dur pour amener les entreprises Yahnu en {country}. Restez à l'écoute !",
-    "We are working hard to bring Yahnu schools to {country}. Stay tuned!": "Nous travaillons dur pour amener les écoles Yahnu en {country}. Restez à l'écoute !"
+    "We are working hard to bring Yahnu schools to {country}. Stay tuned!": "Nous travaillons dur pour amener les écoles Yahnu en {country}. Restez à l'écoute !",
+    "Activate and manage graduate accounts from your institution.": "Activer et gérer les comptes des diplômés de votre établissement.",
+    "All Graduates": "Tous les diplômés",
+    "Search and manage all graduates associated with your school.": "Rechercher et gérer tous les diplômés associés à votre école.",
+    "Pending Activation": "En attente d'activation",
+    "Active Accounts": "Comptes actifs",
+    "Graduation Year": "Année de diplomation",
+    "Deactivate": "Désactiver",
+    "No graduates found.": "Aucun diplômé trouvé.",
+    "Account activated": "Compte activé",
+    "account has been activated.": "le compte a été activé.",
+    "Account deactivated": "Compte désactivé",
+    "account has been deactivated.": "le compte a été désactivé.",
+    "Account pending": "Compte en attente",
+    "Your account is pending approval from your school's administrator. We'll notify you once it's active.": "Votre compte est en attente d'approbation par l'administrateur de votre école. Nous vous informerons une fois qu'il sera actif.",
+    "Account Created!": "Compte créé !"
 }
-
-    

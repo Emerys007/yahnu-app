@@ -119,9 +119,8 @@ export function RegisterForm() {
             ? `${values.firstName} ${values.lastName}` 
             : values.companyName;
 
-        const profileData: UserProfile = {
+        const profileData: Omit<UserProfile, 'uid' | 'status'> = {
             ...values,
-            uid: '', // will be set by signUp
             name,
             email: values.email,
             role: values.role
@@ -131,9 +130,12 @@ export function RegisterForm() {
 
         toast({
             title: t("Account Created!"),
-            description: t("You have successfully signed up. Welcome to Yahnu!"),
+            description: role === 'graduate'
+              ? t("Your account is pending approval from your school's administrator. We'll notify you once it's active.")
+              : t("You have successfully signed up. Welcome to Yahnu!"),
           });
-        router.push('/dashboard');
+        
+        router.push('/login');
     } catch (error: any) {
         toast({
             title: t("Uh oh! Something went wrong."),
@@ -352,5 +354,3 @@ export function RegisterForm() {
     </Form>
   )
 }
-
-    

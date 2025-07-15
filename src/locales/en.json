@@ -306,7 +306,20 @@
     "School Address": "School Address",
     "Coming Soon!": "Coming Soon!",
     "We are working hard to bring Yahnu companies to {country}. Stay tuned!": "We are working hard to bring Yahnu companies to {country}. Stay tuned!",
-    "We are working hard to bring Yahnu schools to {country}. Stay tuned!": "We are working hard to bring Yahnu schools to {country}. Stay tuned!"
+    "We are working hard to bring Yahnu schools to {country}. Stay tuned!": "We are working hard to bring Yahnu schools to {country}. Stay tuned!",
+    "Activate and manage graduate accounts from your institution.": "Activate and manage graduate accounts from your institution.",
+    "All Graduates": "All Graduates",
+    "Search and manage all graduates associated with your school.": "Search and manage all graduates associated with your school.",
+    "Pending Activation": "Pending Activation",
+    "Active Accounts": "Active Accounts",
+    "Graduation Year": "Graduation Year",
+    "Deactivate": "Deactivate",
+    "No graduates found.": "No graduates found.",
+    "Account activated": "Account activated",
+    "account has been activated.": "account has been activated.",
+    "Account deactivated": "Account deactivated",
+    "account has been deactivated.": "account has been deactivated.",
+    "Account pending": "Account pending",
+    "Your account is pending approval from your school's administrator. We'll notify you once it's active.": "Your account is pending approval from your school's administrator. We'll notify you once it's active.",
+    "Account Created!": "Account Created!"
 }
-
-    
