@@ -16,7 +16,8 @@ import {
   X,
   Shield,
   School,
-  Building
+  Building,
+  Calendar
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -43,6 +44,7 @@ const getNotificationsByRole = (t: (key: string) => string, role: Role) => {
         graduate: [
             { id: 1, icon: Briefcase, text: t('New job matching your profile: Software Engineer at TechCorp'), time: "5m ago", read: false },
             { id: 2, icon: UserCheck, text: t('Your application for Product Manager was viewed'), time: "1h ago", read: false },
+            { id: 3, icon: Calendar, text: t('New event: Annual Tech Career Fair by your university'), time: "3h ago", read: false },
         ],
         company: [
             { id: 1, icon: UserCheck, text: t('New applicant for Senior Developer: John Doe'), time: "2m ago", read: false },
@@ -51,6 +53,7 @@ const getNotificationsByRole = (t: (key: string) => string, role: Role) => {
         school: [
             { id: 1, icon: Handshake, text: t('Tech Solutions Abidjan has requested a partnership'), time: "1d ago", read: false },
             { id: 2, icon: Briefcase, text: t('5 graduates from your institution were hired this month'), time: "2d ago", read: true },
+            { id: 3, icon: UserCheck, text: t('Amina Diallo requires account activation'), time: "4d ago", read: false },
         ],
         admin: [
             { id: 1, icon: Building, text: t('New company "Innovate Inc." requires approval'), time: "10m ago", read: false },

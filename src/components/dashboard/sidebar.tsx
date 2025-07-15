@@ -25,7 +25,8 @@ import {
   Users,
   BrainCircuit,
   MessageSquare,
-  UserCog
+  UserCog,
+  Calendar
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -45,6 +46,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/profile", icon: User, label: t('Profile') },
     { href: "/dashboard/jobs", icon: Briefcase, label: t('Job Search') },
     { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
+    { href: "/dashboard/events", icon: Calendar, label: t('Events') },
   ];
 
   const companyNav = [
@@ -62,6 +64,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     ...baseNav,
     { href: "/dashboard/school-profile", icon: School, label: t('School Profile')},
     { href: "/dashboard/graduate-management", icon: UserCheck, label: t('Graduate Management')},
+    { href: "/dashboard/school-events", icon: Calendar, label: t('Event Management')},
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
   ];
