@@ -83,9 +83,14 @@ const WhyChooseYahnu = () => {
               className="text-center p-6 bg-secondary/50 rounded-lg"
               variants={cardVariants}
               whileHover={{ scale: 1.05, y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)" }}
-              transition={{ duration: 0.2 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              {benefit.icon}
+              <motion.div
+                whileHover={{ scale: 1.2, rotate: 10 }}
+                transition={{ type: "spring", stiffness: 300, damping: 10 }}
+              >
+                {benefit.icon}
+              </motion.div>
               <h3 className="text-lg font-semibold">{benefit.title}</h3>
             </motion.div>
           ))}
