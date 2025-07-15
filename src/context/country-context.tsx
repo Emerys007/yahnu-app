@@ -10,16 +10,53 @@ type Country = {
     fr: string;
   };
   theme: string;
-  logoUrl: string;
+  logoUrlLight: string;
+  logoUrlDark: string;
 };
 
 export const allCountries: Country[] = [
-    { code: 'CI', name: { en: 'Ivory Coast', fr: 'Côte d\'Ivoire' }, theme: 'ivory-coast', logoUrl: '/images/Country Maps/Ivory Coast.svg' },
-    { code: 'NG', name: { en: 'Nigeria', fr: 'Nigéria' }, theme: 'nigeria-green', logoUrl: '/images/Country Maps/Nigeria.svg' },
-    { code: 'GH', name: { en: 'Ghana', fr: 'Ghana' }, theme: 'ghana-gold', logoUrl: '/images/Country Maps/Ghana.svg' },
-    { code: 'SN', name: { en: 'Senegal', fr: 'Sénégal' }, theme: 'senegal-sun', logoUrl: '/images/Country Maps/Senegal.svg' },
-    { code: 'CM', name: { en: 'Cameroon', fr: 'Cameroun' }, theme: 'cameroon-unity', logoUrl: '/images/Country Maps/Cameroon.svg' },
-    { code: 'CD', name: { en: 'DR Congo', fr: 'RD Congo' }, theme: 'drc-cobalt', logoUrl: '/images/Country Maps/DRC.svg' },
+    { 
+      code: 'CI', 
+      name: { en: 'Ivory Coast', fr: 'Côte d\'Ivoire' }, 
+      theme: 'ivory-coast', 
+      logoUrlLight: '/images/Country Maps/Ivory Coast.svg',
+      logoUrlDark: '/images/Country Maps/IvoryCoast.svg'
+    },
+    { 
+      code: 'NG', 
+      name: { en: 'Nigeria', fr: 'Nigéria' }, 
+      theme: 'nigeria-green', 
+      logoUrlLight: '/images/Country Maps/Nigeria.svg',
+      logoUrlDark: '/images/Country Maps/Nigeria(W).svg'
+    },
+    { 
+      code: 'GH', 
+      name: { en: 'Ghana', fr: 'Ghana' }, 
+      theme: 'ghana-gold', 
+      logoUrlLight: '/images/Country Maps/Ghana.svg',
+      logoUrlDark: '/images/Country Maps/Ghana (W).svg'
+    },
+    { 
+      code: 'SN', 
+      name: { en: 'Senegal', fr: 'Sénégal' }, 
+      theme: 'senegal-sun', 
+      logoUrlLight: '/images/Country Maps/Senegal.svg',
+      logoUrlDark: '/images/Country Maps/Senegal (W).svg'
+    },
+    { 
+      code: 'CM', 
+      name: { en: 'Cameroon', fr: 'Cameroun' }, 
+      theme: 'cameroon-unity', 
+      logoUrlLight: '/images/Country Maps/Cameroon.svg',
+      logoUrlDark: '/images/Country Maps/Cameroon (W).svg'
+    },
+    { 
+      code: 'CD', 
+      name: { en: 'DR Congo', fr: 'RD Congo' }, 
+      theme: 'drc-cobalt', 
+      logoUrlLight: '/images/Country Maps/DRC.svg',
+      logoUrlDark: '/images/Country Maps/DRCongo.svg'
+    },
 ];
 
 type CountryContextType = {
