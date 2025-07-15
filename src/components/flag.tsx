@@ -17,7 +17,7 @@ export const Flag = ({ countryCode, className }: FlagProps) => {
     <img
       src={src}
       alt={`${countryCode} flag`}
-      className={cn("h-4 w-4 shrink-0", className)}
+      className={cn("h-4 w-4 shrink-0 object-cover rounded-full", className)}
       // Using a standard img tag for simplicity with external SVGs/PNGs from a CDN
       // to avoid Next.js image optimization configuration for every possible flag CDN.
     />
