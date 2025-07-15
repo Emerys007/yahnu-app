@@ -39,6 +39,21 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   )
 }
 
+const industrySectors = [
+    "Agriculture",
+    "Finance & Banking",
+    "Information Technology",
+    "Telecommunications",
+    "Mining & Resources",
+    "Construction & Real Estate",
+    "Retail & Commerce",
+    "Transportation & Logistics",
+    "Tourism & Hospitality",
+    "Health & Pharmaceuticals",
+    "Education",
+    "Energy"
+]
+
 export function RegisterForm() {
   const { t } = useLocalization();
   const { toast } = useToast();
@@ -103,10 +118,25 @@ export function RegisterForm() {
               </div>
 
               {accountType === 'company' && (
-                  <div className="grid gap-2">
-                      <Label htmlFor="company-name">{t('Company Name')}</Label>
-                      <Input id="company-name" placeholder="Innovate Inc." required />
-                  </div>
+                  <>
+                    <div className="grid gap-2">
+                        <Label htmlFor="company-name">{t('Company Name')}</Label>
+                        <Input id="company-name" placeholder="Innovate Inc." required />
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="industry-sector">{t('Industry Sector')}</Label>
+                         <Select>
+                            <SelectTrigger>
+                                <SelectValue placeholder={t('Select an industry')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {industrySectors.map(sector => (
+                                    <SelectItem key={sector} value={sector}>{t(sector)}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                  </>
               )}
               {accountType === 'school' && (
                   <div className="grid gap-2">

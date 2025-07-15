@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -43,6 +44,7 @@ const companyProfileSchema = z.object({
   companyName: z.string().min(2, { message: "Company name must be at least 2 characters." }),
   website: z.string().url({ message: "Please enter a valid URL." }),
   location: z.string().min(2, { message: "Location is required." }),
+  industry: z.string().min(1, "Industry sector is required."),
   tagline: z.string().max(100).optional(),
   description: z.string().min(50, { message: "Description must be at least 50 characters." }),
 })
@@ -52,6 +54,21 @@ const jobPostSchema = z.object({
   location: z.string().min(1, "Location is required"),
   type: z.string().min(1, "Type is required"),
 })
+
+const industrySectors = [
+    "Agriculture",
+    "Finance & Banking",
+    "Information Technology",
+    "Telecommunications",
+    "Mining & Resources",
+    "Construction & Real Estate",
+    "Retail & Commerce",
+    "Transportation & Logistics",
+    "Tourism & Hospitality",
+    "Health & Pharmaceuticals",
+    "Education",
+    "Energy"
+]
 
 export default function CompanyProfilePage() {
   const { t } = useLocalization();
@@ -69,6 +86,7 @@ export default function CompanyProfilePage() {
       companyName: "Innovate Inc.",
       website: "https://innovate.inc",
       location: "New York, NY",
+      industry: "Information Technology",
       tagline: "Building the future of technology.",
       description: "Innovate Inc. is a leading technology firm dedicated to creating cutting-edge solutions that solve real-world problems. We are a team of passionate innovators, designers, and engineers committed to excellence.",
     },
@@ -169,10 +187,32 @@ export default function CompanyProfilePage() {
                   control={profileForm.control}
                   name="location"
                   render={({ field }) => (
-                    <FormItem className="md:col-span-2">
+                    <FormItem>
                       <FormLabel>{t('Headquarters')}</FormLabel>
                       <FormControl><Input placeholder={t("City, State/Country")} {...field} /></FormControl>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={profileForm.control}
+                  name="industry"
+                  render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>{t('Industry Sector')}</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder={t('Select an industry')} />
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            {industrySectors.map(sector => (
+                                <SelectItem key={sector} value={sector}>{t(sector)}</SelectItem>
+                            ))}
+                        </SelectContent>
+                        </Select>
+                        <FormMessage />
                     </FormItem>
                   )}
                 />

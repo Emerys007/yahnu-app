@@ -123,5 +123,19 @@
     "Company Name": "Nom de l'entreprise",
     "School Name": "Nom de l'école",
     "School/University": "École/Université",
-    "Select your school": "Sélectionnez votre école"
+    "Select your school": "Sélectionnez votre école",
+    "Industry Sector": "Secteur d'activité",
+    "Select an industry": "Sélectionnez un secteur",
+    "Agriculture": "Agriculture",
+    "Finance & Banking": "Finance & Banque",
+    "Information Technology": "Technologies de l'information",
+    "Telecommunications": "Télécommunications",
+    "Mining & Resources": "Mines & Ressources",
+    "Construction & Real Estate": "BTP & Immobilier",
+    "Retail & Commerce": "Vente & Commerce",
+    "Transportation & Logistics": "Transport & Logistique",
+    "Tourism & Hospitality": "Tourisme & Hôtellerie",
+    "Health & Pharmaceuticals": "Santé & Pharmacie",
+    "Education": "Éducation",
+    "Energy": "Énergie"
 }
