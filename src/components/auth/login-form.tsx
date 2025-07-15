@@ -31,9 +31,10 @@ export function LoginForm() {
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
-        <div className="flex justify-center mb-4 lg:hidden">
-            <Link href="/" aria-label="Back to home">
+        <div className="flex flex-col items-center mb-4 lg:hidden">
+            <Link href="/" aria-label="Back to home" className="flex flex-col items-center gap-2">
               <Logo className="h-12 w-12 text-primary" />
+              <p className="text-sm text-muted-foreground">{t('Your future starts here')}</p>
             </Link>
         </div>
         <CardTitle className="text-2xl text-center">{t('Welcome Back')}</CardTitle>
