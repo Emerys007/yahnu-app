@@ -18,6 +18,8 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:shadow-sm",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        shimmer:
+          "relative overflow-hidden bg-primary text-primary-foreground shadow-lg transition-all duration-500 hover:bg-primary/90 hover:shadow-xl",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -42,6 +44,27 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
+    const [isHovered, setIsHovered] = React.useState(false);
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      e.currentTarget.style.setProperty("--x", `${x}px`);
+      e.currentTarget.style.setProperty("--y", `${y}px`);
+    };
+    
+    if (variant === "shimmer") {
+        return (
+            <Comp
+                className={cn(buttonVariants({ variant, size, className }), "before:absolute before:inset-0 before:z-0 before:bg-[radial-gradient(500px_circle_at_var(--x)_var(--y),_rgba(255,255,255,0.2),transparent)] before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100")}
+                ref={ref}
+                onMouseMove={handleMouseMove}
+                {...props}
+            />
+        )
+    }
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}

@@ -77,10 +77,7 @@ export function MainNav() {
                 <Button variant="ghost" asChild>
                   <Link href="/login">{t('Login')}</Link>
                 </Button>
-                <Button asChild className={cn(
-                    "relative overflow-hidden",
-                    "before:absolute before:inset-0 before:-translate-x-full before:animate-shimmer before:bg-gradient-to-r before:from-transparent before:via-white/20 hover:before:translate-x-full"
-                  )}>
+                <Button variant="shimmer" asChild>
                   <Link href="/register">{t('Sign Up')}</Link>
                 </Button>
             </div>
@@ -186,6 +183,7 @@ export function MainNav() {
                       <SheetClose asChild>
                         <Button
                           className="justify-start text-lg"
+                          variant="shimmer"
                           asChild
                         >
                           <Link href="/register">{t('Sign Up')}</Link>
