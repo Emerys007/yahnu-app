@@ -31,10 +31,10 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent } from "../ui/sheet";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 import { useLocalization } from "@/context/localization-context";
-import type { AccountType } from "@/context/auth-context";
 import { useAuth } from "@/context/auth-context";
+import { Role } from "@/context/auth-context";
 
-const getNavItems = (t: (key: string) => string, accountType: AccountType) => {
+const getNavItems = (t: (key: string) => string, role: Role) => {
   const baseNav = [
     { href: "/dashboard", icon: LayoutDashboard, label: t('Dashboard') },
     { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
@@ -53,6 +53,7 @@ const getNavItems = (t: (key: string) => string, accountType: AccountType) => {
     { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/talent-pool", icon: Users2, label: t('Talent Pool') },
+    { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
     { type: "divider", label: t('AI Tools') },
     { href: "/dashboard/assessments", icon: ClipboardCheck, label: t('Assessments') },
   ];
@@ -69,8 +70,7 @@ const getNavItems = (t: (key: string) => string, accountType: AccountType) => {
     { href: "/dashboard/admin", icon: Shield, label: t('Overview') },
     { href: "/dashboard/admin/user-management", icon: Users, label: t('Manage Users') },
     { href: "/dashboard/admin/manage-team", icon: Users2, label: t('Manage Team') },
-    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Analytics') },
-    { href: "/dashboard/admin/reports", icon: BrainCircuit, label: t('Custom Reports') },
+    { href: "/dashboard/admin/reports", icon: BarChart3, label: t('Platform Analytics') },
   ];
   
   const bottomNav = [
@@ -79,14 +79,14 @@ const getNavItems = (t: (key: string) => string, accountType: AccountType) => {
       { href: "/dashboard/support", icon: LifeBuoy, label: t('Support') },
   ]
 
-  switch (accountType) {
+  switch (role) {
     case 'graduate':
       return [...graduateNav, ...bottomNav];
     case 'company':
       return [...companyNav, ...bottomNav];
     case 'school':
       return [...schoolNav, ...bottomNav];
-    case 'admin':
+    case 'super_admin':
       return [...adminNav, ...bottomNav];
     default:
       return [...baseNav, ...bottomNav];
@@ -129,9 +129,9 @@ export function DashboardSidebar() {
   const { isCollapsed } = useSidebar();
   const isMobile = useIsMobile();
   const { t } = useLocalization();
-  const { accountType } = useAuth();
+  const { role } = useAuth();
 
-  const navItems = getNavItems(t, accountType);
+  const navItems = getNavItems(t, role);
 
   const renderNavItem = (item: any, index: number) => {
     if (item.type === 'divider') {

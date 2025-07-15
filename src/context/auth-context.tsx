@@ -3,25 +3,25 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type AccountType = 'graduate' | 'company' | 'school' | 'admin';
+export type Role = 'graduate' | 'company' | 'school' | 'super_admin';
 
-type AuthContextType = {
-  accountType: AccountType;
-  setAccountType: (accountType: AccountType) => void;
+interface AuthContextType {
+  role: Role;
+  setRole: (role: Role) => void;
   isAuthenticated: boolean;
-};
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [accountType, setAccountType] = useState<AccountType>('admin'); // Default accountType
+  const [role, setRole] = useState<Role>('company'); // Default role
 
-  const handleSetAccountType = (newAccountType: AccountType) => {
-    setAccountType(newAccountType);
+  const handleSetRole = (newRole: Role) => {
+    setRole(newRole);
   };
 
   return (
-    <AuthContext.Provider value={{ accountType, setAccountType: handleSetAccountType, isAuthenticated: true }}>
+    <AuthContext.Provider value={{ role, setRole: handleSetRole, isAuthenticated: true }}>
       {children}
     </AuthContext.Provider>
   );
@@ -30,11 +30,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    // Fallback for when a component is rendered outside the provider,
-    // which shouldn't happen in the dashboard.
+    // Fallback for when a component is rendered outside the provider
     return {
-      accountType: 'graduate',
-      setAccountType: () => {},
+      role: 'graduate',
+      setRole: () => {},
       isAuthenticated: false,
     };
   }
