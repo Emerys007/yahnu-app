@@ -53,6 +53,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     ...baseNav,
     { href: "/dashboard/company-profile", icon: Building, label: t('Company Profile') },
     { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
+    { href: "/dashboard/company-events", icon: Calendar, label: t('Event Management') },
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/talent-pool", icon: Users2, label: t('Talent Pool') },
     { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
