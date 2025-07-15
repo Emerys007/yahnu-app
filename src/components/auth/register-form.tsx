@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select"
 import { Logo } from "@/components/logo"
 import { useLocalization } from "@/context/localization-context"
-import type { AccountType } from "@/context/auth-context"
+import type { Role } from "@/context/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
@@ -57,13 +57,13 @@ const industrySectors = [
 export function RegisterForm() {
   const { t } = useLocalization();
   const { toast } = useToast();
-  const [accountType, setAccountType] = useState<AccountType | ''>('');
+  const [accountType, setAccountType] = useState<Role | ''>('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [suggestedPassword, setSuggestedPassword] = useState("");
 
   const handleAccountTypeChange = (value: string) => {
-    setAccountType(value as AccountType);
+    setAccountType(value as Role);
   };
 
   const generateStrongPassword = () => {
@@ -88,8 +88,9 @@ export function RegisterForm() {
     <Card className="mx-auto max-w-sm">
       <CardHeader>
         <div className="flex flex-col items-center mb-4 lg:hidden">
-            <Link href="/" aria-label="Back to home" className="flex flex-col items-center gap-2">
-              <Logo className="h-12 w-12 text-primary" />
+            <Link href="/" aria-label="Back to home" className="flex flex-col items-center gap-2 text-center">
+              <Logo className="h-12 w-12" />
+              <p className="font-bold text-xl text-primary">Yahnu</p>
               <p className="text-sm text-muted-foreground">{t('Your future starts here')}</p>
             </Link>
         </div>

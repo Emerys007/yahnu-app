@@ -18,12 +18,10 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       <div className="hidden bg-primary/10 lg:flex flex-col items-center justify-center p-12">
-        <Link href="/" className="flex items-center gap-4 mb-8">
-           <Logo className="h-12 w-12 text-primary" />
-            <div>
-              <h1 className="text-4xl font-bold text-primary">Yahnu</h1>
-              <p className="text-muted-foreground">{t('Your future starts here')}</p>
-            </div>
+        <Link href="/" className="flex flex-col items-center gap-2 mb-8 text-center">
+           <Logo className="h-16 w-16" />
+           <h1 className="text-4xl font-bold text-primary">Yahnu</h1>
+           <p className="text-muted-foreground">{t('Your future starts here')}</p>
         </Link>
         <Image
           src="https://placehold.co/800x600.png"
