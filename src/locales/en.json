@@ -301,5 +301,8 @@
     "ZIP / Postal Code": "ZIP / Postal Code",
     "Country": "Country",
     "Company Address": "Company Address",
-    "School Address": "School Address"
+    "School Address": "School Address",
+    "Coming Soon!": "Coming Soon!",
+    "We are working hard to bring Yahnu companies to {country}. Stay tuned!": "We are working hard to bring Yahnu companies to {country}. Stay tuned!",
+    "We are working hard to bring Yahnu schools to {country}. Stay tuned!": "We are working hard to bring Yahnu schools to {country}. Stay tuned!"
 }

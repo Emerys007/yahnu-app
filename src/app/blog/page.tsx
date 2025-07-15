@@ -5,94 +5,45 @@ import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import Link from "next/link";
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { getFirestore, collection, onSnapshot } from "firebase/firestore";
+import { app } from "@/lib/firebase";
+import React, { useState, useEffect } from "react";
 import { useLocalization } from "@/context/localization-context";
 
-// This is mock data. In a real application, you would fetch this from a CMS.
-const postsData = {
-  en: [
-    {
-      slug: "unlocking-potential-the-yahnu-story",
-      title: "Unlocking Potential: The Yahnu Story",
-      description: "Discover the mission and vision behind Yahnu and how we're bridging the gap between education and employment in {country}.",
-      author: "Dr. Evelyn Reed",
-      date: "2023-10-26",
-      imageUrl: "https://placehold.co/800x600.png",
-      imageHint: "yahnu brand logo with abstract background"
-    },
-      {
-      slug: "top-5-in-demand-skills-for-graduates",
-      title: "Top 5 In-Demand Skills for Graduates in 2024",
-      description: "Stay ahead of the curve. We analyze the current job market to bring you the most sought-after skills by top companies.",
-      author: "John Carter",
-      date: "2023-11-05",
-      imageUrl: "https://placehold.co/800x600.png",
-      imageHint: "data scientist analyzing charts"
-    },
-    {
-      slug: "crafting-the-perfect-resume",
-      title: "Crafting the Perfect Resume: A Guide for Tech Graduates",
-      description: "Your resume is your first impression. Learn how to tailor your resume to land your dream job in the tech industry.",
-      author: "Emily Chen",
-      date: "2023-11-12",
-      imageUrl: "https://placehold.co/800x600.png",
-      imageHint: "professional resume on a desk"
-    },
-    {
-      slug: "the-power-of-university-industry-partnerships",
-      title: "The Power of School-Industry Partnerships",
-      description: "Explore how collaborations between schools and companies are shaping the future of talent and innovation.",
-      author: "David Lee",
-      date: "2023-11-20",
-      imageUrl: "https://placehold.co/800x600.png",
-      imageHint: "handshake between business person and academic"
-    },
-  ],
-  fr: [
-    {
-      slug: "unlocking-potential-the-yahnu-story",
-      title: "Libérer le potentiel : L'histoire de Yahnu",
-      description: "Découvrez la mission et la vision de Yahnu et comment nous comblons le fossé entre l'éducation et l'emploi en {country}.",
-      author: "Dr. Evelyn Reed",
-      date: "2023-10-26",
-      imageUrl: "https://placehold.co/800x600.png",
-      imageHint: "yahnu brand logo with abstract background"
-    },
-    {
-      slug: "top-5-in-demand-skills-for-graduates",
-      title: "Top 5 des compétences les plus demandées pour les diplômés en 2024",
-      description: "Gardez une longueur d'avance. Nous analysons le marché du travail actuel pour vous présenter les compétences les plus recherchées par les grandes entreprises.",
-      author: "John Carter",
-      date: "2023-11-05",
-      imageUrl: "https://placehold.co/800x600.png",
-      imageHint: "data scientist analyzing charts"
-    },
-    {
-      slug: "crafting-the-perfect-resume",
-      title: "Rédiger le CV parfait : Un guide pour les diplômés en technologie",
-      description: "Votre CV est votre première impression. Apprenez à adapter votre CV pour décrocher l'emploi de vos rêves dans l'industrie technologique.",
-      author: "Emily Chen",
-      date: "2023-11-12",
-      imageUrl: "https://placehold.co/800x600.png",
-      imageHint: "professional resume on a desk"
-    },
-    {
-      slug: "the-power-of-university-industry-partnerships",
-      title: "Le pouvoir des partenariats École-Industrie",
-      description: "Découvrez comment les collaborations entre les écoles et les entreprises façonnent l'avenir des talents et de l'innovation.",
-      author: "David Lee",
-      date: "2023-11-20",
-      imageUrl: "https://placehold.co/800x600.png",
-      imageHint: "handshake between business person and academic"
-    },
-  ]
-};
+const db = getFirestore(app);
 
+interface Post {
+    id: string;
+    slug: string;
+    title: string;
+    description: string;
+    author: string;
+    date: string;
+    imageUrl: string;
+}
 
 export default function BlogPage() {
-  const { language, t } = useLocalization();
-  const posts = postsData[language as keyof typeof postsData] || postsData.en;
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { t } = useLocalization();
+
+  useEffect(() => {
+    const postsCol = collection(db, 'posts');
+    const unsubscribe = onSnapshot(postsCol, (snapshot) => {
+        const postList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post));
+        setPosts(postList);
+        setIsLoading(false);
+    }, (err) => {
+        console.error("Firestore listen failed:", err);
+        setError("Failed to load blog posts. Please check your connection and try again.");
+        setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [])
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -101,41 +52,50 @@ export default function BlogPage() {
         <div className="text-center mb-12">
             <h1 className="text-5xl font-bold tracking-tight">{t('Yahnu Insights')}</h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t('Your premier source for career advice, industry trends, and success stories in the {country} professional landscape.')}
+                {t('Your premier source for career advice, industry trends, and success stories in the Ivorian professional landscape.')}
             </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post) => (
-                <Link href={`/blog/${post.slug}`} key={post.slug} className="group">
-                    <Card className="h-full overflow-hidden transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
-                        <CardHeader className="p-0">
-                           <div className="relative w-full h-48">
-                             <Image
-                                src={post.imageUrl}
-                                alt={post.title}
-                                fill
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                className="object-cover"
-                                data-ai-hint={post.imageHint}
-                            />
-                           </div>
-                        </CardHeader>
-                        <CardContent className="p-6">
-                            <h2 className="text-xl font-semibold mb-2">{t(post.title)}</h2>
-                            <p className="text-muted-foreground mb-4 text-sm">{t(post.description)}</p>
-                            <div className="flex items-center justify-between text-sm text-muted-foreground">
-                                <span>{t('By')} {post.author}</span>
-                                <span>{post.date}</span>
-                            </div>
-                             <div className="flex items-center mt-4 font-semibold text-primary">
-                                {t('Read More')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                            </div>
-                        </CardContent>
-                    </Card>
-                </Link>
-            ))}
-        </div>
+        {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+                <Loader2 className="h-16 w-16 animate-spin text-primary" />
+            </div>
+        ) : error ? (
+            <div className="text-center text-red-500">
+                <p>{error}</p>
+            </div>
+        ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {posts.map((post) => (
+                    <Link href={`/blog/${post.slug}`} key={post.id} className="group">
+                        <Card className="h-full overflow-hidden transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
+                            <CardHeader className="p-0">
+                               <div className="relative w-full h-48">
+                                 <Image
+                                    src={post.imageUrl}
+                                    alt={post.title}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    className="object-cover"
+                                />
+                               </div>
+                            </CardHeader>
+                            <CardContent className="p-6">
+                                <h2 className="text-xl font-semibold mb-2">{t(post.title)}</h2>
+                                <p className="text-muted-foreground mb-4 text-sm">{t(post.description)}</p>
+                                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                                    <span>By {post.author}</span>
+                                    <span>{post.date}</span>
+                                </div>
+                                 <div className="flex items-center mt-4 font-semibold text-primary">
+                                    {t('Read More')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </Link>
+                ))}
+            </div>
+        )}
       </main>
       <Footer />
     </div>

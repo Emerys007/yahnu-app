@@ -1,59 +1,35 @@
 
-"use client"
-
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { useLocalization } from "@/context/localization-context";
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
+import { app } from "@/lib/firebase";
 
-// This is mock data. In a real application, you would fetch this from a CMS.
-const postsData = {
-  en: [
-    {
-      slug: "unlocking-potential-the-yahnu-story",
-      title: "Unlocking Potential: The Yahnu Story",
-      description: "Discover the mission and vision behind Yahnu and how we're bridging the gap between education and employment in {country}.",
-      author: "Dr. Evelyn Reed",
-      date: "2023-10-26",
-      imageUrl: "https://placehold.co/1200x400.png",
-      imageHint: "diverse group of students graduating",
-      content: `
-        <p class="lead mb-8 text-xl text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris.</p>
-        <p class="mb-6">Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
-        <h2 class="text-2xl font-bold my-6">Our Mission</h2>
-        <p class="mb-6">Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor.</p>
-        <h2 class="text-2xl font-bold my-6">The Yahnu Platform</h2>
-        <p class="mb-6">Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit.</p>
-      `
-    },
-  ],
-  fr: [
-      {
-      slug: "unlocking-potential-the-yahnu-story",
-      title: "Libérer le potentiel : L'histoire de Yahnu",
-      description: "Découvrez la mission et la vision de Yahnu et comment nous comblons le fossé entre l'éducation et l'emploi en {country}.",
-      author: "Dr. Evelyn Reed",
-      date: "2023-10-26",
-      imageUrl: "https://placehold.co/1200x400.png",
-      imageHint: "diverse group of students graduating",
-      content: `
-        <p class="lead mb-8 text-xl text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris.</p>
-        <p class="mb-6">Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
-        <h2 class="text-2xl font-bold my-6">Notre Mission</h2>
-        <p class="mb-6">Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor.</p>
-        <h2 class="text-2xl font-bold my-6">La Plateforme Yahnu</h2>
-        <p class="mb-6">Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit.</p>
-      `
-    },
-  ]
-};
+const db = getFirestore(app);
 
+interface Post {
+    slug: string;
+    title: string;
+    description: string;
+    author: string;
+    date: string;
+    imageUrl: string;
+    content: string;
+}
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const { language, t } = useLocalization();
-  const posts = postsData[language as keyof typeof postsData] || postsData.en;
-  const post = posts.find((p) => p.slug === params.slug);
+async function getPostBySlug(slug: string): Promise<Post | null> {
+    const q = query(collection(db, "posts"), where("slug", "==", slug));
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+        return null;
+    }
+    const postDoc = querySnapshot.docs[0];
+    return { id: postDoc.id, ...postDoc.data() } as Post;
+}
+
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const post = await getPostBySlug(params.slug);
 
   if (!post) {
     notFound();
@@ -71,12 +47,11 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
               fill
               className="object-cover rounded-lg"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              data-ai-hint={post.imageHint}
             />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight">{t(post.title)}</h1>
-          <p className="text-muted-foreground">{t('By')} {post.author} on {post.date}</p>
-          <div dangerouslySetInnerHTML={{ __html: t(post.content) }} />
+          <h1 className="text-4xl font-bold tracking-tight">{post.title}</h1>
+          <p className="text-muted-foreground">By {post.author} on {post.date}</p>
+          <div dangerouslySetInnerHTML={{ __html: post.content }} />
         </article>
       </main>
       <Footer />

@@ -302,5 +302,8 @@
     "ZIP / Postal Code": "Code postal",
     "Country": "Pays",
     "Company Address": "Adresse de l'entreprise",
-    "School Address": "Adresse de l'école"
+    "School Address": "Adresse de l'école",
+    "Coming Soon!": "Bientôt disponible !",
+    "We are working hard to bring Yahnu companies to {country}. Stay tuned!": "Nous travaillons dur pour amener les entreprises Yahnu en {country}. Restez à l'écoute !",
+    "We are working hard to bring Yahnu schools to {country}. Stay tuned!": "Nous travaillons dur pour amener les écoles Yahnu en {country}. Restez à l'écoute !"
 }

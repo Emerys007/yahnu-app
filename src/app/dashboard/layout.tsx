@@ -1,13 +1,13 @@
 
 "use client"
 
-import { AnimatePresence, motion } from "framer-motion";
+import * as React from 'react';
 import { usePathname } from 'next/navigation';
-import { DashboardHeader } from "@/components/dashboard/header";
-import { DashboardSidebar, SidebarProvider } from "@/components/dashboard/sidebar";
-import { Chatbot } from "@/components/chatbot";
-import { Footer } from "@/components/landing/footer";
-import { AuthProvider } from "@/context/auth-context";
+import { AnimatePresence, motion } from 'framer-motion';
+import { DashboardSidebar, SidebarProvider } from '@/components/dashboard/sidebar';
+import { DashboardHeader } from '@/components/dashboard/header';
+import { Footer } from '@/components/landing/footer';
+import { Chatbot } from '@/components/chatbot';
 
 export default function DashboardLayout({
   children,
@@ -15,34 +15,33 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname();
+
   return (
-    <AuthProvider>
       <SidebarProvider>
-        <div className="min-h-screen w-full flex flex-col">
-          <div className="flex flex-1">
+        <div className="relative flex min-h-screen flex-col bg-background">
+          <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+            <DashboardHeader />
             <DashboardSidebar />
-            <div className="flex flex-col flex-1 overflow-hidden">
-              <DashboardHeader />
-              <main className="flex-1 bg-background/95 dark:bg-muted/40 overflow-y-auto">
-                 <AnimatePresence mode="wait">
-                   <motion.div
+            <div className="flex-1">
+              <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
+                  <AnimatePresence mode="wait">
+                    <motion.div
                       key={pathname}
-                      initial={{ opacity: 0, y: 10 }}
+                      initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.25 }}
-                      className="p-4 md:p-8 lg:p-10"
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="col-span-3"
                     >
                       {children}
                     </motion.div>
-                </AnimatePresence>
+                  </AnimatePresence>
               </main>
             </div>
-            <Chatbot />
           </div>
-          <Footer />
+          <Chatbot />
         </div>
+        <Footer />
       </SidebarProvider>
-    </AuthProvider>
   )
 }

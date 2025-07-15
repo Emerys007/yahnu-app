@@ -1,74 +1,52 @@
 
-"use client"
-
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, Handshake } from "lucide-react";
-import { useLocalization } from "@/context/localization-context";
-import { useToast } from "@/hooks/use-toast";
+import { MapPin, Globe } from "lucide-react";
+import { getFirestore, collection, query, where, getDocs, DocumentData } from "firebase/firestore";
+import { app } from "@/lib/firebase";
 
-// Mock Data
-const schoolsData = {
-  en: [
-    {
-      name: "Institut National Polytechnique Félix Houphouët-Boigny",
-      acronym: "INP-HB",
-      logoUrl: "https://placehold.co/400x300.png",
-      logoHint: "university main building",
-      location: "Yamoussoukro",
-      website: "https://www.inphb.ci",
-      description: "<p>The INP-HB is a public polytechnic institution in Yamoussoukro, Côte d'Ivoire. It was founded in 1996 and is one of the most prestigious engineering schools in West Africa.</p><p>The institute offers a wide range of programs in engineering, technology, and applied sciences. It is known for its strong ties with industry and its commitment to research and innovation.</p>",
-      programs: [
-        "Computer Science & Engineering",
-        "Civil Engineering",
-        "Mechanical Engineering",
-        "Electrical Engineering",
-        "Agronomy",
-      ],
-      slug: "inp-hb",
-    },
-  ],
-  fr: [
-    {
-      name: "Institut National Polytechnique Félix Houphouët-Boigny",
-      acronym: "INP-HB",
-      logoUrl: "https://placehold.co/400x300.png",
-      logoHint: "university main building",
-      location: "Yamoussoukro",
-      website: "https://www.inphb.ci",
-      description: "<p>L'INP-HB est une institution polytechnique publique à Yamoussoukro, Côte d'Ivoire. Elle a été fondée en 1996 et est l'une des écoles d'ingénieurs les plus prestigieuses d'Afrique de l'Ouest.</p><p>L'institut propose une large gamme de programmes en ingénierie, technologie et sciences appliquées. Il est reconnu pour ses liens étroits avec l'industrie et son engagement en faveur de la recherche et de l'innovation.</p>",
-      programs: [
-        "Génie Informatique",
-        "Génie Civil",
-        "Génie Mécanique",
-        "Génie Électrique",
-        "Agronomie",
-      ],
-      slug: "inp-hb",
-    },
-  ]
-};
+const db = getFirestore(app);
 
+interface School {
+    id: string;
+    name: string;
+    acronym: string;
+    logoUrl: string;
+    location: string;
+    website: string;
+    description: string;
+    programs: string[];
+    slug: string;
+}
 
-export default function SchoolPage({ params }: { params: { slug: string } }) {
-  const { language, t } = useLocalization();
-  const { toast } = useToast();
-  const schools = schoolsData[language as keyof typeof schoolsData] || schoolsData.en;
-  const school = schools.find((s) => s.slug === params.slug);
+async function getSchoolBySlug(slug: string): Promise<School | null> {
+    const q = query(collection(db, "schools"), where("slug", "==", slug));
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+        return null;
+    }
+    const schoolDoc = querySnapshot.docs[0];
+    return { id: schoolDoc.id, ...schoolDoc.data() } as School;
+}
+
+export async function generateStaticParams() {
+    const schoolsCol = collection(db, 'schools');
+    const schoolSnapshot = await getDocs(schoolsCol);
+    const schools = schoolSnapshot.docs.map(doc => doc.data());
+    return schools.map((school) => ({
+      slug: school.slug,
+    }));
+}
+
+export default async function SchoolPage({ params }: { params: { slug: string } }) {
+  const school = await getSchoolBySlug(params.slug);
 
   if (!school) {
     notFound();
-  }
-  
-  const handleRequestPartnership = () => {
-    toast({
-        title: t('Request Sent'),
-        description: `${t('Your partnership request to')} ${school.name} ${t('has been sent.')}`
-    })
   }
 
   return (
@@ -82,38 +60,31 @@ export default function SchoolPage({ params }: { params: { slug: string } }) {
                  </div>
             </CardHeader>
             <CardContent className="p-6 md:p-8 -mt-20">
-                <div className="flex flex-col md:flex-row items-start justify-between gap-4">
-                    <div className="flex items-end gap-6">
-                        <div className="relative h-32 w-32 rounded-full overflow-hidden border-8 border-background shrink-0">
-                             <Image
-                                src={school.logoUrl}
-                                alt={`${school.name} logo`}
-                                fill
-                                sizes="128px"
-                                className="object-contain p-4"
-                                data-ai-hint={school.logoHint}
-                            />
-                        </div>
-                        <div>
-                            <h1 className="text-3xl md:text-4xl font-bold">{school.acronym}</h1>
-                            <p className="text-muted-foreground text-lg">{school.name}</p>
-                        </div>
+                <div className="flex items-end gap-6">
+                    <div className="relative h-32 w-32 rounded-full overflow-hidden border-8 border-background shrink-0">
+                         <Image
+                            src={school.logoUrl}
+                            alt={`${school.name} logo`}
+                            fill
+                            sizes="128px"
+                            className="object-contain"
+                        />
                     </div>
-                     <Button onClick={handleRequestPartnership} className="shrink-0 w-full md:w-auto">
-                        <Handshake className="mr-2 h-4 w-4" />
-                        {t('Request Partnership')}
-                    </Button>
+                    <div>
+                        <h1 className="text-3xl md:text-4xl font-bold">{school.acronym}</h1>
+                        <p className="text-muted-foreground text-lg">{school.name}</p>
+                    </div>
                 </div>
                 
                 <div className="grid md:grid-cols-3 gap-8 mt-8">
                     <div className="md:col-span-2">
-                        <h2 className="text-2xl font-bold mb-4">{t('About')} {school.acronym}</h2>
+                        <h2 className="text-2xl font-bold mb-4">About {school.acronym}</h2>
                         <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: school.description }} />
                     </div>
                     <div>
                         <Card>
                             <CardHeader>
-                                <CardTitle>{t('Institution Details')}</CardTitle>
+                                <CardTitle>Institution Details</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-center gap-3"><MapPin className="h-5 w-5 text-muted-foreground"/> <span>{school.location}</span></div>
@@ -124,14 +95,14 @@ export default function SchoolPage({ params }: { params: { slug: string } }) {
                 </div>
 
                 <div className="mt-12">
-                     <h2 className="text-2xl font-bold mb-4">{t('Featured Programs')}</h2>
+                     <h2 className="text-2xl font-bold mb-4">Featured Programs</h2>
                      <div className="space-y-4">
                         {school.programs.map(program => (
                             <Card key={program} className="p-4 flex justify-between items-center">
                                 <div>
                                     <h3 className="font-semibold text-lg">{program}</h3>
                                 </div>
-                                <Button variant="secondary">{t('Learn More')}</Button>
+                                <Button variant="secondary">Learn More</Button>
                             </Card>
                         ))}
                      </div>
