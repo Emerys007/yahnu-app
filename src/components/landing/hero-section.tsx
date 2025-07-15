@@ -23,7 +23,7 @@ const getSlides = (t: (key: string) => string) => [
     {
         role: "Graduates",
         headline: t("Unlock Your Potential. Find Your Dream Job Today."),
-        subtitle: t("Yahnu connects you with thousands of exclusive job opportunities in Côte d'Ivoire tailored to your unique skills and aspirations. Your future starts here."),
+        subtitle: t("Yahnu connects you with thousands of exclusive job opportunities in {country} tailored to your unique skills and aspirations. Your future starts here."),
         buttonText: t("Explore Job Openings"),
         buttonIcon: <Search />,
         imageUrl: "/images/dream-job.jpg",
