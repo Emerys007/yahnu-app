@@ -4,7 +4,7 @@
 import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CountUp } from "@/components/ui/count-up"
-import { TrendingUp, Users, Building } from "lucide-react"
+import { TrendingUp, Users, Building, MoreVertical, Download } from "lucide-react"
 import {
   ChartContainer,
   ChartTooltip,
@@ -13,6 +13,9 @@ import {
   ChartLegendContent
 } from "@/components/ui/chart"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Pie, PieChart } from "recharts"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { exportToCsv } from "@/lib/utils"
 
 const analyticsData = {
     totalHires: 132,
@@ -85,9 +88,24 @@ export default function SchoolAnalyticsPage() {
 
       <div className="grid lg:grid-cols-5 gap-6">
         <Card className="lg:col-span-3">
-            <CardHeader>
-                <CardTitle>{t('Top Hiring Companies')}</CardTitle>
-                <CardDescription>{t('Companies that have hired the most graduates from your institution.')}</CardDescription>
+            <CardHeader className="flex flex-row items-center">
+                <div className="grid gap-2">
+                    <CardTitle>{t('Top Hiring Companies')}</CardTitle>
+                    <CardDescription>{t('Companies that have hired the most graduates from your institution.')}</CardDescription>
+                </div>
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="ml-auto shrink-0">
+                            <MoreVertical className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => exportToCsv(analyticsData.topCompanies.map(({fill, ...rest}) => rest), "top_hiring_companies.csv")}>
+                            <Download className="mr-2 h-4 w-4" />
+                            {t('Export as CSV')}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </CardHeader>
             <CardContent>
                  <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
@@ -102,9 +120,24 @@ export default function SchoolAnalyticsPage() {
             </CardContent>
         </Card>
         <Card className="lg:col-span-2">
-            <CardHeader>
-                <CardTitle>{t('Hires by Industry')}</CardTitle>
-                <CardDescription>{t('Distribution of graduate placements across different industries.')}</CardDescription>
+            <CardHeader className="flex flex-row items-center">
+                <div className="grid gap-2">
+                    <CardTitle>{t('Hires by Industry')}</CardTitle>
+                    <CardDescription>{t('Distribution of graduate placements across different industries.')}</CardDescription>
+                </div>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="ml-auto shrink-0">
+                            <MoreVertical className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => exportToCsv(analyticsData.hiresByIndustry.map(({fill, ...rest}) => rest), "hires_by_industry.csv")}>
+                            <Download className="mr-2 h-4 w-4" />
+                            {t('Export as CSV')}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </CardHeader>
             <CardContent className="flex justify-center">
                  <ChartContainer config={chartConfig} className="min-h-[300px] w-full">

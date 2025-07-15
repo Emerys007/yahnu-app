@@ -4,7 +4,7 @@
 import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CountUp } from "@/components/ui/count-up"
-import { BarChart3, TrendingUp, Users, Percent } from "lucide-react"
+import { BarChart3, TrendingUp, Users, Percent, MoreVertical, Download } from "lucide-react"
 import {
   ChartContainer,
   ChartTooltip,
@@ -13,6 +13,9 @@ import {
   ChartLegendContent
 } from "@/components/ui/chart"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Pie, PieChart, Line, LineChart, Funnel, FunnelChart, LabelList, Tooltip } from "recharts"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { exportToCsv } from "@/lib/utils"
 
 const analyticsData = {
     totalApplicants: 124,
@@ -103,9 +106,24 @@ export default function CompanyAnalyticsPage() {
       </div>
 
       <Card>
-        <CardHeader>
-            <CardTitle>{t('Applicant Funnel')}</CardTitle>
-            <CardDescription>{t('Progression of candidates through hiring stages.')}</CardDescription>
+        <CardHeader className="flex flex-row items-center">
+            <div className="grid gap-2">
+                <CardTitle>{t('Applicant Funnel')}</CardTitle>
+                <CardDescription>{t('Progression of candidates through hiring stages.')}</CardDescription>
+            </div>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="ml-auto shrink-0">
+                        <MoreVertical className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => exportToCsv(analyticsData.applicantFunnel.map(({fill, ...rest}) => rest), "applicant_funnel.csv")}>
+                        <Download className="mr-2 h-4 w-4" />
+                        {t('Export as CSV')}
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </CardHeader>
         <CardContent>
             <ChartContainer config={funnelChartConfig} className="mx-auto aspect-video max-h-[300px]">
@@ -121,9 +139,24 @@ export default function CompanyAnalyticsPage() {
       
       <div className="grid lg:grid-cols-5 gap-6">
         <Card className="lg:col-span-3">
-            <CardHeader>
-                <CardTitle>{t('Application Volume')}</CardTitle>
-                <CardDescription>{t('Number of applications received over time.')}</CardDescription>
+            <CardHeader className="flex flex-row items-center">
+                <div className="grid gap-2">
+                    <CardTitle>{t('Application Volume')}</CardTitle>
+                    <CardDescription>{t('Number of applications received over time.')}</CardDescription>
+                </div>
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="ml-auto shrink-0">
+                            <MoreVertical className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => exportToCsv(analyticsData.applicationVolume, "application_volume.csv")}>
+                            <Download className="mr-2 h-4 w-4" />
+                            {t('Export as CSV')}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </CardHeader>
             <CardContent>
                  <ChartContainer config={lineChartConfig} className="min-h-[300px] w-full">
@@ -138,9 +171,24 @@ export default function CompanyAnalyticsPage() {
             </CardContent>
         </Card>
         <Card className="lg:col-span-2">
-            <CardHeader>
-                <CardTitle>{t('Applicants by School')}</CardTitle>
-                <CardDescription>{t('Source of applicants by academic institution.')}</CardDescription>
+            <CardHeader className="flex flex-row items-center">
+                <div className="grid gap-2">
+                    <CardTitle>{t('Applicants by School')}</CardTitle>
+                    <CardDescription>{t('Source of applicants by academic institution.')}</CardDescription>
+                </div>
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="ml-auto shrink-0">
+                            <MoreVertical className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => exportToCsv(analyticsData.applicantsBySchool.map(({fill, ...rest}) => rest), "applicants_by_school.csv")}>
+                            <Download className="mr-2 h-4 w-4" />
+                            {t('Export as CSV')}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </CardHeader>
             <CardContent className="flex justify-center">
                  <ChartContainer config={pieChartConfig} className="min-h-[300px] w-full">

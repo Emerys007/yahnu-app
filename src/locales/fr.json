@@ -288,5 +288,6 @@
     "has been removed from administrators.": "a été supprimé(e) des administrateurs.",
     "Administrator Invitation Link": "Lien d'invitation d'administrateur",
     "Share this link with the new administrator to allow them to register.": "Partagez ce lien avec le nouvel administrateur pour lui permettre de s'inscrire.",
-    "Link": "Lien"
+    "Link": "Lien",
+    "Export as CSV": "Exporter en CSV"
 }

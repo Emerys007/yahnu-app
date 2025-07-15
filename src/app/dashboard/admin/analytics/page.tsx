@@ -4,7 +4,7 @@
 import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CountUp } from "@/components/ui/count-up"
-import { BarChart3, TrendingUp, Users, Building, School, UserCheck } from "lucide-react"
+import { BarChart3, TrendingUp, Users, Building, School, UserCheck, MoreVertical, Download } from "lucide-react"
 import {
   ChartContainer,
   ChartTooltip,
@@ -13,6 +13,9 @@ import {
   ChartLegendContent
 } from "@/components/ui/chart"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Pie, PieChart } from "recharts"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { exportToCsv } from "@/lib/utils"
 
 const analyticsData = {
     totalUsers: 1256,
@@ -102,9 +105,24 @@ export default function AdminAnalyticsPage() {
 
       <div className="grid lg:grid-cols-5 gap-6">
         <Card className="lg:col-span-3">
-            <CardHeader>
-                <CardTitle>{t('User Growth')}</CardTitle>
-                <CardDescription>{t('Total users on the platform over the last 6 months.')}</CardDescription>
+            <CardHeader className="flex flex-row items-center">
+                <div className="grid gap-2">
+                    <CardTitle>{t('User Growth')}</CardTitle>
+                    <CardDescription>{t('Total users on the platform over the last 6 months.')}</CardDescription>
+                </div>
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="ml-auto shrink-0">
+                            <MoreVertical className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => exportToCsv(analyticsData.userGrowthData, "user_growth.csv")}>
+                            <Download className="mr-2 h-4 w-4" />
+                            {t('Export as CSV')}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </CardHeader>
             <CardContent>
                  <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
@@ -119,9 +137,24 @@ export default function AdminAnalyticsPage() {
             </CardContent>
         </Card>
         <Card className="lg:col-span-2">
-            <CardHeader>
-                <CardTitle>{t('User Distribution')}</CardTitle>
-                <CardDescription>{t('Breakdown of user types on the platform.')}</CardDescription>
+            <CardHeader className="flex flex-row items-center">
+                <div className="grid gap-2">
+                    <CardTitle>{t('User Distribution')}</CardTitle>
+                    <CardDescription>{t('Breakdown of user types on the platform.')}</CardDescription>
+                </div>
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="ml-auto shrink-0">
+                            <MoreVertical className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => exportToCsv(analyticsData.userDistribution.map(({fill, ...rest}) => rest), "user_distribution.csv")}>
+                             <Download className="mr-2 h-4 w-4" />
+                            {t('Export as CSV')}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </CardHeader>
             <CardContent className="flex justify-center">
                  <ChartContainer config={chartConfig} className="min-h-[300px] w-full">

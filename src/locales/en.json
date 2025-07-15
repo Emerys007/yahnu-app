@@ -287,5 +287,6 @@
     "has been removed from administrators.": "has been removed from administrators.",
     "Administrator Invitation Link": "Administrator Invitation Link",
     "Share this link with the new administrator to allow them to register.": "Share this link with the new administrator to allow them to register.",
-    "Link": "Link"
+    "Link": "Link",
+    "Export as CSV": "Export as CSV"
 }
