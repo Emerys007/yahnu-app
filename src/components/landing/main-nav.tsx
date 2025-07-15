@@ -38,7 +38,7 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 const getNavLinks = (t: (key: string) => string) => [
-  { href: "/dashboard/jobs", label: t("Jobs") },
+  { href: "/jobs", label: t("Jobs") },
   { href: "/companies", label: t("Companies") },
   { href: "/schools", label: t("Schools") },
   { href: "/blog", label: t("Blog") },
@@ -257,3 +257,5 @@ export function MainNav() {
     </header>
   );
 }
+
+    
