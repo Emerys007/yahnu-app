@@ -23,7 +23,9 @@ import {
   Shield,
   UserCheck,
   Users,
-  BrainCircuit
+  BrainCircuit,
+  MessageSquare,
+  BookUser
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -36,6 +38,7 @@ import { useAuth } from "@/context/auth-context";
 const getNavItems = (t: (key: string) => string, accountType: AccountType) => {
   const baseNav = [
     { href: "/dashboard", icon: LayoutDashboard, label: t('Dashboard') },
+    { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
   ];
 
   const graduateNav = [
@@ -43,6 +46,8 @@ const getNavItems = (t: (key: string) => string, accountType: AccountType) => {
     { href: "/dashboard/profile", icon: User, label: t('Profile') },
     { href: "/dashboard/jobs", icon: Briefcase, label: t('Job Search') },
     { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
+    { type: "divider", label: t('AI Tools') },
+    { href: "/dashboard/interview-prep", icon: BookUser, label: t('Interview Prep') },
   ];
 
   const companyNav = [
