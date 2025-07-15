@@ -2,26 +2,34 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, User as FirebaseUser } from "firebase/auth";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { app } from '@/lib/firebase'; // Ensure your firebase config is correctly exported from here
 
 const auth = getAuth(app);
 const db = getFirestore(app);
+const googleProvider = new GoogleAuthProvider();
 
 export interface UserProfile {
   uid: string;
   email: string | null;
   name?: string;
   role: 'graduate' | 'company' | 'school' | 'admin';
+  firstName?: string;
+  lastName?: string;
+  schoolId?: string;
+  companyName?: string;
+  contactName?: string;
+  industry?: string;
 }
 
 interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
-  signUp: (name: string, email: string, password: string, role: UserProfile['role']) => Promise<void>;
+  signUp: (profile: Omit<UserProfile, 'uid'>, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -48,12 +56,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser({
             uid: firebaseUser.uid,
             email: firebaseUser.email,
-            name: userData.name,
-            role: userData.role,
-          });
+            ...userData,
+          } as UserProfile);
         } else {
-          console.error("User document not found in Firestore for UID:", firebaseUser.uid);
-          setUser(null);
+           // This can happen during Google sign-up if the user document hasn't been created yet.
+           // We can create a default one here or handle it in the signInWithGoogle function.
+           // For now, let's assume it should exist.
+          console.warn("User document not found in Firestore for UID:", firebaseUser.uid);
+          const profile: Omit<UserProfile, 'uid'> = {
+            email: firebaseUser.email,
+            name: firebaseUser.displayName,
+            role: 'graduate', // Default role
+          };
+          await createUserDocument(firebaseUser, profile);
+          setUser({ uid: firebaseUser.uid, ...profile });
         }
       } else {
         setUser(null);
@@ -63,20 +79,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => unsubscribe();
   }, []);
 
-  const signUp = async (name: string, email: string, password: string, role: UserProfile['role']) => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const firebaseUser = userCredential.user;
-      
-      const userDocRef = doc(db, "users", firebaseUser.uid);
-      await setDoc(userDocRef, {
-        name: name,
-        email: email,
-        role: role,
+  const createUserDocument = async (firebaseUser: FirebaseUser, profile: Omit<UserProfile, 'uid'>) => {
+    const userDocRef = doc(db, "users", firebaseUser.uid);
+    await setDoc(userDocRef, {
+        ...profile,
+        uid: firebaseUser.uid,
+        email: firebaseUser.email, // ensure email from auth is stored
         createdAt: new Date(),
-      });
-      
-      // No need to manually set user here, onAuthStateChanged will trigger
+    });
+  }
+
+  const signUp = async (profile: Omit<UserProfile, 'uid'>, password: string) => {
+    if (!profile.email) throw new Error("Email is required for sign up.");
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, profile.email, password);
+      const firebaseUser = userCredential.user;
+      await createUserDocument(firebaseUser, profile);
+      // onAuthStateChanged will trigger and set the user state
     } catch (error) {
       console.error("Error signing up:", error);
       throw error;
@@ -92,6 +111,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw error;
     }
   };
+
+  const signInWithGoogle = async () => {
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const firebaseUser = result.user;
+        const userDocRef = doc(db, "users", firebaseUser.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (!userDoc.exists()) {
+            // New user via Google
+            const [firstName, ...lastName] = (firebaseUser.displayName || "").split(" ");
+            const profile: Omit<UserProfile, 'uid'> = {
+                email: firebaseUser.email,
+                name: firebaseUser.displayName,
+                firstName,
+                lastName: lastName.join(" "),
+                role: 'graduate', // Default role for Google sign-ups
+            };
+            await createUserDocument(firebaseUser, profile);
+        }
+        // onAuthStateChanged will handle setting the user state.
+    } catch (error) {
+        console.error("Error signing in with Google:", error);
+        throw error;
+    }
+  };
+
 
   const signOut = async () => {
     try {
@@ -109,11 +155,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     signIn,
     signOut,
+    signInWithGoogle,
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
+
+    

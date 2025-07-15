@@ -119,7 +119,9 @@
     "The suggested password has been copied to your clipboard.": "Le mot de passe suggéré a été copié dans votre presse-papiers.",
     "Show password": "Afficher le mot de passe",
     "Hide password": "Masquer le mot de passe",
-    "Contact Person Name": "Nom de la personne de contact",
+    "First Name": "Prénom",
+    "Last Name": "Nom de famille",
+    "Contact Person Name": "Nom de la personne à contacter",
     "Company Name": "Nom de l'entreprise",
     "School Name": "Nom de l'école",
     "School/University": "École/Université",
@@ -307,3 +309,5 @@
     "We are working hard to bring Yahnu companies to {country}. Stay tuned!": "Nous travaillons dur pour amener les entreprises Yahnu en {country}. Restez à l'écoute !",
     "We are working hard to bring Yahnu schools to {country}. Stay tuned!": "Nous travaillons dur pour amener les écoles Yahnu en {country}. Restez à l'écoute !"
 }
+
+    

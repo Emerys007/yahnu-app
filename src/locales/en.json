@@ -119,6 +119,8 @@
     "The suggested password has been copied to your clipboard.": "The suggested password has been copied to your clipboard.",
     "Show password": "Show password",
     "Hide password": "Hide password",
+    "First Name": "First Name",
+    "Last Name": "Last Name",
     "Contact Person Name": "Contact Person Name",
     "Company Name": "Company Name",
     "School Name": "School Name",
@@ -306,3 +308,5 @@
     "We are working hard to bring Yahnu companies to {country}. Stay tuned!": "We are working hard to bring Yahnu companies to {country}. Stay tuned!",
     "We are working hard to bring Yahnu schools to {country}. Stay tuned!": "We are working hard to bring Yahnu schools to {country}. Stay tuned!"
 }
+
+    
