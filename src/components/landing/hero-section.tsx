@@ -22,8 +22,8 @@ import { cn } from "@/lib/utils"
 const getSlides = (t: (key: string) => string) => [
     {
         role: "Graduates",
-        headline: t("Unlock Your Potential. Find Your Dream Job Today."),
-        subtitle: t("Yahnu connects you with thousands of exclusive job opportunities in Côte d'Ivoire tailored to your unique skills and aspirations. Your future starts here."),
+        headline: t("Find Your Dream Job Today"),
+        subtitle: t("Explore thousands of job opportunities tailored for you in Côte d'Ivoire. Your next career move is just a click away."),
         buttonText: t("Explore Job Openings"),
         buttonIcon: <Search className="mr-2 h-4 w-4" />,
         imageUrl: "/images/dream-job.jpg",
@@ -32,8 +32,8 @@ const getSlides = (t: (key: string) => string) => [
       },
       {
         role: "Companies",
-        headline: t("Build a World-Class Team, Effortlessly."),
-        subtitle: t("Tap into a curated network of exceptional graduates from premier institutions. Discover the perfect candidates to drive your company's growth and innovation."),
+        headline: t("Build Your Dream Team"),
+        subtitle: t("Access a diverse pool of talented graduates from top schools. Find the perfect fit for your company's culture and goals."),
         buttonText: t("Find Top Talent"),
         buttonIcon: <PlusCircle className="mr-2 h-4 w-4" />,
         imageUrl: "/images/uni-partnership.jpg",
@@ -42,9 +42,9 @@ const getSlides = (t: (key: string) => string) => [
       },
       {
         role: "Schools",
-        headline: t("Shape the Future of Talent."),
-        subtitle: t("Partner with leading companies to create a direct pipeline for your graduates. Enhance your curriculum, boost graduate employment, and elevate your institution's prestige."),
-        buttonText: t("Forge Industry Partnerships"),
+        headline: t("Forge Industry Partnerships"),
+        subtitle: t("Collaborate with leading academic institutions to shape the future of talent. Connect with the brightest minds and drive innovation."),
+        buttonText: t("Become a Partner"),
         buttonIcon: <Handshake className="mr-2 h-4 w-4" />,
         imageUrl: "/images/Industry.webp",
         imageHint: "university building and a handshake representing partnership",
