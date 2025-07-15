@@ -111,5 +111,17 @@
     "Notify Me": "M'avertir",
     "You're on the list!": "Vous êtes sur la liste !",
     "Go back to the homepage": "Retour à la page d'accueil",
-    "Select a country": "Sélectionnez un pays"
+    "Select a country": "Sélectionnez un pays",
+    "Confirm Password": "Confirmer le mot de passe",
+    "Suggest strong password": "Suggérer un mot de passe fort",
+    "Copy": "Copier",
+    "Password Copied": "Mot de passe copié",
+    "The suggested password has been copied to your clipboard.": "Le mot de passe suggéré a été copié dans votre presse-papiers.",
+    "Show password": "Afficher le mot de passe",
+    "Hide password": "Masquer le mot de passe",
+    "Contact Person Name": "Nom de la personne de contact",
+    "Company Name": "Nom de l'entreprise",
+    "School Name": "Nom de l'école",
+    "School/University": "École/Université",
+    "Select your school": "Sélectionnez votre école"
 }

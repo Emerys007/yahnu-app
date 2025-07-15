@@ -111,5 +111,17 @@
     "Notify Me": "Notify Me",
     "You're on the list!": "You're on the list!",
     "Go back to the homepage": "Go back to the homepage",
-    "Select a country": "Select a country"
+    "Select a country": "Select a country",
+    "Confirm Password": "Confirm Password",
+    "Suggest strong password": "Suggest strong password",
+    "Copy": "Copy",
+    "Password Copied": "Password Copied",
+    "The suggested password has been copied to your clipboard.": "The suggested password has been copied to your clipboard.",
+    "Show password": "Show password",
+    "Hide password": "Hide password",
+    "Contact Person Name": "Contact Person Name",
+    "Company Name": "Company Name",
+    "School Name": "School Name",
+    "School/University": "School/University",
+    "Select your school": "Select your school"
 }

@@ -1,8 +1,9 @@
 
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import Link from "next/link"
+import { Eye, EyeOff, Sparkles } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -24,6 +25,8 @@ import {
 import { Logo } from "@/components/logo"
 import { useLocalization } from "@/context/localization-context"
 import type { AccountType } from "@/context/auth-context"
+import { useToast } from "@/hooks/use-toast"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -38,17 +41,39 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function RegisterForm() {
   const { t } = useLocalization();
-  const [accountType, setAccountType] = React.useState<AccountType | ''>('');
+  const { toast } = useToast();
+  const [accountType, setAccountType] = useState<AccountType | ''>('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [suggestedPassword, setSuggestedPassword] = useState("");
 
   const handleAccountTypeChange = (value: string) => {
     setAccountType(value as AccountType);
   };
+
+  const generateStrongPassword = () => {
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
+    let password = "";
+    for (let i = 0; i < 14; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setSuggestedPassword(password);
+  }
+
+  const copyToClipboard = () => {
+      if (!suggestedPassword) return;
+      navigator.clipboard.writeText(suggestedPassword);
+      toast({
+          title: t('Password Copied'),
+          description: t('The suggested password has been copied to your clipboard.'),
+      });
+  }
   
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
         <div className="flex justify-center mb-4 lg:hidden">
-            <Logo className="h-12 w-12 text-primary" />
+            <Logo className="h-12 w-12" />
         </div>
         <CardTitle className="text-2xl text-center">{t('Create an Account')}</CardTitle>
         <CardDescription className="text-center">
@@ -114,10 +139,47 @@ export function RegisterForm() {
                   required
                 />
               </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="password">{t('Password')}</Label>
-                <Input id="password" type="password" />
+                <div className="relative">
+                    <Input id="password" type={showPassword ? "text" : "password"} className="pr-10" />
+                    <Button type="button" variant="ghost" size="icon" className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)}>
+                        {showPassword ? <EyeOff /> : <Eye />}
+                        <span className="sr-only">{ showPassword ? t('Hide password') : t('Show password')}</span>
+                    </Button>
+                </div>
               </div>
+
+              {(accountType === 'company' || accountType === 'school') && (
+                <div className="grid gap-2">
+                  <Label htmlFor="confirm-password">{t('Confirm Password')}</Label>
+                  <div className="relative">
+                    <Input id="confirm-password" type={showConfirmPassword ? "text" : "password"} className="pr-10" />
+                     <Button type="button" variant="ghost" size="icon" className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                        {showConfirmPassword ? <EyeOff /> : <Eye />}
+                        <span className="sr-only">{ showConfirmPassword ? t('Hide password') : t('Show password')}</span>
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {(accountType === 'company' || accountType === 'school') && (
+                <div>
+                   <Button type="button" variant="link" size="sm" className="p-0 h-auto" onClick={generateStrongPassword}>
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        {t('Suggest strong password')}
+                   </Button>
+                   {suggestedPassword && (
+                    <Alert className="mt-2">
+                        <AlertDescription className="flex items-center justify-between gap-4">
+                            <code className="break-all">{suggestedPassword}</code>
+                            <Button type="button" size="sm" onClick={copyToClipboard}>{t('Copy')}</Button>
+                        </AlertDescription>
+                    </Alert>
+                   )}
+                </div>
+              )}
               
               <Button type="submit" className="w-full" asChild>
                 <Link href="/login">{t('Create an account')}</Link>
