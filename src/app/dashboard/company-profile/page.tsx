@@ -4,7 +4,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, useFieldArray } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Upload, PlusCircle, Trash2, Wand2, Loader2, Sparkles } from "lucide-react"
+import { Upload, PlusCircle, Trash2 } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -38,8 +38,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useLocalization } from "@/context/localization-context"
-import { generateJobDescription } from "@/ai/flows/job-description-generator"
-
 
 const companyProfileSchema = z.object({
   companyName: z.string().min(2, { message: "Company name must be at least 2 characters." }),
@@ -71,116 +69,6 @@ const industrySectors = [
     "Education",
     "Energy"
 ]
-
-const AIGeneratorDialog = ({ jobForm }: { jobForm: any }) => {
-    const { t } = useLocalization();
-    const { toast } = useToast();
-    const [isOpen, setIsOpen] = useState(false);
-    const [isGenerating, setIsGenerating] = useState(false);
-
-    const aiFormSchema = z.object({
-        jobTitle: z.string().min(3, "Job title is required"),
-        keyResponsibilities: z.array(z.object({ value: z.string() })).min(1, "At least one responsibility is required"),
-        requiredSkills: z.array(z.object({ value: z.string() })).min(1, "At least one skill is required"),
-    });
-
-    const aiForm = useForm<z.infer<typeof aiFormSchema>>({
-        resolver: zodResolver(aiFormSchema),
-        defaultValues: {
-            jobTitle: "",
-            keyResponsibilities: [{ value: "" }],
-            requiredSkills: [{ value: "" }],
-        },
-    });
-
-    const { fields: responsibilities, append: appendResponsibility, remove: removeResponsibility } = useFieldArray({
-        control: aiForm.control,
-        name: "keyResponsibilities",
-    });
-
-    const { fields: skills, append: appendSkill, remove: removeSkill } = useFieldArray({
-        control: aiForm.control,
-        name: "requiredSkills",
-    });
-
-    async function onAiSubmit(values: z.infer<typeof aiFormSchema>) {
-        setIsGenerating(true);
-        try {
-            const result = await generateJobDescription({
-                jobTitle: values.jobTitle,
-                keyResponsibilities: values.keyResponsibilities.map(r => r.value).filter(Boolean),
-                requiredSkills: values.requiredSkills.map(s => s.value).filter(Boolean),
-            });
-            jobForm.setValue("description", result.generatedDescription);
-            toast({ title: t("Description Generated!"), description: t("The job description has been pasted below.") });
-            setIsOpen(false);
-        } catch (error) {
-            toast({ title: t("Generation Failed"), description: t("There was a problem generating the description."), variant: "destructive" });
-        } finally {
-            setIsGenerating(false);
-        }
-    }
-    
-    return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
-                <Button type="button" variant="outline" size="sm">
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    {t('AI Generate')}
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-2xl">
-                <DialogHeader>
-                    <DialogTitle>{t('AI Job Description Generator')}</DialogTitle>
-                    <DialogDescription>{t('Provide some details and let AI write a professional job description for you.')}</DialogDescription>
-                </DialogHeader>
-                <Form {...aiForm}>
-                    <form onSubmit={aiForm.handleSubmit(onAiSubmit)} className="space-y-4 max-h-[70vh] overflow-y-auto pr-6">
-                        <FormField control={aiForm.control} name="jobTitle" render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>{t('Job Title')}</FormLabel>
-                                <FormControl><Input {...field} /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                        
-                        <div>
-                            <Label>{t('Key Responsibilities')}</Label>
-                            {responsibilities.map((field, index) => (
-                                <FormField key={field.id} control={aiForm.control} name={`keyResponsibilities.${index}.value`} render={({ field }) => (
-                                    <FormItem className="flex items-center gap-2 mt-2">
-                                        <FormControl><Input {...field} /></FormControl>
-                                        <Button type="button" variant="ghost" size="icon" onClick={() => removeResponsibility(index)} disabled={responsibilities.length <= 1}><Trash2 className="h-4 w-4" /></Button>
-                                    </FormItem>
-                                )} />
-                            ))}
-                            <Button type="button" size="sm" variant="outline" onClick={() => appendResponsibility({ value: "" })} className="mt-2">{t('Add Responsibility')}</Button>
-                        </div>
-
-                         <div>
-                            <Label>{t('Required Skills')}</Label>
-                            {skills.map((field, index) => (
-                                <FormField key={field.id} control={aiForm.control} name={`requiredSkills.${index}.value`} render={({ field }) => (
-                                    <FormItem className="flex items-center gap-2 mt-2">
-                                        <FormControl><Input {...field} /></FormControl>
-                                        <Button type="button" variant="ghost" size="icon" onClick={() => removeSkill(index)} disabled={skills.length <= 1}><Trash2 className="h-4 w-4" /></Button>
-                                    </FormItem>
-                                )} />
-                            ))}
-                            <Button type="button" size="sm" variant="outline" onClick={() => appendSkill({ value: "" })} className="mt-2">{t('Add Skill')}</Button>
-                        </div>
-                        
-                        <DialogFooter>
-                            <Button type="submit" disabled={isGenerating}>
-                                {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('Generating...')}</> : <>{t('Generate Description')}</>}
-                            </Button>
-                        </DialogFooter>
-                    </form>
-                </Form>
-            </DialogContent>
-        </Dialog>
-    )
-}
 
 export default function CompanyProfilePage() {
   const { t } = useLocalization();
@@ -464,10 +352,7 @@ export default function CompanyProfilePage() {
                                         name="description"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <div className="flex items-center justify-between">
-                                                    <FormLabel>{t('Job Description')}</FormLabel>
-                                                    <AIGeneratorDialog jobForm={jobForm} />
-                                                </div>
+                                                <FormLabel>{t('Job Description')}</FormLabel>
                                                 <FormControl><Textarea rows={8} {...field} /></FormControl>
                                                 <FormMessage />
                                             </FormItem>
