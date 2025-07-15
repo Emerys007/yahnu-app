@@ -55,21 +55,6 @@ const WhyChooseYahnu = () => {
     },
   };
 
-  const iconVariants = {
-    hidden: { opacity: 0, scale: 0.5, rotate: -45 },
-    visible: {
-        opacity: 1,
-        scale: 1,
-        rotate: 0,
-        transition: {
-            type: "spring",
-            stiffness: 260,
-            damping: 20,
-            delay: 0.2
-        }
-    }
-  }
-
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto">
@@ -100,12 +85,7 @@ const WhyChooseYahnu = () => {
               whileHover={{ scale: 1.05, y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)" }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              <motion.div
-                variants={iconVariants}
-                whileHover={{ rotate: [0, 15, -10, 15, 0], transition: { duration: 0.4 } }}
-              >
-                {benefit.icon}
-              </motion.div>
+              {benefit.icon}
               <h3 className="text-lg font-semibold">{benefit.title}</h3>
             </motion.div>
           ))}

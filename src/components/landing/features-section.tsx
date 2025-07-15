@@ -6,7 +6,7 @@ import Image from "next/image"
 import { motion, useInView, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { GraduationCap, Briefcase, Building } from "lucide-react"
+import { GraduationCap, Briefcase, Building, School } from "lucide-react"
 import { useLocalization } from "@/context/localization-context"
 import { cn } from "@/lib/utils"
 
@@ -33,7 +33,7 @@ const getFeaturesData = (t: (key: string) => string) => ({
   },
   companies: {
     title: t('For Companies'),
-    icon: <Briefcase className="h-8 w-8 mb-4 text-primary" />,
+    icon: <Building className="h-8 w-8 mb-4 text-primary" />,
     image: "/images/IndustryPartnership.jpeg",
     imageHint: "recruitment dashboard",
     items: [
@@ -53,7 +53,7 @@ const getFeaturesData = (t: (key: string) => string) => ({
   },
   schools: {
     title: t('For Schools'),
-    icon: <Building className="h-8 w-8 mb-4 text-primary" />,
+    icon: <School className="h-8 w-8 mb-4 text-primary" />,
     image: "/images/University.png",
     imageHint: "academic analytics",
     items: [
@@ -109,8 +109,8 @@ const AnimatedTabs = () => {
 
   const tabs = [
     { id: 'graduates', label: t('Graduates'), icon: GraduationCap },
-    { id: 'companies', label: t('Companies'), icon: Briefcase },
-    { id: 'schools', label: t('Schools'), icon: Building },
+    { id: 'companies', label: t('Companies'), icon: Building },
+    { id: 'schools', label: t('Schools'), icon: School },
   ];
 
   const imageVariants = {
