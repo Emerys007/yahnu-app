@@ -29,7 +29,6 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuPortal,
-  DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { useLocalization } from "@/context/localization-context";
@@ -60,20 +59,19 @@ export function MainNav() {
               <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
             </div>
         </Link>
-
-        <nav className="hidden md:flex items-center gap-6 text-sm">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="font-medium text-muted-foreground transition-colors hover:text-foreground/80"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
         
         <div className="flex items-center gap-2 ml-auto">
+            <nav className="hidden md:flex items-center gap-6 text-sm">
+                {navLinks.map((link) => (
+                    <Link
+                    key={link.href}
+                    href={link.href}
+                    className="font-medium text-muted-foreground transition-colors hover:text-foreground/80"
+                    >
+                    {link.label}
+                    </Link>
+                ))}
+            </nav>
             <div className="hidden md:flex items-center gap-2">
                 <Button variant="ghost" asChild>
                   <Link href="/login">{t('Login')}</Link>
