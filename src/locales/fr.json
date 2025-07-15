@@ -267,7 +267,7 @@
     "Suspend": "Suspendre",
     "Delete User": "Supprimer l'utilisateur",
     "Are you absolutely sure?": "Êtes-vous absolument sûr ?",
-    "This action cannot be undone. This will permanently delete the user account and remove their data from our servers.": "Cette action est irréversible. Cela supprimera définitivement le compte utilisateur et ses données de nos serveurs.",
+    "This action cannot be undone. This will permanently delete the user account and remove their data from our servers.": "Cette action est irréversible. Cela supprimera définitiveemment le compte utilisateur et ses données de nos serveurs.",
     "Cancel": "Annuler",
     "Yes, delete user": "Oui, supprimer l'utilisateur",
     "Status Updated": "Statut mis à jour",
@@ -289,5 +289,18 @@
     "Administrator Invitation Link": "Lien d'invitation d'administrateur",
     "Share this link with the new administrator to allow them to register.": "Partagez ce lien avec le nouvel administrateur pour lui permettre de s'inscrire.",
     "Link": "Lien",
-    "Export as CSV": "Exporter en CSV"
+    "Export as CSV": "Exporter en CSV",
+    "Address": "Adresse",
+    "Your primary address.": "Votre adresse principale.",
+    "Search for an address": "Rechercher une adresse",
+    "Start typing an address...": "Commencez à taper une adresse...",
+    "Type to search...": "Tapez pour rechercher...",
+    "No address found.": "Aucune adresse trouvée.",
+    "Street Address": "Adresse de la rue",
+    "City": "Ville",
+    "State / Province": "État / Province",
+    "ZIP / Postal Code": "Code postal",
+    "Country": "Pays",
+    "Company Address": "Adresse de l'entreprise",
+    "School Address": "Adresse de l'école"
 }

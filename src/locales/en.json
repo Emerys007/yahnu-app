@@ -288,5 +288,18 @@
     "Administrator Invitation Link": "Administrator Invitation Link",
     "Share this link with the new administrator to allow them to register.": "Share this link with the new administrator to allow them to register.",
     "Link": "Link",
-    "Export as CSV": "Export as CSV"
+    "Export as CSV": "Export as CSV",
+    "Address": "Address",
+    "Your primary address.": "Your primary address.",
+    "Search for an address": "Search for an address",
+    "Start typing an address...": "Start typing an address...",
+    "Type to search...": "Type to search...",
+    "No address found.": "No address found.",
+    "Street Address": "Street Address",
+    "City": "City",
+    "State / Province": "State / Province",
+    "ZIP / Postal Code": "ZIP / Postal Code",
+    "Country": "Country",
+    "Company Address": "Company Address",
+    "School Address": "School Address"
 }

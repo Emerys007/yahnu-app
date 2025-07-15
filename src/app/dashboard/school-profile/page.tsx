@@ -22,12 +22,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Upload, PlusCircle, Trash2 } from "lucide-react"
 import { useLocalization } from "@/context/localization-context"
 import { PhoneNumberInput } from "@/components/ui/phone-number-input"
+import { AddressAutocomplete } from "@/components/ui/address-autocomplete"
 
 const schoolProfileSchema = z.object({
   schoolName: z.string().min(2, { message: "School name must be at least 2 characters." }),
   website: z.string().url({ message: "Please enter a valid URL." }),
   location: z.string().min(2, { message: "Location is required." }),
   phone: z.string().optional(),
+  address: z.object({
+    street: z.string(),
+    city: z.string(),
+    state: z.string(),
+    zip: z.string(),
+    country: z.string(),
+  }).optional(),
   description: z.string().min(50, { message: "Description must be at least 50 characters." }),
 })
 
@@ -43,6 +51,7 @@ export default function SchoolProfilePage() {
       website: "https://www.inphb.ci",
       location: "Yamoussoukro",
       phone: "",
+      address: { street: "", city: "", state: "", zip: "", country: "" },
       description: "As a leading polytechnic institution in West Africa, we are committed to excellence in engineering, technology, and applied sciences. Our strong industry ties and focus on innovation prepare our graduates to become leaders in their fields.",
     },
   })
@@ -147,6 +156,30 @@ export default function SchoolProfilePage() {
                 />
               </CardContent>
             </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('School Address')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <FormField
+                        control={form.control}
+                        name="address"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <AddressAutocomplete 
+                                        value={field.value || { street: "", city: "", state: "", zip: "", country: "" }} 
+                                        onChange={field.onChange} 
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </CardContent>
+            </Card>
+
             <div className="flex justify-end">
               <Button type="submit">{t('Save Changes')}</Button>
             </div>

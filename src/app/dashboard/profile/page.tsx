@@ -22,11 +22,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Upload, PlusCircle, Trash2 } from "lucide-react"
 import { useLocalization } from "@/context/localization-context"
 import { PhoneNumberInput } from "@/components/ui/phone-number-input"
+import { AddressAutocomplete } from "@/components/ui/address-autocomplete"
 
 const profileSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email(),
   phone: z.string().optional(),
+  address: z.object({
+    street: z.string(),
+    city: z.string(),
+    state: z.string(),
+    zip: z.string(),
+    country: z.string(),
+  }).optional(),
   experience: z.string().optional(),
   education: z.string().optional(),
   skills: z.string().optional(),
@@ -43,6 +51,13 @@ export default function ProfilePage() {
       name: "",
       email: "",
       phone: "",
+      address: {
+        street: "",
+        city: "",
+        state: "",
+        zip: "",
+        country: "",
+      },
       experience: "",
       education: "",
       skills: "",
@@ -175,6 +190,30 @@ export default function ProfilePage() {
               />
             </CardContent>
           </Card>
+
+           <Card>
+                <CardHeader>
+                    <CardTitle>{t('Address')}</CardTitle>
+                    <CardDescription>{t('Your primary address.')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <FormField
+                        control={form.control}
+                        name="address"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <AddressAutocomplete 
+                                        value={field.value || { street: "", city: "", state: "", zip: "", country: "" }} 
+                                        onChange={field.onChange} 
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </CardContent>
+            </Card>
 
           <Card>
             <CardHeader>

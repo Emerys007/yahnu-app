@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/select"
 import { useLocalization } from "@/context/localization-context"
 import { PhoneNumberInput } from "@/components/ui/phone-number-input"
+import { AddressAutocomplete } from "@/components/ui/address-autocomplete"
 
 const companyProfileSchema = z.object({
   companyName: z.string().min(2, { message: "Company name must be at least 2 characters." }),
@@ -46,6 +47,13 @@ const companyProfileSchema = z.object({
   location: z.string().min(2, { message: "Location is required." }),
   industry: z.string().min(1, "Industry sector is required."),
   phone: z.string().optional(),
+  address: z.object({
+    street: z.string(),
+    city: z.string(),
+    state: z.string(),
+    zip: z.string(),
+    country: z.string(),
+  }).optional(),
   tagline: z.string().max(100).optional(),
   description: z.string().min(50, { message: "Description must be at least 50 characters." }),
 })
@@ -90,6 +98,7 @@ export default function CompanyProfilePage() {
       location: "New York, NY",
       industry: "Information Technology",
       phone: "",
+      address: { street: "", city: "", state: "", zip: "", country: "" },
       tagline: "Building the future of technology.",
       description: "Innovate Inc. is a leading technology firm dedicated to creating cutting-edge solutions that solve real-world problems. We are a team of passionate innovators, designers, and engineers committed to excellence.",
     },
@@ -258,6 +267,29 @@ export default function CompanyProfilePage() {
                   )}
                 />
               </CardContent>
+            </Card>
+
+             <Card>
+                <CardHeader>
+                    <CardTitle>{t('Company Address')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <FormField
+                        control={profileForm.control}
+                        name="address"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <AddressAutocomplete 
+                                        value={field.value || { street: "", city: "", state: "", zip: "", country: "" }} 
+                                        onChange={field.onChange} 
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </CardContent>
             </Card>
             <div className="flex justify-end">
               <Button type="submit">{t('Save Changes')}</Button>
