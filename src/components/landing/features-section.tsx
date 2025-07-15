@@ -2,11 +2,12 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { motion, useInView } from "framer-motion"
+import { motion, useInView, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { GraduationCap, Briefcase, Building } from "lucide-react"
 import { useLocalization } from "@/context/localization-context"
+import { cn } from "@/lib/utils"
 
 const getFeaturesData = (t: (key: string) => string) => ({
   graduates: {
@@ -100,18 +101,104 @@ function FeatureCard({ feature }: { feature: { title: string; description: strin
     );
   }
 
+const AnimatedTabs = () => {
+  const { t } = useLocalization();
+  const [activeTab, setActiveTab] = React.useState("graduates");
+  const featuresData = getFeaturesData(t);
+
+  const tabs = [
+    { id: 'graduates', label: t('Graduates'), icon: GraduationCap },
+    { id: 'companies', label: t('Companies'), icon: Briefcase },
+    { id: 'schools', label: t('Schools'), icon: Building },
+  ];
+
+  const imageVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { opacity: 1, scale: 1 },
+  };
+
+  return (
+    <div className="w-full">
+      <div className="flex justify-center mb-12">
+        <div className="relative flex w-full max-w-md items-center justify-center rounded-full bg-muted p-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                "relative z-10 flex-1 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-muted",
+                activeTab === tab.id ? "text-foreground" : "hover:text-foreground/80"
+              )}
+            >
+              <div className="flex items-center justify-center gap-2">
+                <tab.icon className="h-5 w-5" />
+                <span>{tab.label}</span>
+              </div>
+            </button>
+          ))}
+          <motion.div
+            layoutId="active-features-tab-highlight"
+            className="absolute inset-0 z-0 h-full w-1/3"
+            style={{
+                left: tabs.findIndex(t => t.id === activeTab) * (100 / 3) + '%',
+            }}
+            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+          >
+              <div className="h-full w-full rounded-full bg-background shadow-sm" />
+          </motion.div>
+        </div>
+      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+        >
+          {Object.entries(featuresData).map(([key, data]) =>
+            key === activeTab ? (
+              <div key={key}>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                  <motion.div
+                    key={`${activeTab}-image`}
+                    initial="hidden"
+                    animate="visible"
+                    variants={imageVariants}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                    className="relative w-full h-80 lg:h-96 rounded-2xl overflow-hidden shadow-2xl"
+                  >
+                    <Image
+                      src={data.image}
+                      alt={`${data.title} features`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover"
+                      data-ai-hint={data.imageHint}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  </motion.div>
+                  <div className="space-y-6">
+                    {data.items.map((feature, index) => (
+                      <FeatureCard key={index} feature={feature} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : null
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+};
+
+
 export function FeaturesSection() {
     const { t } = useLocalization();
-    const [activeTab, setActiveTab] = React.useState("graduates");
     const ref = React.useRef(null);
     const isInView = useInView(ref, { once: true, amount: 0.2 });
-
-    const featuresData = getFeaturesData(t);
-  
-    const imageVariants = {
-      hidden: { opacity: 0, scale: 0.95 },
-      visible: { opacity: 1, scale: 1 },
-    };
 
   return (
     <section ref={ref} className="py-24 bg-secondary/50" id="features">
@@ -128,58 +215,9 @@ export function FeaturesSection() {
             {t('Yahnu is a comprehensive ecosystem designed to bridge the gap between education and employment. Explore the powerful features tailored for every user.')}
           </p>
         </motion.div>
+        
+        <AnimatedTabs />
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <motion.div
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-            variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex justify-center mb-12"
-          >
-            <TabsList className="grid w-full max-w-md grid-cols-3">
-              <TabsTrigger value="graduates">
-                <GraduationCap className="mr-2 h-5 w-5" /> {t('Graduates')}
-              </TabsTrigger>
-              <TabsTrigger value="companies">
-                <Briefcase className="mr-2 h-5 w-5" /> {t('Companies')}
-              </TabsTrigger>
-              <TabsTrigger value="schools">
-                <Building className="mr-2 h-5 w-5" /> {t('Schools')}
-              </TabsTrigger>
-            </TabsList>
-          </motion.div>
-
-          {Object.entries(featuresData).map(([key, data]) => (
-            <TabsContent key={key} value={key}>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <motion.div 
-                    key={activeTab} // Re-trigger animation on tab change
-                    initial="hidden"
-                    animate="visible"
-                    variants={imageVariants}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="relative w-full h-80 lg:h-96 rounded-2xl overflow-hidden shadow-2xl"
-                >
-                    <Image
-                        src={data.image}
-                        alt={`${data.title} features`}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover"
-                        data-ai-hint={data.imageHint}
-                    />
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                </motion.div>
-                <div className="space-y-6">
-                    {data.items.map((feature, index) => (
-                        <FeatureCard key={index} feature={feature} />
-                    ))}
-                </div>
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
       </div>
     </section>
   );
