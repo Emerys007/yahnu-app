@@ -1,13 +1,19 @@
 
-import { MainNav } from "@/components/landing/main-nav";
-import { Footer } from "@/components/landing/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 export default function TermsOfServicePage() {
   return (
-    <div className="flex flex-col min-h-screen bg-secondary/50">
-      <MainNav />
-      <main className="flex-1 container mx-auto py-12">
+    <div className="min-h-screen w-full bg-muted/40 py-12 px-4">
+      <div className="container max-w-4xl mx-auto">
+        <Button asChild variant="ghost" className="mb-4 -ml-4">
+          <Link href="/">
+            <ChevronLeft className="mr-2 h-4 w-4" />
+            Back to home
+          </Link>
+        </Button>
         <Card className="p-6 md:p-8">
             <CardHeader>
                 <CardTitle className="text-4xl font-bold">Terms of Service</CardTitle>
@@ -52,8 +58,7 @@ export default function TermsOfServicePage() {
                 </div>
             </CardContent>
         </Card>
-      </main>
-      <Footer />
+      </div>
     </div>
   );
 }
