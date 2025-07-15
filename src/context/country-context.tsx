@@ -10,8 +10,7 @@ type Country = {
     fr: string;
   };
   theme: string;
-  logoUrlLight: string;
-  logoUrlDark: string;
+  logoUrl: string;
 };
 
 export const allCountries: Country[] = [
@@ -19,43 +18,37 @@ export const allCountries: Country[] = [
       code: 'CI', 
       name: { en: 'Ivory Coast', fr: 'Côte d\'Ivoire' }, 
       theme: 'ivory-coast', 
-      logoUrlLight: '/images/Country Maps/Ivory Coast.svg',
-      logoUrlDark: '/images/Country Maps/IvoryCoast.svg'
+      logoUrl: '/images/Country Maps/Ivory Coast.svg'
     },
     { 
       code: 'NG', 
       name: { en: 'Nigeria', fr: 'Nigéria' }, 
       theme: 'nigeria-green', 
-      logoUrlLight: '/images/Country Maps/Nigeria.svg',
-      logoUrlDark: '/images/Country Maps/Nigeria(W).svg'
+      logoUrl: '/images/Country Maps/Nigeria.svg'
     },
     { 
       code: 'GH', 
       name: { en: 'Ghana', fr: 'Ghana' }, 
       theme: 'ghana-gold', 
-      logoUrlLight: '/images/Country Maps/Ghana.svg',
-      logoUrlDark: '/images/Country Maps/Ghana (W).svg'
+      logoUrl: '/images/Country Maps/Ghana.svg'
     },
     { 
       code: 'SN', 
       name: { en: 'Senegal', fr: 'Sénégal' }, 
       theme: 'senegal-sun', 
-      logoUrlLight: '/images/Country Maps/Senegal.svg',
-      logoUrlDark: '/images/Country Maps/Senegal (W).svg'
+      logoUrl: '/images/Country Maps/Senegal.svg'
     },
     { 
       code: 'CM', 
       name: { en: 'Cameroon', fr: 'Cameroun' }, 
       theme: 'cameroon-unity', 
-      logoUrlLight: '/images/Country Maps/Cameroon.svg',
-      logoUrlDark: '/images/Country Maps/Cameroon (W).svg'
+      logoUrl: '/images/Country Maps/Cameroon.svg'
     },
     { 
       code: 'CD', 
       name: { en: 'DR Congo', fr: 'RD Congo' }, 
       theme: 'drc-cobalt', 
-      logoUrlLight: '/images/Country Maps/DRC.svg',
-      logoUrlDark: '/images/Country Maps/DRCongo.svg'
+      logoUrl: '/images/Country Maps/DRC.svg'
     },
 ];
 

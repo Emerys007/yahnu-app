@@ -5,11 +5,9 @@ import * as React from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useCountry } from '@/context/country-context';
-import { useTheme } from 'next-themes';
 
 export const Logo = (props: { className?: string }) => {
   const { country } = useCountry();
-  const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -21,15 +19,11 @@ export const Logo = (props: { className?: string }) => {
     return <div className={cn(props.className)} style={{ aspectRatio: '1 / 1' }} />;
   }
   
-  // Use resolvedTheme to handle the 'system' theme preference
-  const isDarkMode = resolvedTheme === 'dark';
-  const src = isDarkMode ? country.logoUrlDark : country.logoUrlLight;
-  
   return (
     <div className={cn(props.className, "transition-opacity duration-300")}>
         <Image 
-            key={src} // Add key to force re-render on src change
-            src={src} 
+            key={country.logoUrl} // Add key to force re-render on src change
+            src={country.logoUrl} 
             alt={`${country.name.en} map logo`} 
             width={100}
             height={100}
