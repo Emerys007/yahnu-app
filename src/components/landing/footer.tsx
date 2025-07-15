@@ -26,7 +26,7 @@ export function Footer() {
                   <span className="text-xl font-bold">Yahnu</span>
                 </div>
                 <p className="mt-4 text-sm text-muted-foreground">
-                  {t('Connecting talent, companies, and schools in Côte d\'Ivoire.')}
+                  {t('Connecting talent, companies, and schools in {country}.')}
                 </p>
               </div>
 
