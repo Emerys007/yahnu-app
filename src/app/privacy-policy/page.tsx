@@ -1,4 +1,6 @@
 
+import { MainNav } from "@/components/landing/main-nav";
+import { Footer } from "@/components/landing/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -8,16 +10,17 @@ export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen w-full bg-muted/40 py-12 px-4">
       <div className="container max-w-4xl mx-auto">
-        <Button asChild variant="ghost" className="mb-4 -ml-4">
-          <Link href="/">
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Back to home
-          </Link>
-        </Button>
+        
         <Card className="p-6 md:p-8">
+            <Button asChild variant="ghost" className="mb-4 -ml-4">
+                <Link href="/">
+                    <ChevronLeft className="mr-2 h-4 w-4" />
+                    Back to home
+                </Link>
+            </Button>
             <CardHeader>
                 <CardTitle className="text-4xl font-bold">Privacy Policy</CardTitle>
-                <CardDescription>Last updated: October 26, 2023</CardDescription>
+                <CardDescription>Last updated: January 15, 2025</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="prose prose-lg max-w-none prose-h2:font-bold prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:font-semibold prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3 prose-p:leading-relaxed prose-ul:list-disc prose-ul:pl-6 prose-li:mb-2 prose-strong:font-semibold">
