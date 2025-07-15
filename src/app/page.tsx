@@ -55,6 +55,21 @@ const WhyChooseYahnu = () => {
     },
   };
 
+  const iconVariants = {
+    hidden: { opacity: 0, scale: 0.5, rotate: -45 },
+    visible: {
+        opacity: 1,
+        scale: 1,
+        rotate: 0,
+        transition: {
+            type: "spring",
+            stiffness: 260,
+            damping: 20,
+            delay: 0.2
+        }
+    }
+  }
+
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto">
@@ -86,8 +101,8 @@ const WhyChooseYahnu = () => {
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               <motion.div
-                whileHover={{ scale: 1.2, rotate: 10 }}
-                transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                variants={iconVariants}
+                whileHover={{ rotate: [0, 15, -10, 15, 0], transition: { duration: 0.4 } }}
               >
                 {benefit.icon}
               </motion.div>
