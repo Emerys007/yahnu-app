@@ -10,11 +10,12 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, SchoolIcon } from "lucide-react"
+import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, School as SchoolIcon } from "lucide-react"
 
 // #region Shared Settings
 const UserAccountSettings = () => {
     const { t } = useLocalization();
+    const { user } = useAuth();
     return (
         <Card>
             <CardHeader>
@@ -25,11 +26,11 @@ const UserAccountSettings = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <Label htmlFor="name">{t('Full Name')}</Label>
-                  <Input id="name" defaultValue="John Doe" />
+                  <Input id="name" defaultValue={user?.name} />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="email">{t('Email Address')}</Label>
-                  <Input id="email" type="email" defaultValue="user@example.com" />
+                  <Input id="email" type="email" defaultValue={user?.email || ''} disabled />
                 </div>
               </div>
               <Button variant="outline">{t('Change Password')}</Button>
@@ -172,12 +173,14 @@ const settingsComponents: Record<Role, React.ComponentType> = {
   graduate: GraduateSettings,
   company: CompanySettings,
   school: SchoolSettings,
+  admin: UserAccountSettings,
 };
 
 const pageConfig: Record<Role, { icon: React.ElementType; title: string; description: string }> = {
     graduate: { icon: User, title: 'Your Settings', description: 'Manage your personal account details, profile visibility, and notifications.' },
     company: { icon: Building, title: 'Company Settings', description: 'Manage your personal account, team members, and billing.' },
     school: { icon: SchoolIcon, title: 'School Settings', description: 'Manage your personal account and institution contacts.' },
+    admin: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
 }
 
 export default function SettingsPage() {

@@ -35,9 +35,9 @@ const profileSchema = z.object({
 
 export default function ProfilePage() {
   const { toast } = useToast()
-  const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, loading } = useAuth();
   const [isParsing, setIsParsing] = useState(false)
+  const [isSaving, setIsSaving] = useState(false);
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -53,23 +53,14 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
-        const fetchProfile = async () => {
-            const docRef = doc(db, "users", user.uid);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                form.reset({
-                    name: data.name || '',
-                    email: data.email || '',
-                    phone: data.phone || '',
-                    experience: data.experience || '',
-                    education: data.education || '',
-                    skills: Array.isArray(data.skills) ? data.skills.join(", ") : data.skills || '',
-                });
-            }
-            setIsLoading(false);
-        };
-        fetchProfile();
+        form.reset({
+            name: user.name || (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ''),
+            email: user.email || '',
+            phone: user.phone || '',
+            experience: user.experience || '',
+            education: user.education || '',
+            skills: Array.isArray(user.skills) ? user.skills.join(", ") : user.skills || '',
+        });
     }
   }, [user, form]);
 
@@ -99,11 +90,8 @@ export default function ProfilePage() {
       form.setValue("name", result.name || "")
       form.setValue("email", result.email || "")
       form.setValue("phone", result.phone || "")
-      form.setValue("experience", result.experience?.join("
-
-") || "")
-      form.setValue("education", result.education?.join("
-") || "")
+      form.setValue("experience", result.experience?.join("\n\n") || "")
+      form.setValue("education", result.education?.join("\n\n") || "")
       form.setValue("skills", result.skills?.join(", ") || "")
 
       toast({
@@ -128,11 +116,20 @@ export default function ProfilePage() {
         toast({ title: "Error", description: "You must be logged in to update your profile.", variant: "destructive" });
         return;
     }
-    setIsLoading(true);
+    setIsSaving(true);
     try {
         const userDocRef = doc(db, "users", user.uid);
-        const { email, ...updateData } = values; // Cannot update email directly here
-        await updateDoc(userDocRef, updateData);
+        const { email, name, ...updateData } = values; 
+        
+        const [firstName, ...lastNameParts] = name.split(' ');
+        const lastName = lastNameParts.join(' ');
+        
+        await updateDoc(userDocRef, {
+            ...updateData,
+            name,
+            firstName,
+            lastName,
+        });
         toast({
             title: "Profile Updated",
             description: "Your professional profile has been saved successfully.",
@@ -141,11 +138,11 @@ export default function ProfilePage() {
         console.error("Profile update failed:", error);
         toast({ title: "Error", description: "Failed to update profile.", variant: "destructive" });
     } finally {
-        setIsLoading(false);
+        setIsSaving(false);
     }
   }
   
-  if (isLoading) {
+  if (loading) {
     return <div className="flex justify-center items-center h-64"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
   }
 
@@ -286,7 +283,7 @@ export default function ProfilePage() {
           </div>
           
           <div className="flex justify-end">
-            <Button type="submit" disabled={isLoading}>{isLoading ? "Saving..." : "Save Profile"}</Button>
+            <Button type="submit" disabled={isSaving || isParsing}>{isSaving ? "Saving..." : "Save Profile"}</Button>
           </div>
         </form>
       </Form>

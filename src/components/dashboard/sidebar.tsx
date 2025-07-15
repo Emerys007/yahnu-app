@@ -31,8 +31,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent } from "../ui/sheet";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 import { useLocalization } from "@/context/localization-context";
-import { useAuth } from "@/context/auth-context";
-import { Role } from "@/context/auth-context";
+import { useAuth, type Role } from "@/context/auth-context";
 
 const getNavItems = (t: (key: string) => string, role: Role) => {
   const baseNav = [
@@ -86,7 +85,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
       return [...companyNav, ...bottomNav];
     case 'school':
       return [...schoolNav, ...bottomNav];
-    case 'super_admin':
+    case 'admin':
       return [...adminNav, ...bottomNav];
     default:
       return [...baseNav, ...bottomNav];
