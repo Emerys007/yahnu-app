@@ -7,9 +7,27 @@ import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { User, Mail, Phone, GraduationCap, University, Briefcase, Award, MessageSquare } from "lucide-react";
+import { User, Mail, Phone, GraduationCap, University, Briefcase, Award, MessageSquare, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Label } from "@/components/ui/label";
 
 const graduatesData = {
   en: [
@@ -138,6 +156,60 @@ const graduatesData = {
   ]
 };
 
+const companyJobs = [
+    { id: "swe1", title: "Software Engineer, Frontend" },
+    { id: "pm1", title: "Product Manager" },
+]
+
+const InviteDialog = ({ graduateName }: { graduateName: string }) => {
+    const { t } = useLocalization();
+    const { toast } = useToast();
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleSendInvite = () => {
+        toast({
+            title: t('Invitation Sent'),
+            description: `${t('An invitation to apply has been sent to')} ${graduateName}.`
+        })
+        setIsOpen(false);
+    }
+    
+    return (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+                <Button>
+                    <Send className="mr-2 h-4 w-4" />
+                    {t('Invite to Apply')}
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{t('Invite {name} to a Job', { name: graduateName })}</DialogTitle>
+                    <DialogDescription>
+                        {t('Select one of your open positions to invite this candidate to apply.')}
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="py-4">
+                    <Label htmlFor="job-select">{t('Select a Job Posting')}</Label>
+                    <Select>
+                        <SelectTrigger id="job-select">
+                            <SelectValue placeholder={t('Choose a job...')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {companyJobs.map(job => (
+                                <SelectItem key={job.id} value={job.id}>{job.title}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <DialogFooter>
+                    <Button onClick={handleSendInvite}>{t('Send Invitation')}</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
 export default function GraduateProfilePage({ params }: { params: { slug: string } }) {
   const { language, t } = useLocalization();
   const { toast } = useToast();
@@ -191,11 +263,12 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-6">
-            <Button onClick={handleContact} className="w-full md:w-auto">
+        <CardContent className="p-6 flex gap-2">
+            <Button onClick={handleContact} variant="outline">
                 <MessageSquare className="mr-2 h-4 w-4" />
                 {t('Contact Graduate')}
             </Button>
+            <InviteDialog graduateName={graduate.name} />
         </CardContent>
       </Card>
 

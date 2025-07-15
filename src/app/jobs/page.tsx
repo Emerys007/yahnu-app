@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { Search, MapPin, Briefcase, Building } from "lucide-react"
+import { Search, MapPin, Briefcase, Building, ArrowRight } from "lucide-react"
 import { useLocalization } from '@/context/localization-context'
 import Link from 'next/link'
 import { MainNav } from '@/components/landing/main-nav'
@@ -31,114 +31,114 @@ import { Footer } from '@/components/landing/footer'
 const jobListingsData = {
   en: [
     {
-      slug: "software-engineer-frontend-innovate",
-      title: "Software Engineer, Frontend",
-      company: "Innovate Inc.",
-      location: "Remote",
-      type: "Full-time",
-      workplace: "remote",
-      tags: ["React", "TypeScript", "Next.js"],
-    },
-    {
-      slug: "product-manager-datadriven",
-      title: "Product Manager",
-      company: "DataDriven Co.",
-      location: "New York, NY",
-      type: "Full-time",
-      workplace: "on-site",
-      tags: ["Agile", "Roadmap", "SaaS"],
-    },
-    {
-      slug: "ux-ui-designer-creative",
-      title: "UX/UI Designer",
-      company: "Creative Solutions",
-      location: "San Francisco, CA",
-      type: "Contract",
-      workplace: "hybrid",
-      tags: ["Figma", "User Research", "Prototyping"],
-    },
-    {
-      slug: "data-scientist-quantumleap",
-      title: "Data Scientist",
-      company: "QuantumLeap",
-      location: "Boston, MA",
-      type: "Full-time",
-      workplace: "on-site",
-      tags: ["Python", "Machine Learning", "SQL"],
-    },
-    {
-      slug: "devops-engineer-cloudnine",
-      title: "DevOps Engineer",
-      company: "CloudNine",
-      location: "Austin, TX",
+      slug: "tech-lead-orange",
+      title: "Tech Lead - Mobile Money",
+      company: "Orange Côte d'Ivoire",
+      location: "Abidjan, Côte d'Ivoire",
       type: "Full-time",
       workplace: "hybrid",
-      tags: ["AWS", "Kubernetes", "CI/CD"],
+      tags: ["Fintech", "Mobile", "Management", "API"],
     },
     {
-      slug: "frontend-developer-innovate",
-      title: "Frontend Developer",
-      company: "Innovate Inc.",
+      slug: "agronomist-sifca",
+      title: "Agronomist",
+      company: "SIFCA",
+      location: "Yamoussoukro, Côte d'Ivoire",
+      type: "Full-time",
+      workplace: "on-site",
+      tags: ["Agriculture", "Agronomy", "Field Work"],
+    },
+    {
+      slug: "data-analyst-bridge-bank",
+      title: "Data Analyst",
+      company: "Bridge Bank Group",
+      location: "Abidjan, Côte d'Ivoire",
+      type: "Full-time",
+      workplace: "on-site",
+      tags: ["Finance", "Data Analysis", "SQL", "Power BI"],
+    },
+    {
+      slug: "marketing-manager-solibra",
+      title: "Marketing Manager",
+      company: "SOLIBRA",
+      location: "Abidjan, Côte d'Ivoire",
+      type: "Full-time",
+      workplace: "hybrid",
+      tags: ["FMCG", "Marketing", "Branding"],
+    },
+    {
+      slug: "logistics-coordinator-bollore",
+      title: "Logistics Coordinator",
+      company: "Bolloré Logistics",
+      location: "San-Pédro, Côte d'Ivoire",
+      type: "Full-time",
+      workplace: "on-site",
+      tags: ["Logistics", "Supply Chain", "Port Operations"],
+    },
+    {
+      slug: "ui-ux-designer-jambaars",
+      title: "UI/UX Designer",
+      company: "Jambaars",
       location: "Remote",
       type: "Contract",
       workplace: "remote",
-      tags: ["Vue", "JavaScript"],
+      tags: ["UI/UX", "Figma", "SaaS", "Startup"],
     },
   ],
   fr: [
     {
-      slug: "software-engineer-frontend-innovate",
-      title: "Ingénieur logiciel, Frontend",
-      company: "Innovate Inc.",
-      location: "Télétravail",
-      type: "Temps plein",
-      workplace: "remote",
-      tags: ["React", "TypeScript", "Next.js"],
-    },
-    {
-      slug: "product-manager-datadriven",
-      title: "Chef de produit",
-      company: "DataDriven Co.",
-      location: "New York, NY",
-      type: "Temps plein",
-      workplace: "on-site",
-      tags: ["Agile", "Roadmap", "SaaS"],
-    },
-    {
-      slug: "ux-ui-designer-creative",
-      title: "Designer UX/UI",
-      company: "Creative Solutions",
-      location: "San Francisco, CA",
-      type: "Contrat",
-      workplace: "hybrid",
-      tags: ["Figma", "Recherche utilisateur", "Prototypage"],
-    },
-    {
-      slug: "data-scientist-quantumleap",
-      title: "Data Scientist",
-      company: "QuantumLeap",
-      location: "Boston, MA",
-      type: "Temps plein",
-      workplace: "on-site",
-      tags: ["Python", "Machine Learning", "SQL"],
-    },
-    {
-      slug: "devops-engineer-cloudnine",
-      title: "Ingénieur DevOps",
-      company: "CloudNine",
-      location: "Austin, TX",
+      slug: "tech-lead-orange",
+      title: "Lead Technique - Orange Money",
+      company: "Orange Côte d'Ivoire",
+      location: "Abidjan, Côte d'Ivoire",
       type: "Temps plein",
       workplace: "hybrid",
-      tags: ["AWS", "Kubernetes", "CI/CD"],
+      tags: ["Fintech", "Mobile", "Gestion", "API"],
     },
     {
-      slug: "frontend-developer-innovate",
-      title: "Développeur Frontend",
-      company: "Innovate Inc.",
+      slug: "agronomist-sifca",
+      title: "Ingénieur Agronome",
+      company: "SIFCA",
+      location: "Yamoussoukro, Côte d'Ivoire",
+      type: "Temps plein",
+      workplace: "on-site",
+      tags: ["Agriculture", "Agronomie", "Terrain"],
+    },
+    {
+      slug: "data-analyst-bridge-bank",
+      title: "Analyste de Données",
+      company: "Bridge Bank Group",
+      location: "Abidjan, Côte d'Ivoire",
+      type: "Temps plein",
+      workplace: "on-site",
+      tags: ["Finance", "Analyse de données", "SQL", "Power BI"],
+    },
+    {
+      slug: "marketing-manager-solibra",
+      title: "Responsable Marketing",
+      company: "SOLIBRA",
+      location: "Abidjan, Côte d'Ivoire",
+      type: "Temps plein",
+      workplace: "hybrid",
+      tags: ["FMCG", "Marketing", "Branding"],
+    },
+    {
+      slug: "logistics-coordinator-bollore",
+      title: "Coordinateur Logistique",
+      company: "Bolloré Logistics",
+      location: "San-Pédro, Côte d'Ivoire",
+      type: "Temps plein",
+      workplace: "on-site",
+      tags: ["Logistique", "Chaîne d'approvisionnement", "Opérations portuaires"],
+    },
+    {
+      slug: "ui-ux-designer-jambaars",
+      title: "Designer UI/UX",
+      company: "Jambaars",
       location: "Télétravail",
       type: "Contrat",
       workplace: "remote",
-      tags: ["Vue", "JavaScript"],
+      tags: ["UI/UX", "Figma", "SaaS", "Startup"],
     },
   ]
 };
@@ -272,17 +272,17 @@ export default function PublicJobSearchPage() {
               {filteredJobs.length > 0 ? filteredJobs.map((job) => (
                 <Card key={job.slug}>
                    <CardHeader>
-                    <div className="flex justify-between items-start">
+                    <div className="flex justify-between items-start gap-4">
                       <div>
-                        <CardTitle className="hover:text-primary"><Link href={`/jobs/${job.slug}`}>{job.title}</Link></CardTitle>
-                        <CardDescription className="mt-1 flex items-center gap-4 pt-1">
+                        <CardTitle className="text-xl">{job.title}</CardTitle>
+                        <CardDescription className="mt-1 flex flex-col sm:flex-row sm:items-center sm:gap-4 pt-1">
                           <span className="flex items-center gap-1.5"><Building className="h-4 w-4"/> {job.company}</span>
                           <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4"/> {job.location}</span>
                           <span className="flex items-center gap-1.5"><Briefcase className="h-4 w-4"/> {t(job.type)}</span>
                         </CardDescription>
                       </div>
-                      <Button asChild>
-                        <Link href={`/jobs/${job.slug}`}>{t('View Job')}</Link>
+                      <Button asChild className="shrink-0">
+                        <Link href="/register">{t('View Job')}</Link>
                       </Button>
                     </div>
                   </CardHeader>
@@ -302,6 +302,17 @@ export default function PublicJobSearchPage() {
                   </CardContent>
                 </Card>
               )}
+              <Card>
+                <CardContent className="py-8 text-center">
+                    <h3 className="text-2xl font-bold">{t('Unlock More Opportunities')}</h3>
+                    <p className="text-muted-foreground mt-2 mb-4">{t('Create a free account to view full job details and apply directly.')}</p>
+                    <Button asChild size="lg">
+                        <Link href="/register">
+                            {t('Sign Up Now')} <ArrowRight className="ml-2 h-4 w-4"/>
+                        </Link>
+                    </Button>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
@@ -310,5 +321,3 @@ export default function PublicJobSearchPage() {
     </div>
   )
 }
-
-    
