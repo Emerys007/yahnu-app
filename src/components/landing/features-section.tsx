@@ -120,15 +120,15 @@ const AnimatedTabs = () => {
   return (
     <div className="w-full">
       <div className="flex justify-center mb-12">
-        <div className="relative flex w-full max-w-md items-center justify-center rounded-full bg-muted p-1">
+        <div className="relative flex w-full max-w-lg items-center justify-center rounded-full bg-muted p-2">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "relative z-10 flex-1 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors",
+                "relative z-10 flex-1 rounded-full px-4 py-2.5 text-md font-medium transition-colors duration-300",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-muted",
-                activeTab === tab.id ? "text-foreground" : "hover:text-foreground/80"
+                activeTab === tab.id ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
               )}
             >
               <div className="flex items-center justify-center gap-2">
@@ -139,13 +139,14 @@ const AnimatedTabs = () => {
           ))}
           <motion.div
             layoutId="active-features-tab-highlight"
-            className="absolute inset-0 z-0 h-full w-1/3"
+            className="absolute inset-0 z-0 h-full p-2"
             style={{
-                left: tabs.findIndex(t => t.id === activeTab) * (100 / 3) + '%',
+                width: `${100 / tabs.length}%`,
+                left: `${tabs.findIndex(t => t.id === activeTab) * (100 / tabs.length)}%`,
             }}
-            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+            transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
           >
-              <div className="h-full w-full rounded-full bg-background shadow-sm" />
+              <div className="h-full w-full rounded-full bg-primary shadow-md" />
           </motion.div>
         </div>
       </div>
