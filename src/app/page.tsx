@@ -11,6 +11,7 @@ import { useLocalization } from "@/context/localization-context";
 import { ShieldCheck, Wand2, Handshake, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { AnimatedGradientBackground } from "@/components/ui/animated-gradient-background";
 
 const WhyChooseYahnu = () => {
   const { t } = useLocalization();
@@ -105,8 +106,9 @@ export default function HomePage() {
         <FeaturesSection />
         <WhyChooseYahnu />
 
-        <section className="py-20 bg-muted/40">
-          <div className="container mx-auto text-center">
+        <section className="py-20 relative overflow-hidden">
+          <AnimatedGradientBackground />
+          <div className="container mx-auto text-center relative z-10">
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('Ready to Join the Elite?')}</h2>
               <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto">
                   {t("Create your account today and unlock a world of opportunities. Whether you're a graduate, a company, or a school, Yahnu is your gateway to success.")}
