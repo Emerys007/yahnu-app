@@ -22,30 +22,30 @@ import { cn } from "@/lib/utils"
 const getSlides = (t: (key: string) => string) => [
     {
         role: "Graduates",
-        headline: t("Find Your Dream Job Today"),
-        subtitle: t("Explore thousands of job opportunities tailored for you in Côte d'Ivoire. Your next career move is just a click away."),
+        headline: t("Unlock Your Potential. Find Your Dream Job Today."),
+        subtitle: t("Yahnu connects you with thousands of exclusive job opportunities in Côte d'Ivoire tailored to your unique skills and aspirations. Your future starts here."),
         buttonText: t("Explore Job Openings"),
-        buttonIcon: <Search className="mr-2 h-4 w-4" />,
+        buttonIcon: <Search />,
         imageUrl: "/images/dream-job.jpg",
         imageHint: "confident graduate looking towards the future",
         href: "/dashboard/jobs"
       },
       {
         role: "Companies",
-        headline: t("Build Your Dream Team"),
-        subtitle: t("Access a diverse pool of talented graduates from top schools. Find the perfect fit for your company's culture and goals."),
+        headline: t("Build a World-Class Team, Effortlessly."),
+        subtitle: t("Tap into a curated network of exceptional graduates from premier institutions. Discover the perfect candidates to drive your company's growth and innovation."),
         buttonText: t("Find Top Talent"),
-        buttonIcon: <PlusCircle className="mr-2 h-4 w-4" />,
+        buttonIcon: <PlusCircle />,
         imageUrl: "/images/uni-partnership.jpg",
         imageHint: "diverse team collaborating in a modern office",
         href: "/dashboard/company-profile"
       },
       {
         role: "Schools",
-        headline: t("Forge Industry Partnerships"),
-        subtitle: t("Collaborate with leading academic institutions to shape the future of talent. Connect with the brightest minds and drive innovation."),
-        buttonText: t("Become a Partner"),
-        buttonIcon: <Handshake className="mr-2 h-4 w-4" />,
+        headline: t("Shape the Future of Talent."),
+        subtitle: t("Partner with leading companies to create a direct pipeline for your graduates. Enhance your curriculum, boost graduate employment, and elevate your institution's prestige."),
+        buttonText: t("Forge Industry Partnerships"),
+        buttonIcon: <Handshake />,
         imageUrl: "/images/Industry.webp",
         imageHint: "university building and a handshake representing partnership",
         href: "/register"
@@ -113,13 +113,21 @@ export function HeroSection() {
                     <p className="text-lg md:text-2xl text-white/90 drop-shadow-xl max-w-3xl">
                       {slide.subtitle}
                     </p>
-                    <div className="flex justify-center">
-                        <Button size="lg" asChild className="text-base px-8 py-6">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Button size="lg" variant="shimmer" asChild className="text-base px-8 py-6">
                             <Link href={slide.href}>
-                                <>
+                                <div className="flex items-center gap-2">
                                     {slide.buttonIcon}
                                     {slide.buttonText}
-                                </>
+                                </div>
+                            </Link>
+                        </Button>
+                        <Button size="lg" variant="gooey" asChild className="text-base px-8 py-6 border-white hover:border-primary">
+                            <Link href="/register">
+                                <div className="flex items-center gap-2">
+                                    {t('Create an Account')}
+                                    <ArrowRight />
+                                </div>
                             </Link>
                         </Button>
                     </div>

@@ -29,12 +29,11 @@ export default function RegisterPage() {
            <p className="text-muted-foreground">{t('Your future starts here')}</p>
         </Link>
         <Image
-          src="https://placehold.co/800x600.png"
-          alt="Yahnu Platform Showcase"
+          src="/images/Community.png"
+          alt="Yahnu Community"
           width="800"
           height="600"
           className="rounded-xl shadow-2xl"
-          data-ai-hint="team collaboration"
         />
         <div className="mt-8 text-center max-w-lg">
           <h2 className="text-3xl font-bold tracking-tight">{t('Join a Thriving Community')}</h2>
