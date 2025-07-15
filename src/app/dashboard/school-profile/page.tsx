@@ -21,11 +21,13 @@ import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, PlusCircle, Trash2 } from "lucide-react"
 import { useLocalization } from "@/context/localization-context"
+import { PhoneNumberInput } from "@/components/ui/phone-number-input"
 
 const schoolProfileSchema = z.object({
   schoolName: z.string().min(2, { message: "School name must be at least 2 characters." }),
   website: z.string().url({ message: "Please enter a valid URL." }),
   location: z.string().min(2, { message: "Location is required." }),
+  phone: z.string().optional(),
   description: z.string().min(50, { message: "Description must be at least 50 characters." }),
 })
 
@@ -40,6 +42,7 @@ export default function SchoolProfilePage() {
       schoolName: "Institut National Polytechnique Félix Houphouët-Boigny",
       website: "https://www.inphb.ci",
       location: "Yamoussoukro",
+      phone: "",
       description: "As a leading polytechnic institution in West Africa, we are committed to excellence in engineering, technology, and applied sciences. Our strong industry ties and focus on innovation prepare our graduates to become leaders in their fields.",
     },
   })
@@ -112,6 +115,19 @@ export default function SchoolProfilePage() {
                     <FormItem>
                       <FormLabel>{t('Main Campus Location')}</FormLabel>
                       <FormControl><Input placeholder={t("City, Country")} {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('Phone Number')}</FormLabel>
+                      <FormControl>
+                        <PhoneNumberInput {...field} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

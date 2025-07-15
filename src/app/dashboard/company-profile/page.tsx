@@ -38,12 +38,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useLocalization } from "@/context/localization-context"
+import { PhoneNumberInput } from "@/components/ui/phone-number-input"
 
 const companyProfileSchema = z.object({
   companyName: z.string().min(2, { message: "Company name must be at least 2 characters." }),
   website: z.string().url({ message: "Please enter a valid URL." }),
   location: z.string().min(2, { message: "Location is required." }),
   industry: z.string().min(1, "Industry sector is required."),
+  phone: z.string().optional(),
   tagline: z.string().max(100).optional(),
   description: z.string().min(50, { message: "Description must be at least 50 characters." }),
 })
@@ -87,6 +89,7 @@ export default function CompanyProfilePage() {
       website: "https://innovate.inc",
       location: "New York, NY",
       industry: "Information Technology",
+      phone: "",
       tagline: "Building the future of technology.",
       description: "Innovate Inc. is a leading technology firm dedicated to creating cutting-edge solutions that solve real-world problems. We are a team of passionate innovators, designers, and engineers committed to excellence.",
     },
@@ -214,6 +217,19 @@ export default function CompanyProfilePage() {
                         </SelectContent>
                         </Select>
                         <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={profileForm.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('Phone Number')}</FormLabel>
+                      <FormControl>
+                        <PhoneNumberInput {...field} />
+                      </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />

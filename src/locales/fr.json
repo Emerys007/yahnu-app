@@ -157,18 +157,6 @@
     "Custom Reports": "Rapports personnalisés",
     "Help & Settings": "Aide et paramètres",
     "Support": "Support",
-    "Job Title": "Titre du poste",
-    "Key Responsibilities": "Responsabilités clés",
-    "Add Responsibility": "Ajouter une responsabilité",
-    "Required Skills": "Compétences requises",
-    "Add Skill": "Ajouter une compétence",
-    "Generating...": "Génération en cours...",
-    "Generate Description": "Générer la description",
-    "Description Generated!": "Description générée !",
-    "The job description has been pasted below.": "La description de poste a été collée ci-dessous.",
-    "Generation Failed": "Échec de la génération",
-    "There was a problem generating the description.": "Un problème est survenu lors de la génération de la description.",
-    "Job Description": "Description du poste",
     "Post Job": "Publier l'offre",
     "The \"{title}\" position has been added.": "Le poste \"{title}\" a été ajouté.",
     "Job Removed": "Poste supprimé",
@@ -216,5 +204,8 @@
     "Down from 32 days last quarter": "En baisse par rapport à 32 jours le trimestre dernier",
     " days": " jours",
     "+10% from last quarter": "+10% par rapport au trimestre dernier",
-    "Platform Analytics": "Analyses de Plateforme"
+    "Platform Analytics": "Analyses de Plateforme",
+    "Phone Number": "Numéro de téléphone",
+    "Search country...": "Rechercher un pays...",
+    "No country found.": "Aucun pays trouvé."
 }

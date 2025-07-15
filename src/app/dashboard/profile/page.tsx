@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -20,6 +21,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, PlusCircle, Trash2 } from "lucide-react"
 import { useLocalization } from "@/context/localization-context"
+import { PhoneNumberInput } from "@/components/ui/phone-number-input"
 
 const profileSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -163,9 +165,9 @@ export default function ProfilePage() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('Phone Number (Optional)')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder="(123) 456-7890" {...field} />
+                    <FormLabel>{t('Phone Number')}</FormLabel>
+                     <FormControl>
+                        <PhoneNumberInput {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
