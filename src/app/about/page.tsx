@@ -34,7 +34,7 @@ export default function AboutPage() {
         <section className="py-20">
             <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center">
                 <div className="relative w-full h-80 rounded-lg overflow-hidden">
-                    <Image src="https://placehold.co/800x600.png" alt="Yahnu Team" fill className="object-cover" data-ai-hint="diverse team working" />
+                    <Image src="https://placehold.co/800x600.png" alt="Yahnu Team" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" data-ai-hint="diverse team working" priority />
                 </div>
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight mb-4">{t('Our Story')}</h2>
@@ -80,7 +80,7 @@ export default function AboutPage() {
                     {teamMembers.map(member => (
                         <div key={member.name} className="text-center">
                             <div className="relative h-40 w-40 mx-auto rounded-full overflow-hidden mb-4">
-                                 <Image src={member.imageUrl} alt={member.name} fill className="object-cover" />
+                                 <Image src={member.imageUrl} alt={member.name} fill sizes="160px" className="object-cover" />
                             </div>
                             <h4 className="font-semibold text-lg">{member.name}</h4>
                             <p className="text-primary">{t(member.role)}</p>

@@ -24,17 +24,34 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select"
-import { useAuth, UserProfile } from "@/context/auth-context"
+import { useAuth, type UserProfile } from "@/context/auth-context"
 import { useToast } from "@/hooks/use-toast"
+import { useLocalization } from "@/context/localization-context"
+
+const allSchools = [
+    { id: "inp-hb", name: "Institut National Polytechnique Félix Houphouët-Boigny" },
+    { id: "ufhb", name: "Université Félix Houphouët-Boigny" },
+    { id: "csi", name: "Groupe CSI Pôle Polytechnique" },
+];
 
 const registerSchema = z.object({
+  role: z.enum(['graduate', 'company', 'school']),
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  schoolId: z.string().optional(),
   email: z.string().email({ message: "Please enter a valid email address." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
-  role: z.enum(['graduate', 'company', 'school']),
-})
+}).refine(data => {
+    if (data.role === 'graduate') {
+        return !!data.schoolId;
+    }
+    return true;
+}, {
+    message: "School is required for graduates.",
+    path: ["schoolId"],
+});
 
 export function RegisterForm() {
+    const { t } = useLocalization();
     const { signUp } = useAuth();
     const { toast } = useToast();
     const router = useRouter();
@@ -47,22 +64,31 @@ export function RegisterForm() {
       email: "",
       password: "",
       role: "graduate",
+      schoolId: "",
     },
-  })
+  });
+
+  const role = form.watch("role");
+
+  const nameLabels = {
+    graduate: t('Full name'),
+    company: t('Company Name'),
+    school: t('School Name'),
+  };
 
   async function onSubmit(values: z.infer<typeof registerSchema>) {
     setIsLoading(true);
     try {
         await signUp(values.name, values.email, values.password, values.role as UserProfile['role']);
         toast({
-            title: "Account Created!",
-            description: "You have successfully signed up. Welcome to Yahnu!",
+            title: t("Account Created!"),
+            description: t("You have successfully signed up. Welcome to Yahnu!"),
           });
         router.push('/dashboard');
     } catch (error: any) {
         toast({
-            title: "Uh oh! Something went wrong.",
-            description: error.message || "There was a problem with your request.",
+            title: t("Uh oh! Something went wrong."),
+            description: error.message || t("There was a problem with your request."),
             variant: "destructive",
           });
     } finally {
@@ -73,25 +99,74 @@ export function RegisterForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+         <FormField
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("I am a...")}</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                    <FormControl>
+                    <SelectTrigger>
+                        <SelectValue placeholder={t("Select your account type")} />
+                    </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                        <SelectItem value="graduate">{t("Graduate")}</SelectItem>
+                        <SelectItem value="company">{t("Company")}</SelectItem>
+                        <SelectItem value="school">{t("School")}</SelectItem>
+                    </SelectContent>
+                </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Full Name</FormLabel>
+              <FormLabel>{nameLabels[role]}</FormLabel>
               <FormControl>
-                <Input placeholder="John Doe" {...field} disabled={isLoading} />
+                <Input placeholder={t("John Doe")} {...field} disabled={isLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {role === 'graduate' && (
+            <FormField
+            control={form.control}
+            name="schoolId"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>{t('School/University')}</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                    <FormControl>
+                    <SelectTrigger>
+                        <SelectValue placeholder={t("Select your school")} />
+                    </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                        {allSchools.map(school => (
+                            <SelectItem key={school.id} value={school.id}>{school.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+        )}
+
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email Address</FormLabel>
+              <FormLabel>{t('Email')}</FormLabel>
               <FormControl>
                 <Input type="email" placeholder="you@example.com" {...field} disabled={isLoading} />
               </FormControl>
@@ -104,7 +179,7 @@ export function RegisterForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>{t('Password')}</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
               </FormControl>
@@ -112,30 +187,8 @@ export function RegisterForm() {
             </FormItem>
           )}
         />
-         <FormField
-          control={form.control}
-          name="role"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>I am a...</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
-                    <FormControl>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select your role" />
-                    </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                    <SelectItem value="graduate">Graduate</SelectItem>
-                    <SelectItem value="company">Company Representative</SelectItem>
-                    <SelectItem value="school">School Administrator</SelectItem>
-                    </SelectContent>
-                </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Creating Account..." : "Create Account"}
+            {isLoading ? t("Creating Account...") : t("Create Account")}
         </Button>
       </form>
     </Form>
