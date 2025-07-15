@@ -1,9 +1,9 @@
 
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChevronLeft } from "lucide-react";
 
 export default function PrivacyPolicyPage() {
@@ -11,13 +11,13 @@ export default function PrivacyPolicyPage() {
     <div className="min-h-screen w-full bg-muted/40 py-12 px-4">
       <div className="container max-w-4xl mx-auto">
         
+        <Button asChild variant="ghost" className="mb-4 px-0">
+            <Link href="/">
+                <ChevronLeft className="mr-2 h-4 w-4" />
+                Back to home
+            </Link>
+        </Button>
         <Card className="p-6 md:p-8">
-            <Button asChild variant="ghost" className="mb-4 -ml-4">
-                <Link href="/">
-                    <ChevronLeft className="mr-2 h-4 w-4" />
-                    Back to home
-                </Link>
-            </Button>
             <CardHeader>
                 <CardTitle className="text-4xl font-bold">Privacy Policy</CardTitle>
                 <CardDescription>Last updated: January 15, 2025</CardDescription>
