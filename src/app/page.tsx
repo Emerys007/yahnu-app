@@ -10,6 +10,7 @@ import { Footer } from "@/components/landing/footer";
 import { useLocalization } from "@/context/localization-context";
 import { ShieldCheck, Wand2, Handshake, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const WhyChooseYahnu = () => {
   const { t } = useLocalization();
@@ -111,7 +112,10 @@ export default function HomePage() {
                   {t("Create your account today and unlock a world of opportunities. Whether you're a graduate, a company, or a school, Yahnu is your gateway to success.")}
               </p>
               <div className="mt-8 flex justify-center">
-                  <Button size="lg" asChild>
+                  <Button size="lg" asChild className={cn(
+                    "relative overflow-hidden",
+                    "before:absolute before:inset-0 before:-translate-x-full before:animate-shimmer before:bg-gradient-to-r before:from-transparent before:via-white/20 hover:before:translate-x-full"
+                  )}>
                       <Link href="/register">{t('Get Started Now')}</Link>
                   </Button>
               </div>

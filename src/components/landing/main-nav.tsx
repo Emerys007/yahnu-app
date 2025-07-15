@@ -35,6 +35,7 @@ import { useLocalization } from "@/context/localization-context";
 import { useCountry, allCountries } from "@/context/country-context";
 import { Flag } from "../flag";
 import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 
 const getNavLinks = (t: (key: string) => string) => [
   { href: "/dashboard/jobs", label: t("Jobs") },
@@ -52,7 +53,7 @@ export function MainNav() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center">
-        <Link href="/" className="mr-6 flex items-center gap-2">
+        <Link href="/" className="mr-auto flex items-center gap-3">
             <Logo className="h-12 w-12" />
             <div>
               <p className="font-bold text-xl">Yahnu</p>
@@ -60,7 +61,7 @@ export function MainNav() {
             </div>
         </Link>
         
-        <div className="flex items-center gap-2 ml-auto">
+        <div className="flex items-center gap-2">
             <nav className="hidden md:flex items-center gap-6 text-sm">
                 {navLinks.map((link) => (
                     <Link
@@ -76,7 +77,10 @@ export function MainNav() {
                 <Button variant="ghost" asChild>
                   <Link href="/login">{t('Login')}</Link>
                 </Button>
-                <Button asChild>
+                <Button asChild className={cn(
+                    "relative overflow-hidden",
+                    "before:absolute before:inset-0 before:-translate-x-full before:animate-shimmer before:bg-gradient-to-r before:from-transparent before:via-white/20 hover:before:translate-x-full"
+                  )}>
                   <Link href="/register">{t('Sign Up')}</Link>
                 </Button>
             </div>
