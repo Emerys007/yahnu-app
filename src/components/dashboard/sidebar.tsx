@@ -70,7 +70,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/admin", icon: Shield, label: t('Overview') },
     { href: "/dashboard/admin/user-management", icon: Users, label: t('Manage Users') },
     { href: "/dashboard/admin/manage-team", icon: Users2, label: t('Manage Team') },
-    { href: "/dashboard/admin/reports", icon: BarChart3, label: t('Platform Analytics') },
+    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Platform Analytics') },
   ];
   
   const bottomNav = [
@@ -201,9 +201,14 @@ export function DashboardSidebar() {
 
   const sidebarContent = (
     <>
-      <div className={cn("flex items-center h-16 px-6 border-b gap-3 shrink-0", isCollapsed && "px-0 justify-center")}>
-          <Logo className={cn("h-8 w-8 text-primary transition-all", isCollapsed && "h-8 w-8")} />
-          <h1 className={cn("text-xl font-bold transition-opacity duration-200", isCollapsed && "opacity-0 hidden")}>Yahnu</h1>
+      <div className={cn("flex h-20 items-center border-b px-4", isCollapsed && "h-16 justify-center px-0")}>
+        <Link href="/" className={cn("flex items-center gap-3", isCollapsed && "justify-center")}>
+          <Logo className={cn("h-10 w-10 text-primary transition-all", isCollapsed && "h-8 w-8")} />
+          <div className={cn("flex flex-col transition-opacity duration-200", isCollapsed && "opacity-0 hidden")}>
+            <h1 className="text-xl font-bold">Yahnu</h1>
+            <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
+          </div>
+        </Link>
       </div>
       <div className="flex-1 overflow-y-auto overflow-x-hidden">
         <nav className="flex-1 px-4 py-4 space-y-1">

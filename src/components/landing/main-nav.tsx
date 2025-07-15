@@ -42,6 +42,7 @@ const getNavLinks = (t: (key: string) => string) => [
   { href: "/companies", label: t("Companies") },
   { href: "/schools", label: t("Schools") },
   { href: "/blog", label: t("Blog") },
+  { href: "/about", label: t("About") },
 ];
 
 export function MainNav() {
