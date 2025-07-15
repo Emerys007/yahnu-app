@@ -160,7 +160,8 @@ export function MainNav() {
                       </SheetClose>
                     </SheetTitle>
                   </SheetHeader>
-                  <div className="mt-6 flex flex-col gap-4">
+                  <Separator className="my-4" />
+                  <div className="flex flex-col gap-4">
                     {navLinks.map((link) => (
                       <SheetClose asChild key={link.href}>
                         <Link
