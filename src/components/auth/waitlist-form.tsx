@@ -31,9 +31,11 @@ export function WaitlistForm() {
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
-        <div className="flex justify-center mb-4 lg:hidden">
-            <Link href="/" aria-label="Back to home">
-              <Logo className="h-12 w-12 text-primary" />
+        <div className="flex flex-col items-center mb-4 lg:hidden">
+            <Link href="/" aria-label="Back to home" className="flex flex-col items-center gap-2 text-center">
+              <Logo className="h-12 w-12" />
+               <p className="font-bold text-xl text-primary">Yahnu</p>
+              <p className="text-sm text-muted-foreground">{t('Your future starts here')}</p>
             </Link>
         </div>
         <CardTitle className="text-2xl text-center">{t('Coming Soon to {country}', { country: countryName })}</CardTitle>
