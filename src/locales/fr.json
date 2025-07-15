@@ -154,7 +154,7 @@
     "Graduate Management": "Gestion des diplômés",
     "Analytics": "Analyses",
     "Overview": "Aperçu",
-    "Manage Users": "Gérer les utilisateurs",
+    "User Management": "Gestion des utilisateurs",
     "Manage Team": "Gérer l'équipe",
     "Custom Reports": "Rapports personnalisés",
     "Help & Settings": "Aide et paramètres",
@@ -322,5 +322,17 @@
     "account has been deactivated.": "le compte a été désactivé.",
     "Account pending": "Compte en attente",
     "Your account is pending approval from your school's administrator. We'll notify you once it's active.": "Votre compte est en attente d'approbation par l'administrateur de votre école. Nous vous informerons une fois qu'il sera actif.",
-    "Account Created!": "Compte créé !"
+    "Account Created!": "Compte créé !",
+    "Admin Overview": "Aperçu de l'administration",
+    "Oversee and manage the entire Yahnu platform.": "Superviser et gérer l'ensemble de la plateforme Yahnu.",
+    "Pending Registration Requests": "Demandes d'inscription en attente",
+    "Approve or reject new company and school registrations.": "Approuver ou rejeter les nouvelles inscriptions d'entreprises et d'écoles.",
+    "Organization Name": "Nom de l'organisation",
+    "Type": "Type",
+    "No pending requests.": "Aucune demande en attente.",
+    "Request Approved": "Demande approuvée",
+    "Request Rejected": "Demande rejetée",
+    "The registration for ": "L'inscription pour ",
+    " has been approved.": " a été approuvée.",
+    " has been rejected.": " a été rejetée."
 }

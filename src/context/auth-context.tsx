@@ -69,7 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (firebaseUser) {
         const userProfile = await fetchUserDocument(firebaseUser);
          if (userProfile) {
-          if (userProfile.role === 'graduate' && userProfile.status === 'pending') {
+          if (userProfile.status === 'pending') {
             setUser(null);
             await firebaseSignOut(auth);
           } else {
@@ -91,8 +91,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const createUserDocument = async (firebaseUser: FirebaseUser, profile: Omit<UserProfile, 'uid' | 'email'>, email: string) => {
     const userDocRef = doc(db, "users", firebaseUser.uid);
     
-    // Graduates start as pending, others are active by default
-    const status: UserStatus = profile.role === 'graduate' ? 'pending' : 'active';
+    // Only admins are active by default
+    const status: UserStatus = profile.role === 'admin' ? 'active' : 'pending';
     
     await setDoc(userDocRef, {
         ...profile,
@@ -113,7 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { email, ...profileData } = profile;
     const status = await createUserDocument(firebaseUser, profileData, firebaseUser.email!);
     
-    // Don't auto-login pending graduates
+    // Don't auto-login pending users
     if (status === 'pending') {
         await firebaseSignOut(auth);
     } else {
@@ -126,9 +126,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const userProfile = await fetchUserDocument(userCredential.user);
 
-    if (userProfile?.role === 'graduate' && userProfile.status === 'pending') {
+    if (userProfile?.status === 'pending') {
         await firebaseSignOut(auth);
-        throw new Error("Your account is pending approval by your school's administrator.");
+        throw new Error("Your account is pending approval by an administrator.");
+    }
+     if (userProfile?.status === 'suspended') {
+        await firebaseSignOut(auth);
+        throw new Error("Your account has been suspended. Please contact support.");
     }
     
     if (userProfile) setUser(userProfile);
@@ -154,9 +158,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     const userProfile = userDoc.data() as UserProfile;
     
-    if (userProfile?.role === 'graduate' && userProfile.status === 'pending') {
+    if (userProfile?.status === 'pending') {
         await firebaseSignOut(auth);
         throw new Error("Your account is pending approval. Please contact your school's administrator.");
+    }
+     if (userProfile?.status === 'suspended') {
+        await firebaseSignOut(auth);
+        throw new Error("Your account has been suspended. Please contact support.");
     }
     
     if (userProfile) setUser(userProfile);

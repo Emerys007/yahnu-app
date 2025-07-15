@@ -154,7 +154,7 @@
     "Graduate Management": "Graduate Management",
     "Analytics": "Analytics",
     "Overview": "Overview",
-    "Manage Users": "Manage Users",
+    "User Management": "User Management",
     "Manage Team": "Manage Team",
     "Custom Reports": "Custom Reports",
     "Help & Settings": "Help & Settings",
@@ -321,5 +321,17 @@
     "account has been deactivated.": "account has been deactivated.",
     "Account pending": "Account pending",
     "Your account is pending approval from your school's administrator. We'll notify you once it's active.": "Your account is pending approval from your school's administrator. We'll notify you once it's active.",
-    "Account Created!": "Account Created!"
+    "Account Created!": "Account Created!",
+    "Admin Overview": "Admin Overview",
+    "Oversee and manage the entire Yahnu platform.": "Oversee and manage the entire Yahnu platform.",
+    "Pending Registration Requests": "Pending Registration Requests",
+    "Approve or reject new company and school registrations.": "Approve or reject new company and school registrations.",
+    "Organization Name": "Organization Name",
+    "Type": "Type",
+    "No pending requests.": "No pending requests.",
+    "Request Approved": "Request Approved",
+    "Request Rejected": "Request Rejected",
+    "The registration for ": "The registration for ",
+    " has been approved.": " has been approved.",
+    " has been rejected.": " has been rejected."
 }
