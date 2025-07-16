@@ -6,10 +6,7 @@ import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Globe } from "lucide-react";
-import { getFirestore, collection, query, where, getDocs, DocumentData } from "firebase/firestore";
-import { app } from "@/lib/firebase";
-
-const db = getFirestore(app);
+import Link from "next/link";
 
 interface School {
     id: string;
@@ -23,21 +20,49 @@ interface School {
     slug: string;
 }
 
-async function getSchoolBySlug(slug: string): Promise<School | null> {
-    const q = query(collection(db, "schools"), where("slug", "==", slug));
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.empty) {
-        return null;
+const schoolsData: School[] = [
+    {
+        id: "1",
+        name: "Institut National Polytechnique Félix Houphouët-Boigny",
+        acronym: "INP-HB",
+        logoUrl: "/images/University.png",
+        location: "Yamoussoukro",
+        website: "https://www.inphb.ci",
+        description: "<p>The Institut National Polytechnique Félix Houphouët-Boigny (INP-HB) is a public polytechnic institute in Yamoussoukro, Côte d'Ivoire. It is a leading institution for engineering, technology, and agricultural sciences in West Africa.</p>",
+        programs: ["Computer Science & Engineering", "Civil Engineering", "Agronomy", "Mines & Geology"],
+        slug: "inp-hb",
+    },
+    {
+        id: "2",
+        name: "Université Félix Houphouët-Boigny",
+        acronym: "UFHB",
+        logoUrl: "/images/UFHB.png",
+        location: "Abidjan",
+        website: "https://www.univ-fhb.edu.ci",
+        description: "<p>The Université Félix Houphouët-Boigny (formerly the University of Cocody) is the largest university in Côte d'Ivoire. It offers a comprehensive range of programs across multiple faculties, including medicine, law, economics, and humanities.</p>",
+        programs: ["Economics & Management", "Law", "Medicine", "Letters, Arts and Human Sciences"],
+        slug: "ufhb",
+    },
+    {
+        id: "3",
+        name: "Groupe CSI Pôle Polytechnique",
+        acronym: "CSI",
+        logoUrl: "/images/CSI.png",
+        location: "Abidjan",
+        website: "https://www.csi-polytechnique.com",
+        description: "<p>Groupe CSI Pôle Polytechnique is a well-regarded private higher education institution in Abidjan. It focuses on providing quality education in technology, industrial sciences, and management to meet the demands of the modern workforce.</p>",
+        programs: ["Industrial Technology", "Computer Networks & Telecommunications", "Finance & Accounting", "Human Resource Management"],
+        slug: "csi",
     }
-    const schoolDoc = querySnapshot.docs[0];
-    return { id: schoolDoc.id, ...schoolDoc.data() } as School;
+];
+
+async function getSchoolBySlug(slug: string): Promise<School | null> {
+    const school = schoolsData.find(s => s.slug === slug);
+    return school || null;
 }
 
 export async function generateStaticParams() {
-    const schoolsCol = collection(db, 'schools');
-    const schoolSnapshot = await getDocs(schoolsCol);
-    const schools = schoolSnapshot.docs.map(doc => doc.data());
-    return schools.map((school) => ({
+    return schoolsData.map((school) => ({
       slug: school.slug,
     }));
 }
@@ -61,7 +86,7 @@ export default async function SchoolPage({ params }: { params: { slug: string } 
             </CardHeader>
             <CardContent className="p-6 md:p-8 -mt-20">
                 <div className="flex items-end gap-6">
-                    <div className="relative h-32 w-32 rounded-full overflow-hidden border-8 border-background shrink-0">
+                    <div className="relative h-32 w-32 rounded-full overflow-hidden border-8 border-background shrink-0 bg-white p-2">
                          <Image
                             src={school.logoUrl}
                             alt={`${school.name} logo`}
@@ -102,7 +127,9 @@ export default async function SchoolPage({ params }: { params: { slug: string } 
                                 <div>
                                     <h3 className="font-semibold text-lg">{program}</h3>
                                 </div>
-                                <Button variant="secondary">Learn More</Button>
+                                 <Button asChild variant="secondary">
+                                    <Link href="/register">Learn More</Link>
+                                </Button>
                             </Card>
                         ))}
                      </div>

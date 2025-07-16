@@ -7,14 +7,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, ArrowRight, Loader2 } from "lucide-react";
+import { MapPin, ArrowRight, Loader2, PlusCircle } from "lucide-react";
 import { useLocalization } from "@/context/localization-context";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
-import { app } from "@/lib/firebase";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useCountry } from "@/context/country-context";
-
-const db = getFirestore(app);
 
 interface School {
     id: string;
@@ -26,36 +22,39 @@ interface School {
     slug: string;
 }
 
-async function getSchools(): Promise<School[]> {
-    const schoolsCol = collection(db, 'schools');
-    const schoolSnapshot = await getDocs(schoolsCol);
-    const schoolList = schoolSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as School));
-    return schoolList;
-}
+const schoolsData: School[] = [
+    {
+        id: "1",
+        name: "Institut National Polytechnique Félix Houphouët-Boigny",
+        acronym: "INP-HB",
+        logoUrl: "/images/University.png",
+        location: "Yamoussoukro",
+        description: "A leading polytechnic institution in West Africa, focused on engineering, technology, and applied sciences.",
+        slug: "inp-hb",
+    },
+    {
+        id: "2",
+        name: "Université Félix Houphouët-Boigny",
+        acronym: "UFHB",
+        logoUrl: "/images/UFHB.png",
+        location: "Abidjan",
+        description: "The largest university in Côte d'Ivoire, offering a wide range of programs in science, arts, and humanities.",
+        slug: "ufhb",
+    },
+    {
+        id: "3",
+        name: "Groupe CSI Pôle Polytechnique",
+        acronym: "CSI",
+        logoUrl: "/images/CSI.png",
+        location: "Abidjan",
+        description: "A private higher education group known for its focus on technology, management, and innovation.",
+        slug: "csi",
+    }
+];
 
 export default function SchoolsPage() {
   const { t, countryName } = useLocalization();
   const { country } = useCountry();
-  const [schools, setSchools] = useState<School[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (country.code === 'CI') {
-        async function loadSchools() {
-            try {
-                const fetchedSchools = await getSchools();
-                setSchools(fetchedSchools);
-            } catch(error) {
-                console.error("Failed to fetch schools:", error)
-            } finally {
-                setIsLoading(false);
-            }
-        }
-        loadSchools();
-    } else {
-        setIsLoading(false);
-    }
-  }, [country.code])
 
   const isLaunchCountry = country.code === 'CI';
   
@@ -73,30 +72,26 @@ export default function SchoolsPage() {
             </p>
         </div>
 
-        {isLoading ? (
-            <div className="flex justify-center items-center h-64">
-                <Loader2 className="h-16 w-16 animate-spin text-primary" />
-            </div>
-        ) : isLaunchCountry ? (
+        {isLaunchCountry ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {schools.map((school) => (
+                {schoolsData.map((school) => (
                     <Link href={`/schools/${school.slug}`} key={school.id} className="group block">
                         <Card className="group flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full">
                             <CardHeader className="p-0">
-                                <div className="relative w-full h-48 bg-muted">
+                                <div className="relative w-full h-48 bg-muted flex items-center justify-center">
                                     <Image
                                         src={school.logoUrl}
                                         alt={`${school.name} logo`}
-                                        fill
-                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                        className="object-contain p-8"
+                                        width={160}
+                                        height={160}
+                                        className="object-contain p-8 h-full w-auto"
                                     />
                                 </div>
                             </CardHeader>
                             <CardContent className="p-6 flex flex-col flex-grow">
                                 <h2 className="text-xl font-bold">{school.acronym}</h2>
-                                <p className="text-sm text-muted-foreground flex-grow">{school.name}</p>
-                                <p className="mt-4 text-muted-foreground flex-grow">{t(school.description)}</p>
+                                <p className="text-sm text-muted-foreground mb-4">{school.name}</p>
+                                <p className="text-muted-foreground flex-grow">{t(school.description)}</p>
                                 <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
                                     <MapPin className="h-4 w-4"/> {school.location}
                                 </div>
@@ -111,6 +106,14 @@ export default function SchoolsPage() {
                         </Card>
                     </Link>
                 ))}
+                 <Card className="bg-primary/5 border-2 border-dashed border-primary/20 flex flex-col items-center justify-center text-center p-6">
+                    <PlusCircle className="h-12 w-12 text-primary mb-4" />
+                    <h2 className="text-2xl font-bold mb-2">{t('Want to Partner With Us?')}</h2>
+                    <p className="text-muted-foreground max-w-md mx-auto mb-6">{t('Join our network to connect your graduates with leading companies and track their success.')}</p>
+                    <Button asChild size="lg">
+                        <Link href="/register">{t('Partner With Us')}</Link>
+                    </Button>
+                </Card>
             </div>
         ) : (
              <Card className="py-24">

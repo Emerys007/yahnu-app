@@ -7,15 +7,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Briefcase, MapPin, Building, ArrowRight, Loader2 } from "lucide-react";
+import { Briefcase, MapPin, Building, ArrowRight, Loader2, PlusCircle } from "lucide-react";
 import { useLocalization } from "@/context/localization-context";
-import { Logo } from "@/components/logo";
-import { getFirestore, collection, getDocs, DocumentData } from "firebase/firestore";
-import { app } from "@/lib/firebase";
-import React, { useState, useEffect } from "react";
 import { useCountry } from "@/context/country-context";
-
-const db = getFirestore(app);
+import React, { useState, useEffect } from "react";
 
 interface Company {
     id: string;
@@ -25,40 +20,56 @@ interface Company {
     industry: string;
     featuredJobs: string[];
     slug: string;
+    logoUrl: string;
 }
 
-async function getCompanies(): Promise<Company[]> {
-    const companiesCol = collection(db, 'companies');
-    const companySnapshot = await getDocs(companiesCol);
-    const companyList = companySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Company));
-    return companyList;
-}
-
+const companiesData: Company[] = [
+    {
+        id: "1",
+        name: "Orange Côte d'Ivoire",
+        slug: "orange-ci",
+        tagline: "La vie change avec Orange",
+        location: "Abidjan, Côte d'Ivoire",
+        industry: "Telecommunications",
+        featuredJobs: ["Tech Lead - Mobile Money", "Marketing Manager", "Network Engineer"],
+        logoUrl: "/images/Orange.png"
+    },
+    {
+        id: "2",
+        name: "SIFCA",
+        slug: "sifca",
+        tagline: "Le leader de l'agro-industrie en Afrique de l'Ouest",
+        location: "Abidjan, Côte d'Ivoire",
+        industry: "Agriculture",
+        featuredJobs: ["Agronomist", "Supply Chain Manager", "Financial Analyst"],
+        logoUrl: "/images/SIFCA.png"
+    },
+    {
+        id: "3",
+        name: "Bridge Bank Group",
+        slug: "bridge-bank-group",
+        tagline: "Votre partenaire pour la croissance",
+        location: "Abidjan, Côte d'Ivoire",
+        industry: "Finance & Banking",
+        featuredJobs: ["Data Analyst", "Relationship Manager", "IT Security Specialist"],
+        logoUrl: "/images/BridgeBank.png"
+    },
+    {
+        id: "4",
+        name: "Bolloré Logistics",
+        slug: "bollore-logistics",
+        tagline: "Leader du transport et de la logistique",
+        location: "Abidjan, Côte d'Ivoire",
+        industry: "Transportation & Logistics",
+        featuredJobs: ["Logistics Coordinator", "Customs Broker", "Operations Supervisor"],
+        logoUrl: "/images/Bollore.png"
+    },
+];
 
 export default function CompaniesPage() {
   const { t, countryName } = useLocalization();
   const { country } = useCountry();
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-      if (country.code === 'CI') {
-        async function loadCompanies() {
-            try {
-              const fetchedCompanies = await getCompanies();
-              setCompanies(fetchedCompanies);
-            } catch(error) {
-              console.error("Failed to fetch companies:", error)
-            } finally {
-              setIsLoading(false);
-            }
-        }
-        loadCompanies();
-      } else {
-        setIsLoading(false);
-      }
-  }, [country.code])
-
+  
   const isLaunchCountry = country.code === 'CI';
   
   return (
@@ -75,21 +86,17 @@ export default function CompaniesPage() {
             </p>
         </div>
 
-        {isLoading ? (
-            <div className="flex justify-center items-center h-64">
-                <Loader2 className="h-16 w-16 animate-spin text-primary" />
-            </div>
-        ) : isLaunchCountry ? (
+        {isLaunchCountry ? (
             <div className="space-y-8">
-                {companies.map((company) => (
+                {companiesData.map((company) => (
                     <Link href={`/companies/${company.slug}`} key={company.id} className="group block">
                         <Card className="flex flex-col md:flex-row items-center p-6 gap-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                            <Logo className="h-24 w-24 shrink-0" />
+                            <Image src={company.logoUrl} alt={`${company.name} Logo`} width={96} height={96} className="h-24 w-24 shrink-0 object-contain" />
                             <div className="flex-grow text-center md:text-left">
                                 <h2 className="text-2xl font-bold">{company.name}</h2>
-                                <p className="text-muted-foreground italic">"{company.tagline}"</p>
+                                <p className="text-muted-foreground italic">"{t(company.tagline)}"</p>
                                 <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 mt-2 text-sm text-muted-foreground">
-                                    <span className="flex items-center gap-1"><Building className="h-4 w-4"/> {company.industry}</span>
+                                    <span className="flex items-center gap-1"><Building className="h-4 w-4"/> {t(company.industry)}</span>
                                     <span className="flex items-center gap-1"><MapPin className="h-4 w-4"/> {company.location}</span>
                                 </div>
                             </div>
@@ -99,19 +106,31 @@ export default function CompaniesPage() {
                                     {company.featuredJobs.map((job) => (
                                         <li key={job} className="flex items-center gap-2 justify-center md:justify-start">
                                             <Briefcase className="h-4 w-4 text-muted-foreground"/> 
-                                            <span>{job}</span>
+                                            <span>{t(job)}</span>
                                         </li>
                                     ))}
                                 </ul>
                             </div>
                             <div className="self-center mt-4 md:mt-0">
-                                <Button>
-                                    {t('View Profile')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"/>
+                                <Button asChild>
+                                    <div className="flex items-center">
+                                        {t('View Profile')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"/>
+                                    </div>
                                 </Button>
                             </div>
                         </Card>
                     </Link>
                 ))}
+                 <Card className="bg-primary/5 border-2 border-dashed border-primary/20">
+                    <CardContent className="p-8 text-center flex flex-col items-center justify-center">
+                        <PlusCircle className="h-12 w-12 text-primary mb-4" />
+                        <h2 className="text-2xl font-bold mb-2">{t('Is Your Company Next?')}</h2>
+                        <p className="text-muted-foreground max-w-md mx-auto mb-6">{t('Join Yahnu to access a pool of pre-vetted, top-tier talent from the best institutions in {country}.')}</p>
+                        <Button asChild size="lg">
+                            <Link href="/register">{t('Become a Partner Company')}</Link>
+                        </Button>
+                    </CardContent>
+                </Card>
             </div>
         ) : (
             <Card className="py-24">
