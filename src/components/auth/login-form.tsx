@@ -55,13 +55,17 @@ export function LoginForm() {
         });
         router.push('/dashboard');
     } catch (error: any) {
-        let errorMessage = "Invalid credentials. Please try again.";
-        // More specific error messages from Firebase
+        let errorMessage = t("Invalid credentials. Please try again.");
         if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-            errorMessage = "Invalid email or password. Please check your credentials.";
+            errorMessage = t("Invalid email or password. Please check your credentials.");
         } else if (error.code === 'auth/too-many-requests') {
-            errorMessage = "Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later."
+            errorMessage = t("Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.")
+        } else if (error.message.includes("pending approval")) {
+            errorMessage = t("Your account is pending approval. Please contact support or your institution's administrator.");
+        } else if (error.message.includes("suspended")) {
+            errorMessage = t("Your account has been suspended. Please contact support.");
         }
+
         toast({
             title: t("Uh oh! Login Failed."),
             description: errorMessage,
@@ -82,9 +86,15 @@ export function LoginForm() {
       });
       router.push('/dashboard');
     } catch (error: any) {
+      let errorMessage = error.message || t("Could not sign in with Google.");
+       if (error.message.includes("pending approval")) {
+            errorMessage = t("Your account is pending approval. Please contact support or your institution's administrator.");
+        } else if (error.message.includes("suspended")) {
+            errorMessage = t("Your account has been suspended. Please contact support.");
+        }
       toast({
         title: t("Uh oh! Something went wrong."),
-        description: error.message || t("Could not sign in with Google."),
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -159,5 +169,3 @@ export function LoginForm() {
     </>
   )
 }
-
-    

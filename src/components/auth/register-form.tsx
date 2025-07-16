@@ -70,8 +70,9 @@ const companySchema = baseSchema.extend({
 });
 
 const schoolSchema = baseSchema.extend({
-    companyName: z.string().min(2, { message: "School name is required." }),
+    schoolName: z.string().min(2, { message: "School name is required." }), // Use schoolName
     contactName: z.string().min(2, { message: "Contact person name is required." }),
+    companyName: z.string().optional(), // Make companyName optional
     firstName: z.string().optional(),
     lastName: z.string().optional(),
     schoolId: z.string().optional(),
@@ -115,16 +116,19 @@ export function RegisterForm() {
   async function onSubmit(values: z.infer<typeof registerSchema>) {
     setIsLoading(true);
     try {
-        const name = values.role === 'graduate' 
-            ? `${values.firstName} ${values.lastName}` 
-            : values.companyName;
+        let name: string | undefined;
+        let profileData: Omit<UserProfile, 'uid' | 'status'>;
 
-        const profileData: Omit<UserProfile, 'uid' | 'status'> = {
-            ...values,
-            name,
-            email: values.email,
-            role: values.role
-        };
+        if (values.role === 'graduate') {
+            name = `${values.firstName} ${values.lastName}`;
+            profileData = { ...values, name, email: values.email, role: values.role };
+        } else if (values.role === 'company') {
+            name = values.companyName;
+            profileData = { ...values, name, email: values.email, role: values.role };
+        } else { // school
+            name = values.schoolName;
+            profileData = { ...values, name, email: values.email, role: values.role };
+        }
         
         await signUp(profileData, values.password);
 
@@ -132,7 +136,7 @@ export function RegisterForm() {
             title: t("Account Created!"),
             description: role === 'graduate'
               ? t("Your account is pending approval from your school's administrator. We'll notify you once it's active.")
-              : t("You have successfully signed up. Welcome to Yahnu!"),
+              : t("Your registration is pending approval from a Yahnu administrator. We'll notify you once it's active."),
           });
         
         router.push('/login');
@@ -224,12 +228,12 @@ export function RegisterForm() {
             </div>
         )}
 
-        {(role === 'company' || role === 'school') && (
+        {role === 'company' && (
           <>
             <FormField control={form.control} name="companyName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{role === 'company' ? t('Company Name') : t('School Name')}</FormLabel>
+                  <FormLabel>{t('Company Name')}</FormLabel>
                   <FormControl><Input {...field} disabled={isLoading} /></FormControl>
                   <FormMessage />
                 </FormItem>
@@ -246,6 +250,30 @@ export function RegisterForm() {
             />
           </>
         )}
+        
+        {role === 'school' && (
+          <>
+            <FormField control={form.control} name="schoolName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('School Name')}</FormLabel>
+                  <FormControl><Input {...field} disabled={isLoading} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField control={form.control} name="contactName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('Contact Person Name')}</FormLabel>
+                  <FormControl><Input {...field} disabled={isLoading} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
+        )}
+
 
         {role === 'graduate' && (
             <FormField

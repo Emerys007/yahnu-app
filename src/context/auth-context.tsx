@@ -22,6 +22,7 @@ export interface UserProfile {
   firstName?: string;
   lastName?: string;
   schoolId?: string;
+  schoolName?: string;
   companyName?: string;
   contactName?: string;
   industry?: string;
@@ -70,9 +71,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userProfile = await fetchUserDocument(firebaseUser);
          if (userProfile) {
           if (userProfile.status === 'pending') {
+            // User is pending, but let's not sign them out immediately.
+            // This allows us to show them a "pending" status page if we want.
+            // For now, we'll just treat them as logged out from a UI perspective.
+            setUser(null); 
+          } else if (userProfile.status === 'suspended') {
             setUser(null);
-            await firebaseSignOut(auth);
-          } else {
+          }
+          else {
             setUser(userProfile);
           }
         } else {
@@ -91,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const createUserDocument = async (firebaseUser: FirebaseUser, profile: Omit<UserProfile, 'uid' | 'email'>, email: string) => {
     const userDocRef = doc(db, "users", firebaseUser.uid);
     
-    // Only admins are active by default
+    // Graduates need approval from their school. Companies/Schools need admin approval.
     const status: UserStatus = profile.role === 'admin' ? 'active' : 'pending';
     
     await setDoc(userDocRef, {
@@ -113,13 +119,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { email, ...profileData } = profile;
     const status = await createUserDocument(firebaseUser, profileData, firebaseUser.email!);
     
-    // Don't auto-login pending users
-    if (status === 'pending') {
-        await firebaseSignOut(auth);
-    } else {
-        const userProfile = await fetchUserDocument(firebaseUser);
-        if(userProfile) setUser(userProfile);
-    }
+    // Always sign out after registration so user has to log in.
+    await firebaseSignOut(auth);
   };
 
   const signIn = async (email: string, password: string) => {
@@ -128,11 +129,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (userProfile?.status === 'pending') {
         await firebaseSignOut(auth);
-        throw new Error("Your account is pending approval by an administrator.");
+        throw new Error("Your account is pending approval.");
     }
      if (userProfile?.status === 'suspended') {
         await firebaseSignOut(auth);
-        throw new Error("Your account has been suspended. Please contact support.");
+        throw new Error("Your account has been suspended.");
     }
     
     if (userProfile) setUser(userProfile);
@@ -145,12 +146,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let userDoc = await getDoc(userDocRef);
 
     if (!userDoc.exists()) {
-        const [firstName, ...lastName] = (firebaseUser.displayName || "").split(" ");
+        const [firstName, ...lastNameParts] = (firebaseUser.displayName || "").split(" ");
+        const lastName = lastNameParts.join(" ");
         const profile: Omit<UserProfile, 'uid' | 'email' | 'status'> = {
             name: firebaseUser.displayName || "Google User",
             firstName,
-            lastName: lastName.join(" "),
-            role: 'graduate', 
+            lastName,
+            role: 'graduate', // Default to graduate for Google sign-ups
         };
         await createUserDocument(firebaseUser, profile, firebaseUser.email!);
         userDoc = await getDoc(userDocRef); // Re-fetch the doc after creation
