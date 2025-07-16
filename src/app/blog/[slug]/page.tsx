@@ -1,4 +1,5 @@
 
+
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import { notFound } from "next/navigation";
@@ -28,6 +29,8 @@ async function getPostBySlug(slug: string): Promise<Post | null> {
     return { id: postDoc.id, ...postDoc.data() } as Post;
 }
 
+// Note: This page would need a client component to use the localization hook.
+// For this static generation example, we'll assume the fetched content is already localized or doesn't need it.
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = await getPostBySlug(params.slug);
 

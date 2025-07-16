@@ -9,9 +9,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Users, Lightbulb, Target } from "lucide-react";
 
 const teamMembers = [
-    { name: "Dr. Evelyn Reed", role: "Founder & CEO", imageUrl: "https://placehold.co/400x400.png" },
-    { name: "John Carter", role: "Head of Product", imageUrl: "https://placehold.co/400x400.png" },
-    { name: "Emily Chen", role: "Lead Engineer", imageUrl: "https://placehold.co/400x400.png" },
+    { name: "Colombe Koffi", role: "Founder & CEO", imageUrl: "/images/Colombe Koffi.jpeg" },
+    { name: "Joël K", role: "Head of Product & Lead Engineer", imageUrl: "/images/Joel K.jpeg" },
     { name: "David Lee", role: "Partnerships Manager", imageUrl: "https://placehold.co/400x400.png" },
 ]
 
@@ -76,7 +75,7 @@ export default function AboutPage() {
                     <h2 className="text-3xl font-bold tracking-tight">{t('Meet the Team')}</h2>
                     <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">{t('The passionate individuals dedicated to building Yahnu.')}</p>
                  </div>
-                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                 <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
                     {teamMembers.map(member => (
                         <div key={member.name} className="text-center">
                             <div className="relative h-40 w-40 mx-auto rounded-full overflow-hidden mb-4">
