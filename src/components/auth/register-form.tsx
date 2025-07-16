@@ -216,7 +216,6 @@ export function RegisterForm() {
                         <SelectItem value="graduate">{t("Graduate")}</SelectItem>
                         <SelectItem value="company">{t("Company Representative")}</SelectItem>
                         <SelectItem value="school">{t("School Administrator")}</SelectItem>
-                        <SelectItem value="admin">{t("Admin")}</SelectItem>
                     </SelectContent>
                 </Select>
               <FormMessage />
