@@ -1,5 +1,3 @@
-import { config } from 'dotenv';
-config();
 
 import '@/ai/flows/assessment-generator.ts';
 import '@/ai/flows/resume-parser.ts';
