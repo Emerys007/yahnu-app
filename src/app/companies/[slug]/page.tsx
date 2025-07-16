@@ -1,6 +1,4 @@
 
-"use client"
-
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import { notFound } from "next/navigation";
@@ -96,18 +94,11 @@ function getCompanyBySlug(slug: string): CompanyProfile | null {
     return company || null;
 }
 
-export default function CompanyPage({ params }: { params: { slug: string } }) {
-  const { t } = useLocalization();
-  const company = getCompanyBySlug(params.slug);
+function CompanyProfileClient({ company }: { company: CompanyProfile }) {
+    "use client";
+    const { t } = useLocalization();
 
-  if (!company) {
-    notFound();
-  }
-
-  return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <MainNav />
-      <main className="flex-1 container mx-auto py-12">
+    return (
         <Card className="overflow-hidden">
             <CardHeader className="p-0">
                  <div className="relative w-full h-48 md:h-64 bg-muted">
@@ -168,6 +159,21 @@ export default function CompanyPage({ params }: { params: { slug: string } }) {
                 </div>
             </CardContent>
         </Card>
+    )
+}
+
+export default async function CompanyPage({ params }: { params: { slug: string } }) {
+  const company = getCompanyBySlug(params.slug);
+
+  if (!company) {
+    notFound();
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background">
+      <MainNav />
+      <main className="flex-1 container mx-auto py-12">
+        <CompanyProfileClient company={company} />
       </main>
       <Footer />
     </div>
