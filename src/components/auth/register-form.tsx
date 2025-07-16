@@ -56,6 +56,7 @@ const graduateSchema = baseSchema.extend({
     lastName: z.string().min(2, { message: "Last name is required." }),
     schoolId: z.string().min(1, { message: "School is required for graduates." }),
     companyName: z.string().optional(),
+    schoolName: z.string().optional(),
     contactName: z.string().optional(),
     industry: z.string().optional(),
 });
@@ -67,6 +68,7 @@ const companySchema = baseSchema.extend({
     firstName: z.string().optional(),
     lastName: z.string().optional(),
     schoolId: z.string().optional(),
+    schoolName: z.string().optional(),
 });
 
 const schoolSchema = baseSchema.extend({
@@ -83,6 +85,7 @@ const adminSchema = baseSchema.extend({
     firstName: z.string().min(2, { message: "First name is required." }),
     lastName: z.string().min(2, { message: "Last name is required." }),
     companyName: z.string().optional(),
+    schoolName: z.string().optional(),
     contactName: z.string().optional(),
     industry: z.string().optional(),
     schoolId: z.string().optional(),
@@ -108,10 +111,17 @@ export function RegisterForm() {
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
+      role: "graduate",
       email: "",
       password: "",
       confirmPassword: "",
-      role: "graduate",
+      firstName: "",
+      lastName: "",
+      schoolId: "",
+      companyName: "",
+      schoolName: "",
+      contactName: "",
+      industry: "",
     },
   });
 
@@ -399,5 +409,3 @@ export function RegisterForm() {
     </Form>
   )
 }
-
-    
