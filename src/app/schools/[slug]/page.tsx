@@ -1,6 +1,4 @@
 
-"use client"
-
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import { notFound } from "next/navigation";
@@ -66,6 +64,7 @@ function getSchoolBySlug(slug: string): School | null {
 
 // Client Component for rendering the profile
 function SchoolProfile({ school }: { school: School }) {
+    "use client";
     const { t } = useLocalization();
 
     return (
@@ -120,7 +119,7 @@ function SchoolProfile({ school }: { school: School }) {
                                 </div>
                                  <Button asChild variant="secondary">
                                     <Link href="/register">{t('Learn More')}</Link>
-                                </Button>
+                                 </Button>
                             </Card>
                         ))}
                      </div>
