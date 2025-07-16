@@ -11,7 +11,7 @@ const dashboardComponents: Record<Role, React.ComponentType> = {
   graduate: GraduateDashboard,
   company: CompanyDashboard,
   school: SchoolDashboard,
-  admin: AdminPage
+  admin: AdminPage,
 };
 
 export default function DashboardPage() {

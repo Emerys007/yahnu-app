@@ -71,7 +71,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   ];
 
   const adminNav = [
-    { href: "/dashboard/admin", icon: Shield, label: t('Overview') },
+    { href: "/dashboard/admin/overview", icon: Shield, label: t('Overview') },
     { href: "/dashboard/admin/user-management", icon: UserCog, label: t('Manage Users') },
     { href: "/dashboard/admin/manage-team", icon: Users2, label: t('Manage Team') },
     { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Platform Analytics') },
