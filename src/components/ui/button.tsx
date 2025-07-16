@@ -11,7 +11,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-md hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20",
+          "bg-primary text-primary-foreground shadow-lg shadow-primary/20 before:content-[''] before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:skew-x-[-25deg] hover:before:left-full hover:before:transition-all hover:before:duration-700",
         destructive:
           "bg-destructive text-destructive-foreground shadow-md hover:bg-destructive/90 hover:shadow-lg hover:shadow-destructive/20",
         outline:
@@ -20,8 +20,6 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        shimmer:
-          "bg-primary text-primary-foreground shadow-lg shadow-primary/20 before:content-[''] before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:skew-x-[-25deg] hover:before:left-full hover:before:transition-all hover:before:duration-700",
         gooey: "relative overflow-hidden border border-input bg-transparent text-primary transition-colors duration-300 before:absolute before:left-0 before:top-0 before:-z-10 before:h-full before:w-0 before:bg-primary before:transition-all before:duration-300 before:content-[''] hover:text-white hover:before:w-full",
       },
       size: {

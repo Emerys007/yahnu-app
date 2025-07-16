@@ -114,7 +114,7 @@ export function HeroSection() {
                       {slide.subtitle}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Button size="lg" variant="shimmer" asChild className="text-base px-8 py-6">
+                        <Button size="lg" asChild className="text-base px-8 py-6">
                             <Link href={slide.href}>
                                 <div className="flex items-center gap-2">
                                     {slide.buttonIcon}

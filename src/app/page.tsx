@@ -114,7 +114,7 @@ export default function HomePage() {
                   {t("Create your account today and unlock a world of opportunities. Whether you're a graduate, a company, or a school, Yahnu is your gateway to success.")}
               </p>
               <div className="mt-8 flex justify-center">
-                  <Button size="lg" variant="shimmer" asChild>
+                  <Button size="lg" asChild>
                       <Link href="/register">{t('Get Started Now')}</Link>
                   </Button>
               </div>

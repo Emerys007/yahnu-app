@@ -78,7 +78,7 @@ export function MainNav() {
                 <Button variant="ghost" asChild>
                   <Link href="/login">{t('Login')}</Link>
                 </Button>
-                <Button variant="shimmer" asChild>
+                <Button asChild>
                   <Link href="/register">{t('Sign Up')}</Link>
                 </Button>
             </div>
@@ -187,7 +187,6 @@ export function MainNav() {
                       <SheetClose asChild>
                         <Button
                           className="justify-start text-lg"
-                          variant="shimmer"
                           asChild
                         >
                           <Link href="/register">{t('Sign Up')}</Link>
@@ -257,5 +256,3 @@ export function MainNav() {
     </header>
   );
 }
-
-    
