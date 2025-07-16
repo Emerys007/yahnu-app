@@ -494,5 +494,12 @@
     "Signed In Successfully!": "Connecté avec succès !",
     "Welcome to Yahnu.": "Bienvenue sur Yahnu.",
     "Could not sign in with Google.": "Impossible de se connecter avec Google.",
-    "There was a problem with your request.": "Il y a eu un problème avec votre demande."
+    "There was a problem with your request.": "Il y a eu un problème avec votre demande.",
+    "Your account is pending approval. Please contact your school's administrator.": "Votre compte est en attente d'approbation par l'administrateur de votre école.",
+    "Change Password": "Changer le mot de passe",
+    "Create Password": "Créer un mot de passe",
+    "Password reset email sent": "E-mail de réinitialisation de mot de passe envoyé",
+    "Check your inbox to create a new password.": "Vérifiez votre boîte de réception pour créer un nouveau mot de passe.",
+    "Error": "Erreur",
+    "Failed to send password reset email.": "Échec de l'envoi de l'e-mail de réinitialisation du mot de passe."
 }

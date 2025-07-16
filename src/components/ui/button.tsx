@@ -20,7 +20,7 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        gooey: "relative overflow-hidden border border-input bg-transparent text-primary transition-colors duration-300 before:absolute before:left-0 before:top-0 before:-z-10 before:h-full before:w-0 before:bg-primary before:transition-all before:duration-300 before:content-[''] hover:text-white hover:before:w-full",
+        gooey: "relative overflow-hidden border border-input bg-transparent text-primary-foreground transition-colors duration-300 before:absolute before:left-0 before:top-0 before:-z-10 before:h-full before:w-0 before:bg-primary before:transition-all before:duration-300 before:content-[''] hover:text-white hover:before:w-full",
       },
       size: {
         default: "h-10 px-4 py-2",

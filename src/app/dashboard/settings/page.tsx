@@ -10,12 +10,32 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, School as SchoolIcon } from "lucide-react"
+import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, School as SchoolIcon, KeyRound } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 // #region Shared Settings
 const UserAccountSettings = () => {
     const { t } = useLocalization();
-    const { user } = useAuth();
+    const { user, createPassword, isGoogleProvider } = useAuth();
+    const { toast } = useToast();
+
+    const handleCreatePassword = async () => {
+        if (!user || !user.email) return;
+        try {
+            await createPassword();
+            toast({
+                title: t('Password reset email sent'),
+                description: t('Check your inbox to create a new password.'),
+            });
+        } catch (error) {
+            toast({
+                title: t('Error'),
+                description: t('Failed to send password reset email.'),
+                variant: 'destructive',
+            });
+        }
+    };
+
     return (
         <Card>
             <CardHeader>
@@ -33,7 +53,10 @@ const UserAccountSettings = () => {
                   <Input id="email" type="email" defaultValue={user?.email || ''} disabled />
                 </div>
               </div>
-              <Button variant="outline">{t('Change Password')}</Button>
+              <Button variant="outline" onClick={handleCreatePassword}>
+                <KeyRound className="mr-2 h-4 w-4" />
+                {isGoogleProvider() ? t('Create Password') : t('Change Password')}
+              </Button>
             </CardContent>
         </Card>
     )

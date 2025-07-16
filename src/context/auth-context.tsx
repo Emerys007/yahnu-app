@@ -2,7 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser } from "firebase/auth";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { app } from '@/lib/firebase'; // Ensure your firebase config is correctly exported from here
 
@@ -36,6 +36,8 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
+  isGoogleProvider: () => boolean;
+  createPassword: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -140,36 +142,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithGoogle = async () => {
-    const result = await signInWithPopup(auth, googleProvider);
-    const firebaseUser = result.user;
-    const userDocRef = doc(db, "users", firebaseUser.uid);
-    let userDoc = await getDoc(userDocRef);
+    if (auth.currentUser) {
+        // This is a user who is already logged in with email/password and wants to link their Google account.
+        try {
+            const result = await linkWithPopup(auth.currentUser, googleProvider);
+            const userProfile = await fetchUserDocument(result.user);
+            if(userProfile) setUser(userProfile);
+        } catch (error: any) {
+            // Handle specific errors, e.g., 'auth/credential-already-in-use'
+             console.error("Failed to link Google account:", error);
+            if(error.code === 'auth/credential-already-in-use') {
+                throw new Error("This Google account is already linked to another Yahnu user.");
+            }
+            throw new Error("Failed to link Google account.");
+        }
+    } else {
+        // This is a new sign-in or sign-up attempt.
+        const result = await signInWithPopup(auth, googleProvider);
+        const firebaseUser = result.user;
+        const userDocRef = doc(db, "users", firebaseUser.uid);
+        let userDoc = await getDoc(userDocRef);
 
-    if (!userDoc.exists()) {
-        const [firstName, ...lastNameParts] = (firebaseUser.displayName || "").split(" ");
-        const lastName = lastNameParts.join(" ");
-        const profile: Omit<UserProfile, 'uid' | 'email' | 'status'> = {
-            name: firebaseUser.displayName || "Google User",
-            firstName,
-            lastName,
-            role: 'graduate', // Default to graduate for Google sign-ups
-        };
-        await createUserDocument(firebaseUser, profile, firebaseUser.email!);
-        userDoc = await getDoc(userDocRef); // Re-fetch the doc after creation
+        if (!userDoc.exists()) {
+            const [firstName, ...lastNameParts] = (firebaseUser.displayName || "").split(" ");
+            const lastName = lastNameParts.join(" ");
+            const profile: Omit<UserProfile, 'uid' | 'email' | 'status'> = {
+                name: firebaseUser.displayName || "Google User",
+                firstName,
+                lastName,
+                role: 'graduate', // Default to graduate for Google sign-ups
+            };
+            await createUserDocument(firebaseUser, profile, firebaseUser.email!);
+            userDoc = await getDoc(userDocRef); // Re-fetch the doc after creation
+        }
+        
+        const userProfile = userDoc.data() as UserProfile;
+        
+        if (userProfile?.status === 'pending') {
+            await firebaseSignOut(auth);
+            throw new Error("Your account is pending approval. Please contact your school's administrator.");
+        }
+        if (userProfile?.status === 'suspended') {
+            await firebaseSignOut(auth);
+            throw new Error("Your account has been suspended. Please contact support.");
+        }
+        
+        if (userProfile) setUser(userProfile);
     }
-    
-    const userProfile = userDoc.data() as UserProfile;
-    
-    if (userProfile?.status === 'pending') {
-        await firebaseSignOut(auth);
-        throw new Error("Your account is pending approval. Please contact your school's administrator.");
-    }
-     if (userProfile?.status === 'suspended') {
-        await firebaseSignOut(auth);
-        throw new Error("Your account has been suspended. Please contact support.");
-    }
-    
-    if (userProfile) setUser(userProfile);
   };
 
 
@@ -177,6 +196,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await firebaseSignOut(auth);
     setUser(null);
   };
+
+  const isGoogleProvider = () => {
+      if (!auth.currentUser) return false;
+      return auth.currentUser.providerData.some(p => p.providerId === 'google.com');
+  }
+
+  const createPassword = async () => {
+      if (!auth.currentUser || !auth.currentUser.email) {
+          throw new Error("No user is currently signed in or user has no email.");
+      }
+      await sendPasswordResetEmail(auth, auth.currentUser.email);
+  }
 
   const value = {
     user,
@@ -186,6 +217,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signIn,
     signOut,
     signInWithGoogle,
+    isGoogleProvider,
+    createPassword,
   };
 
   return (
