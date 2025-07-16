@@ -190,8 +190,8 @@ export function RegisterForm() {
                     </FormControl>
                     <SelectContent>
                         <SelectItem value="graduate">{t("Graduate")}</SelectItem>
-                        <SelectItem value="company">{t("Company")}</SelectItem>
-                        <SelectItem value="school">{t("School")}</SelectItem>
+                        <SelectItem value="company">{t("Company Representative")}</SelectItem>
+                        <SelectItem value="school">{t("School Administrator")}</SelectItem>
                     </SelectContent>
                 </Select>
               <FormMessage />
