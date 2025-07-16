@@ -99,6 +99,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
 
 type SidebarContextType = {
   isCollapsed: boolean;
+  isMobile: boolean;
   toggleSidebar: () => void;
 };
 
@@ -113,25 +114,29 @@ export function useSidebar() {
 }
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
-  const [isCollapsed, setIsCollapsed] = React.useState(false);
   const isMobile = useIsMobile();
+  const [isCollapsed, setIsCollapsed] = React.useState(isMobile);
+  
+  React.useEffect(() => {
+    setIsCollapsed(isMobile);
+  }, [isMobile]);
   
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
   
   const value = React.useMemo(() => ({
-    isCollapsed: isMobile ? false : isCollapsed, // always expanded on mobile sheet
+    isCollapsed,
+    isMobile,
     toggleSidebar,
-  }), [isCollapsed, toggleSidebar, isMobile]);
+  }), [isCollapsed, isMobile, toggleSidebar]);
 
   return <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>;
 }
 
 export function DashboardSidebar() {
   const pathname = usePathname()
-  const { isCollapsed } = useSidebar();
-  const isMobile = useIsMobile();
+  const { isCollapsed, isMobile, toggleSidebar } = useSidebar();
   const { t } = useLocalization();
   const { role } = useAuth();
 
@@ -205,7 +210,7 @@ export function DashboardSidebar() {
 
   const sidebarContent = (
     <>
-      <div className={cn("flex h-20 items-center border-b px-4", isCollapsed && "h-16 justify-center px-0")}>
+      <div className={cn("flex h-16 items-center border-b px-4 shrink-0", isCollapsed && "h-16 justify-center px-0")}>
         <Link href="/" className={cn("flex items-center gap-3", isCollapsed && "justify-center")}>
           <Logo className={cn("h-10 w-10 text-primary transition-all", isCollapsed && "h-8 w-8")} />
           <div className={cn("flex flex-col transition-opacity duration-200", isCollapsed && "opacity-0 hidden")}>
@@ -215,7 +220,7 @@ export function DashboardSidebar() {
         </Link>
       </div>
       <div className="flex-1 overflow-y-auto overflow-x-hidden">
-        <nav className="flex-1 px-4 py-4 space-y-1">
+        <nav className="flex-1 px-2 py-4 space-y-1">
             {navItems.map(renderNavItem)}
         </nav>
       </div>
@@ -224,21 +229,17 @@ export function DashboardSidebar() {
 
   if (isMobile) {
     return (
-      <Sheet open={!isCollapsed} onOpenChange={useSidebar().toggleSidebar}>
-        <SheetContent side="left" className="p-0 w-72">
-           <div className="flex flex-col h-full">
-            {sidebarContent}
-           </div>
+      <Sheet open={!isCollapsed} onOpenChange={toggleSidebar}>
+        <SheetContent side="left" className="p-0 w-72 flex flex-col">
+           {sidebarContent}
         </SheetContent>
       </Sheet>
     );
   }
 
   return (
-    <div className={cn("hidden lg:flex lg:flex-col border-r bg-card transition-all duration-300 ease-in-out", isCollapsed ? "w-20" : "w-72")}>
-        <div className="flex flex-col flex-grow">
-           {sidebarContent}
-        </div>
-    </div>
+    <aside className={cn("hidden lg:flex flex-col border-r bg-card transition-all duration-300 ease-in-out sticky top-0 h-screen", isCollapsed ? "w-20" : "w-72")}>
+        {sidebarContent}
+    </aside>
   )
 }

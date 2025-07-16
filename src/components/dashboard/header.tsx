@@ -89,21 +89,12 @@ export function DashboardHeader() {
         <Button
             variant="ghost"
             size="icon"
-            className="shrink-0 lg:hidden"
-            onClick={toggleSidebar}
-          >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">{t('Toggle navigation menu')}</span>
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hidden lg:flex"
+            className="shrink-0"
             onClick={toggleSidebar}
           >
             <PanelLeft className="h-5 w-5" />
             <span className="sr-only">{t('Toggle navigation menu')}</span>
-          </Button>
+        </Button>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 justify-end">
         <form className="ml-auto hidden sm:flex-initial">
           <div className="relative">
