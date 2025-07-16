@@ -28,40 +28,40 @@ const companiesData: Company[] = [
         id: "1",
         name: "Orange Côte d'Ivoire",
         slug: "orange-ci",
-        tagline: "La vie change avec Orange",
+        tagline: "company_1_tagline",
         location: "Abidjan, Côte d'Ivoire",
         industry: "Telecommunications",
-        featuredJobs: ["Tech Lead - Mobile Money", "Marketing Manager", "Network Engineer"],
+        featuredJobs: ["company_1_job_1", "company_1_job_2", "company_1_job_3"],
         logoUrl: "/images/Orange.png"
     },
     {
         id: "2",
         name: "SIFCA",
         slug: "sifca",
-        tagline: "Le leader de l'agro-industrie en Afrique de l'Ouest",
+        tagline: "company_2_tagline",
         location: "Abidjan, Côte d'Ivoire",
         industry: "Agriculture",
-        featuredJobs: ["Agronomist", "Supply Chain Manager", "Financial Analyst"],
+        featuredJobs: ["company_2_job_1", "company_2_job_2", "company_2_job_3"],
         logoUrl: "/images/SIFCA.png"
     },
     {
         id: "3",
         name: "Bridge Bank Group",
         slug: "bridge-bank-group",
-        tagline: "Votre partenaire pour la croissance",
+        tagline: "company_3_tagline",
         location: "Abidjan, Côte d'Ivoire",
         industry: "Finance & Banking",
-        featuredJobs: ["Data Analyst", "Relationship Manager", "IT Security Specialist"],
+        featuredJobs: ["company_3_job_1", "company_3_job_2", "company_3_job_3"],
         logoUrl: "/images/BridgeBank.png"
     },
     {
         id: "4",
         name: "Bolloré Logistics",
         slug: "bollore-logistics",
-        tagline: "Leader du transport et de la logistique",
+        tagline: "company_4_tagline",
         location: "Abidjan, Côte d'Ivoire",
         industry: "Transportation & Logistics",
-        featuredJobs: ["Logistics Coordinator", "Customs Broker", "Operations Supervisor"],
+        featuredJobs: ["company_4_job_1", "company_4_job_2", "company_4_job_3"],
         logoUrl: "/images/Bollore.png"
     },
 ];

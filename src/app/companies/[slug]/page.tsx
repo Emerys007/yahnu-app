@@ -1,4 +1,6 @@
 
+"use client"
+
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import { notFound } from "next/navigation";
@@ -7,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Briefcase, MapPin, Building, Globe } from "lucide-react";
 import Link from "next/link";
+import { useLocalization } from "@/context/localization-context";
 
 interface CompanyProfile {
     id: string;
@@ -26,81 +29,76 @@ const companiesData: CompanyProfile[] = [
         id: "1",
         name: "Orange Côte d'Ivoire",
         slug: "orange-ci",
-        tagline: "La vie change avec Orange",
+        tagline: "company_1_tagline",
         logoUrl: "/images/Orange.png",
         location: "Abidjan, Côte d'Ivoire",
         industry: "Telecommunications",
         website: "https://www.orange.ci",
-        description: "<p>Orange Côte d'Ivoire is a leading telecommunications operator in Côte d'Ivoire, offering mobile, fixed, and internet services. As a key player in the digital economy, we are committed to innovation and providing our customers with an unparalleled experience.</p>",
+        description: "company_1_description",
         jobs: [
-            { title: "Tech Lead - Mobile Money", type: "Full-time", location: "Abidjan" },
-            { title: "Marketing Manager", type: "Full-time", location: "Abidjan" },
-            { title: "Network Engineer", type: "Full-time", location: "Abidjan" }
+            { title: "company_1_job_1", type: "Full-time", location: "Abidjan" },
+            { title: "company_1_job_2", type: "Full-time", location: "Abidjan" },
+            { title: "company_1_job_3", type: "Full-time", location: "Abidjan" }
         ],
     },
     {
         id: "2",
         name: "SIFCA",
         slug: "sifca",
-        tagline: "Le leader de l'agro-industrie en Afrique de l'Ouest",
+        tagline: "company_2_tagline",
         logoUrl: "/images/SIFCA.png",
         location: "Abidjan, Côte d'Ivoire",
         industry: "Agriculture",
         website: "https://www.groupesifca.com",
-        description: "<p>SIFCA is a leading agro-industrial group specializing in the cultivation, processing, and marketing of palm oil, natural rubber, and sugar cane. With a strong commitment to sustainable development, SIFCA plays a major role in the economies of West Africa.</p>",
+        description: "company_2_description",
         jobs: [
-            { title: "Agronomist", type: "Full-time", location: "Yamoussoukro" },
-            { title: "Supply Chain Manager", type: "Full-time", location: "Abidjan" },
-            { title: "Financial Analyst", type: "Full-time", location: "Abidjan" }
+            { title: "company_2_job_1", type: "Full-time", location: "Yamoussoukro" },
+            { title: "company_2_job_2", type: "Full-time", location: "Abidjan" },
+            { title: "company_2_job_3", type: "Full-time", location: "Abidjan" }
         ],
     },
      {
         id: "3",
         name: "Bridge Bank Group",
         slug: "bridge-bank-group",
-        tagline: "Votre partenaire pour la croissance",
+        tagline: "company_3_tagline",
         logoUrl: "/images/BridgeBank.png",
         location: "Abidjan, Côte d'Ivoire",
         industry: "Finance & Banking",
         website: "https://www.bridgebankgroup.com",
-        description: "<p>Bridge Bank Group Côte d'Ivoire offers a wide range of banking and financial services to individuals, businesses, and institutions. Our mission is to support the economic development of the region by providing innovative and tailored financial solutions.</p>",
+        description: "company_3_description",
         jobs: [
-            { title: "Data Analyst", type: "Full-time", location: "Abidjan" },
-            { title: "Relationship Manager", type: "Full-time", location: "Abidjan" },
-            { title: "IT Security Specialist", type: "Full-time", location: "Abidjan" }
+            { title: "company_3_job_1", type: "Full-time", location: "Abidjan" },
+            { title: "company_3_job_2", type: "Full-time", location: "Abidjan" },
+            { title: "company_3_job_3", type: "Full-time", location: "Abidjan" }
         ],
     },
      {
         id: "4",
         name: "Bolloré Logistics",
         slug: "bollore-logistics",
-        tagline: "Leader du transport et de la logistique",
+        tagline: "company_4_tagline",
         logoUrl: "/images/Bollore.png",
         location: "Abidjan, Côte d'Ivoire",
         industry: "Transportation & Logistics",
         website: "https://www.bollore-logistics.com",
-        description: "<p>Bolloré Logistics is a global leader in international transport and logistics. We offer a full range of services, including multimodal transport, customs and regulatory compliance, logistics, and supply chain management, supported by a large integrated logistics network.</p>",
+        description: "company_4_description",
         jobs: [
-            { title: "Logistics Coordinator", type: "Full-time", location: "San-Pédro" },
-            { title: "Customs Broker", type: "Full-time", location: "Abidjan" },
-            { title: "Operations Supervisor", type: "Full-time", location: "Abidjan" }
+            { title: "company_4_job_1", type: "Full-time", location: "San-Pédro" },
+            { title: "company_4_job_2", type: "Full-time", location: "Abidjan" },
+            { title: "company_4_job_3", type: "Full-time", location: "Abidjan" }
         ],
     },
 ];
 
-async function getCompanyBySlug(slug: string): Promise<CompanyProfile | null> {
+function getCompanyBySlug(slug: string): CompanyProfile | null {
     const company = companiesData.find((c) => c.slug === slug);
     return company || null;
 }
 
-export async function generateStaticParams() {
-    return companiesData.map((company) => ({
-      slug: company.slug,
-    }));
-}
-
-export default async function CompanyPage({ params }: { params: { slug: string } }) {
-  const company = await getCompanyBySlug(params.slug);
+export default function CompanyPage({ params }: { params: { slug: string } }) {
+  const { t } = useLocalization();
+  const company = getCompanyBySlug(params.slug);
 
   if (!company) {
     notFound();
@@ -129,22 +127,22 @@ export default async function CompanyPage({ params }: { params: { slug: string }
                     </div>
                     <div>
                         <h1 className="text-3xl md:text-4xl font-bold">{company.name}</h1>
-                        <p className="text-muted-foreground text-lg">"{company.tagline}"</p>
+                        <p className="text-muted-foreground text-lg">"{t(company.tagline)}"</p>
                     </div>
                 </div>
                 
                 <div className="grid md:grid-cols-3 gap-8 mt-8">
                     <div className="md:col-span-2">
-                        <h2 className="text-2xl font-bold mb-4">About {company.name}</h2>
-                        <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: company.description }} />
+                        <h2 className="text-2xl font-bold mb-4">{t('About')} {company.name}</h2>
+                        <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: t(company.description) }} />
                     </div>
                     <div>
                         <Card>
                             <CardHeader>
-                                <CardTitle>Company Info</CardTitle>
+                                <CardTitle>{t('Company Info')}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
-                                <div className="flex items-center gap-3"><Building className="h-5 w-5 text-muted-foreground"/> <span>{company.industry}</span></div>
+                                <div className="flex items-center gap-3"><Building className="h-5 w-5 text-muted-foreground"/> <span>{t(company.industry)}</span></div>
                                 <div className="flex items-center gap-3"><MapPin className="h-5 w-5 text-muted-foreground"/> <span>{company.location}</span></div>
                                 <div className="flex items-center gap-3"><Globe className="h-5 w-5 text-muted-foreground"/> <a href={company.website} target="_blank" rel="noreferrer" className="text-primary hover:underline">{company.website}</a></div>
                             </CardContent>
@@ -153,16 +151,16 @@ export default async function CompanyPage({ params }: { params: { slug: string }
                 </div>
 
                 <div className="mt-12">
-                     <h2 className="text-2xl font-bold mb-4">Open Positions</h2>
+                     <h2 className="text-2xl font-bold mb-4">{t('Open Positions')}</h2>
                      <div className="space-y-4">
                         {company.jobs.map(job => (
                             <Card key={job.title} className="p-4 flex justify-between items-center">
                                 <div>
-                                    <h3 className="font-semibold text-lg">{job.title}</h3>
-                                    <p className="text-muted-foreground">{job.type} &middot; {job.location}</p>
+                                    <h3 className="font-semibold text-lg">{t(job.title)}</h3>
+                                    <p className="text-muted-foreground">{t(job.type)} &middot; {job.location}</p>
                                 </div>
                                 <Button asChild>
-                                    <Link href="/register">Apply Now</Link>
+                                    <Link href="/register">{t('Apply Now')}</Link>
                                 </Button>
                             </Card>
                         ))}

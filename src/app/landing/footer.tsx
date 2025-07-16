@@ -34,7 +34,7 @@ export function Footer() {
               <div>
                 <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{t('Platform')}</h3>
                 <ul className="mt-4 space-y-2 text-sm">
-                  <li><Link href="/dashboard/jobs" className="text-muted-foreground hover:text-primary transition-colors">{t('Jobs')}</Link></li>
+                  <li><Link href="/jobs" className="text-muted-foreground hover:text-primary transition-colors">{t('Jobs')}</Link></li>
                   <li><Link href="/companies" className="text-muted-foreground hover:text-primary transition-colors">{t('Companies')}</Link></li>
                   <li><Link href="/schools" className="text-muted-foreground hover:text-primary transition-colors">{t('Schools')}</Link></li>
                   <li><Link href="/blog" className="text-muted-foreground hover:text-primary transition-colors">{t('Blog')}</Link></li>

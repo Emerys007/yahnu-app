@@ -25,29 +25,29 @@ interface School {
 const schoolsData: School[] = [
     {
         id: "1",
-        name: "Institut National Polytechnique Félix Houphouët-Boigny",
+        name: "school_1_name",
         acronym: "INP-HB",
         logoUrl: "/images/University.png",
         location: "Yamoussoukro",
-        description: "A leading polytechnic institution in West Africa, focused on engineering, technology, and applied sciences.",
+        description: "school_desc_1",
         slug: "inp-hb",
     },
     {
         id: "2",
-        name: "Université Félix Houphouët-Boigny",
+        name: "school_2_name",
         acronym: "UFHB",
         logoUrl: "/images/UFHB.png",
         location: "Abidjan",
-        description: "The largest university in Côte d'Ivoire, offering a wide range of programs in science, arts, and humanities.",
+        description: "school_desc_2",
         slug: "ufhb",
     },
     {
         id: "3",
-        name: "Groupe CSI Pôle Polytechnique",
+        name: "school_3_name",
         acronym: "CSI",
         logoUrl: "/images/CSI.png",
         location: "Abidjan",
-        description: "A private higher education group known for its focus on technology, management, and innovation.",
+        description: "school_desc_3",
         slug: "csi",
     }
 ];
@@ -66,7 +66,7 @@ export default function SchoolsPage() {
             <h1 className="text-5xl font-bold tracking-tight">{t('Partner Schools')}</h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
                 {isLaunchCountry
-                    ? t('Collaborating with the finest institutions to nurture the next generation of Ivorian leaders.')
+                    ? t('Collaborating with the finest institutions to nurture the next generation of {country} leaders.', { country: 'Ivorian' })
                     : t('Coming Soon to {country}', { country: countryName })
                 }
             </p>
@@ -81,7 +81,7 @@ export default function SchoolsPage() {
                                 <div className="relative w-full h-48 bg-muted flex items-center justify-center">
                                     <Image
                                         src={school.logoUrl}
-                                        alt={`${school.name} logo`}
+                                        alt={`${t(school.name)} logo`}
                                         width={160}
                                         height={160}
                                         className="object-contain p-8 h-full w-auto"
@@ -90,7 +90,7 @@ export default function SchoolsPage() {
                             </CardHeader>
                             <CardContent className="p-6 flex flex-col flex-grow">
                                 <h2 className="text-xl font-bold">{school.acronym}</h2>
-                                <p className="text-sm text-muted-foreground mb-4">{school.name}</p>
+                                <p className="text-sm text-muted-foreground mb-4">{t(school.name)}</p>
                                 <p className="text-muted-foreground flex-grow">{t(school.description)}</p>
                                 <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
                                     <MapPin className="h-4 w-4"/> {school.location}
