@@ -29,7 +29,7 @@ export default function RegisterPage() {
            <p className="text-muted-foreground">{t('Your future starts here')}</p>
         </Link>
         <Image
-          src="/images/Community.png"
+          src="/images/Community.jpeg"
           alt="Yahnu Community"
           width="800"
           height="600"
