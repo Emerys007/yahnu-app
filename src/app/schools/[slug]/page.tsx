@@ -64,18 +64,11 @@ function getSchoolBySlug(slug: string): School | null {
     return school || null;
 }
 
-export default function SchoolPage({ params }: { params: { slug: string } }) {
-  const { t } = useLocalization();
-  const school = getSchoolBySlug(params.slug);
+// Client Component for rendering the profile
+function SchoolProfile({ school }: { school: School }) {
+    const { t } = useLocalization();
 
-  if (!school) {
-    notFound();
-  }
-
-  return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <MainNav />
-      <main className="flex-1 container mx-auto py-12">
+    return (
         <Card className="overflow-hidden">
             <CardHeader className="p-0">
                  <div className="relative w-full h-48 md:h-64 bg-muted">
@@ -134,6 +127,23 @@ export default function SchoolPage({ params }: { params: { slug: string } }) {
                 </div>
             </CardContent>
         </Card>
+    );
+}
+
+
+// Server Component Page
+export default async function SchoolPage({ params }: { params: { slug: string } }) {
+  const school = getSchoolBySlug(params.slug);
+
+  if (!school) {
+    notFound();
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background">
+      <MainNav />
+      <main className="flex-1 container mx-auto py-12">
+        <SchoolProfile school={school} />
       </main>
       <Footer />
     </div>
