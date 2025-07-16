@@ -211,7 +211,7 @@ export function DashboardSidebar() {
   const sidebarContent = (
     <>
       <div className={cn("flex h-16 items-center border-b px-4 shrink-0", isCollapsed && "h-16 justify-center px-0")}>
-        <Link href="/" className={cn("flex items-center gap-3", isCollapsed && "justify-center")}>
+        <Link href="/dashboard" className={cn("flex items-center gap-3", isCollapsed && "justify-center")}>
           <Logo className={cn("h-10 w-10 text-primary transition-all", isCollapsed && "h-8 w-8")} />
           <div className={cn("flex flex-col transition-opacity duration-200", isCollapsed && "opacity-0 hidden")}>
             <h1 className="text-xl font-bold">Yahnu</h1>
