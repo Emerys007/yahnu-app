@@ -99,7 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const createUserDocument = async (firebaseUser: FirebaseUser, profile: Omit<UserProfile, 'uid' | 'email'>, email: string) => {
     const userDocRef = doc(db, "users", firebaseUser.uid);
     
-    // Graduates need approval from their school. Companies/Schools need admin approval.
+    // Graduates need approval from their school. Companies/Schools need admin approval. Admins are active immediately.
     const status: UserStatus = profile.role === 'admin' ? 'active' : 'pending';
     
     await setDoc(userDocRef, {
@@ -227,3 +227,5 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
+
+    

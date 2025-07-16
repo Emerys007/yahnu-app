@@ -45,7 +45,7 @@ const industrySectors = [
 ];
 
 const baseSchema = z.object({
-    role: z.enum(['graduate', 'company', 'school']),
+    role: z.enum(['graduate', 'company', 'school', 'admin']),
     email: z.string().email({ message: "Please enter a valid email address." }),
     password: z.string().min(8, { message: "Password must be at least 8 characters." }),
     confirmPassword: z.string()
@@ -79,10 +79,20 @@ const schoolSchema = baseSchema.extend({
     industry: z.string().optional(),
 })
 
+const adminSchema = baseSchema.extend({
+    firstName: z.string().min(2, { message: "First name is required." }),
+    lastName: z.string().min(2, { message: "Last name is required." }),
+    companyName: z.string().optional(),
+    contactName: z.string().optional(),
+    industry: z.string().optional(),
+    schoolId: z.string().optional(),
+})
+
 const registerSchema = z.discriminatedUnion("role", [
     graduateSchema.extend({ role: z.literal("graduate") }),
     companySchema.extend({ role: z.literal("company") }),
     schoolSchema.extend({ role: z.literal("school") }),
+    adminSchema.extend({ role: z.literal("admin") }),
 ]).refine(data => data.password === data.confirmPassword, {
     message: "Passwords do not match.",
     path: ["confirmPassword"],
@@ -119,7 +129,7 @@ export function RegisterForm() {
         let name: string | undefined;
         let profileData: Omit<UserProfile, 'uid' | 'status'>;
 
-        if (values.role === 'graduate') {
+        if (values.role === 'graduate' || values.role === 'admin') {
             name = `${values.firstName} ${values.lastName}`;
             profileData = { ...values, name, email: values.email, role: values.role };
         } else if (values.role === 'company') {
@@ -134,9 +144,9 @@ export function RegisterForm() {
 
         toast({
             title: t("Account Created!"),
-            description: role === 'graduate'
+            description: (role === 'graduate')
               ? t("Your account is pending approval from your school's administrator. We'll notify you once it's active.")
-              : t("Your registration is pending approval from a Yahnu administrator. We'll notify you once it's active."),
+              : (role === 'admin' ? "Admin account created. You can now log in." : t("Your registration is pending approval from a Yahnu administrator. We'll notify you once it's active.")),
           });
         
         router.push('/login');
@@ -196,6 +206,7 @@ export function RegisterForm() {
                         <SelectItem value="graduate">{t("Graduate")}</SelectItem>
                         <SelectItem value="company">{t("Company Representative")}</SelectItem>
                         <SelectItem value="school">{t("School Administrator")}</SelectItem>
+                        <SelectItem value="admin">{t("Admin")}</SelectItem>
                     </SelectContent>
                 </Select>
               <FormMessage />
@@ -203,7 +214,7 @@ export function RegisterForm() {
           )}
         />
         
-        {role === 'graduate' && (
+        {(role === 'graduate' || role === 'admin') && (
             <div className="grid grid-cols-2 gap-4">
                 <FormField
                     control={form.control} name="firstName"
@@ -388,3 +399,5 @@ export function RegisterForm() {
     </Form>
   )
 }
+
+    
