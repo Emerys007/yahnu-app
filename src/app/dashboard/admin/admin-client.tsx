@@ -10,9 +10,11 @@ import { Building, School, Check, X } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { type UserStatus } from "@/context/auth-context"
+import { doc, updateDoc } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 
 type User = {
-  id: number
+  id: string
   name: string
   email: string
   accountType: "Company" | "School" | "Graduate" | "Admin"
@@ -25,15 +27,24 @@ export const AdminClient = ({ initialRequests }: { initialRequests: User[] }) =>
     const { toast } = useToast();
     const [requests, setRequests] = useState(initialRequests);
 
-    const handleRequest = (id: number, action: "approve" | "reject") => {
+    const handleRequest = async (id: string, action: "approve" | "reject") => {
         const request = requests.find(r => r.id === id)
         if (!request) return
 
-        setRequests(requests.filter(r => r.id !== id))
-        toast({
-            title: t(action === "approve" ? "Request Approved" : "Request Rejected"),
-            description: `${t('The registration for ')} ${request.name} ${t(action === "approve" ? ' has been approved.' : ' has been rejected.')}`,
-        })
+        try {
+            const userDocRef = doc(db, "users", id);
+            const newStatus = action === "approve" ? "active" : "declined";
+            await updateDoc(userDocRef, { status: newStatus });
+            
+            setRequests(requests.filter(r => r.id !== id))
+            toast({
+                title: t(action === "approve" ? "Request Approved" : "Request Rejected"),
+                description: `${t('The registration for ')} ${request.name} ${t(action === "approve" ? ' has been approved.' : ' has been rejected.')}`,
+            })
+        } catch (error) {
+            console.error("Failed to update user status:", error);
+            toast({ title: t('Error'), description: t('Failed to update user status.'), variant: "destructive" });
+        }
     }
 
     return (
