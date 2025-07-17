@@ -33,7 +33,7 @@ export default function AboutPage() {
         <section className="py-20">
             <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center">
                 <div className="relative w-full h-80 rounded-lg overflow-hidden">
-                    <Image src="https://placehold.co/800x600.png" alt="Yahnu Team" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" data-ai-hint="diverse team working" priority />
+                    <Image src="https://placehold.co/800x600.png" alt="Yahnu Team" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" data-ai-hint="african professionals" priority />
                 </div>
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight mb-4">{t('Our Story')}</h2>
