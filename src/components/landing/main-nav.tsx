@@ -8,7 +8,8 @@ import {
   MoreVertical,
   Sun,
   Moon,
-  Monitor
+  Monitor,
+  Search,
 } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,7 @@ import { useCountry, allCountries } from "@/context/country-context";
 import { Flag } from "../flag";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
+import { Input } from "../ui/input";
 
 const getNavLinks = (t: (key: string) => string) => [
   { href: "/jobs", label: t("Jobs") },
@@ -54,16 +56,21 @@ export function MainNav() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center">
-        <Link href="/" className="mr-auto flex items-center gap-3">
+        <Link href="/" className="mr-6 flex items-center gap-3">
             <Logo className="h-12 w-12" />
             <div>
               <p className="font-bold text-xl">Yahnu</p>
               <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
             </div>
         </Link>
+
+        <div className="relative hidden md:block flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Input placeholder={t("Search for jobs, companies...")} className="pl-10 w-full max-w-sm" />
+        </div>
         
-        <div className="flex items-center gap-2">
-            <nav className="hidden md:flex items-center gap-6 text-sm">
+        <div className="flex items-center gap-2 ml-auto">
+            <nav className="hidden md:flex items-center gap-4 text-sm">
                 {navLinks.map((link) => (
                     <Link
                     key={link.href}

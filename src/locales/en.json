@@ -495,7 +495,6 @@
     "Welcome to Yahnu.": "Welcome to Yahnu.",
     "Could not sign in with Google.": "Could not sign in with Google.",
     "There was a problem with your request.": "There was a problem with your request.",
-    "Your account is pending approval. Please contact your school's administrator.": "Your account is pending approval. Please contact your school's administrator.",
     "Change Password": "Change Password",
     "Create Password": "Create Password",
     "Password reset email sent": "Password reset email sent",
@@ -636,5 +635,7 @@
     "Assesses soft skills, cultural fit, and situational judgment.": "Assesses soft skills, cultural fit, and situational judgment.",
     "Technical Questions": "Technical Questions",
     "Tests specific hard skills and role-related knowledge.": "Tests specific hard skills and role-related knowledge.",
-    "Tip": "Tip"
+    "Tip": "Tip",
+    "Search for jobs, companies...": "Search for jobs, companies...",
+    "Select a state": "Select a state"
 }

@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -21,6 +22,8 @@ import {
 import { useLocalization } from "@/context/localization-context"
 import { Input } from "./input"
 import { Label } from "./label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select"
+import { africanCountries, type Country } from "@/lib/african-countries"
 
 type AddressSuggestion = {
   description: string
@@ -42,8 +45,8 @@ type AddressAutocompleteProps = {
 
 // Mock address data for demonstration purposes
 const mockAddresses: { [key: string]: Address } = {
-  "ChIJ--acW_HJxkcRcrwAb9c_xgA": { street: "123 Main St", city: "Abidjan", state: "Lagunes", zip: "10001", country: "Côte d'Ivoire" },
-  "ChIJI_LOK_zJxkcR6N4Ysw_G-Eg": { street: "456 Market St", city: "Abidjan", state: "Lagunes", zip: "10002", country: "Côte d'Ivoire" },
+  "ChIJ--acW_HJxkcRcrwAb9c_xgA": { street: "123 Main St", city: "Abidjan", state: "Lagunes District", zip: "10001", country: "Côte d'Ivoire" },
+  "ChIJI_LOK_zJxkcR6N4Ysw_G-Eg": { street: "456 Market St", city: "Abidjan", state: "Lagunes District", zip: "10002", country: "Côte d'Ivoire" },
   "ChIJN1-E9qjHxkcR4xYwS_b_xGc": { street: "789 Park Ave", city: "New York", state: "NY", zip: "10021", country: "United States" },
   "ChIJr2prqsdc1BIR8AsL4y8dJ3Q": { street: "10 Rue de Rivoli", city: "Paris", state: "Île-de-France", zip: "75001", country: "France" },
 }
@@ -87,6 +90,14 @@ export const AddressAutocomplete = React.forwardRef<
   const [search, setSearch] = React.useState("")
   const [suggestions, setSuggestions] = React.useState<AddressSuggestion[]>([])
   const [isLoading, setIsLoading] = React.useState(false)
+  const [selectedCountry, setSelectedCountry] = React.useState<Country | null>(null)
+
+  React.useEffect(() => {
+    if (value.country) {
+      const country = africanCountries.find(c => c.name === value.country)
+      setSelectedCountry(country || null)
+    }
+  }, [value.country])
 
   const handleSearchChange = async (newSearch: string) => {
     setSearch(newSearch)
@@ -107,6 +118,12 @@ export const AddressAutocomplete = React.forwardRef<
     setSearch(suggestion?.description || "")
     setOpen(false)
   }
+
+  const handleCountryChange = (countryName: string) => {
+    const country = africanCountries.find(c => c.name === countryName);
+    setSelectedCountry(country || null);
+    onChange({ ...value, country: countryName, state: "" }); // Reset state on country change
+  };
 
   return (
     <div ref={ref} className="space-y-4">
@@ -163,16 +180,34 @@ export const AddressAutocomplete = React.forwardRef<
           <Input id="city" value={value.city} onChange={(e) => onChange({...value, city: e.target.value})} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="state">{t('State / Province')}</Label>
-          <Input id="state" value={value.state} onChange={(e) => onChange({...value, state: e.target.value})} />
-        </div>
-        <div className="space-y-2">
           <Label htmlFor="zip">{t('ZIP / Postal Code')}</Label>
           <Input id="zip" value={value.zip} onChange={(e) => onChange({...value, zip: e.target.value})} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="country">{t('Country')}</Label>
-          <Input id="country" value={value.country} onChange={(e) => onChange({...value, country: e.target.value})} />
+            <Label htmlFor="country">{t('Country')}</Label>
+            <Select onValueChange={handleCountryChange} value={value.country}>
+                <SelectTrigger id="country">
+                    <SelectValue placeholder={t('Select a country')} />
+                </SelectTrigger>
+                <SelectContent>
+                    {africanCountries.map(c => (
+                        <SelectItem key={c.code} value={c.name}>{c.name}</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+        </div>
+        <div className="space-y-2">
+            <Label htmlFor="state">{t('State / Province')}</Label>
+            <Select onValueChange={(state) => onChange({...value, state})} value={value.state} disabled={!selectedCountry}>
+                <SelectTrigger id="state">
+                    <SelectValue placeholder={t('Select a state')} />
+                </SelectTrigger>
+                <SelectContent>
+                    {selectedCountry?.states.map(s => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
         </div>
       </div>
     </div>
