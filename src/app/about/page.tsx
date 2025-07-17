@@ -11,7 +11,7 @@ import { Users, Lightbulb, Target } from "lucide-react";
 const teamMembers = [
     { name: "Colombe Koffi", role: "Founder & CEO", imageUrl: "/images/Colombe Koffi.jpeg" },
     { name: "Joël K", role: "Head of Product & Lead Engineer", imageUrl: "/images/Joel K.jpeg" },
-    { name: "David Lee", role: "Partnerships Manager", imageUrl: "https://placehold.co/400x400.png" },
+    { name: "Bethel Touman", role: "Data Engineer", imageUrl: "https://placehold.co/400x400.png" },
 ]
 
 export default function AboutPage() {
