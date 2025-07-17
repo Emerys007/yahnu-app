@@ -6,7 +6,7 @@ import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Crown, Trash2, UserPlus, Users, Link as LinkIcon, Copy } from "lucide-react"
+import { Crown, Trash2, UserPlus, Copy } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Input } from "@/components/ui/input"
@@ -26,12 +26,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import { type Role } from "@/context/auth-context"
+
 
 type AdminUser = {
   id: string
   name: string
   email: string
-  accountType: "Admin" | "Super Admin" | "Content Moderator" | "Support Staff"
+  accountType: Role
 }
 
 export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[] }) {
@@ -43,7 +45,7 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
 
     const handleDeleteAdmin = (id: string) => {
         const adminToDelete = admins.find(a => a.id === id);
-        if (adminToDelete?.accountType === 'Super Admin') {
+        if (adminToDelete?.accountType === 'super_admin') {
             toast({
                 title: t('Action Forbidden'),
                 description: t('The Super Admin account cannot be deleted.'),
@@ -59,10 +61,14 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
     }
 
     const handleInviteAdmin = () => {
-        const uniqueToken = Math.random().toString(36).substring(2, 15);
-        const newInviteLink = `https://yahnu.ci/register?invite=${uniqueToken}`;
+        // In a real app, you would generate a secure, single-use token on the server
+        // and store it. For this example, we generate a client-side token.
+        const uniqueToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        const newInviteLink = `${window.location.origin}/register?invite=${uniqueToken}`;
         setInviteLink(newInviteLink);
         setIsInviteDialogOpen(true);
+        // Here you would also typically save the token on the server with the associated
+        // email and role to validate it upon registration.
     }
 
     const copyToClipboard = () => {
@@ -71,6 +77,19 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
             title: t('Link Copied'),
             description: t('The invite link has been copied to your clipboard.'),
         });
+    }
+
+    const getRoleDisplayName = (role: Role) => {
+        const roleMap: Record<Role, string> = {
+            admin: 'Admin',
+            super_admin: 'Super Admin',
+            content_moderator: 'Content Moderator',
+            support_staff: 'Support Staff',
+            graduate: 'Graduate',
+            company: 'Company',
+            school: 'School'
+        }
+        return t(roleMap[role] || role);
     }
 
     return (
@@ -113,13 +132,13 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
                                     <TableCell className="font-medium">{admin.name}</TableCell>
                                     <TableCell>{admin.email}</TableCell>
                                     <TableCell>
-                                        <Badge variant={admin.accountType === 'Super Admin' ? 'default' : 'secondary'}>
-                                            {admin.accountType === 'Super Admin' && <Crown className="mr-1 h-3 w-3" />}
-                                            {t(admin.accountType)}
+                                        <Badge variant={admin.accountType === 'super_admin' ? 'default' : 'secondary'}>
+                                            {admin.accountType === 'super_admin' && <Crown className="mr-1 h-3 w-3" />}
+                                            {getRoleDisplayName(admin.accountType)}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <Button size="icon" variant="ghost" onClick={() => handleDeleteAdmin(admin.id)} disabled={admin.accountType === 'Super Admin'}>
+                                        <Button size="icon" variant="ghost" onClick={() => handleDeleteAdmin(admin.id)} disabled={admin.accountType === 'super_admin'}>
                                             <Trash2 className="h-4 w-4 text-destructive" />
                                         </Button>
                                     </TableCell>
@@ -160,3 +179,5 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
         </>
     );
 }
+
+    

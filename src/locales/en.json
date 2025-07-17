@@ -575,14 +575,12 @@
     "Invalid credentials. Please try again.": "Invalid credentials. Please try again.",
     "Invalid email or password. Please check your credentials.": "Invalid email or password. Please check your credentials.",
     "Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.": "Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.",
-    "Your account is pending approval. Please contact a Yahnu administrator.": "Your account is pending approval. Please contact a Yahnu administrator.",
     "Your account has been suspended. Please contact support.": "Your account has been suspended. Please contact support.",
     "Uh oh! Something went wrong.": "Uh oh! Something went wrong.",
     "Signed In Successfully!": "Signed In Successfully!",
     "Welcome to Yahnu.": "Welcome to Yahnu.",
     "Could not sign in with Google.": "Could not sign in with Google.",
     "There was a problem with your request.": "There was a problem with your request.",
-    "Your account is pending approval. Please contact your school's administrator.": "Your account is pending approval. Please contact your school's administrator.",
     "Change Password": "Change Password",
     "Create Password": "Create Password",
     "Password reset email sent": "Password reset email sent",
@@ -599,5 +597,10 @@
     "Placement Rate": "Placement Rate",
     "Up 5% from last year": "Up 5% from last year",
     "Graduate Placement Trends": "Graduate Placement Trends",
-    "Number of graduates placed in jobs over the last 6 months.": "Number of graduates placed in jobs over the last 6 months."
+    "Number of graduates placed in jobs over the last 6 months.": "Number of graduates placed in jobs over the last 6 months.",
+    "Declined": "Declined",
+    "No users found.": "No users found.",
+    "Super Admin": "Super Admin"
 }
+
+    

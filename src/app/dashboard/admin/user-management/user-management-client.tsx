@@ -6,7 +6,7 @@ import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Users, Search, School, Building, PlusCircle, Trash2, ShieldAlert, VenetianMask, UserCog } from "lucide-react"
+import { Search, School, Building, Trash2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
@@ -34,16 +34,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { type Role, type UserStatus } from "@/context/auth-context"
-import { doc, updateDoc } from "firebase/firestore"
+import { doc, updateDoc, deleteDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
 
@@ -75,11 +70,21 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
         }
     }
     
-    const handleDelete = () => {
-        onUserDelete(user.id);
-        toast({ title: t('User Deleted'), description: `${user.name} ${t('has been removed from the platform.')}`, variant: "destructive" });
-        setIsDeleteDialogOpen(false);
-        setIsManageOpen(false);
+    const handleDelete = async () => {
+        try {
+            const userDocRef = doc(db, "users", user.id);
+            await deleteDoc(userDocRef); // This will delete the user document from Firestore.
+                                         // Note: This does not delete the user from Firebase Authentication.
+                                         // A server-side function (e.g., Firebase Function) would be needed for that.
+            onUserDelete(user.id);
+            toast({ title: t('User Deleted'), description: `${user.name} ${t('has been removed from the platform.')}`, variant: "destructive" });
+        } catch (error) {
+            console.error("Failed to delete user:", error);
+            toast({ title: t('Error'), description: t('Failed to delete user.'), variant: "destructive" });
+        } finally {
+            setIsDeleteDialogOpen(false);
+            setIsManageOpen(false);
+        }
     }
 
     return (
@@ -104,7 +109,9 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
                 <DialogFooter>
                     <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                         <AlertDialogTrigger asChild>
-                            <Button variant="destructive" disabled={user.accountType === "admin"}><Trash2 className="mr-2 h-4 w-4" />{t('Delete User')}</Button>
+                            <Button variant="destructive" disabled={user.accountType === "admin" || user.accountType === "super_admin"}>
+                                <Trash2 className="mr-2 h-4 w-4" />{t('Delete User')}
+                            </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
@@ -124,188 +131,6 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
         </Dialog>
     )
 }
-
-const addOrgSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email(),
-})
-
-const AddSchoolDialog = ({ onAdd }: { onAdd: (user: User) => void }) => {
-    const { t } = useLocalization()
-    const [isOpen, setIsOpen] = useState(false)
-    const [passwordInfo, setPasswordInfo] = useState<{ name: string; pass: string } | null>(null)
-    const form = useForm<z.infer<typeof addOrgSchema>>({
-        resolver: zodResolver(addOrgSchema),
-        defaultValues: { name: "", email: "" },
-    })
-
-    function onSubmit(values: z.infer<typeof addOrgSchema>) {
-        const tempPassword = Math.random().toString(36).slice(-8);
-        const newUser: User = {
-            id: Date.now().toString(), // Use string ID for consistency
-            name: values.name,
-            email: values.email,
-            accountType: "school",
-            status: "active",
-            date: new Date().toISOString().split('T')[0],
-        }
-        onAdd(newUser)
-        setPasswordInfo({ name: values.name, pass: tempPassword })
-        form.reset()
-        setIsOpen(false)
-    }
-
-    return (
-        <>
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogTrigger asChild>
-                    <Button variant="outline"><PlusCircle className="mr-2 h-4 w-4" />{t('Add School')}</Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>{t('Add a new School')}</DialogTitle>
-                        <DialogDescription>{t("Manually create a new school account. The account will be active immediately.")}</DialogDescription>
-                    </DialogHeader>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                             <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('School Name')}</FormLabel>
-                                    <FormControl><Input placeholder={t("Prestige University")} {...field} /></FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('Administrator Email')}</FormLabel>
-                                    <FormControl><Input placeholder="admin@prestige.edu" {...field} /></FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-                            <DialogFooter>
-                                <Button type="submit">{t('Create School Account')}</Button>
-                            </DialogFooter>
-                        </form>
-                    </Form>
-                </DialogContent>
-            </Dialog>
-             <AlertDialog open={!!passwordInfo} onOpenChange={() => setPasswordInfo(null)}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>{t('Account Created Successfully!')}</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            {t('The account for {name} has been created. Please securely share the following temporary password with them.', { name: passwordInfo?.name })}
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <div className="bg-muted p-4 rounded-md text-center">
-                        <p className="text-sm text-muted-foreground">{t('Temporary Password')}</p>
-                        <p className="text-lg font-bold tracking-widest">{passwordInfo?.pass}</p>
-                    </div>
-                    <AlertDialogFooter>
-                        <AlertDialogAction onClick={() => setPasswordInfo(null)}>{t('Close')}</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-        </>
-    )
-}
-
-const AddCompanyDialog = ({ onAdd }: { onAdd: (user: User) => void }) => {
-    const { t } = useLocalization()
-    const [isOpen, setIsOpen] = useState(false)
-    const [passwordInfo, setPasswordInfo] = useState<{ name: string; pass: string } | null>(null)
-    const form = useForm<z.infer<typeof addOrgSchema>>({
-        resolver: zodResolver(addOrgSchema),
-        defaultValues: { name: "", email: "" },
-    })
-
-    function onSubmit(values: z.infer<typeof addOrgSchema>) {
-        const tempPassword = Math.random().toString(36).slice(-8);
-        const newUser: User = {
-            id: Date.now().toString(), // Use string ID for consistency
-            name: values.name,
-            email: values.email,
-            accountType: "company",
-            status: "active",
-            date: new Date().toISOString().split('T')[0],
-        }
-        onAdd(newUser)
-        setPasswordInfo({ name: values.name, pass: tempPassword })
-        form.reset()
-        setIsOpen(false)
-    }
-
-    return (
-        <>
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogTrigger asChild>
-                    <Button><PlusCircle className="mr-2 h-4 w-4" />{t('Add Company')}</Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>{t('Add a new Company')}</DialogTitle>
-                        <DialogDescription>{t("Manually create a new company account. The account will be active immediately.")}</DialogDescription>
-                    </DialogHeader>
-                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                             <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('Company Name')}</FormLabel>
-                                    <FormControl><Input placeholder={t("Innovate Inc.")} {...field} /></FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('Administrator Email')}</FormLabel>
-                                    <FormControl><Input placeholder="hr@innovate.inc" {...field} /></FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-                            <DialogFooter>
-                                <Button type="submit">{t('Create Company Account')}</Button>
-                            </DialogFooter>
-                        </form>
-                    </Form>
-                </DialogContent>
-            </Dialog>
-            <AlertDialog open={!!passwordInfo} onOpenChange={() => setPasswordInfo(null)}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>{t('Account Created Successfully!')}</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            {t('The account for {name} has been created. Please securely share the following temporary password with them.', { name: passwordInfo?.name })}
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <div className="bg-muted p-4 rounded-md text-center">
-                        <p className="text-sm text-muted-foreground">{t('Temporary Password')}</p>
-                        <p className="text-lg font-bold tracking-widest">{passwordInfo?.pass}</p>
-                    </div>
-                    <AlertDialogFooter>
-                        <AlertDialogAction onClick={() => setPasswordInfo(null)}>{t('Close')}</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-        </>
-    )
-}
-
 
 export function UserManagementClient({ initialUsers }: { initialUsers: User[] }) {
     const { t } = useLocalization();
@@ -329,6 +154,7 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
             case 'active': return 'secondary';
             case 'pending': return 'outline';
             case 'suspended': return 'destructive';
+            case 'declined': return 'destructive';
             default: return 'default';
         }
     }
@@ -340,18 +166,9 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
     const handleUserDelete = (userId: string) => {
         setUsers(users.filter(u => u.id !== userId));
     };
-
-    const handleAddUser = (newUser: User) => {
-        setUsers(prev => [newUser, ...prev])
-    }
     
     return (
         <>
-            <div className="flex justify-end gap-2">
-                <AddSchoolDialog onAdd={handleAddUser} />
-                <AddCompanyDialog onAdd={handleAddUser} />
-            </div>
-
             <Card>
                 <CardHeader>
                     <CardTitle>{t('All Users')}</CardTitle>
@@ -383,6 +200,7 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                                 <SelectItem value="active">{t('Active')}</SelectItem>
                                 <SelectItem value="pending">{t('Pending')}</SelectItem>
                                 <SelectItem value="suspended">{t('Suspended')}</SelectItem>
+                                <SelectItem value="declined">{t('Declined')}</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -420,6 +238,11 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                                     </TableCell>
                                 </TableRow>
                             ))}
+                             {filteredUsers.length === 0 && (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="h-24 text-center">{t('No users found.')}</TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -427,3 +250,5 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
         </>
     )
 }
+
+    

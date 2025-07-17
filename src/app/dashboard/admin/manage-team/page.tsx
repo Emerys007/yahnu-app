@@ -3,16 +3,17 @@ import { Users } from "lucide-react";
 import { ManageTeamClient } from "./manage-team-client";
 import { db } from "@/lib/firebase";
 import { collection, query, where, getDocs, DocumentData } from "firebase/firestore";
+import { type Role } from "@/context/auth-context";
 
 type AdminUser = {
   id: string
   name: string
   email: string
-  accountType: "Admin" | "Super Admin" | "Content Moderator" | "Support Staff"
+  accountType: Role
 }
 
 async function getAdmins(): Promise<AdminUser[]> {
-    const adminRoles = ["admin", "super_admin", "content_moderator", "support_staff"];
+    const adminRoles: Role[] = ["admin", "super_admin", "content_moderator", "support_staff"];
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("role", "in", adminRoles));
     
@@ -24,15 +25,14 @@ async function getAdmins(): Promise<AdminUser[]> {
             id: doc.id,
             name: data.name || "Unnamed Admin",
             email: data.email,
-            // A simple mapping from role ID to display name
-            accountType: data.role.replace('_', ' ').replace(/\b\w/g, (l:string) => l.toUpperCase()) as AdminUser['accountType'],
+            accountType: data.role as Role,
         });
     });
     
     // Ensure Super Admins are listed first
     admins.sort((a, b) => {
-        if (a.accountType === 'Super Admin') return -1;
-        if (b.accountType === 'Super Admin') return 1;
+        if (a.accountType === 'super_admin') return -1;
+        if (b.accountType === 'super_admin') return 1;
         return a.name.localeCompare(b.name);
     });
 
@@ -58,3 +58,4 @@ export default async function ManageTeamPage() {
     );
 }
 
+    
