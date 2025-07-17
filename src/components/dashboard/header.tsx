@@ -64,6 +64,18 @@ const formatDistanceToNow = (date: Date, t: (key: string) => string): string => 
     return `${Math.floor(seconds)} ${t('seconds ago')}`;
 };
 
+const getReadNotificationIds = (): string[] => {
+    if (typeof window === "undefined") return [];
+    const stored = localStorage.getItem("readNotificationIds");
+    return stored ? JSON.parse(stored) : [];
+};
+
+const setReadNotificationIds = (ids: string[]) => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("readNotificationIds", JSON.stringify(ids));
+};
+
+
 export function DashboardHeader() {
   const { toggleSidebar } = useSidebar();
   const { t, setLanguage } = useLocalization();
@@ -76,7 +88,6 @@ export function DashboardHeader() {
 
     let q;
     if (role === 'admin') {
-      // Admin gets notifications for pending company/school registrations
       q = query(
         collection(db, "users"), 
         where('status', '==', 'pending'),
@@ -84,20 +95,19 @@ export function DashboardHeader() {
         limit(5)
       );
     } else if (role === 'school') {
-        // School gets notifications for pending graduate registrations
         q = query(
             collection(db, "users"),
             where('status', '==', 'pending'),
             where('role', '==', 'graduate'),
-            where('schoolId', '==', user.schoolId), // Assuming school user has schoolId
+            where('schoolId', '==', user.schoolId),
             limit(5)
         );
     }
-    // Add more else if blocks for other roles (graduate, company) if needed
 
     if (!q) return;
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const readIds = getReadNotificationIds();
         const fetchedNotifications: NotificationItem[] = [];
         querySnapshot.forEach((doc) => {
             const data = doc.data() as DocumentData;
@@ -121,7 +131,7 @@ export function DashboardHeader() {
                 text: notificationText,
                 time: formatDistanceToNow(createdAt, t),
                 icon: icon,
-                read: false, // In a real app, you'd store and check read status
+                read: readIds.includes(doc.id),
             });
         });
         setNotifications(fetchedNotifications);
@@ -135,11 +145,21 @@ export function DashboardHeader() {
   const unreadCount = notifications.filter(n => !n.read).length;
   
   const handleRead = (id: string) => {
-    setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
+    const updatedNotifications = notifications.map(n => n.id === id ? { ...n, read: true } : n);
+    setNotifications(updatedNotifications);
+    
+    const readIds = getReadNotificationIds();
+    if (!readIds.includes(id)) {
+        setReadNotificationIds([...readIds, id]);
+    }
   };
   
   const handleReadAll = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })));
+    const updatedNotifications = notifications.map(n => ({ ...n, read: true }));
+    setNotifications(updatedNotifications);
+
+    const allIds = notifications.map(n => n.id);
+    setReadNotificationIds(allIds);
   };
 
   return (
@@ -182,7 +202,7 @@ export function DashboardHeader() {
                 <DropdownMenuSeparator />
                 {notifications.length > 0 ? (
                     notifications.map((item) => (
-                         <DropdownMenuItem key={item.id} className="flex items-start gap-3" onSelect={() => handleRead(item.id)}>
+                         <DropdownMenuItem key={item.id} className="flex items-start gap-3" onSelect={(e) => {e.preventDefault(); handleRead(item.id)}}>
                             {!item.read && <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />}
                             <item.icon className={cn("h-4 w-4 mt-1 text-muted-foreground", item.read && "ml-[14px]")} />
                             <div className="flex-1">
