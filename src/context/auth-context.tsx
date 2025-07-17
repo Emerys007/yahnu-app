@@ -11,7 +11,7 @@ const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
 export type Role = 'graduate' | 'company' | 'school' | 'admin';
-export type UserStatus = 'pending' | 'active' | 'suspended';
+export type UserStatus = 'pending' | 'active' | 'suspended' | 'declined';
 
 export interface UserProfile {
   uid: string;
@@ -73,27 +73,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
-      if (firebaseUser && !user) { // Only run if firebaseUser exists and we don't have a user yet
+      if (firebaseUser) {
         const userProfile = await fetchUserDocument(firebaseUser);
-         if (userProfile) {
-          if (userProfile.status === 'active') {
-            setUser(userProfile);
-          } else {
-             // For pending/suspended users, keep them signed out of the app state
-             setUser(null);
-          }
+         if (userProfile && userProfile.status === 'active') {
+          setUser(userProfile);
         } else {
-           console.warn("User document not found for UID:", firebaseUser.uid);
+           // For pending/suspended/non-existent-doc users, keep them signed out of the app state
+           // This also prevents users who haven't been approved from accessing the dashboard.
            setUser(null);
-           await firebaseSignOut(auth);
         }
-      } else if (!firebaseUser) {
+      } else {
         setUser(null);
       }
       setLoading(false);
     });
     return () => unsubscribe();
-  }, [user]);
+  }, []);
 
   const createUserDocument = async (firebaseUser: FirebaseUser, profile: Omit<UserProfile, 'uid' | 'email'>, email: string) => {
     const userDocRef = doc(db, "users", firebaseUser.uid);
@@ -118,11 +113,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const userCredential = await createUserWithEmailAndPassword(auth, profile.email, password);
     const firebaseUser = userCredential.user;
     
+    // Send email verification
     await sendEmailVerification(firebaseUser);
 
     const { email, ...profileData } = profile;
     const status = await createUserDocument(firebaseUser, profileData, firebaseUser.email!);
     
+    // Sign out the user immediately after registration so they have to log in
     await firebaseSignOut(auth);
   };
 
@@ -135,17 +132,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error("User data not found. Please contact support.");
     }
 
-    if (userProfile.status === 'pending') {
+    if (userProfile.status !== 'active') {
         await firebaseSignOut(auth);
         if (userProfile.role === 'graduate') {
             throw new Error("pending_graduate");
-        } else {
+        } else if (userProfile.status === 'pending') {
             throw new Error("pending_org");
+        } else if (userProfile.status === 'suspended') {
+            throw new Error("suspended");
         }
-    }
-    if (userProfile.status === 'suspended') {
-        await firebaseSignOut(auth);
-        throw new Error("suspended");
     }
     
     setUser(userProfile);
@@ -185,13 +180,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         const userProfile = userDoc.data() as UserProfile;
         
-        if (userProfile?.status === 'pending') {
+        if (userProfile?.status !== 'active') {
             await firebaseSignOut(auth);
-            throw new Error("pending_graduate");
-        }
-        if (userProfile?.status === 'suspended') {
-            await firebaseSignOut(auth);
-            throw new Error("suspended");
+            if (userProfile?.role === 'graduate') {
+                throw new Error("pending_graduate");
+            } else if (userProfile?.status === 'pending') {
+                throw new Error("pending_org");
+            } else if (userProfile?.status === 'suspended') {
+                throw new Error("suspended");
+            }
         }
         
         if (userProfile) setUser(userProfile);
