@@ -362,7 +362,6 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                                 <SelectItem value="graduate">{t('Graduate')}</SelectItem>
                                 <SelectItem value="company">{t('Company')}</SelectItem>
                                 <SelectItem value="school">{t('School')}</SelectItem>
-                                <SelectItem value="admin">{t('Admin')}</SelectItem>
                             </SelectContent>
                         </Select>
                          <Select value={filters.status} onValueChange={(v) => handleFilterChange('status', v)}>
