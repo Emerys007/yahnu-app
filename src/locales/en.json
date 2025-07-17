@@ -566,5 +566,7 @@
     "days ago": "days ago",
     "hours ago": "hours ago",
     "minutes ago": "minutes ago",
-    "seconds ago": "seconds ago"
+    "seconds ago": "seconds ago",
+    "Your account is pending approval. Please contact a Yahnu administrator.": "Your account is pending approval. Please contact a Yahnu administrator.",
+    "Admin account created. You can now log in.": "Admin account created. You can now log in."
 }

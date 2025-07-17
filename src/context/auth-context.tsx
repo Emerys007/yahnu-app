@@ -77,9 +77,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userProfile = await fetchUserDocument(firebaseUser);
          if (userProfile) {
           if (userProfile.status === 'pending') {
-            // User is pending, but let's not sign them out immediately.
-            // This allows us to show them a "pending" status page if we want.
-            // For now, we'll just treat them as logged out from a UI perspective.
             setUser(null); 
           } else if (userProfile.status === 'suspended') {
             setUser(null);
@@ -123,13 +120,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const userCredential = await createUserWithEmailAndPassword(auth, profile.email, password);
     const firebaseUser = userCredential.user;
     
-    // Send verification email
     await sendEmailVerification(firebaseUser);
 
     const { email, ...profileData } = profile;
     const status = await createUserDocument(firebaseUser, profileData, firebaseUser.email!);
     
-    // Always sign out after registration so user has to log in.
     await firebaseSignOut(auth);
   };
 
@@ -137,27 +132,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const userProfile = await fetchUserDocument(userCredential.user);
 
-    if (userProfile?.status === 'pending') {
+    if (!userProfile) {
         await firebaseSignOut(auth);
-        throw new Error("Your account is pending approval.");
+        throw new Error("User data not found. Please contact support.");
     }
-     if (userProfile?.status === 'suspended') {
+
+    if (userProfile.status === 'pending') {
         await firebaseSignOut(auth);
-        throw new Error("Your account has been suspended.");
+        if (userProfile.role === 'graduate') {
+            throw new Error("pending_graduate");
+        } else {
+            throw new Error("pending_org");
+        }
+    }
+    if (userProfile.status === 'suspended') {
+        await firebaseSignOut(auth);
+        throw new Error("suspended");
     }
     
-    if (userProfile) setUser(userProfile);
+    setUser(userProfile);
   };
 
   const signInWithGoogle = async () => {
     if (auth.currentUser) {
-        // This is a user who is already logged in with email/password and wants to link their Google account.
         try {
             const result = await linkWithPopup(auth.currentUser, googleProvider);
             const userProfile = await fetchUserDocument(result.user);
             if(userProfile) setUser(userProfile);
         } catch (error: any) {
-            // Handle specific errors, e.g., 'auth/credential-already-in-use'
              console.error("Failed to link Google account:", error);
             if(error.code === 'auth/credential-already-in-use') {
                 throw new Error("This Google account is already linked to another Yahnu user.");
@@ -165,7 +167,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             throw new Error("Failed to link Google account.");
         }
     } else {
-        // This is a new sign-in or sign-up attempt.
         const result = await signInWithPopup(auth, googleProvider);
         const firebaseUser = result.user;
         const userDocRef = doc(db, "users", firebaseUser.uid);
@@ -181,18 +182,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 role: 'graduate', // Default to graduate for Google sign-ups
             };
             await createUserDocument(firebaseUser, profile, firebaseUser.email!);
-            userDoc = await getDoc(userDocRef); // Re-fetch the doc after creation
+            userDoc = await getDoc(userDocRef);
         }
         
         const userProfile = userDoc.data() as UserProfile;
         
         if (userProfile?.status === 'pending') {
             await firebaseSignOut(auth);
-            throw new Error("Your account is pending approval. Please contact your school's administrator.");
+            throw new Error("pending_graduate");
         }
         if (userProfile?.status === 'suspended') {
             await firebaseSignOut(auth);
-            throw new Error("Your account has been suspended. Please contact support.");
+            throw new Error("suspended");
         }
         
         if (userProfile) setUser(userProfile);

@@ -60,9 +60,11 @@ export function LoginForm() {
             errorMessage = t("Invalid email or password. Please check your credentials.");
         } else if (error.code === 'auth/too-many-requests') {
             errorMessage = t("Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.")
-        } else if (error.message.includes("pending approval")) {
-            errorMessage = t("Your account is pending approval. Please contact support or your institution's administrator.");
-        } else if (error.message.includes("suspended")) {
+        } else if (error.message === 'pending_graduate') {
+            errorMessage = t("Your account is pending approval. Please contact your school's administrator.");
+        } else if (error.message === 'pending_org') {
+             errorMessage = t("Your account is pending approval. Please contact a Yahnu administrator.");
+        } else if (error.message === "suspended") {
             errorMessage = t("Your account has been suspended. Please contact support.");
         }
 
@@ -87,9 +89,11 @@ export function LoginForm() {
       router.push('/dashboard');
     } catch (error: any) {
       let errorMessage = error.message || t("Could not sign in with Google.");
-       if (error.message.includes("pending approval")) {
-            errorMessage = t("Your account is pending approval. Please contact support or your institution's administrator.");
-        } else if (error.message.includes("suspended")) {
+       if (error.message === "pending_graduate") {
+            errorMessage = t("Your account is pending approval. Please contact your school's administrator.");
+        } else if (error.message === 'pending_org') {
+             errorMessage = t("Your account is pending approval. Please contact a Yahnu administrator.");
+        } else if (error.message === "suspended") {
             errorMessage = t("Your account has been suspended. Please contact support.");
         }
       toast({

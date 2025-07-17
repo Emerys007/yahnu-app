@@ -151,12 +151,24 @@ export function RegisterForm() {
         }
         
         await signUp(profileData, values.password);
+        
+        let toastDescription = "";
+        switch(role) {
+            case 'graduate':
+                toastDescription = t("Your account is pending approval from your school's administrator. We'll notify you once it's active.");
+                break;
+            case 'company':
+            case 'school':
+                 toastDescription = t("Your registration is pending approval from a Yahnu administrator. We'll notify you once it's active.");
+                 break;
+            case 'admin':
+                toastDescription = t("Admin account created. You can now log in.");
+                break;
+        }
 
         toast({
             title: t("Account Created!"),
-            description: (role === 'graduate')
-              ? t("Your account is pending approval from your school's administrator. We'll notify you once it's active.")
-              : (role === 'admin' ? "Admin account created. You can now log in." : t("Your registration is pending approval from a Yahnu administrator. We'll notify you once it's active.")),
+            description: toastDescription,
           });
         
         router.push('/login');

@@ -2,7 +2,7 @@
 import { UserCog } from "lucide-react";
 import { UserManagementClient } from "./user-management-client";
 import { db } from "@/lib/firebase";
-import { collection, query, getDocs, DocumentData } from "firebase/firestore";
+import { collection, query, getDocs, DocumentData, where } from "firebase/firestore";
 import { type Role, type UserStatus } from "@/context/auth-context";
 
 type User = {
@@ -16,7 +16,8 @@ type User = {
 
 async function getUsers(): Promise<User[]> {
     const usersRef = collection(db, "users");
-    const q = query(usersRef);
+    // Only fetch non-admin roles for this page
+    const q = query(usersRef, where("role", "in", ["graduate", "company", "school"]));
     const querySnapshot = await getDocs(q);
 
     return querySnapshot.docs.map(doc => {

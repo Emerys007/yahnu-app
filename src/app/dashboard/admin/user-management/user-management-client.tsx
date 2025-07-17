@@ -398,7 +398,6 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                                             {user.accountType === 'company' && <Building className="h-3 w-3" />}
                                             {user.accountType === 'school' && <School className="h-3 w-3" />}
                                             {user.accountType === 'graduate' && <Users className="h-3 w-3" />}
-                                            {user.accountType === 'admin' && <VenetianMask className="h-3 w-3" />}
                                             {t(user.accountType)}
                                         </Badge>
                                     </TableCell>

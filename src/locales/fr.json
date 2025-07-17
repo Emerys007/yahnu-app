@@ -566,5 +566,7 @@
     "days ago": "il y a quelques jours",
     "hours ago": "il y a des heures",
     "minutes ago": "il y a quelques minutes",
-    "seconds ago": "il y a quelques secondes"
+    "seconds ago": "il y a quelques secondes",
+    "Your account is pending approval. Please contact a Yahnu administrator.": "Votre compte est en attente d'approbation. Veuillez contacter un administrateur Yahnu.",
+    "Admin account created. You can now log in.": "Compte administrateur créé. Vous pouvez maintenant vous connecter."
 }
