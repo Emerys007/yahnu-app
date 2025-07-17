@@ -56,7 +56,24 @@ const initialConversations: Conversation[] = [
             { id: 2, sender: "me", text: "Can you tell me more about the team culture?", time: "Yesterday" },
         ]
     },
+     {
+        id: "inp-hb-admin",
+        name: "INP-HB Admin",
+        avatar: "/images/University.png",
+        lastMessage: "Okay, I see. Let me check on that for you.",
+        time: "2 days ago",
+        unread: 0,
+        messages: [
+            { id: 1, sender: "me", text: "Hello, I noticed one of my degrees is still unverified.", time: "2 days ago" },
+            { id: 2, sender: "them", text: "Okay, I see. Let me check on that for you.", time: "2 days ago" },
+        ]
+    },
 ];
+
+const getNewConvoName = (id: string) => {
+    if (id === 'inp-hb-admin') return 'INP-HB Admin';
+    return id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
 
 export default function MessagesPage() {
     const { t } = useLocalization()
@@ -76,8 +93,8 @@ export default function MessagesPage() {
             } else {
                  const newConvo: Conversation = {
                     id: newConvoId,
-                    name: newConvoId.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()),
-                    avatar: "https://placehold.co/100x100.png",
+                    name: getNewConvoName(newConvoId),
+                    avatar: newConvoId.includes('admin') ? "/images/University.png" : "https://placehold.co/100x100.png",
                     lastMessage: "",
                     time: "Now",
                     unread: 0,

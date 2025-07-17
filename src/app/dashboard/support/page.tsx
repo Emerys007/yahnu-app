@@ -4,7 +4,7 @@
 import { useAuth, type Role } from "@/context/auth-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocalization } from "@/context/localization-context";
-import { LifeBuoy, Mail, Phone, Send } from "lucide-react";
+import { LifeBuoy, Mail, Phone, Send, University } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -15,6 +15,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 interface FaqItem {
   question: string;
@@ -105,7 +106,16 @@ const ContactSupportForm = () => {
 
 export default function SupportPage() {
   const { t } = useLocalization();
-  const { role } = useAuth();
+  const { user, role } = useAuth();
+  const router = useRouter();
+
+  const handleContactSchool = () => {
+    if (user?.schoolId) {
+        // This is a mock implementation. A real one would look up the school admin's name.
+        // For now, we'll use a placeholder ID.
+        router.push(`/dashboard/messages?new=${user.schoolId}`);
+    }
+  }
 
   const generalFaqs: FaqItem[] = [
     { question: t('faq_q_password'), answer: t('faq_a_password') },
@@ -177,7 +187,7 @@ export default function SupportPage() {
                 </Card>
                  <ContactSupportForm />
             </div>
-            <div className="lg:col-span-1 sticky top-24">
+            <div className="lg:col-span-1 sticky top-24 space-y-4">
                  <Card>
                     <CardHeader>
                         <CardTitle>{t('Contact Support')}</CardTitle>
@@ -198,6 +208,20 @@ export default function SupportPage() {
                         </Button>
                     </CardContent>
                 </Card>
+                {role === 'graduate' && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{t('School Support')}</CardTitle>
+                            <CardDescription>{t('Need to contact your school about your account?')}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Button className="w-full justify-start" onClick={handleContactSchool}>
+                                <University className="mr-2 h-4 w-4" />
+                                {t('Contact Your School')}
+                            </Button>
+                        </CardContent>
+                    </Card>
+                )}
             </div>
         </div>
     </div>
