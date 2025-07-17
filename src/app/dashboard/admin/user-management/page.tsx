@@ -1,9 +1,12 @@
+
 import { UserCog } from "lucide-react";
 import { UserManagementClient } from "./user-management-client";
+import { db } from "@/lib/firebase";
+import { collection, query, getDocs, DocumentData } from "firebase/firestore";
 import { type Role, type UserStatus } from "@/context/auth-context";
 
 type User = {
-  id: number;
+  id: string;
   name: string;
   email: string;
   accountType: Role;
@@ -11,19 +14,23 @@ type User = {
   date: string;
 };
 
-const allUsers: User[] = [
-    { id: 1, name: "Amina Diallo", email: "amina.d@example.com", accountType: "graduate", status: "pending", date: "2023-10-25" },
-    { id: 2, name: "Ben Traoré", email: "ben.t@example.com", accountType: "graduate", status: "active", date: "2023-10-24" },
-    { id: 3, name: "Innovate Inc.", email: "contact@innovate.inc", accountType: "company", status: "pending", date: "2023-10-23" },
-    { id: 4, name: "Prestige University", email: "contact@prestige.edu", accountType: "school", status: "pending", date: "2023-10-22" },
-    { id: 5, name: "Global Tech", email: "hr@global.tech", accountType: "company", status: "active", date: "2023-10-21" },
-    { id: 6, name: "Moussa Diarra", email: "moussa.d@example.com", accountType: "graduate", status: "suspended", date: "2023-10-20" },
-    { id: 7, name: "Dr. Evelyn Reed", email: "e.reed@yahnu.ci", accountType: "admin", status: "active", date: "2023-01-15" },
-];
+async function getUsers(): Promise<User[]> {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef);
+    const querySnapshot = await getDocs(q);
 
-async function getUsers() {
-    // In a real app, this would be a database call
-    return allUsers;
+    return querySnapshot.docs.map(doc => {
+        const data = doc.data() as DocumentData;
+        const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+        return {
+            id: doc.id,
+            name: data.name || data.email,
+            email: data.email,
+            accountType: data.role,
+            status: data.status,
+            date: createdAt.toISOString().split('T')[0],
+        } as User;
+    });
 }
 
 

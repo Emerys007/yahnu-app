@@ -1,10 +1,12 @@
 
 import { Shield } from "lucide-react";
 import { AdminClient } from "../admin-client";
+import { db } from "@/lib/firebase";
+import { collection, query, where, getDocs, DocumentData } from "firebase/firestore";
 import { type UserStatus } from "@/context/auth-context";
 
 type User = {
-  id: number
+  id: string
   name: string
   email: string
   accountType: "Company" | "School" | "Graduate" | "Admin"
@@ -12,14 +14,29 @@ type User = {
   date: string
 }
 
-const allUsers: User[] = [
-    { id: 3, name: "Innovate Inc.", email: "contact@innovate.inc", accountType: "Company", status: "pending", date: "2023-10-23" },
-    { id: 4, name: "Prestige University", email: "contact@prestige.edu", accountType: "School", status: "pending", date: "2023-10-22" },
-];
+async function getPendingRequests(): Promise<User[]> {
+    const usersRef = collection(db, "users");
+    const q = query(
+        usersRef, 
+        where('status', '==', 'pending'), 
+        where('role', 'in', ['company', 'school'])
+    );
+    const querySnapshot = await getDocs(q);
 
-async function getPendingRequests() {
-    // In a real app, you would fetch this data from a database
-    return allUsers.filter(u => u.status === 'pending' && (u.accountType === 'Company' || u.accountType === 'School'));
+    const requests = querySnapshot.docs.map(doc => {
+        const data = doc.data() as DocumentData;
+        const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+        return {
+            id: doc.id,
+            name: data.name,
+            email: data.email,
+            accountType: data.role.charAt(0).toUpperCase() + data.role.slice(1),
+            status: data.status,
+            date: createdAt.toISOString().split('T')[0],
+        } as User;
+    });
+
+    return requests;
 }
 
 
@@ -42,3 +59,4 @@ export default async function AdminOverviewPage() {
         </div>
     )
 }
+

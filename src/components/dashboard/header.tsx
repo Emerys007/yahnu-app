@@ -37,46 +37,104 @@ import { useSidebar } from "./sidebar"
 import { useLocalization } from "@/context/localization-context"
 import { useAuth, type Role } from "@/context/auth-context"
 import { cn } from "@/lib/utils"
+import { collection, query, where, getDocs, onSnapshot, orderBy, limit, DocumentData } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 
-const getNotificationsByRole = (t: (key: string) => string, role: Role) => {
-    const baseNotifications = {
-        graduate: [
-            { id: 1, icon: Briefcase, text: t('New job matching your profile: Software Engineer at TechCorp'), time: "5m ago", read: false },
-            { id: 2, icon: UserCheck, text: t('Your application for Product Manager was viewed'), time: "1h ago", read: false },
-            { id: 3, icon: Calendar, text: t('New event: Annual Tech Career Fair by your university'), time: "3h ago", read: false },
-        ],
-        company: [
-            { id: 1, icon: UserCheck, text: t('New applicant for Senior Developer: John Doe'), time: "2m ago", read: false },
-            { id: 2, icon: Briefcase, text: t("Your job post 'UI/UX Designer' has received 5 new views"), time: "30m ago", read: true },
-        ],
-        school: [
-            { id: 1, icon: Handshake, text: t('Tech Solutions Abidjan has requested a partnership'), time: "1d ago", read: false },
-            { id: 2, icon: Briefcase, text: t('5 graduates from your institution were hired this month'), time: "2d ago", read: true },
-            { id: 3, icon: UserCheck, text: t('Amina Diallo requires account activation'), time: "4d ago", read: false },
-        ],
-        admin: [
-            { id: 1, icon: Building, text: t('New company "Innovate Inc." requires approval'), time: "10m ago", read: false },
-            { id: 2, icon: School, text: t('New school "Prestige University" requires approval'), time: "1h ago", read: false },
-        ]
-    };
+type NotificationItem = {
+    id: string;
+    icon: React.ElementType;
+    text: string;
+    time: string;
+    read: boolean;
+};
 
-    return baseNotifications[role] || [];
+const formatDistanceToNow = (date: Date, t: (key: string) => string): string => {
+    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    let interval = seconds / 31536000;
+    if (interval > 1) return `${Math.floor(interval)} ${t('years ago')}`;
+    interval = seconds / 2592000;
+    if (interval > 1) return `${Math.floor(interval)} ${t('months ago')}`;
+    interval = seconds / 86400;
+    if (interval > 1) return `${Math.floor(interval)} ${t('days ago')}`;
+    interval = seconds / 3600;
+    if (interval > 1) return `${Math.floor(interval)} ${t('hours ago')}`;
+    interval = seconds / 60;
+    if (interval > 1) return `${Math.floor(interval)} ${t('minutes ago')}`;
+    return `${Math.floor(seconds)} ${t('seconds ago')}`;
 };
 
 export function DashboardHeader() {
   const { toggleSidebar } = useSidebar();
   const { t, setLanguage } = useLocalization();
-  const { role } = useAuth();
+  const { user, role } = useAuth();
   
-  const [notifications, setNotifications] = React.useState(getNotificationsByRole(t, role));
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const [notifications, setNotifications] = React.useState<NotificationItem[]>([]);
   
   React.useEffect(() => {
-    setNotifications(getNotificationsByRole(t, role));
-  }, [role, t]);
+    if (!user) return;
+
+    let q;
+    if (role === 'admin') {
+      // Admin gets notifications for pending company/school registrations
+      q = query(
+        collection(db, "users"), 
+        where('status', '==', 'pending'),
+        where('role', 'in', ['company', 'school']),
+        orderBy('createdAt', 'desc'),
+        limit(5)
+      );
+    } else if (role === 'school') {
+        // School gets notifications for pending graduate registrations
+        q = query(
+            collection(db, "users"),
+            where('status', '==', 'pending'),
+            where('role', '==', 'graduate'),
+            where('schoolId', '==', user.schoolId), // Assuming school user has schoolId
+            orderBy('createdAt', 'desc'),
+            limit(5)
+        );
+    }
+    // Add more else if blocks for other roles (graduate, company) if needed
+
+    if (!q) return;
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const fetchedNotifications: NotificationItem[] = [];
+        querySnapshot.forEach((doc) => {
+            const data = doc.data() as DocumentData;
+            const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+
+            let notificationText = '';
+            let icon = Building;
+            if (data.role === 'company') {
+                notificationText = t("New company \"{name}\" requires approval", { name: data.name });
+                icon = Building;
+            } else if (data.role === 'school') {
+                notificationText = t("New school \"{name}\" requires approval", { name: data.name });
+                icon = School;
+            } else if (data.role === 'graduate') {
+                notificationText = t("New graduate \"{name}\" requires activation", { name: data.name });
+                icon = UserCheck;
+            }
+            
+            fetchedNotifications.push({
+                id: doc.id,
+                text: notificationText,
+                time: formatDistanceToNow(createdAt, t),
+                icon: icon,
+                read: false, // In a real app, you'd store and check read status
+            });
+        });
+        setNotifications(fetchedNotifications);
+    });
+
+    return () => unsubscribe();
+  }, [user, role, t]);
   
-  const handleRead = (id: number) => {
+  const unreadCount = notifications.filter(n => !n.read).length;
+  
+  const handleRead = (id: string) => {
     setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
   };
   
@@ -124,7 +182,7 @@ export function DashboardHeader() {
                 <DropdownMenuSeparator />
                 {notifications.length > 0 ? (
                     notifications.map((item) => (
-                         <DropdownMenuItem key={item.id} className="flex items-start gap-3" onClick={() => handleRead(item.id)}>
+                         <DropdownMenuItem key={item.id} className="flex items-start gap-3" onSelect={() => handleRead(item.id)}>
                             {!item.read && <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />}
                             <item.icon className={cn("h-4 w-4 mt-1 text-muted-foreground", item.read && "ml-[14px]")} />
                             <div className="flex-1">

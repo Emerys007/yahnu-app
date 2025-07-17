@@ -12,7 +12,7 @@ type AdminUser = {
 }
 
 async function getAdmins(): Promise<AdminUser[]> {
-    const adminRoles = ["admin", "super-admin", "content-moderator", "support-staff"];
+    const adminRoles = ["admin", "super_admin", "content_moderator", "support_staff"];
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("role", "in", adminRoles));
     
@@ -25,7 +25,7 @@ async function getAdmins(): Promise<AdminUser[]> {
             name: data.name || "Unnamed Admin",
             email: data.email,
             // A simple mapping from role ID to display name
-            accountType: data.role.replace('-', ' ').replace(/\b\w/g, (l:string) => l.toUpperCase()) as AdminUser['accountType'],
+            accountType: data.role.replace('_', ' ').replace(/\b\w/g, (l:string) => l.toUpperCase()) as AdminUser['accountType'],
         });
     });
     
@@ -57,3 +57,4 @@ export default async function ManageTeamPage() {
         </div>
     );
 }
+
