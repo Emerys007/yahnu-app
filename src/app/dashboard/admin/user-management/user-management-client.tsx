@@ -43,9 +43,12 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { type Role, type UserStatus } from "@/context/auth-context"
+import { doc, updateDoc } from "firebase/firestore"
+import { db } from "@/lib/firebase"
+
 
 type User = {
-  id: number
+  id: string
   name: string
   email: string
   accountType: Role
@@ -53,16 +56,23 @@ type User = {
   date: string
 }
 
-const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; onUserUpdate: (user: User) => void; onUserDelete: (userId: number) => void; }) => {
+const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; onUserUpdate: (user: User) => void; onUserDelete: (userId: string) => void; }) => {
     const { t } = useLocalization();
     const { toast } = useToast();
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
     const [isManageOpen, setIsManageOpen] = useState(false)
 
-    const handleStatusChange = (newStatus: UserStatus) => {
-        onUserUpdate({ ...user, status: newStatus });
-        toast({ title: t('Status Updated'), description: `${user.name}'s status is now ${t(newStatus)}.` });
-        setIsManageOpen(false);
+    const handleStatusChange = async (newStatus: UserStatus) => {
+        try {
+            const userDocRef = doc(db, "users", user.id);
+            await updateDoc(userDocRef, { status: newStatus });
+            onUserUpdate({ ...user, status: newStatus });
+            toast({ title: t('Status Updated'), description: `${user.name}'s status is now ${t(newStatus)}.` });
+            setIsManageOpen(false);
+        } catch (error) {
+            console.error("Failed to update status:", error);
+            toast({ title: t('Error'), description: t('Failed to update user status.'), variant: "destructive" });
+        }
     }
     
     const handleDelete = () => {
@@ -132,7 +142,7 @@ const AddSchoolDialog = ({ onAdd }: { onAdd: (user: User) => void }) => {
     function onSubmit(values: z.infer<typeof addOrgSchema>) {
         const tempPassword = Math.random().toString(36).slice(-8);
         const newUser: User = {
-            id: Date.now(),
+            id: Date.now().toString(), // Use string ID for consistency
             name: values.name,
             email: values.email,
             accountType: "school",
@@ -220,7 +230,7 @@ const AddCompanyDialog = ({ onAdd }: { onAdd: (user: User) => void }) => {
     function onSubmit(values: z.infer<typeof addOrgSchema>) {
         const tempPassword = Math.random().toString(36).slice(-8);
         const newUser: User = {
-            id: Date.now(),
+            id: Date.now().toString(), // Use string ID for consistency
             name: values.name,
             email: values.email,
             accountType: "company",
@@ -327,7 +337,7 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
         setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
     };
 
-    const handleUserDelete = (userId: number) => {
+    const handleUserDelete = (userId: string) => {
         setUsers(users.filter(u => u.id !== userId));
     };
 
