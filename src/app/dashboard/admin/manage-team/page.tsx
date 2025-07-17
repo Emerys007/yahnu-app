@@ -1,21 +1,42 @@
+
 import { Users } from "lucide-react";
 import { ManageTeamClient } from "./manage-team-client";
+import { db } from "@/lib/firebase";
+import { collection, query, where, getDocs, DocumentData } from "firebase/firestore";
 
 type AdminUser = {
-  id: number
+  id: string
   name: string
   email: string
   accountType: "Admin" | "Super Admin" | "Content Moderator" | "Support Staff"
 }
 
-const initialAdmins: AdminUser[] = [
-  { id: 1, name: "Dr. Evelyn Reed", email: "e.reed@yahnu.ci", accountType: "Super Admin" },
-  { id: 2, name: "John Carter", email: "j.carter@yahnu.ci", accountType: "Admin" },
-]
+async function getAdmins(): Promise<AdminUser[]> {
+    const adminRoles = ["admin", "super-admin", "content-moderator", "support-staff"];
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("role", "in", adminRoles));
+    
+    const querySnapshot = await getDocs(q);
+    const admins: AdminUser[] = [];
+    querySnapshot.forEach((doc) => {
+        const data = doc.data() as DocumentData;
+        admins.push({
+            id: doc.id,
+            name: data.name || "Unnamed Admin",
+            email: data.email,
+            // A simple mapping from role ID to display name
+            accountType: data.role.replace('-', ' ').replace(/\b\w/g, (l:string) => l.toUpperCase()) as AdminUser['accountType'],
+        });
+    });
+    
+    // Ensure Super Admins are listed first
+    admins.sort((a, b) => {
+        if (a.accountType === 'Super Admin') return -1;
+        if (b.accountType === 'Super Admin') return 1;
+        return a.name.localeCompare(b.name);
+    });
 
-async function getAdmins() {
-    // In a real app, this would be a database call
-    return initialAdmins;
+    return admins;
 }
 
 export default async function ManageTeamPage() {

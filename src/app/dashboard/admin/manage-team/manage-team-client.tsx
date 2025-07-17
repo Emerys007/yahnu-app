@@ -28,7 +28,7 @@ import {
 import { Label } from "@/components/ui/label"
 
 type AdminUser = {
-  id: number
+  id: string
   name: string
   email: string
   accountType: "Admin" | "Super Admin" | "Content Moderator" | "Support Staff"
@@ -41,7 +41,7 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
     const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
     const [inviteLink, setInviteLink] = useState("");
 
-    const handleDeleteAdmin = (id: number) => {
+    const handleDeleteAdmin = (id: string) => {
         const adminToDelete = admins.find(a => a.id === id);
         if (adminToDelete?.accountType === 'Super Admin') {
             toast({
