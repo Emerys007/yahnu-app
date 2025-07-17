@@ -1,38 +1,77 @@
 
 "use client"
 
+import { useAuth, type Role } from "@/context/auth-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocalization } from "@/context/localization-context";
-import { LifeBuoy, Mail, Phone, ChevronRight } from "lucide-react";
+import { LifeBuoy, Mail, Phone } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+const FAQSection = ({ title, faqs }: { title: string; faqs: FaqItem[] }) => (
+  <div className="mb-6">
+    <h3 className="text-xl font-semibold mb-4">{title}</h3>
+    <Accordion type="single" collapsible className="w-full">
+      {faqs.map((faq, index) => (
+        <AccordionItem value={`item-${index}`} key={index}>
+          <AccordionTrigger>{faq.question}</AccordionTrigger>
+          <AccordionContent>{faq.answer}</AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  </div>
+);
+
 export default function SupportPage() {
   const { t } = useLocalization();
+  const { role } = useAuth();
 
-  const faqs = [
-    {
-      question: t('faq_q1'),
-      answer: t('faq_a1')
-    },
-    {
-      question: t('faq_q2'),
-      answer: t('faq_a2')
-    },
-    {
-      question: t('faq_q3'),
-      answer: t('faq_a3')
-    },
-    {
-      question: t('faq_q4'),
-      answer: t('faq_a4')
-    },
-    {
-        question: t('faq_q5'),
-        answer: t('faq_a5')
-    }
+  const generalFaqs: FaqItem[] = [
+    { question: t('faq_q_password'), answer: t('faq_a_password') },
+    { question: t('faq_q_info'), answer: t('faq_a_info') },
+    { question: t('faq_q_contact'), answer: t('faq_a_contact') },
   ];
+
+  const graduateFaqs: FaqItem[] = [
+    { question: t('faq_q_pending'), answer: t('faq_a_pending') },
+    { question: t('faq_q_profile'), answer: t('faq_a_profile') },
+    { question: t('faq_q_matching'), answer: t('faq_a_matching') },
+  ];
+  
+  const companyFaqs: FaqItem[] = [
+    { question: t('faq_q_post_job'), answer: t('faq_a_post_job') },
+    { question: t('faq_q_find_candidates'), answer: t('faq_a_find_candidates') },
+    { question: t('faq_q_partnerships'), answer: t('faq_a_partnerships') },
+  ];
+
+  const schoolFaqs: FaqItem[] = [
+    { question: t('faq_q_approve_graduates'), answer: t('faq_a_approve_graduates') },
+    { question: t('faq_q_school_partnerships'), answer: t('faq_a_school_partnerships') },
+    { question: t('faq_q_placement_analytics'), answer: t('faq_a_placement_analytics') },
+  ];
+  
+  const roleFaqs: Record<Role, FaqItem[]> = {
+      graduate: graduateFaqs,
+      company: companyFaqs,
+      school: schoolFaqs,
+      admin: [],
+  };
+  
+  const roleFaqTitles: Record<Role, string> = {
+      graduate: t('faq_graduate_title'),
+      company: t('faq_company_title'),
+      school: t('faq_school_title'),
+      admin: '',
+  };
+
+  const specificFaqs = roleFaqs[role] || [];
+  const specificFaqTitle = roleFaqTitles[role] || '';
 
   return (
     <div className="space-y-8">
@@ -53,16 +92,8 @@ export default function SupportPage() {
                         <CardTitle>{t('Frequently Asked Questions')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <Accordion type="single" collapsible className="w-full">
-                            {faqs.map((faq, index) => (
-                                <AccordionItem value={`item-${index}`} key={index}>
-                                    <AccordionTrigger>{faq.question}</AccordionTrigger>
-                                    <AccordionContent>
-                                        {faq.answer}
-                                    </AccordionContent>
-                                </AccordionItem>
-                            ))}
-                        </Accordion>
+                        {specificFaqs.length > 0 && <FAQSection title={specificFaqTitle} faqs={specificFaqs} />}
+                        <FAQSection title={t('faq_general_title')} faqs={generalFaqs} />
                     </CardContent>
                 </Card>
             </div>
