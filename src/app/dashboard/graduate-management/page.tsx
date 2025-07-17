@@ -8,12 +8,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { UserCheck, Check, X, Search, Loader2, Award } from "lucide-react"
+import { UserCheck, Check, X, Search, Loader2, Send } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Input } from "@/components/ui/input"
 import { collection, query, where, getDocs, doc, updateDoc, onSnapshot, DocumentData } from "firebase/firestore"
 import { db } from "@/lib/firebase"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 
 
 type GraduateStatus = "pending" | "active"
@@ -30,6 +48,72 @@ type Graduate = {
   email: string
   status: GraduateStatus
   education?: EducationEntry[]
+}
+
+const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
+    const { t } = useLocalization();
+    const { toast } = useToast();
+    const [isOpen, setIsOpen] = useState(false);
+    
+    const pendingCount = graduates.filter(g => g.status === 'pending').length;
+    const activeCount = graduates.filter(g => g.status === 'active').length;
+
+    const handleSendBroadcast = () => {
+        // In a real app, this would trigger a backend process
+        toast({
+            title: t("Broadcast Sent"),
+            description: t("Your message is being sent to the selected graduates."),
+        });
+        setIsOpen(false);
+    }
+
+    return (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+                <Button>
+                    <Send className="mr-2 h-4 w-4" />
+                    {t('Broadcast Message')}
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{t('Send a Broadcast Message')}</DialogTitle>
+                    <DialogDescription>
+                        {t('Compose a message to send to multiple graduates at once. They will receive it as an individual message.')}
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                    <div>
+                        <Label htmlFor="recipients">{t('Recipients')}</Label>
+                        <Select defaultValue="all">
+                            <SelectTrigger id="recipients">
+                                <SelectValue placeholder={t("Select recipients")} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">{t('All Graduates')} ({graduates.length})</SelectItem>
+                                <SelectItem value="pending">{t('Pending Graduates')} ({pendingCount})</SelectItem>
+                                <SelectItem value="active">{t('Active Graduates')} ({activeCount})</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                     <div>
+                        <Label htmlFor="subject">{t('Subject')}</Label>
+                        <Input id="subject" placeholder={t("e.g., Upcoming Career Fair")} />
+                    </div>
+                     <div>
+                        <Label htmlFor="message-body">{t('Message')}</Label>
+                        <Textarea id="message-body" rows={8} placeholder={t("Type your message here...")} />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button onClick={handleSendBroadcast}>
+                         <Send className="mr-2 h-4 w-4" />
+                        {t('Send Broadcast')}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
 }
 
 export default function GraduateManagementPage() {
@@ -175,14 +259,17 @@ export default function GraduateManagementPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-start gap-4">
-        <div className="bg-primary/10 p-3 rounded-lg">
-          <UserCheck className="h-6 w-6 text-primary" />
+      <div className="flex items-start justify-between">
+        <div className="flex items-start gap-4">
+            <div className="bg-primary/10 p-3 rounded-lg">
+            <UserCheck className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+            <h1 className="text-3xl font-bold tracking-tight">{t('Graduate Management')}</h1>
+            <p className="text-muted-foreground mt-1">{t('Activate accounts and verify academic credentials.')}</p>
+            </div>
         </div>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('Graduate Management')}</h1>
-          <p className="text-muted-foreground mt-1">{t('Activate accounts and verify academic credentials.')}</p>
-        </div>
+        <BroadcastDialog graduates={graduates} />
       </div>
 
        <Card>
@@ -218,3 +305,5 @@ export default function GraduateManagementPage() {
     </div>
   )
 }
+
+    
