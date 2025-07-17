@@ -653,7 +653,24 @@
     "You passed! A new badge has been added to your profile.": "Vous avez réussi ! Un nouveau badge a été ajouté à votre profil.",
     "You did not meet the passing score of 70%. You can try again in 30 days.": "Vous n'avez pas atteint le score de passage de 70%. Vous pourrez réessayer dans 30 jours.",
     "Return to My Profile": "Retourner à mon profil",
+    "AI Assessment Generator": "Générateur d'évaluation IA",
+    "Create relevant skills assessments for any role.": "Créez des évaluations de compétences pertinentes pour n'importe quel rôle.",
+    "Assessment Details": "Détails de l'évaluation",
+    "Provide details about the job and your company to generate a tailored assessment.": "Fournissez des détails sur le poste et votre entreprise pour générer une évaluation sur mesure.",
+    "Company Values": "Valeurs de l'entreprise",
+    "Paste the job description here...": "Collez la description du poste ici...",
+    "e.g., Innovation, Teamwork, Customer First...": "ex., Innovation, Travail d'équipe, Client d'abord...",
+    "Number of \"Basic Fit\" Questions": "Nombre de questions « d'adéquation de base »",
+    "Number of \"Cognitive Aptitude\" Questions": "Nombre de questions « d'aptitude cognitive »",
+    "Generate Assessment": "Générer l'évaluation",
+    "Generating Assessment...": "Génération de l'évaluation en cours...",
+    "Our AI is crafting the perfect questions. Please wait.": "Notre IA élabore les questions parfaites. Veuillez patienter.",
+    "Assessment Generated!": "Évaluation générée !",
+    "Your custom assessment is ready below.": "Votre évaluation personnalisée est prête ci-dessous.",
+    "There was a problem creating the assessment.": "Un problème est survenu lors de la création de l'évaluation.",
+    "Basic Fit Assessment": "Évaluation d'adéquation de base",
+    "Assesses alignment with company values and role requirements.": "Évalue l'alignement avec les valeurs de l'entreprise et les exigences du poste.",
+    "Cognitive Aptitude Assessment": "Évaluation d'aptitude cognitive",
+    "Tests problem-solving and critical-thinking skills.": "Teste les compétences en résolution de problèmes et en pensée critique.",
     "Data Engineer": "Ingénieur de Données"
 }
-
-    
