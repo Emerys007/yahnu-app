@@ -63,8 +63,6 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/talent-pool", icon: Users2, label: t('Talent Pool') },
     { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
-    { type: "divider", label: t('AI Tools') },
-    { href: "/dashboard/assessments", icon: ClipboardCheck, label: t('Assessments') },
   ];
   
   const schoolNav = [

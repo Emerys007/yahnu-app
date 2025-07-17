@@ -4,10 +4,9 @@
 import { useLocalization } from "@/context/localization-context";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Award, BrainCircuit, Code, DollarSign, Leaf, Truck, ArrowRight } from "lucide-react";
+import { Award, BrainCircuit, Code, DollarSign, Leaf, Truck } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
-import CompanyAssessmentsPage from "./company/page";
 
 const assessments = [
   {
@@ -57,7 +56,7 @@ const assessments = [
   }
 ];
 
-const GraduateAssessmentsPage = () => {
+export default function AssessmentsPage() {
     const { t } = useLocalization();
     const categories = [...new Set(assessments.map(a => a.category))];
     
@@ -106,13 +105,4 @@ const GraduateAssessmentsPage = () => {
       ))}
     </div>
     )
-}
-
-
-export default function AssessmentsPage() {
-    const { role } = useAuth();
-    if (role === 'company') {
-        return <CompanyAssessmentsPage />;
-    }
-    return <GraduateAssessmentsPage />;
 }
