@@ -13,8 +13,8 @@ const assessments = [
     id: "frontend-basics",
     title: "Frontend Development (React)",
     description: "Validate your fundamental skills in React, JavaScript, and modern CSS.",
-    questions: 20,
-    time: 30,
+    questions: 10,
+    time: 20,
     icon: Code,
     category: "IT & Telecoms"
   },
@@ -22,8 +22,8 @@ const assessments = [
     id: "financial-analysis",
     title: "Financial Analysis Fundamentals",
     description: "Test your knowledge of financial statements, valuation, and modeling.",
-    questions: 15,
-    time: 25,
+    questions: 10,
+    time: 20,
     icon: DollarSign,
     category: "Finance & Banking"
   },
@@ -31,8 +31,8 @@ const assessments = [
     id: "agronomy-principles",
     title: "Modern Agronomy Principles",
     description: "Assess your understanding of crop science, soil management, and sustainable practices.",
-    questions: 18,
-    time: 20,
+    questions: 10,
+    time: 15,
     icon: Leaf,
     category: "Agriculture"
   },
@@ -40,8 +40,8 @@ const assessments = [
     id: "supply-chain",
     title: "Supply Chain Essentials",
     description: "Demonstrate your expertise in logistics, inventory management, and transportation.",
-    questions: 15,
-    time: 20,
+    questions: 10,
+    time: 15,
     icon: Truck,
     category: "Logistics"
   },
@@ -49,7 +49,7 @@ const assessments = [
     id: "cognitive-aptitude",
     title: "Cognitive Aptitude Test",
     description: "Measure your problem-solving, critical thinking, and numerical reasoning skills.",
-    questions: 25,
+    questions: 10,
     time: 15,
     icon: BrainCircuit,
     category: "General Aptitude"

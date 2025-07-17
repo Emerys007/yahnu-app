@@ -51,7 +51,7 @@ export default function AssessmentResultPage({ params }: { params: { testId: str
     // For now, we simulate this by just showing the result.
 
     return (
-        <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="container mx-auto py-12 flex items-center justify-center">
             <Card className="max-w-lg w-full text-center">
                 <CardHeader>
                     <div className="mx-auto bg-muted p-4 rounded-full w-fit mb-4">
