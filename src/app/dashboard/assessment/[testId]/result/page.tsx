@@ -6,14 +6,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Award, CheckCircle, XCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useConfetti } from '@/hooks/use-confetti';
+import { useConfetti } from '@/context/confetti-context';
+import { useLocalization } from '@/context/localization-context';
 
-const testTitles: Record<string, string> = {
-    'frontend-basics': 'Frontend Development (React)',
-    'financial-analysis': 'Financial Analysis Fundamentals',
-    'agronomy-principles': 'Modern Agronomy Principles',
-    'supply-chain': 'Supply Chain Essentials',
-    'cognitive-aptitude': 'Cognitive Aptitude Test',
+const testTitles: Record<string, Record<string, string>> = {
+    'frontend-basics': {
+        en: 'Frontend Development (React)',
+        fr: 'Développement Frontend (React)'
+    },
+    'financial-analysis': {
+        en: 'Financial Analysis Fundamentals',
+        fr: 'Principes de l\'Analyse Financière'
+    },
+    'agronomy-principles': {
+        en: 'Modern Agronomy Principles',
+        fr: 'Principes d\'Agronomie Moderne'
+    },
+    'supply-chain': {
+        en: 'Supply Chain Essentials',
+        fr: 'Essentiels de la Chaîne d\'Approvisionnement'
+    },
+    'cognitive-aptitude': {
+        en: 'Cognitive Aptitude Test',
+        fr: 'Test d\'Aptitude Cognitive'
+    },
 }
 
 export default function AssessmentResultPage({ params }: { params: { testId: string } }) {
@@ -21,10 +37,11 @@ export default function AssessmentResultPage({ params }: { params: { testId: str
     const searchParams = useSearchParams();
     const score = searchParams.get('score');
     const { fire } = useConfetti();
+    const { t, language } = useLocalization();
 
     const scoreValue = score ? parseInt(score, 10) : 0;
     const passed = scoreValue >= 70;
-    const testTitle = testTitles[params.testId] || "Assessment";
+    const testTitle = testTitles[params.testId]?.[language] || "Assessment";
 
     if(passed) {
         fire();
@@ -45,10 +62,10 @@ export default function AssessmentResultPage({ params }: { params: { testId: str
                         )}
                     </div>
                     <CardTitle className="text-3xl">
-                        {passed ? "Congratulations!" : "Assessment Complete"}
+                        {passed ? t("Congratulations!") : t("Assessment Complete")}
                     </CardTitle>
                     <CardDescription>
-                        You have completed the {testTitle} assessment.
+                        {t('You have completed the {testTitle} assessment.', {testTitle})}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -58,17 +75,17 @@ export default function AssessmentResultPage({ params }: { params: { testId: str
                     {passed ? (
                         <div className="flex items-center justify-center gap-2 text-green-600">
                             <CheckCircle className="h-5 w-5" />
-                            <p className="font-semibold">You passed! A new badge has been added to your profile.</p>
+                            <p className="font-semibold">{t('You passed! A new badge has been added to your profile.')}</p>
                         </div>
                     ) : (
                         <p className="text-destructive">
-                            You did not meet the passing score of 70%. You can try again in 30 days.
+                            {t('You did not meet the passing score of 70%. You can try again in 30 days.')}
                         </p>
                     )}
                 </CardContent>
                 <CardFooter className="flex justify-center">
                     <Button onClick={() => router.push('/dashboard/profile')}>
-                        Return to My Profile
+                        {t('Return to My Profile')}
                     </Button>
                 </CardFooter>
             </Card>

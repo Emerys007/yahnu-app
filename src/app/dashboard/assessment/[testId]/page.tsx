@@ -10,23 +10,43 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, Video, Volume2, ShieldAlert } from 'lucide-react';
+import { Loader2, Video, ShieldAlert } from 'lucide-react';
+import { useLocalization } from '@/context/localization-context';
 
 const testData = {
     'frontend-basics': {
-        title: 'Frontend Development (React)',
-        questions: [
-            { question: "What is JSX?", options: ["A JavaScript syntax extension", "A templating engine", "A CSS preprocessor", "A database query language"], answer: "A JavaScript syntax extension" },
-            { question: "How do you pass data to a component from outside?", options: ["state", "props", "refs", "context"], answer: "props" },
-            { question: "Which hook would you use to track state in a function component?", options: ["useEffect", "useState", "useContext", "useReducer"], answer: "useState" },
-        ]
+        en: {
+            title: 'Frontend Development (React)',
+            questions: [
+                { question: "What is JSX?", options: ["A JavaScript syntax extension", "A templating engine", "A CSS preprocessor", "A database query language"], answer: "A JavaScript syntax extension" },
+                { question: "How do you pass data to a component from outside?", options: ["state", "props", "refs", "context"], answer: "props" },
+                { question: "Which hook would you use to track state in a function component?", options: ["useEffect", "useState", "useContext", "useReducer"], answer: "useState" },
+            ]
+        },
+        fr: {
+            title: 'Développement Frontend (React)',
+            questions: [
+                { question: "Qu'est-ce que le JSX ?", options: ["Une extension de syntaxe JavaScript", "Un moteur de modèles", "Un préprocesseur CSS", "Un langage de requête de base de données"], answer: "Une extension de syntaxe JavaScript" },
+                { question: "Comment passez-vous des données à un composant de l'extérieur ?", options: ["state", "props", "refs", "context"], answer: "props" },
+                { question: "Quel hook utiliseriez-vous pour suivre l'état dans un composant fonctionnel ?", options: ["useEffect", "useState", "useContext", "useReducer"], answer: "useState" },
+            ]
+        }
     },
     'financial-analysis': {
-        title: 'Financial Analysis Fundamentals',
-        questions: [
-            { question: "Which statement shows a company's financial position at a specific point in time?", options: ["Income Statement", "Balance Sheet", "Cash Flow Statement", "Statement of Retained Earnings"], answer: "Balance Sheet" },
-            { question: "What does EBIT stand for?", options: ["Earnings Before Interest and Taxes", "Earnings Before Investment and Transactions", "Estimated Business Income and Totals", "Equity Backed Investment Trust"], answer: "Earnings Before Interest and Taxes" },
-        ]
+        en: {
+            title: 'Financial Analysis Fundamentals',
+            questions: [
+                { question: "Which statement shows a company's financial position at a specific point in time?", options: ["Income Statement", "Balance Sheet", "Cash Flow Statement", "Statement of Retained Earnings"], answer: "Balance Sheet" },
+                { question: "What does EBIT stand for?", options: ["Earnings Before Interest and Taxes", "Earnings Before Investment and Transactions", "Estimated Business Income and Totals", "Equity Backed Investment Trust"], answer: "Earnings Before Interest and Taxes" },
+            ]
+        },
+        fr: {
+            title: 'Principes de l\'Analyse Financière',
+            questions: [
+                { question: "Quel état financier montre la situation financière d'une entreprise à un moment précis ?", options: ["Compte de résultat", "Bilan", "Tableau des flux de trésorerie", "État des résultats non distribués"], answer: "Bilan" },
+                { question: "Que signifie EBIT ?", options: ["Bénéfice Avant Intérêts et Impôts", "Bénéfice Avant Investissement et Transactions", "Revenu d'Entreprise Estimé et Totaux", "Fiducie de Placement adossée à des Actions"], answer: "Bénéfice Avant Intérêts et Impôts" },
+            ]
+        }
     }
 }
 
@@ -34,6 +54,7 @@ type TestId = keyof typeof testData;
 
 const ProctoringSetup = ({ onSetupComplete }: { onSetupComplete: () => void }) => {
   const { toast } = useToast();
+  const { t } = useLocalization();
   const [hasPermission, setHasPermission] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -50,42 +71,42 @@ const ProctoringSetup = ({ onSetupComplete }: { onSetupComplete: () => void }) =
         setHasPermission(false);
         toast({
           variant: 'destructive',
-          title: 'Camera Access Denied',
-          description: 'Please enable camera and microphone permissions in your browser settings to continue.',
+          title: t('Camera Access Denied'),
+          description: t('Please enable camera and microphone permissions in your browser settings to continue.'),
         });
       }
     };
     getCameraPermission();
-  }, [toast]);
+  }, [toast, t]);
 
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>Assessment Setup</CardTitle>
-        <CardDescription>Please complete the following steps to begin your proctored assessment.</CardDescription>
+        <CardTitle>{t('Assessment Setup')}</CardTitle>
+        <CardDescription>{t('Please complete the following steps to begin your proctored assessment.')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between p-3 border rounded-lg">
           <div className="flex items-center gap-3">
             <Video className="h-5 w-5" />
-            <span>Camera Access</span>
+            <span>{t('Camera Access')}</span>
           </div>
           <span className={`text-sm font-semibold ${hasPermission ? 'text-green-600' : 'text-destructive'}`}>
-            {hasPermission ? 'Enabled' : 'Disabled'}
+            {hasPermission ? t('Enabled') : t('Disabled')}
           </span>
         </div>
         <Alert variant="destructive">
           <ShieldAlert className="h-4 w-4" />
-          <AlertTitle>Assessment Rules</AlertTitle>
+          <AlertTitle>{t('Assessment Rules')}</AlertTitle>
           <AlertDescription>
-            You must remain in the browser window for the duration of the test. Navigating away will be flagged.
+            {t('You must remain in the browser window for the duration of the test. Navigating away will be flagged.')}
           </AlertDescription>
         </Alert>
         <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted />
       </CardContent>
       <CardFooter>
         <Button onClick={onSetupComplete} disabled={!hasPermission} className="w-full">
-          {hasPermission ? "Start Assessment" : <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Waiting for permissions...</>}
+          {hasPermission ? t("Start Assessment") : <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('Waiting for permissions...')}</>}
         </Button>
       </CardFooter>
     </Card>
@@ -96,12 +117,13 @@ const ProctoringSetup = ({ onSetupComplete }: { onSetupComplete: () => void }) =
 const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestComplete: (score: number) => void }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { toast } = useToast();
+  const { language, t } = useLocalization();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes
   
-  const test = testData[testId];
-  const totalQuestions = test.questions.length;
+  const testContent = testData[testId][language as keyof typeof testData[TestId]];
+  const totalQuestions = testContent.questions.length;
   
   // Tab focus lock
   useEffect(() => {
@@ -109,14 +131,14 @@ const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestCompl
       if (document.hidden) {
         toast({
           variant: "destructive",
-          title: "Warning: Focus Lost",
-          description: "You have navigated away from the test. This event has been logged.",
+          title: t("Warning: Focus Lost"),
+          description: t("You have navigated away from the test. This event has been logged."),
         });
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [toast]);
+  }, [toast, t]);
 
   // Timer
   useEffect(() => {
@@ -126,13 +148,18 @@ const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestCompl
     }
     const timer = setInterval(() => setTimeLeft(timeLeft - 1), 1000);
     return () => clearInterval(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft]);
   
   useEffect(() => {
     const getCamera = async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        if(videoRef.current) {
-            videoRef.current.srcObject = stream;
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            if(videoRef.current) {
+                videoRef.current.srcObject = stream;
+            }
+        } catch (error) {
+            console.error("Could not get camera for test interface", error)
         }
     }
     getCamera();
@@ -146,7 +173,7 @@ const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestCompl
   
   const handleSubmit = () => {
     let score = 0;
-    test.questions.forEach((q, i) => {
+    testContent.questions.forEach((q, i) => {
         if (answers[i] === q.answer) {
             score++;
         }
@@ -164,7 +191,7 @@ const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestCompl
   };
 
   const progress = ((currentQuestion + 1) / totalQuestions) * 100;
-  const q = test.questions[currentQuestion];
+  const q = testContent.questions[currentQuestion];
 
   return (
     <div className="grid md:grid-cols-[1fr_300px] gap-8 items-start">
@@ -172,11 +199,11 @@ const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestCompl
             <Card>
                 <CardHeader>
                     <div className="flex justify-between items-center">
-                        <CardTitle>{test.title}</CardTitle>
+                        <CardTitle>{testContent.title}</CardTitle>
                         <div className="font-mono text-lg">{`${Math.floor(timeLeft / 60).toString().padStart(2, '0')}:${(timeLeft % 60).toString().padStart(2, '0')}`}</div>
                     </div>
                     <Progress value={progress} className="w-full" />
-                    <CardDescription>Question {currentQuestion + 1} of {totalQuestions}</CardDescription>
+                    <CardDescription>{t('Question {current} of {total}', {current: currentQuestion + 1, total: totalQuestions})}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <p className="font-semibold text-lg mb-6">{q.question}</p>
@@ -191,7 +218,7 @@ const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestCompl
                 </CardContent>
                 <CardFooter>
                     <Button onClick={handleNext} className="ml-auto">
-                        {currentQuestion < totalQuestions - 1 ? 'Next Question' : 'Finish & Submit'}
+                        {currentQuestion < totalQuestions - 1 ? t('Next Question') : t('Finish & Submit')}
                     </Button>
                 </CardFooter>
             </Card>
@@ -200,9 +227,9 @@ const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestCompl
             <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted />
             <Alert>
                 <ShieldAlert className="h-4 w-4" />
-                <AlertTitle>Proctoring Enabled</AlertTitle>
+                <AlertTitle>{t('Proctoring Enabled')}</AlertTitle>
                 <AlertDescription>
-                    Your session is being monitored. Please remain focused on the test.
+                    {t('Your session is being monitored. Please remain focused on the test.')}
                 </AlertDescription>
             </Alert>
         </div>
@@ -213,10 +240,11 @@ const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestCompl
 
 export default function TakeAssessmentPage({ params }: { params: { testId: string } }) {
   const router = useRouter();
+  const { t } = useLocalization();
   const [step, setStep] = useState<'setup' | 'test'>('setup');
   
   if (!Object.keys(testData).includes(params.testId)) {
-    return <div>Test not found</div>;
+    return <div>{t('Test not found')}</div>;
   }
 
   const handleTestComplete = (score: number) => {
@@ -231,4 +259,3 @@ export default function TakeAssessmentPage({ params }: { params: { testId: strin
     </div>
   );
 }
-
