@@ -1,48 +1,86 @@
 
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useLocalization } from "@/context/localization-context"
+import { useAuth } from "@/context/auth-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { UserCheck, Check, X, Search } from "lucide-react"
+import { UserCheck, Check, X, Search, Loader2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Input } from "@/components/ui/input"
+import { collection, query, where, getDocs, doc, updateDoc, onSnapshot, DocumentData } from "firebase/firestore"
+import { db } from "@/lib/firebase"
+
 
 type GraduateStatus = "pending" | "active"
 type Graduate = {
-  id: number
+  id: string
   name: string
   email: string
-  graduationYear: number
+  graduationYear?: number
   status: GraduateStatus
 }
-
-const allGraduates: Graduate[] = [
-  { id: 1, name: "Amina Diallo", email: "amina.d@example.com", graduationYear: 2023, status: "pending" },
-  { id: 2, name: "Ben Traoré", email: "ben.t@example.com", graduationYear: 2023, status: "active" },
-  { id: 3, name: "Chloe Dubois", email: "chloe.d@example.com", graduationYear: 2022, status: "active" },
-  { id: 4, name: "Moussa Diarra", email: "moussa.d@example.com", graduationYear: 2024, status: "pending" },
-];
 
 export default function GraduateManagementPage() {
   const { t } = useLocalization()
   const { toast } = useToast()
-  const [graduates, setGraduates] = useState<Graduate[]>(allGraduates)
+  const { user } = useAuth()
+  const [graduates, setGraduates] = useState<Graduate[]>([])
   const [searchTerm, setSearchTerm] = useState("")
+  const [isLoading, setIsLoading] = useState(true)
 
-  const handleStatusChange = (id: number, newStatus: GraduateStatus) => {
+  useEffect(() => {
+    if (!user) return
+
+    setIsLoading(true);
+    const graduatesQuery = query(
+        collection(db, "users"),
+        where("role", "==", "graduate"),
+        where("schoolId", "==", user.uid)
+    );
+
+    const unsubscribe = onSnapshot(graduatesQuery, (querySnapshot) => {
+        const grads = querySnapshot.docs.map(doc => {
+            const data = doc.data() as DocumentData;
+            return {
+                id: doc.id,
+                name: data.name,
+                email: data.email,
+                graduationYear: data.graduationYear,
+                status: data.status,
+            } as Graduate;
+        });
+        setGraduates(grads);
+        setIsLoading(false);
+    }, (error) => {
+        console.error("Error fetching graduates:", error);
+        toast({ title: "Error", description: "Could not fetch graduate data.", variant: "destructive" });
+        setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [user, toast]);
+
+  const handleStatusChange = async (id: string, newStatus: GraduateStatus) => {
     const graduate = graduates.find(g => g.id === id)
     if (!graduate) return
 
-    setGraduates(graduates.map(g => g.id === id ? { ...g, status: newStatus } : g))
-    toast({
-      title: t('Account ' + newStatus),
-      description: `${graduate.name}'s ${t('account has been ')}${newStatus}.`,
-    })
+    try {
+        const userDocRef = doc(db, "users", id);
+        await updateDoc(userDocRef, { status: newStatus });
+        
+        toast({
+          title: t(newStatus === 'active' ? 'Account activated' : 'Account deactivated'),
+          description: `${graduate.name}'s ${t(newStatus === 'active' ? 'account has been activated.' : 'account has been deactivated.')}`,
+        })
+    } catch (error) {
+        console.error("Failed to update status:", error);
+        toast({ title: t('Error'), description: t('Failed to update status.'), variant: "destructive" });
+    }
   }
 
   const filteredGraduates = graduates.filter(g => 
@@ -68,7 +106,7 @@ export default function GraduateManagementPage() {
             <TableRow key={grad.id}>
               <TableCell className="font-medium">{grad.name}</TableCell>
               <TableCell>{grad.email}</TableCell>
-              <TableCell>{grad.graduationYear}</TableCell>
+              <TableCell>{grad.graduationYear || 'N/A'}</TableCell>
               <TableCell className="text-right space-x-2">
                 {grad.status === 'pending' && (
                     <Button size="sm" onClick={() => handleStatusChange(grad.id, 'active')}>
@@ -83,7 +121,7 @@ export default function GraduateManagementPage() {
               </TableCell>
             </TableRow>
           ))}
-          {data.length === 0 && (
+          {data.length === 0 && !isLoading && (
             <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">{t('No graduates found.')}</TableCell>
             </TableRow>
@@ -114,18 +152,24 @@ export default function GraduateManagementPage() {
                 </div>
             </CardHeader>
             <CardContent>
-                 <Tabs defaultValue="pending">
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="pending">{t('Pending Activation')} ({pendingGraduates.length})</TabsTrigger>
-                        <TabsTrigger value="active">{t('Active Accounts')} ({activeGraduates.length})</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="pending" className="mt-4">
-                        {renderTable(pendingGraduates)}
-                    </TabsContent>
-                    <TabsContent value="active" className="mt-4">
-                        {renderTable(activeGraduates)}
-                    </TabsContent>
-                </Tabs>
+                {isLoading ? (
+                    <div className="flex justify-center items-center h-64">
+                        <Loader2 className="h-16 w-16 animate-spin text-primary" />
+                    </div>
+                ) : (
+                    <Tabs defaultValue="pending">
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="pending">{t('Pending Activation')} ({pendingGraduates.length})</TabsTrigger>
+                            <TabsTrigger value="active">{t('Active Accounts')} ({activeGraduates.length})</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="pending" className="mt-4">
+                            {renderTable(pendingGraduates)}
+                        </TabsContent>
+                        <TabsContent value="active" className="mt-4">
+                            {renderTable(activeGraduates)}
+                        </TabsContent>
+                    </Tabs>
+                )}
             </CardContent>
         </Card>
     </div>

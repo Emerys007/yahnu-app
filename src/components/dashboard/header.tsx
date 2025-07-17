@@ -99,7 +99,7 @@ export function DashboardHeader() {
             collection(db, "users"),
             where('status', '==', 'pending'),
             where('role', '==', 'graduate'),
-            where('schoolId', '==', user.schoolId),
+            where('schoolId', '==', user.uid), // Use user's UID as the schoolId
             limit(5)
         );
     }
