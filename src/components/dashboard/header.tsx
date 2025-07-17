@@ -81,7 +81,6 @@ export function DashboardHeader() {
         collection(db, "users"), 
         where('status', '==', 'pending'),
         where('role', 'in', ['company', 'school']),
-        orderBy('createdAt', 'desc'),
         limit(5)
       );
     } else if (role === 'school') {
@@ -91,7 +90,6 @@ export function DashboardHeader() {
             where('status', '==', 'pending'),
             where('role', '==', 'graduate'),
             where('schoolId', '==', user.schoolId), // Assuming school user has schoolId
-            orderBy('createdAt', 'desc'),
             limit(5)
         );
     }
@@ -127,6 +125,8 @@ export function DashboardHeader() {
             });
         });
         setNotifications(fetchedNotifications);
+    }, (error) => {
+        console.error("Firestore snapshot error:", error);
     });
 
     return () => unsubscribe();
