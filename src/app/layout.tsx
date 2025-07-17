@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { LocalizationProvider } from '@/context/localization-context';
 import { AuthProvider } from '@/context/auth-context';
 import { CountryProvider } from '@/context/country-context';
+import { ConfettiProvider } from '@/context/confetti-context';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -31,19 +32,21 @@ export default function RootLayout({
         <AuthProvider>
           <CountryProvider>
             <LocalizationProvider>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-                disableTransitionOnChange
-              >
-                <div vaul-drawer-wrapper="">
-                  <div className="relative flex min-h-screen flex-col bg-background">
-                    {children}
-                  </div>
-                </div>
-                <Toaster />
-              </ThemeProvider>
+                <ConfettiProvider>
+                  <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                  >
+                    <div vaul-drawer-wrapper="">
+                      <div className="relative flex min-h-screen flex-col bg-background">
+                        {children}
+                      </div>
+                    </div>
+                    <Toaster />
+                  </ThemeProvider>
+                </ConfettiProvider>
             </LocalizationProvider>
           </CountryProvider>
         </AuthProvider>

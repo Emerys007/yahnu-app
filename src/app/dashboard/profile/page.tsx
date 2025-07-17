@@ -22,7 +22,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Upload, Loader2, PlusCircle, Trash2 } from "lucide-react"
+import { Upload, Loader2, PlusCircle, Trash2, Award, Eye, EyeOff } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Switch } from "@/components/ui/switch"
 
 const educationSchema = z.object({
   degree: z.string().min(2, "Degree is required."),
@@ -40,11 +42,18 @@ const profileSchema = z.object({
   skills: z.string().optional(),
 })
 
+// Mock data for badges
+const earnedBadges = [
+    { id: 'frontend-basics', name: "Frontend Development (React)", visible: true },
+    { id: 'financial-analysis', name: "Financial Analysis", visible: false },
+]
+
 export default function ProfilePage() {
   const { toast } = useToast()
   const { user, loading } = useAuth();
   const [isParsing, setIsParsing] = useState(false)
   const [isSaving, setIsSaving] = useState(false);
+  const [badges, setBadges] = useState(earnedBadges);
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -103,16 +112,13 @@ export default function ProfilePage() {
       form.setValue("email", result.email || "")
       form.setValue("phone", result.phone || "")
       form.setValue("experience", result.experience?.join("\n\n") || "")
-      // This part is tricky as resume parser gives an array of strings. 
-      // We will just set the first education entry if it exists.
       if (result.education && result.education.length > 0) {
         const firstEdu = result.education[0];
-        // This is a simplistic parse, would need more robust logic for real world
         const [degree, field] = firstEdu.split(',').map(s => s.trim());
         const gradYearMatch = firstEdu.match(/\d{4}/);
         
         if (fields.length > 0) {
-            remove(0); // remove existing if any
+            remove(0);
         }
         append({ degree: degree || "", field: field || "", gradYear: gradYearMatch ? gradYearMatch[0] : "", verified: false });
 
@@ -166,6 +172,10 @@ export default function ProfilePage() {
         setIsSaving(false);
     }
   }
+
+  const toggleBadgeVisibility = (id: string) => {
+    setBadges(badges.map(b => b.id === id ? { ...b, visible: !b.visible } : b));
+  }
   
   if (loading) {
     return <div className="flex justify-center items-center h-64"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
@@ -194,167 +204,200 @@ export default function ProfilePage() {
       </div>
       
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
-              <CardDescription>This information will be visible on your public profile.</CardDescription>
-            </CardHeader>
-            <CardContent className="grid md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="John Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email Address</FormLabel>
-                    <FormControl>
-                      <Input placeholder="you@example.com" {...field} disabled />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-               <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number (Optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="(123) 456-7890" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-                <div className="flex justify-between items-center">
-                    <div>
-                        <CardTitle>Education</CardTitle>
-                        <CardDescription>Your academic background. Add each degree separately.</CardDescription>
-                    </div>
-                    <Button type="button" variant="outline" size="sm" onClick={() => append({ degree: '', field: '', gradYear: '', verified: false })}>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Add Degree
-                    </Button>
-                </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                 {fields.map((field, index) => (
-                    <div key={field.id} className="p-4 border rounded-lg relative space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <FormField
-                                control={form.control}
-                                name={`education.${index}.degree`}
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Degree</FormLabel>
-                                        <FormControl><Input placeholder="e.g. Bachelor of Science" {...field} /></FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name={`education.${index}.field`}
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Field of Study</FormLabel>
-                                        <FormControl><Input placeholder="e.g. Computer Science" {...field} /></FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                             <FormField
-                                control={form.control}
-                                name={`education.${index}.gradYear`}
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Graduation Year</FormLabel>
-                                        <FormControl><Input type="number" placeholder="e.g. 2024" {...field} /></FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="grid lg:grid-cols-3 gap-8 items-start">
+            <div className="lg:col-span-2 space-y-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Personal Information</CardTitle>
+                  <CardDescription>This information will be visible on your public profile.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid md:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Full Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="John Doe" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email Address</FormLabel>
+                        <FormControl>
+                          <Input placeholder="you@example.com" {...field} disabled />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                   <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Phone Number (Optional)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="(123) 456-7890" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <CardTitle>Education</CardTitle>
+                            <CardDescription>Your academic background. Add each degree separately.</CardDescription>
                         </div>
-                         <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="absolute top-2 right-2 h-6 w-6"
-                            onClick={() => remove(index)}
-                        >
-                            <Trash2 className="h-4 w-4" />
+                        <Button type="button" variant="outline" size="sm" onClick={() => append({ degree: '', field: '', gradYear: '', verified: false })}>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Add Degree
                         </Button>
                     </div>
-                ))}
-                {fields.length === 0 && (
-                    <p className="text-sm text-muted-foreground text-center py-4">No education history added yet.</p>
-                )}
-            </CardContent>
-          </Card>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                     {fields.map((field, index) => (
+                        <div key={field.id} className="p-4 border rounded-lg relative space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name={`education.${index}.degree`}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Degree</FormLabel>
+                                            <FormControl><Input placeholder="e.g. Bachelor of Science" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name={`education.${index}.field`}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Field of Study</FormLabel>
+                                            <FormControl><Input placeholder="e.g. Computer Science" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                 <FormField
+                                    control={form.control}
+                                    name={`education.${index}.gradYear`}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Graduation Year</FormLabel>
+                                            <FormControl><Input type="number" placeholder="e.g. 2024" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                             <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                className="absolute top-2 right-2 h-6 w-6"
+                                onClick={() => remove(index)}
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    ))}
+                    {fields.length === 0 && (
+                        <p className="text-sm text-muted-foreground text-center py-4">No education history added yet.</p>
+                    )}
+                </CardContent>
+              </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Work Experience</CardTitle>
-              <CardDescription>Detail your professional journey.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <FormField
-                control={form.control}
-                name="experience"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Textarea placeholder="Describe your work experience..." rows={10} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
-            <Card>
-            <CardHeader>
-                <CardTitle>Skills</CardTitle>
-                <CardDescription>Your key competencies.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <FormField
-                control={form.control}
-                name="skills"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormControl>
-                        <Textarea placeholder="e.g., JavaScript, Product Management, ..." rows={5} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-            </CardContent>
-            </Card>
-          
-          <div className="flex justify-end">
-            <Button type="submit" disabled={isSaving || isParsing}>{isSaving ? "Saving..." : "Save Profile"}</Button>
-          </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Work Experience</CardTitle>
+                  <CardDescription>Detail your professional journey.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FormField
+                    control={form.control}
+                    name="experience"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Textarea placeholder="Describe your work experience..." rows={10} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+                <Card>
+                <CardHeader>
+                    <CardTitle>Skills</CardTitle>
+                    <CardDescription>Your key competencies.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <FormField
+                    control={form.control}
+                    name="skills"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormControl>
+                            <Textarea placeholder="e.g., JavaScript, Product Management, ..." rows={5} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                </CardContent>
+                </Card>
+              
+              <div className="flex justify-end">
+                <Button type="submit" disabled={isSaving || isParsing}>{isSaving ? "Saving..." : "Save Profile"}</Button>
+              </div>
+            </div>
+            <div className="lg:col-span-1 space-y-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Award /> Certifications & Badges</CardTitle>
+                        <CardDescription>Manage the visibility of your earned skill badges.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        {badges.length > 0 ? badges.map(badge => (
+                            <div key={badge.id} className="flex items-center justify-between p-3 border rounded-lg">
+                                <div className="flex items-center gap-2">
+                                    <Award className="h-5 w-5 text-primary" />
+                                    <span className="font-medium">{badge.name}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                     {badge.visible ? <Eye className="h-4 w-4 text-muted-foreground" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
+                                     <Switch
+                                        checked={badge.visible}
+                                        onCheckedChange={() => toggleBadgeVisibility(badge.id)}
+                                        aria-label={`Toggle visibility for ${badge.name} badge`}
+                                    />
+                                </div>
+                            </div>
+                        )) : (
+                            <p className="text-sm text-muted-foreground text-center py-4">No badges earned yet. Take an assessment to get started!</p>
+                        )}
+                        <Button variant="secondary" asChild className="w-full">
+                            <Link href="/dashboard/assessments">Take a New Assessment</Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
         </form>
       </Form>
     </div>

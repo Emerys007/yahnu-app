@@ -26,7 +26,8 @@ import {
   BrainCircuit,
   MessageSquare,
   UserCog,
-  Calendar
+  Calendar,
+  Award
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -48,7 +49,8 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/jobs", icon: Briefcase, label: t('Job Search') },
     { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
     { href: "/dashboard/events", icon: Calendar, label: t('Events') },
-    { type: "divider", label: t('AI Tools') },
+    { type: "divider", label: t('AI & Assessments') },
+    { href: "/dashboard/assessments", icon: Award, label: t('Skill Certifications') },
     { href: "/dashboard/interview-prep", icon: BrainCircuit, label: t('Interview Prep') },
   ];
 
