@@ -1,9 +1,10 @@
 
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
 import { useLocalization } from "@/context/localization-context"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,24 +12,26 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { MessageSquare, Send, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-type Conversation = {
+type Message = {
     id: number
+    sender: "me" | "them"
+    text: string
+    time: string
+};
+
+type Conversation = {
+    id: string
     name: string
     avatar: string
     lastMessage: string
     time: string
     unread: number
-    messages: {
-        id: number
-        sender: "me" | "them"
-        text: string
-        time: string
-    }[]
+    messages: Message[]
 }
 
-const conversationsData: Conversation[] = [
+const initialConversations: Conversation[] = [
     {
-        id: 1,
+        id: "amina-diallo",
         name: "Amina Diallo",
         avatar: "https://placehold.co/100x100.png",
         lastMessage: "Thank you for the opportunity! I'm looking forward to the interview.",
@@ -42,7 +45,7 @@ const conversationsData: Conversation[] = [
         ]
     },
     {
-        id: 2,
+        id: "tech-solutions",
         name: "Tech Solutions Abidjan",
         avatar: "https://placehold.co/100x100.png",
         lastMessage: "Can you tell me more about the team culture?",
@@ -53,11 +56,65 @@ const conversationsData: Conversation[] = [
             { id: 2, sender: "me", text: "Can you tell me more about the team culture?", time: "Yesterday" },
         ]
     },
-]
+];
 
 export default function MessagesPage() {
     const { t } = useLocalization()
-    const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(conversationsData[0]);
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    
+    const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
+    const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
+    const [message, setMessage] = useState("");
+
+    useEffect(() => {
+        const newConvoId = searchParams.get('new');
+        if (newConvoId) {
+            const existingConvo = conversations.find(c => c.id === newConvoId);
+            if (existingConvo) {
+                setSelectedConversation(existingConvo);
+            } else {
+                 const newConvo: Conversation = {
+                    id: newConvoId,
+                    name: newConvoId.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                    avatar: "https://placehold.co/100x100.png",
+                    lastMessage: "",
+                    time: "Now",
+                    unread: 0,
+                    messages: [],
+                };
+                setConversations(prev => [newConvo, ...prev]);
+                setSelectedConversation(newConvo);
+            }
+             // Clean up URL
+            router.replace('/dashboard/messages');
+        } else if (conversations.length > 0 && !selectedConversation) {
+            setSelectedConversation(conversations[0]);
+        }
+    }, [searchParams, conversations, router, selectedConversation]);
+
+    const handleSendMessage = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!message.trim() || !selectedConversation) return;
+
+        const newMessage: Message = {
+            id: Date.now(),
+            sender: "me",
+            text: message,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        
+        const updatedConversation = {
+            ...selectedConversation,
+            messages: [...selectedConversation.messages, newMessage],
+            lastMessage: message,
+            time: "Now"
+        };
+        
+        setSelectedConversation(updatedConversation);
+        setConversations(conversations.map(c => c.id === updatedConversation.id ? updatedConversation : c));
+        setMessage("");
+    }
 
     return (
         <div className="h-[calc(100vh-10rem)] flex flex-col">
@@ -80,7 +137,7 @@ export default function MessagesPage() {
                         </div>
                     </div>
                     <ScrollArea className="h-[calc(100vh-18rem)]">
-                        {conversationsData.map((convo) => (
+                        {conversations.map((convo) => (
                             <button
                                 key={convo.id}
                                 className={cn(
@@ -121,24 +178,29 @@ export default function MessagesPage() {
                             </div>
                             <ScrollArea className="flex-1 p-6">
                                 <div className="space-y-4">
-                                    {selectedConversation.messages.map(message => (
-                                        <div key={message.id} className={cn("flex items-end gap-2", message.sender === "me" ? "justify-end" : "justify-start")}>
-                                            {message.sender === 'them' && <Avatar className="h-8 w-8"><AvatarImage src={selectedConversation.avatar} /></Avatar>}
+                                    {selectedConversation.messages.map(msg => (
+                                        <div key={msg.id} className={cn("flex items-end gap-2", msg.sender === "me" ? "justify-end" : "justify-start")}>
+                                            {msg.sender === 'them' && <Avatar className="h-8 w-8"><AvatarImage src={selectedConversation.avatar} /></Avatar>}
                                             <div className={cn(
                                                 "max-w-xs md:max-w-md lg:max-w-lg rounded-xl p-3 text-sm",
-                                                message.sender === "me" ? "bg-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none"
+                                                msg.sender === "me" ? "bg-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none"
                                             )}>
-                                                <p>{message.text}</p>
-                                                <p className="text-xs opacity-70 mt-1 text-right">{message.time}</p>
+                                                <p>{msg.text}</p>
+                                                <p className="text-xs opacity-70 mt-1 text-right">{msg.time}</p>
                                             </div>
-                                            {message.sender === 'me' && <Avatar className="h-8 w-8"><AvatarImage src="https://placehold.co/100x100.png" /></Avatar>}
+                                            {msg.sender === 'me' && <Avatar className="h-8 w-8"><AvatarImage src="https://placehold.co/100x100.png" /></Avatar>}
                                         </div>
                                     ))}
                                 </div>
                             </ScrollArea>
                             <div className="p-4 border-t">
-                                <form className="flex items-center gap-2">
-                                    <Input placeholder={t("Type your message...")} className="flex-1" />
+                                <form className="flex items-center gap-2" onSubmit={handleSendMessage}>
+                                    <Input 
+                                        placeholder={t("Type your message...")} 
+                                        className="flex-1"
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
+                                    />
                                     <Button type="submit"><Send className="h-4 w-4" /></Button>
                                 </form>
                             </div>

@@ -2,7 +2,7 @@
 "use client"
 
 import { useLocalization } from "@/context/localization-context";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -225,6 +225,7 @@ const InviteDialog = ({ graduateName }: { graduateName: string }) => {
 export default function GraduateProfilePage({ params }: { params: { slug: string } }) {
   const { language, t } = useLocalization();
   const { toast } = useToast();
+  const router = useRouter();
   const allGraduates = [...graduatesData.en, ...graduatesData.fr];
   const graduate = allGraduates.find((g) => g.slug === params.slug);
   
@@ -240,8 +241,9 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
   const handleContact = () => {
     toast({
       title: t('Contact Initiated'),
-      description: `${t('A message has been sent to')} ${graduate.name}. ${t('They will be notified of your interest.')}`
-    })
+      description: `${t('Redirecting to messages...')}`
+    });
+    router.push(`/dashboard/messages?new=${graduate.slug}`);
   }
 
   const mainFieldOfStudy = graduate.education.length > 0 ? graduate.education[0].field : "Graduate";

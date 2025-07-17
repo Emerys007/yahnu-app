@@ -1,7 +1,7 @@
 
 "use client"
 
-import { LogOut, User, Settings, Building } from "lucide-react"
+import { LogOut, User, Settings, Building, MessageSquare } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -76,6 +76,10 @@ export function UserNav() {
               <span>Company Profile</span>
             </DropdownMenuItem>
           )}
+           <DropdownMenuItem onClick={() => router.push('/dashboard/messages')}>
+            <MessageSquare className="mr-2 h-4 w-4" />
+            <span>Messages</span>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>
             <Settings className="mr-2 h-4 w-4" />
             <span>Settings</span>
