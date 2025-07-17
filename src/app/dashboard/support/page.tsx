@@ -4,15 +4,27 @@
 import { useAuth, type Role } from "@/context/auth-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocalization } from "@/context/localization-context";
-import { LifeBuoy, Mail, Phone } from "lucide-react";
+import { LifeBuoy, Mail, Phone, Send } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 
 interface FaqItem {
   question: string;
   answer: string;
 }
+
+const contactFormSchema = z.object({
+  subject: z.string().min(5, { message: "Subject must be at least 5 characters." }),
+  message: z.string().min(20, { message: "Message must be at least 20 characters." }),
+});
 
 const FAQSection = ({ title, faqs }: { title: string; faqs: FaqItem[] }) => (
   <div className="mb-6">
@@ -28,6 +40,69 @@ const FAQSection = ({ title, faqs }: { title: string; faqs: FaqItem[] }) => (
   </div>
 );
 
+const ContactSupportForm = () => {
+    const { t } = useLocalization();
+    const { toast } = useToast();
+    const form = useForm<z.infer<typeof contactFormSchema>>({
+        resolver: zodResolver(contactFormSchema),
+        defaultValues: { subject: "", message: "" },
+    });
+
+    const onSubmit = (values: z.infer<typeof contactFormSchema>) => {
+        console.log("Support form submitted:", values);
+        toast({
+            title: t('form_submitted_title'),
+            description: t('form_submitted_desc'),
+        });
+        form.reset();
+    }
+    
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>{t('contact_form_title')}</CardTitle>
+                <CardDescription>{t('contact_form_desc')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <FormField
+                            control={form.control}
+                            name="subject"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('form_subject_label')}</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder={t('form_subject_placeholder')} {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="message"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('form_message_label')}</FormLabel>
+                                    <FormControl>
+                                        <Textarea placeholder={t('form_message_placeholder')} rows={6} {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="w-full">
+                            <Send className="mr-2 h-4 w-4" />
+                            {t('form_submit_button')}
+                        </Button>
+                    </form>
+                </Form>
+            </CardContent>
+        </Card>
+    )
+}
+
 export default function SupportPage() {
   const { t } = useLocalization();
   const { role } = useAuth();
@@ -36,24 +111,28 @@ export default function SupportPage() {
     { question: t('faq_q_password'), answer: t('faq_a_password') },
     { question: t('faq_q_info'), answer: t('faq_a_info') },
     { question: t('faq_q_contact'), answer: t('faq_a_contact') },
+    { question: t('faq_q_language_theme'), answer: t('faq_a_language_theme') },
   ];
 
   const graduateFaqs: FaqItem[] = [
     { question: t('faq_q_pending'), answer: t('faq_a_pending') },
     { question: t('faq_q_profile'), answer: t('faq_a_profile') },
     { question: t('faq_q_matching'), answer: t('faq_a_matching') },
+    { question: t('faq_q_resume_parser'), answer: t('faq_a_resume_parser') },
   ];
   
   const companyFaqs: FaqItem[] = [
     { question: t('faq_q_post_job'), answer: t('faq_a_post_job') },
     { question: t('faq_q_find_candidates'), answer: t('faq_a_find_candidates') },
     { question: t('faq_q_partnerships'), answer: t('faq_a_partnerships') },
+    { question: t('faq_q_assessment_generator'), answer: t('faq_a_assessment_generator') },
   ];
 
   const schoolFaqs: FaqItem[] = [
     { question: t('faq_q_approve_graduates'), answer: t('faq_a_approve_graduates') },
     { question: t('faq_q_school_partnerships'), answer: t('faq_a_school_partnerships') },
     { question: t('faq_q_placement_analytics'), answer: t('faq_a_placement_analytics') },
+    { question: t('faq_q_event_management'), answer: t('faq_a_event_management') },
   ];
   
   const roleFaqs: Record<Role, FaqItem[]> = {
@@ -85,8 +164,8 @@ export default function SupportPage() {
             </div>
         </div>
         
-        <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
+        <div className="grid lg:grid-cols-3 gap-8 items-start">
+            <div className="lg:col-span-2 space-y-8">
                 <Card>
                     <CardHeader>
                         <CardTitle>{t('Frequently Asked Questions')}</CardTitle>
@@ -96,8 +175,9 @@ export default function SupportPage() {
                         <FAQSection title={t('faq_general_title')} faqs={generalFaqs} />
                     </CardContent>
                 </Card>
+                 <ContactSupportForm />
             </div>
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 sticky top-24">
                  <Card>
                     <CardHeader>
                         <CardTitle>{t('Contact Support')}</CardTitle>

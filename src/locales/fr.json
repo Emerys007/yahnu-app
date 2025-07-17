@@ -535,5 +535,22 @@
     "faq_q_school_partnerships": "Comment mon école peut-elle s'associer avec des entreprises ?",
     "faq_a_school_partnerships": "Les entreprises sur la plateforme peuvent vous envoyer des demandes de partenariat, que vous pouvez gérer sur la page 'Partenariats'. Vous pouvez également contacter de manière proactive les entreprises en mettant en valeur les programmes et les meilleurs diplômés de votre école.",
     "faq_q_placement_analytics": "Comment puis-je suivre le succès de mes diplômés ?",
-    "faq_a_placement_analytics": "La page 'Analyses' fournit des informations détaillées sur les taux de placement de vos diplômés, les entreprises qui les embauchent le plus et les secteurs dans lesquels ils entrent. Ces données vous aident à comprendre et à améliorer l'efficacité de vos services d'orientation professionnelle."
+    "faq_a_placement_analytics": "La page 'Analyses' fournit des informations détaillées sur les taux de placement de vos diplômés, les entreprises qui les embauchent le plus et les secteurs dans lesquels ils entrent. Ces données vous aident à comprendre et à améliorer l'efficacité de vos services d'orientation professionnelle.",
+    "faq_q_language_theme": "Comment puis-je changer la langue ou le thème ?",
+    "faq_a_language_theme": "Vous pouvez changer la langue et le thème (Clair/Sombre/Système) depuis le menu des paramètres. Sur ordinateur, cliquez sur l'icône des points verticaux en haut à droite de la barre de navigation. Sur mobile, c'est également dans le menu 'Plus'.",
+    "faq_q_resume_parser": "Pourquoi l'analyseur de CV n'a-t-il pas extrait toutes mes informations correctement ?",
+    "faq_a_resume_parser": "Notre analyseur de CV IA est très puissant, mais sa précision peut dépendre du format et de la mise en page du CV. Pour de meilleurs résultats, utilisez un format de CV propre et standard (par exemple, un PDF à une seule colonne). Après l'analyse, vérifiez toujours l'exactitude et l'exhaustivité des champs pré-remplis.",
+    "faq_q_assessment_generator": "Quel type de questions le générateur d'évaluations IA crée-t-il ?",
+    "faq_a_assessment_generator": "L'IA génère deux types de questions : des questions de 'compatibilité de base', adaptées aux valeurs de votre entreprise et aux compétences générales requises pour le poste, et des questions d' 'aptitude cognitive', qui évaluent la résolution de problèmes et la pensée critique en fonction de la complexité du rôle.",
+    "faq_q_event_management": "Qui est averti lorsque je crée un événement ?",
+    "faq_a_event_management": "Lorsque vous créez un événement, tous les diplômés de votre établissement inscrits sur la plateforme Yahnu recevront une notification les invitant à consulter les détails de l'événement et à RSVP.",
+    "contact_form_title": "Envoyez-nous un message",
+    "contact_form_desc": "Si vous n'avez pas trouvé de réponse dans la FAQ, veuillez remplir le formulaire ci-dessous.",
+    "form_subject_label": "Sujet",
+    "form_subject_placeholder": "ex: Problème avec mon profil",
+    "form_message_label": "Votre Message",
+    "form_message_placeholder": "Veuillez décrire votre problème en détail...",
+    "form_submit_button": "Envoyer le Message",
+    "form_submitted_title": "Message envoyé !",
+    "form_submitted_desc": "Merci de nous avoir contactés. Notre équipe de support vous répondra sous peu."
 }
