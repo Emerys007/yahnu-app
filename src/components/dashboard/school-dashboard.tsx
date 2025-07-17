@@ -120,7 +120,7 @@ export function SchoolDashboard() {
                 <CardDescription>{t('Number of graduates placed in jobs over the last 6 months.')}</CardDescription>
             </CardHeader>
             <CardContent>
-               <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+               <ChartContainer config={chartConfig} className="h-[250px] w-full">
                   <BarChart accessibilityLayer data={chartData}>
                     <CartesianGrid vertical={false} />
                     <XAxis
@@ -129,7 +129,7 @@ export function SchoolDashboard() {
                       tickMargin={10}
                       axisLine={false}
                     />
-                    <YAxis />
+                    <YAxis tickCount={5} />
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <ChartLegend content={<ChartLegendContent />} />
                     <Bar dataKey="graduates" fill="var(--color-graduates)" radius={4} />
