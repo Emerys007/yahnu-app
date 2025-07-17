@@ -38,6 +38,7 @@ const graduatesData = {
       email: "amina.diallo@example.com",
       phone: "+225 01 02 03 04 05",
       skills: ["React", "TypeScript", "Node.js", "GraphQL", "Next.js", "Figma"], 
+      badges: ["Frontend Development (React)"],
       available: true,
       experience: "2 years as a Frontend Developer at Tech Solutions Abidjan. Developed and maintained responsive web applications using React and TypeScript. Collaborated with UI/UX designers to implement pixel-perfect designs.",
       education: [
@@ -51,7 +52,8 @@ const graduatesData = {
       school: "UFHB", 
       email: "ben.traore@example.com",
       phone: "+225 02 03 04 05 06",
-      skills: ["Marketing", "Project Management", "Salesforce", "Market Analysis"], 
+      skills: ["Marketing", "Project Management", "Salesforce", "Market Analysis"],
+      badges: [],
       available: false,
       experience: "Marketing Intern at Finance & Forte. Assisted in market research and creating marketing campaigns. Managed social media accounts and analyzed engagement metrics.",
       education: [
@@ -65,6 +67,7 @@ const graduatesData = {
       email: "chloe.dubois@example.com",
       phone: "+225 03 04 05 06 07",
       skills: ["AutoCAD", "PLC", "Matlab", "Circuit Design", "Power Systems"], 
+      badges: [],
       available: true,
       experience: "Intern at Ivoirienne d'Électricité. Assisted in the design and maintenance of electrical grids. Conducted simulations using Matlab.",
       education: [
@@ -77,7 +80,8 @@ const graduatesData = {
       school: "INP-HB", 
       email: "david.kone@example.com",
       phone: "+225 04 05 06 07 08",
-      skills: ["Crop Science", "Soil Analysis", "Pest Management", "GIS", "Sustainable Agriculture"], 
+      skills: ["Crop Science", "Soil Analysis", "Pest Management", "GIS", "Sustainable Agriculture"],
+      badges: ["Modern Agronomy Principles"],
       available: true,
       experience: "Field Agronomist at AgriBiz Côte d'Ivoire. Conducted soil and crop analysis to improve yield. Implemented sustainable farming practices.",
       education: [
@@ -91,6 +95,7 @@ const graduatesData = {
       email: "elise.fofana@example.com",
       phone: "+225 05 06 07 08 09",
       skills: ["Financial Modeling", "Excel", "Valuation", "Risk Analysis", "Bloomberg Terminal"], 
+      badges: ["Financial Analysis Fundamentals"],
       available: true,
       experience: "Financial Analyst at Finance & Forte. Developed financial models for investment valuation. Conducted market research and risk analysis.",
       education: [
@@ -105,7 +110,8 @@ const graduatesData = {
       school: "INP-HB", 
       email: "amina.diallo@example.com",
       phone: "+225 01 02 03 04 05",
-      skills: ["React", "TypeScript", "Node.js", "GraphQL", "Next.js", "Figma"], 
+      skills: ["React", "TypeScript", "Node.js", "GraphQL", "Next.js", "Figma"],
+      badges: ["Développement Frontend (React)"],
       available: true,
       experience: "2 ans en tant que Développeuse Frontend chez Tech Solutions Abidjan. Développé et maintenu des applications web réactives en utilisant React et TypeScript. Collaboré avec les designers UI/UX pour implémenter des maquettes parfaites.",
       education: [
@@ -119,7 +125,8 @@ const graduatesData = {
       school: "UFHB", 
       email: "ben.traore@example.com",
       phone: "+225 02 03 04 05 06",
-      skills: ["Marketing", "Gestion de projet", "Salesforce", "Analyse de marché"], 
+      skills: ["Marketing", "Gestion de projet", "Salesforce", "Analyse de marché"],
+      badges: [],
       available: false,
       experience: "Stagiaire en marketing chez Finance & Forte. A assisté à la recherche de marché et à la création de campagnes marketing. A géré les comptes de médias sociaux et analysé les métriques d'engagement.",
       education: [
@@ -132,7 +139,8 @@ const graduatesData = {
       school: "Groupe CSI", 
       email: "chloe.dubois@example.com",
       phone: "+225 03 04 05 06 07",
-      skills: ["AutoCAD", "API", "Matlab", "Conception de circuits", "Systèmes d'alimentation"], 
+      skills: ["AutoCAD", "API", "Matlab", "Conception de circuits", "Systèmes d'alimentation"],
+      badges: [], 
       available: true,
       experience: "Stagiaire à l'Ivoirienne d'Électricité. A participé à la conception et à la maintenance des réseaux électriques. A réalisé des simulations avec Matlab.",
       education: [
@@ -145,7 +153,8 @@ const graduatesData = {
       school: "INP-HB", 
       email: "david.kone@example.com",
       phone: "+225 04 05 06 07 08",
-      skills: ["Phytotechnie", "Analyse de sol", "Lutte antiparasitaire", "SIG", "Agriculture durable"], 
+      skills: ["Phytotechnie", "Analyse de sol", "Lutte antiparasitaire", "SIG", "Agriculture durable"],
+      badges: ["Principes d'Agronomie Moderne"],
       available: true,
       experience: "Agronome de terrain chez AgriBiz Côte d'Ivoire. A effectué des analyses de sol et de culture pour améliorer le rendement. A mis en œuvre des pratiques agricoles durables.",
       education: [
@@ -159,6 +168,7 @@ const graduatesData = {
       email: "elise.fofana@example.com",
       phone: "+225 05 06 07 08 09",
       skills: ["Modélisation financière", "Excel", "Évaluation", "Analyse des risques", "Terminal Bloomberg"], 
+      badges: ["Principes de l'Analyse Financière"],
       available: true,
       experience: "Analyste financier chez Finance & Forte. A développé des modèles financiers pour l'évaluation des investissements. A effectué des études de marché et des analyses de risques.",
       education: [
@@ -320,16 +330,35 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
 
        <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Award /> {t('Skills')}</CardTitle>
+            <CardTitle className="flex items-center gap-2"><Award /> {t('Skills & Certifications')}</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            {localizedGraduate.skills.map((skill) => (
-              <Badge key={skill} variant="secondary" className="text-sm py-1 px-3">
-                {skill}
-              </Badge>
-            ))}
+          <CardContent className="space-y-4">
+            <div>
+                <h4 className="font-semibold text-sm mb-2">{t('Self-Reported Skills')}</h4>
+                <div className="flex flex-wrap gap-2">
+                {localizedGraduate.skills.map((skill) => (
+                    <Badge key={skill} variant="outline" className="text-sm py-1 px-3">
+                        {skill}
+                    </Badge>
+                ))}
+                </div>
+            </div>
+            {localizedGraduate.badges && localizedGraduate.badges.length > 0 && (
+                 <div>
+                    <h4 className="font-semibold text-sm mb-2">{t('Verified Skills')}</h4>
+                    <div className="flex flex-wrap gap-2">
+                    {localizedGraduate.badges.map((badge) => (
+                        <Badge key={badge} variant="secondary" className="text-sm py-1 px-3 gap-1.5">
+                             <CheckCircle2 className="h-3.5 w-3.5" />
+                            {t(badge)}
+                        </Badge>
+                    ))}
+                    </div>
+                </div>
+            )}
           </CardContent>
         </Card>
     </div>
   );
 }
+

@@ -17,25 +17,35 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { Search, GraduationCap, University, Briefcase } from "lucide-react"
+import { Search, GraduationCap, University, Briefcase, Award } from "lucide-react"
 import { useLocalization } from '@/context/localization-context'
+import { MultiSelectCombobox, type MultiSelectOption } from '@/components/ui/multi-select'
+
 
 const graduatesData = {
   en: [
-    { name: "Amina Diallo", slug: "amina-diallo", school: "INP-HB", field: "Computer Science", skills: ["React", "TypeScript", "Node.js"], available: true },
-    { name: "Ben Traoré", slug: "ben-traore", school: "UFHB", field: "Business Administration", skills: ["Marketing", "Project Management"], available: false },
-    { name: "Chloe Dubois", slug: "chloe-dubois", school: "Groupe CSI", field: "Electrical Engineering", skills: ["AutoCAD", "PLC", "Matlab"], available: true },
-    { name: "David Kone", slug: "david-kone", school: "INP-HB", field: "Agronomy", skills: ["Crop Science", "Soil Analysis"], available: true },
-    { name: "Elise Fofana", slug: "elise-fofana", school: "UFHB", field: "Finance", skills: ["Financial Modeling", "Excel"], available: true },
+    { name: "Amina Diallo", slug: "amina-diallo", school: "INP-HB", field: "Computer Science", skills: ["React", "TypeScript", "Node.js"], badges: ["Frontend Development (React)"], available: true },
+    { name: "Ben Traoré", slug: "ben-traore", school: "UFHB", field: "Business Administration", skills: ["Marketing", "Project Management"], badges: [], available: false },
+    { name: "Chloe Dubois", slug: "chloe-dubois", school: "Groupe CSI", field: "Electrical Engineering", skills: ["AutoCAD", "PLC", "Matlab"], badges: [], available: true },
+    { name: "David Kone", slug: "david-kone", school: "INP-HB", field: "Agronomy", skills: ["Crop Science", "Soil Analysis"], badges: ["Modern Agronomy Principles"], available: true },
+    { name: "Elise Fofana", slug: "elise-fofana", school: "UFHB", field: "Finance", skills: ["Financial Modeling", "Excel"], badges: ["Financial Analysis Fundamentals"], available: true },
   ],
   fr: [
-    { name: "Amina Diallo", slug: "amina-diallo", school: "INP-HB", field: "Génie Informatique", skills: ["React", "TypeScript", "Node.js"], available: true },
-    { name: "Ben Traoré", slug: "ben-traore", school: "UFHB", field: "Administration des affaires", skills: ["Marketing", "Gestion de projet"], available: false },
-    { name: "Chloe Dubois", slug: "chloe-dubois", school: "Groupe CSI", field: "Génie Électrique", skills: ["AutoCAD", "PLC", "Matlab"], available: true },
-    { name: "David Kone", slug: "david-kone", school: "INP-HB", field: "Agronomie", skills: ["Science des cultures", "Analyse de sol"], available: true },
-    { name: "Elise Fofana", slug: "elise-fofana", school: "UFHB", field: "Finance", skills: ["Modélisation financière", "Excel"], available: true },
+    { name: "Amina Diallo", slug: "amina-diallo", school: "INP-HB", field: "Génie Informatique", skills: ["React", "TypeScript", "Node.js"], badges: ["Développement Frontend (React)"], available: true },
+    { name: "Ben Traoré", slug: "ben-traore", school: "UFHB", field: "Administration des affaires", skills: ["Marketing", "Gestion de projet"], badges: [], available: false },
+    { name: "Chloe Dubois", slug: "chloe-dubois", school: "Groupe CSI", field: "Génie Électrique", skills: ["AutoCAD", "PLC", "Matlab"], badges: [], available: true },
+    { name: "David Kone", slug: "david-kone", school: "INP-HB", field: "Agronomie", skills: ["Science des cultures", "Analyse de sol"], badges: ["Principes d'Agronomie Moderne"], available: true },
+    { name: "Elise Fofana", slug: "elise-fofana", school: "UFHB", field: "Finance", skills: ["Modélisation financière", "Excel"], badges: ["Principes de l'Analyse Financière"], available: true },
   ]
 };
+
+const allBadges: MultiSelectOption[] = [
+    { value: "Frontend Development (React)", label: "Frontend Development (React)" },
+    { value: "Financial Analysis Fundamentals", label: "Financial Analysis Fundamentals" },
+    { value: "Modern Agronomy Principles", label: "Modern Agronomy Principles" },
+    { value: "Supply Chain Essentials", label: "Supply Chain Essentials" },
+    { value: "Cognitive Aptitude Test", label: "Cognitive Aptitude Test" },
+];
 
 export default function TalentPoolPage() {
   const { language, t } = useLocalization();
@@ -46,6 +56,7 @@ export default function TalentPoolPage() {
     school: "",
     field: "",
     availableOnly: false,
+    badges: [] as MultiSelectOption[]
   })
 
   const handleFilterChange = (key: string, value: any) => {
@@ -54,15 +65,16 @@ export default function TalentPoolPage() {
 
   const filteredGraduates = useMemo(() => {
     return graduates.filter(grad => {
-      const { keywords, school, field, availableOnly } = filters;
+      const { keywords, school, field, availableOnly, badges } = filters;
       
       const keywordsMatch = (grad.name.toLowerCase().includes(keywords.toLowerCase()) || 
                              grad.skills.some(skill => skill.toLowerCase().includes(keywords.toLowerCase())));
       const schoolMatch = grad.school.toLowerCase().includes(school.toLowerCase());
       const fieldMatch = grad.field.toLowerCase().includes(field.toLowerCase());
       const availabilityMatch = !availableOnly || grad.available;
+      const badgeMatch = badges.length === 0 || badges.every(badge => grad.badges.includes(badge.value));
 
-      return keywordsMatch && schoolMatch && fieldMatch && availabilityMatch;
+      return keywordsMatch && schoolMatch && fieldMatch && availabilityMatch && badgeMatch;
     })
   }, [filters, graduates]);
 
@@ -94,6 +106,16 @@ export default function TalentPoolPage() {
               <GraduationCap className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input id="field" placeholder={t("e.g., Computer Science")} className="pl-8" value={filters.field} onChange={(e) => handleFilterChange('field', e.target.value)} />
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="badges">{t('Verified Skills')}</Label>
+            <MultiSelectCombobox 
+                groups={[{ label: t("Certifications"), options: allBadges.map(b => ({...b, label: t(b.label)})) }]}
+                selected={filters.badges}
+                onChange={(selected) => handleFilterChange('badges', selected)}
+                placeholder={t("Filter by badges...")}
+                searchPlaceholder={t("Search skills...")}
+            />
           </div>
            <div className="flex items-center space-x-2 pt-2">
             <Checkbox id="available" checked={filters.availableOnly} onCheckedChange={(checked) => handleFilterChange('availableOnly', checked)} />
@@ -129,6 +151,19 @@ export default function TalentPoolPage() {
                     <Badge key={skill} variant="outline">{skill}</Badge>
                   ))}
                 </div>
+                {grad.badges && grad.badges.length > 0 && (
+                    <div className="mt-4">
+                        <h4 className="font-semibold text-sm mb-2">{t('Verified Skills')}</h4>
+                        <div className="flex flex-wrap gap-2">
+                        {grad.badges.map((badge) => (
+                            <Badge key={badge} variant="secondary" className="gap-1">
+                                <Award className="h-3 w-3" />
+                                {t(badge)}
+                            </Badge>
+                        ))}
+                        </div>
+                    </div>
+                )}
               </CardContent>
               <CardFooter>
                  <Button className="w-full" asChild>
@@ -149,3 +184,4 @@ export default function TalentPoolPage() {
     </div>
   )
 }
+
