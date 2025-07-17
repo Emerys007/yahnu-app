@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { africanCountries, Country } from "@/lib/countries"
+import { africanCountries as countryData, type Country as CountryData } from "@/lib/african-countries"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { useLocalization } from "@/context/localization-context"
@@ -30,7 +30,6 @@ interface AddressSuggestion {
   description: string
 }
 
-// Mock API functions - to be replaced with a real geocoding API
 const fetchAddressSuggestions = async (query: string, countryCode: string): Promise<AddressSuggestion[]> => {
     if (!query || !OPENCAGE_API_KEY) return [];
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(query)}&key=${OPENCAGE_API_KEY}&countrycode=${countryCode}&limit=5`;
@@ -39,7 +38,7 @@ const fetchAddressSuggestions = async (query: string, countryCode: string): Prom
         const data = await response.json();
         if (data.results) {
             return data.results.map((result: any, index: number) => ({
-                id: result.annotations.geohash || `${result.bounds.northeast.lat}-${index}`, // Create a more stable ID
+                id: result.annotations.geohash || `${result.bounds.northeast.lat}-${index}`,
                 description: result.formatted,
             }));
         }
@@ -83,16 +82,16 @@ export const AddressAutocomplete = React.forwardRef<
   const [search, setSearch] = React.useState("")
   const [suggestions, setSuggestions] = React.useState<AddressSuggestion[]>([])
   const [isLoading, setIsLoading] = React.useState(false)
-  const [selectedCountry, setSelectedCountry] = React.useState<Country | null>(null)
+  const [selectedCountry, setSelectedCountry] = React.useState<CountryData | null>(null)
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (value.country) {
-      const country = africanCountries.find(c => c.name === value.country)
+      const country = countryData.find(c => c.name === value.country)
       setSelectedCountry(country || null)
     }
   }, [value.country])
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handler = setTimeout(async () => {
       if (search.length > 2 && selectedCountry) {
         setIsLoading(true)
@@ -102,7 +101,7 @@ export const AddressAutocomplete = React.forwardRef<
       } else {
         setSuggestions([])
       }
-    }, 500) // Debounce API calls
+    }, 500)
 
     return () => clearTimeout(handler)
   }, [search, selectedCountry])
@@ -118,12 +117,12 @@ export const AddressAutocomplete = React.forwardRef<
     <div ref={ref} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Country')}</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Country')}</label>
           <Select
             onValueChange={(countryName) => {
-                const country = africanCountries.find(c => c.name === countryName)
+                const country = countryData.find(c => c.name === countryName)
                 setSelectedCountry(country || null)
-                onChange({ ...value, country: countryName })
+                onChange({ ...value, country: countryName, state: '' })
             }}
             value={value.country}
           >
@@ -131,7 +130,7 @@ export const AddressAutocomplete = React.forwardRef<
               <SelectValue placeholder={t("Select a country")} />
             </SelectTrigger>
             <SelectContent>
-              {africanCountries.map((country) => (
+              {countryData.map((country) => (
                 <SelectItem key={country.code} value={country.name}>
                   {country.name}
                 </SelectItem>
@@ -140,17 +139,17 @@ export const AddressAutocomplete = React.forwardRef<
           </Select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Find Address')}</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Find Address')}</label>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
                 role="combobox"
                 aria-expanded={open}
-                className="w-full justify-between"
+                className="w-full justify-between font-normal"
                 disabled={!selectedCountry}
               >
-                {search || t("Start typing an address...")}
+                <span className="truncate">{search || t("Start typing an address...")}</span>
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -184,7 +183,7 @@ export const AddressAutocomplete = React.forwardRef<
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Street')}</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Street Address')}</label>
           <Input 
             value={value.street} 
             onChange={e => onChange({...value, street: e.target.value})}
@@ -192,7 +191,7 @@ export const AddressAutocomplete = React.forwardRef<
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('City')}</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('City')}</label>
           <Input 
             value={value.city}
             onChange={e => onChange({...value, city: e.target.value})}
@@ -202,15 +201,26 @@ export const AddressAutocomplete = React.forwardRef<
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('State / Province')}</label>
-          <Input
-            value={value.state}
-            onChange={e => onChange({...value, state: e.target.value})}
-            placeholder="e.g. Lagunes"
-          />
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('State / Province')}</label>
+            <Select
+                onValueChange={(stateName) => onChange({ ...value, state: stateName })}
+                value={value.state}
+                disabled={!selectedCountry || !selectedCountry.states.length}
+            >
+                <SelectTrigger>
+                    <SelectValue placeholder={t("Select a state")} />
+                </SelectTrigger>
+                <SelectContent>
+                    {selectedCountry?.states.map((state) => (
+                        <SelectItem key={state} value={state}>
+                            {state}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Postal Code')}</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('ZIP / Postal Code')}</label>
           <Input
             value={value.zip}
             onChange={e => onChange({...value, zip: e.target.value})}
