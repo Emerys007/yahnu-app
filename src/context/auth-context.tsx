@@ -2,7 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup } from "firebase/auth";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { app } from '@/lib/firebase'; // Ensure your firebase config is correctly exported from here
 
@@ -26,6 +26,10 @@ export interface UserProfile {
   companyName?: string;
   contactName?: string;
   industry?: string;
+  experience?: string;
+  education?: string;
+  skills?: string[] | string;
+  phone?: string;
 }
 
 interface AuthContextType {
@@ -118,6 +122,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     const userCredential = await createUserWithEmailAndPassword(auth, profile.email, password);
     const firebaseUser = userCredential.user;
+    
+    // Send verification email
+    await sendEmailVerification(firebaseUser);
+
     const { email, ...profileData } = profile;
     const status = await createUserDocument(firebaseUser, profileData, firebaseUser.email!);
     
@@ -227,5 +235,3 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
-
-    
