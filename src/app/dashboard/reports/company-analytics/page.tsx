@@ -12,11 +12,21 @@ import {
   ChartLegend,
   ChartLegendContent
 } from "@/components/ui/chart"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Pie, PieChart, Line, LineChart, Funnel, FunnelChart, LabelList, Tooltip } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Pie, PieChart, Line, LineChart, Funnel, FunnelChart, LabelList, Tooltip, TooltipProps } from "recharts"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { exportToCsv } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 
+type AppVolumeDetail = {
+    jobTitle: string;
+    count: number;
+}
+type ApplicationVolumePoint = {
+    date: string;
+    count: number;
+    details: AppVolumeDetail[];
+};
 const analyticsData = {
     totalApplicants: 124,
     avgTimeToHire: 42,
@@ -29,12 +39,12 @@ const analyticsData = {
         { name: "Hired", value: 8, fill: "hsl(var(--chart-5))" },
     ],
     applicationVolume: [
-        { date: "2023-01-01", count: 15 },
-        { date: "2023-02-01", count: 28 },
-        { date: "2023-03-01", count: 22 },
-        { date: "2023-04-01", count: 45 },
-        { date: "2023-05-01", count: 38 },
-        { date: "2023-06-01", count: 53 },
+        { date: "2023-01-01", count: 15, details: [{ jobTitle: "Software Engineer", count: 10 }, { jobTitle: "Product Manager", count: 5 }] },
+        { date: "2023-02-01", count: 28, details: [{ jobTitle: "Software Engineer", count: 18 }, { jobTitle: "Product Manager", count: 10 }] },
+        { date: "2023-03-01", count: 22, details: [{ jobTitle: "UX/UI Designer", count: 12 }, { jobTitle: "Software Engineer", count: 10 }] },
+        { date: "2023-04-01", count: 45, details: [{ jobTitle: "Data Scientist", count: 20 }, { jobTitle: "Software Engineer", count: 15 }, { jobTitle: "Product Manager", count: 10 }] },
+        { date: "2023-05-01", count: 38, details: [{ jobTitle: "Data Scientist", count: 18 }, { jobTitle: "DevOps Engineer", count: 20 }] },
+        { date: "2023-06-01", count: 53, details: [{ jobTitle: "Software Engineer", count: 30 }, { jobTitle: "DevOps Engineer", count: 23 }] },
     ],
     applicantsBySchool: [
         { name: "INP-HB", value: 58, fill: "hsl(var(--chart-1))" },
@@ -61,6 +71,31 @@ const pieChartConfig = {
     "CSI": { label: "CSI", color: "hsl(var(--chart-3))" },
 }
 
+const CustomVolumeTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+    const { t } = useLocalization();
+    if (active && payload && payload.length) {
+      const data: ApplicationVolumePoint = payload[0].payload;
+      return (
+        <Card className="w-64 shadow-lg">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">{new Date(label).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</CardTitle>
+            <CardDescription>{t('{count} total applications', { count: data.count })}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-1 text-sm">
+              {data.details.map((detail, i) => (
+                <li key={i} className="flex justify-between">
+                  <span>{detail.jobTitle}:</span>
+                  <strong>{detail.count}</strong>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      );
+    }
+    return null;
+};
 
 export default function CompanyAnalyticsPage() {
   const { t } = useLocalization();
@@ -72,7 +107,7 @@ export default function CompanyAnalyticsPage() {
         <p className="text-muted-foreground mt-1">{t('Insights into your hiring funnel and applicant data.')}</p>
       </div>
       
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{t('Total Applicants')}</CardTitle>
@@ -128,7 +163,7 @@ export default function CompanyAnalyticsPage() {
         <CardContent>
             <ChartContainer config={funnelChartConfig} className="mx-auto aspect-video max-h-[300px]">
                 <FunnelChart layout="horizontal" data={analyticsData.applicantFunnel}>
-                    <Tooltip />
+                    <Tooltip content={<ChartTooltipContent indicator="line" />} />
                     <Funnel dataKey="value" nameKey="name" isAnimationActive>
                         <LabelList position="center" fill="#fff" stroke="none" dataKey="name" />
                     </Funnel>
@@ -137,7 +172,7 @@ export default function CompanyAnalyticsPage() {
         </CardContent>
       </Card>
       
-      <div className="grid lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         <Card className="lg:col-span-3">
             <CardHeader className="flex flex-row items-center">
                 <div className="grid gap-2">
@@ -151,7 +186,7 @@ export default function CompanyAnalyticsPage() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => exportToCsv(analyticsData.applicationVolume, "application_volume.csv")}>
+                        <DropdownMenuItem onClick={() => exportToCsv(analyticsData.applicationVolume.map(d => ({ date: d.date, count: d.count })), "application_volume.csv")}>
                             <Download className="mr-2 h-4 w-4" />
                             {t('Export as CSV')}
                         </DropdownMenuItem>
@@ -160,12 +195,12 @@ export default function CompanyAnalyticsPage() {
             </CardHeader>
             <CardContent>
                  <ChartContainer config={lineChartConfig} className="min-h-[300px] w-full">
-                    <LineChart data={analyticsData.applicationVolume}>
+                    <LineChart accessibilityLayer data={analyticsData.applicationVolume}>
                         <CartesianGrid vertical={false} />
                         <XAxis dataKey="date" tickFormatter={(val) => new Date(val).toLocaleDateString('en-US', { month: 'short' })} />
                         <YAxis />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        <Line type="monotone" dataKey="count" stroke="hsl(var(--primary))" />
+                        <ChartTooltip cursor={false} content={<CustomVolumeTooltip />} />
+                        <Line type="monotone" dataKey="count" stroke="hsl(var(--primary))" strokeWidth={2} dot={{r: 4, fill: "hsl(var(--primary))" }} />
                     </LineChart>
                 </ChartContainer>
             </CardContent>
@@ -190,11 +225,11 @@ export default function CompanyAnalyticsPage() {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </CardHeader>
-            <CardContent className="flex justify-center">
-                 <ChartContainer config={pieChartConfig} className="min-h-[300px] w-full">
+            <CardContent className="flex justify-center h-[300px]">
+                 <ChartContainer config={pieChartConfig} className="w-full">
                     <PieChart>
                         <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-                        <Pie data={analyticsData.applicantsBySchool} dataKey="value" nameKey="name" />
+                        <Pie data={analyticsData.applicantsBySchool} dataKey="value" nameKey="name" innerRadius={50} paddingAngle={2}/>
                         <ChartLegend content={<ChartLegendContent nameKey="name" />} />
                     </PieChart>
                 </ChartContainer>

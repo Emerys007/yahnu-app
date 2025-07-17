@@ -602,7 +602,21 @@
     "Number of graduates placed in jobs over the last 6 months.": "Nombre de diplômés placés en emploi au cours des 6 derniers mois.",
     "Declined": "Refusé",
     "No users found.": "Aucun utilisateur trouvé.",
-    "Super Admin": "Super Administrateur"
+    "Super Admin": "Super Administrateur",
+    "New users this month": "Nouveaux utilisateurs ce mois-ci",
+    "Total": "Total",
+    "Graduates": "Diplômés",
+    "January": "Janvier",
+    "February": "Février",
+    "March": "Mars",
+    "April": "Avril",
+    "May": "Mai",
+    "June": "Juin",
+    "July": "Juillet",
+    "August": "Août",
+    "September": "Septembre",
+    "October": "Octobre",
+    "November": "Novembre",
+    "December": "Décembre",
+    "{count} total applications": "{count} candidatures au total"
 }
-
-    

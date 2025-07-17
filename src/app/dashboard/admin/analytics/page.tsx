@@ -2,6 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart3 } from "lucide-react"
 import { AnalyticsClient } from "./analytics-client"
+import { useLocalization } from "@/context/localization-context";
 
 const analyticsData = {
     totalUsers: 1256,
@@ -10,12 +11,12 @@ const analyticsData = {
     activeSchools: 12,
     activeGraduates: 1196,
     userGrowthData: [
-        { month: "Jan", users: 150 },
-        { month: "Feb", users: 280 },
-        { month: "Mar", users: 450 },
-        { month: "Apr", users: 680 },
-        { month: "May", users: 950 },
-        { month: "Jun", users: 1256 },
+        { month: "Jan", users: 150, details: { newGraduates: 140, newCompanies: 8, newSchools: 2 } },
+        { month: "Feb", users: 280, details: { newGraduates: 250, newCompanies: 25, newSchools: 5 } },
+        { month: "Mar", users: 450, details: { newGraduates: 420, newCompanies: 20, newSchools: 10 } },
+        { month: "Apr", users: 680, details: { newGraduates: 650, newCompanies: 20, newSchools: 10 } },
+        { month: "May", users: 950, details: { newGraduates: 900, newCompanies: 40, newSchools: 10 } },
+        { month: "Jun", users: 1256, details: { newGraduates: 1196, newCompanies: 48, newSchools: 12 } },
     ],
     userDistribution: [
         { name: "Graduates", value: 1196, fill: "var(--color-graduates)" },
@@ -25,6 +26,15 @@ const analyticsData = {
 }
 
 export default async function AdminAnalyticsPage() {
+  const { t } = useLocalization();
+
+  // This is a bit of a hack to use the hook in a server component context.
+  // In a real app, you might pass the `t` function down or fetch translations differently.
+  analyticsData.userGrowthData.forEach(d => {
+      // @ts-ignore
+      d.month = t(d.month)
+  })
+
   return (
     <div className="space-y-8">
       <div className="flex items-start gap-4">
@@ -32,8 +42,8 @@ export default async function AdminAnalyticsPage() {
             <BarChart3 className="h-6 w-6 text-primary" />
         </div>
         <div>
-            <h1 className="text-3xl font-bold tracking-tight">Platform Analytics</h1>
-            <p className="text-muted-foreground mt-1">High-level insights into platform usage and growth.</p>
+            <h1 className="text-3xl font-bold tracking-tight">{t('Platform Analytics')}</h1>
+            <p className="text-muted-foreground mt-1">{t('High-level insights into platform usage and growth.')}</p>
         </div>
       </div>
       
