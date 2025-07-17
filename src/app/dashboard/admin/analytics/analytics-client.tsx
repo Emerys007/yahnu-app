@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button"
 import { exportToCsv } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useLocalization } from "@/context/localization-context"
+import React from "react"
 
 const chartConfig = {
     graduates: { label: "Graduates", color: "hsl(var(--chart-1))" },
@@ -70,6 +71,22 @@ const CustomGrowthTooltip = ({ active, payload, label }: TooltipProps<number, st
 
 export function AnalyticsClient({ data }: { data: AnalyticsData }) {
     const { t } = useLocalization();
+    
+    const translatedUserGrowthData = React.useMemo(() => {
+        return data.userGrowthData.map(d => ({
+            ...d,
+            month: t(d.month.substring(0, 3))
+        }))
+    }, [data.userGrowthData, t]);
+    
+    const translatedUserDistribution = React.useMemo(() => {
+        return data.userDistribution.map(d => ({
+            ...d,
+            name: t(d.name)
+        }))
+    }, [data.userDistribution, t])
+
+
     return (
         <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -138,7 +155,7 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
                     </CardHeader>
                     <CardContent>
                         <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
-                            <BarChart accessibilityLayer data={data.userGrowthData}>
+                            <BarChart accessibilityLayer data={translatedUserGrowthData}>
                                 <CartesianGrid vertical={false} />
                                 <XAxis dataKey="month" tickLine={false} tickMargin={10} axisLine={false} />
                                 <YAxis tickLine={false} axisLine={false} />
@@ -176,7 +193,7 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
                         <ChartContainer config={chartConfig} className="w-full">
                             <PieChart>
                                 <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-                                <Pie data={data.userDistribution} dataKey="value" nameKey="name" innerRadius={50} paddingAngle={2} />
+                                <Pie data={translatedUserDistribution} dataKey="value" nameKey="name" innerRadius={50} paddingAngle={2} />
                                 <ChartLegend content={<ChartLegendContent nameKey="name" />} />
                             </PieChart>
                         </ChartContainer>

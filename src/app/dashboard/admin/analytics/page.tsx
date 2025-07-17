@@ -2,7 +2,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart3 } from "lucide-react"
 import { AnalyticsClient } from "./analytics-client"
-import { useLocalization } from "@/context/localization-context";
 
 const analyticsData = {
     totalUsers: 1256,
@@ -26,15 +25,6 @@ const analyticsData = {
 }
 
 export default async function AdminAnalyticsPage() {
-  const { t } = useLocalization();
-
-  // This is a bit of a hack to use the hook in a server component context.
-  // In a real app, you might pass the `t` function down or fetch translations differently.
-  analyticsData.userGrowthData.forEach(d => {
-      // @ts-ignore
-      d.month = t(d.month)
-  })
-
   return (
     <div className="space-y-8">
       <div className="flex items-start gap-4">
@@ -42,8 +32,8 @@ export default async function AdminAnalyticsPage() {
             <BarChart3 className="h-6 w-6 text-primary" />
         </div>
         <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t('Platform Analytics')}</h1>
-            <p className="text-muted-foreground mt-1">{t('High-level insights into platform usage and growth.')}</p>
+            <h1 className="text-3xl font-bold tracking-tight">Platform Analytics</h1>
+            <p className="text-muted-foreground mt-1">High-level insights into platform usage and growth.</p>
         </div>
       </div>
       
