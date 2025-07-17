@@ -238,9 +238,10 @@ export function SchoolDashboard() {
                       tickFormatter={(value) => value.slice(0, 3)}
                     />
                     <YAxis tickCount={5} />
-                    <ChartTooltip 
-                        cursor={{ fill: 'hsl(var(--accent))', radius: 4, y: 10, height: 215 }}
-                        content={<CustomTooltip />} 
+                    <ChartTooltip
+                      cursor={{ fill: "hsl(var(--accent))", radius: 4 }}
+                      content={<CustomTooltip />}
+                      position={{ y: -130 }}
                     />
                     <Bar dataKey="graduates" fill="var(--color-graduates)" radius={4} />
                   </BarChart>
