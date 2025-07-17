@@ -3,7 +3,6 @@ import * as React from 'react';
 import { DashboardSidebar, SidebarProvider } from '@/components/dashboard/sidebar';
 import { DashboardHeader } from '@/components/dashboard/header';
 import { Footer } from '@/components/landing/footer';
-import { Chatbot } from '@/components/chatbot';
 import { DashboardContent } from '@/components/dashboard/dashboard-content';
 
 export default function DashboardLayout({
@@ -24,7 +23,6 @@ export default function DashboardLayout({
                     </DashboardContent>
                 </main>
             </div>
-            <Chatbot />
         </div>
         <Footer />
       </SidebarProvider>
