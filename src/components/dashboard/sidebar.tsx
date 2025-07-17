@@ -48,6 +48,8 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/jobs", icon: Briefcase, label: t('Job Search') },
     { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
     { href: "/dashboard/events", icon: Calendar, label: t('Events') },
+    { type: "divider", label: t('AI Tools') },
+    { href: "/dashboard/interview-prep", icon: BrainCircuit, label: t('Interview Prep') },
   ];
 
   const companyNav = [
