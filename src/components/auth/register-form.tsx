@@ -30,12 +30,13 @@ import { useLocalization } from "@/context/localization-context"
 import { PasswordInput } from "@/components/ui/password-input"
 import { Separator } from "../ui/separator"
 import Link from "next/link"
+import { db } from "@/lib/firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
-const allSchools = [
-    { id: "inp-hb", name: "Institut National Polytechnique Félix Houphouët-Boigny" },
-    { id: "ufhb", name: "Université Félix Houphouët-Boigny" },
-    { id: "csi", name: "Groupe CSI Pôle Polytechnique" },
-];
+type SchoolOption = {
+    id: string;
+    name: string;
+}
 
 const industrySectors = [
     "Agriculture", "Finance & Banking", "Information Technology", "Telecommunications", 
@@ -107,6 +108,30 @@ export function RegisterForm() {
     const { toast } = useToast();
     const router = useRouter();
     const [isLoading, setIsLoading] = React.useState(false);
+    const [schools, setSchools] = React.useState<SchoolOption[]>([]);
+
+    React.useEffect(() => {
+        const fetchSchools = async () => {
+            try {
+                const schoolsQuery = query(collection(db, "users"), where("role", "==", "school"), where("status", "==", "active"));
+                const querySnapshot = await getDocs(schoolsQuery);
+                const schoolList = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    name: doc.data().name as string
+                }));
+                setSchools(schoolList);
+            } catch (error) {
+                console.error("Failed to fetch schools:", error);
+                toast({
+                    title: "Could not load schools",
+                    description: "There was a problem fetching the list of schools. Please try again later.",
+                    variant: "destructive"
+                });
+            }
+        };
+
+        fetchSchools();
+    }, [toast]);
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -313,14 +338,14 @@ export function RegisterForm() {
             render={({ field }) => (
                 <FormItem>
                 <FormLabel>{t('School/University')}</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading || schools.length === 0}>
                     <FormControl>
                     <SelectTrigger>
                         <SelectValue placeholder={t("Select your school")} />
                     </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                        {allSchools.map(school => (
+                        {schools.map(school => (
                             <SelectItem key={school.id} value={school.id}>{school.name}</SelectItem>
                         ))}
                     </SelectContent>

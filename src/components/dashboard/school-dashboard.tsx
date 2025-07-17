@@ -47,7 +47,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
     if (active && payload && payload.length) {
         const data: MonthlyHires = payload[0].payload;
         return (
-        <Card className="w-80 shadow-2xl">
+        <Card className="w-80 shadow-2xl" style={{ transform: 'translateX(-50%)' }}>
             <CardHeader>
                 <CardTitle className="text-base">{label}</CardTitle>
                 <CardDescription>{t('{count} graduates hired', { count: data.graduates })}</CardDescription>
@@ -239,7 +239,7 @@ export function SchoolDashboard() {
                     />
                     <YAxis tickCount={5} />
                     <ChartTooltip
-                      cursor={{ fill: "hsl(var(--accent))", radius: 4 }}
+                      cursor={false}
                       content={<CustomTooltip />}
                       position={{ y: -130 }}
                     />
