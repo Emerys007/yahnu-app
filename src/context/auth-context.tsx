@@ -73,29 +73,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
-      if (firebaseUser) {
+      if (firebaseUser && !user) { // Only run if firebaseUser exists and we don't have a user yet
         const userProfile = await fetchUserDocument(firebaseUser);
          if (userProfile) {
-          if (userProfile.status === 'pending') {
-            setUser(null); 
-          } else if (userProfile.status === 'suspended') {
-            setUser(null);
-          }
-          else {
+          if (userProfile.status === 'active') {
             setUser(userProfile);
+          } else {
+             // For pending/suspended users, keep them signed out of the app state
+             setUser(null);
           }
         } else {
            console.warn("User document not found for UID:", firebaseUser.uid);
            setUser(null);
            await firebaseSignOut(auth);
         }
-      } else {
+      } else if (!firebaseUser) {
         setUser(null);
       }
       setLoading(false);
     });
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   const createUserDocument = async (firebaseUser: FirebaseUser, profile: Omit<UserProfile, 'uid' | 'email'>, email: string) => {
     const userDocRef = doc(db, "users", firebaseUser.uid);
