@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import { useLocalization } from "@/context/localization-context"
 import { useAuth } from "@/context/auth-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -23,15 +23,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { MultiSelectCombobox, type MultiSelectOption } from "@/components/ui/multi-select"
 
 
 type GraduateStatus = "pending" | "active"
@@ -54,17 +48,31 @@ const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
     const { t } = useLocalization();
     const { toast } = useToast();
     const [isOpen, setIsOpen] = useState(false);
+    const [selectedRecipients, setSelectedRecipients] = useState<MultiSelectOption[]>([]);
     
-    const pendingCount = graduates.filter(g => g.status === 'pending').length;
-    const activeCount = graduates.filter(g => g.status === 'active').length;
+    const graduateOptions: MultiSelectOption[] = useMemo(() => 
+        graduates.map(g => ({ value: g.id, label: g.name })),
+    [graduates]);
+
+    const groupOptions: MultiSelectOption[] = useMemo(() => [
+        { value: 'all', label: t('All Graduates') },
+        { value: 'pending', label: t('Pending Graduates') },
+        { value: 'active', label: t('Active Graduates') }
+    ], [t]);
+
 
     const handleSendBroadcast = () => {
         // In a real app, this would trigger a backend process
+        // You would resolve the selected recipients (groups and individuals) into a list of UIDs
+        // and send the message via a server-side function.
+        console.log("Sending broadcast to:", selectedRecipients.map(r => r.value));
+        
         toast({
             title: t("Broadcast Sent"),
             description: t("Your message is being sent to the selected graduates."),
         });
         setIsOpen(false);
+        setSelectedRecipients([]);
     }
 
     return (
@@ -75,7 +83,7 @@ const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
                     {t('Broadcast Message')}
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>{t('Send a Broadcast Message')}</DialogTitle>
                     <DialogDescription>
@@ -85,16 +93,17 @@ const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
                 <div className="space-y-4 py-4">
                     <div>
                         <Label htmlFor="recipients">{t('Recipients')}</Label>
-                        <Select defaultValue="all">
-                            <SelectTrigger id="recipients">
-                                <SelectValue placeholder={t("Select recipients")} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">{t('All Graduates')} ({graduates.length})</SelectItem>
-                                <SelectItem value="pending">{t('Pending Graduates')} ({pendingCount})</SelectItem>
-                                <SelectItem value="active">{t('Active Graduates')} ({activeCount})</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <MultiSelectCombobox
+                            groups={[
+                                { label: t('Groups'), options: groupOptions },
+                                { label: t('Individuals'), options: graduateOptions }
+                            ]}
+                            selected={selectedRecipients}
+                            onChange={setSelectedRecipients}
+                            placeholder={t("Select recipients...")}
+                            searchPlaceholder={t("Search graduates or groups...")}
+                            emptyPlaceholder={t("No results found.")}
+                        />
                     </div>
                      <div>
                         <Label htmlFor="subject">{t('Subject')}</Label>
@@ -106,7 +115,7 @@ const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleSendBroadcast}>
+                    <Button onClick={handleSendBroadcast} disabled={selectedRecipients.length === 0}>
                          <Send className="mr-2 h-4 w-4" />
                         {t('Send Broadcast')}
                     </Button>
@@ -305,5 +314,3 @@ export default function GraduateManagementPage() {
     </div>
   )
 }
-
-    
