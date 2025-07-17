@@ -13,6 +13,13 @@ const googleProvider = new GoogleAuthProvider();
 export type Role = 'graduate' | 'company' | 'school' | 'admin';
 export type UserStatus = 'pending' | 'active' | 'suspended' | 'declined';
 
+export type EducationEntry = {
+  degree: string;
+  field: string;
+  gradYear: string;
+  verified: boolean;
+};
+
 export interface UserProfile {
   uid: string;
   email: string | null;
@@ -27,7 +34,7 @@ export interface UserProfile {
   contactName?: string;
   industry?: string;
   experience?: string;
-  education?: string;
+  education?: EducationEntry[];
   skills?: string[] | string;
   phone?: string;
 }

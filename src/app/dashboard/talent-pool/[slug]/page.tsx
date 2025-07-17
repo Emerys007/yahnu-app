@@ -7,7 +7,7 @@ import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { User, Mail, Phone, GraduationCap, University, Briefcase, Award, MessageSquare, Send } from "lucide-react";
+import { User, Mail, Phone, GraduationCap, University, Briefcase, Award, MessageSquare, Send, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import React, { useState } from "react";
@@ -35,61 +35,67 @@ const graduatesData = {
       name: "Amina Diallo",
       slug: "amina-diallo", 
       school: "INP-HB", 
-      field: "Computer Science",
       email: "amina.diallo@example.com",
       phone: "+225 01 02 03 04 05",
       skills: ["React", "TypeScript", "Node.js", "GraphQL", "Next.js", "Figma"], 
       available: true,
       experience: "2 years as a Frontend Developer at Tech Solutions Abidjan. Developed and maintained responsive web applications using React and TypeScript. Collaborated with UI/UX designers to implement pixel-perfect designs.",
-      education: "Master's Degree in Computer Science, INP-HB (2022)\nBachelor's Degree in Software Engineering, INP-HB (2020)",
+      education: [
+        { degree: "Master's Degree", field: "Computer Science", gradYear: "2022", verified: true },
+        { degree: "Bachelor's Degree", field: "Software Engineering", gradYear: "2020", verified: false }
+      ],
     },
     { 
       name: "Ben Traoré", 
       slug: "ben-traore",
       school: "UFHB", 
-      field: "Business Administration", 
       email: "ben.traore@example.com",
       phone: "+225 02 03 04 05 06",
       skills: ["Marketing", "Project Management", "Salesforce", "Market Analysis"], 
       available: false,
       experience: "Marketing Intern at Finance & Forte. Assisted in market research and creating marketing campaigns. Managed social media accounts and analyzed engagement metrics.",
-      education: "Bachelor's Degree in Business Administration, UFHB (2023)",
+      education: [
+        { degree: "Bachelor's Degree", field: "Business Administration", gradYear: "2023", verified: true }
+      ],
     },
     { 
       name: "Chloe Dubois", 
       slug: "chloe-dubois",
       school: "Groupe CSI", 
-      field: "Electrical Engineering", 
       email: "chloe.dubois@example.com",
       phone: "+225 03 04 05 06 07",
       skills: ["AutoCAD", "PLC", "Matlab", "Circuit Design", "Power Systems"], 
       available: true,
       experience: "Intern at Ivoirienne d'Électricité. Assisted in the design and maintenance of electrical grids. Conducted simulations using Matlab.",
-      education: "Bachelor's Degree in Electrical Engineering, Groupe CSI (2023)",
+      education: [
+         { degree: "Bachelor's Degree", field: "Electrical Engineering", gradYear: "2023", verified: false }
+      ],
     },
     { 
       name: "David Kone", 
       slug: "david-kone",
       school: "INP-HB", 
-      field: "Agronomy", 
       email: "david.kone@example.com",
       phone: "+225 04 05 06 07 08",
       skills: ["Crop Science", "Soil Analysis", "Pest Management", "GIS", "Sustainable Agriculture"], 
       available: true,
       experience: "Field Agronomist at AgriBiz Côte d'Ivoire. Conducted soil and crop analysis to improve yield. Implemented sustainable farming practices.",
-      education: "Master's Degree in Agronomy, INP-HB (2021)",
+      education: [
+        { degree: "Master's Degree", field: "Agronomy", gradYear: "2021", verified: true }
+      ],
     },
     { 
       name: "Elise Fofana", 
       slug: "elise-fofana",
       school: "UFHB", 
-      field: "Finance", 
       email: "elise.fofana@example.com",
       phone: "+225 05 06 07 08 09",
       skills: ["Financial Modeling", "Excel", "Valuation", "Risk Analysis", "Bloomberg Terminal"], 
       available: true,
       experience: "Financial Analyst at Finance & Forte. Developed financial models for investment valuation. Conducted market research and risk analysis.",
-      education: "Master's Degree in Finance, UFHB (2022)",
+      education: [
+        { degree: "Master's Degree", field: "Finance", gradYear: "2022", verified: true }
+      ],
     },
   ],
   fr: [
@@ -97,61 +103,67 @@ const graduatesData = {
       name: "Amina Diallo", 
       slug: "amina-diallo",
       school: "INP-HB", 
-      field: "Génie Informatique", 
       email: "amina.diallo@example.com",
       phone: "+225 01 02 03 04 05",
       skills: ["React", "TypeScript", "Node.js", "GraphQL", "Next.js", "Figma"], 
       available: true,
       experience: "2 ans en tant que Développeuse Frontend chez Tech Solutions Abidjan. Développé et maintenu des applications web réactives en utilisant React et TypeScript. Collaboré avec les designers UI/UX pour implémenter des maquettes parfaites.",
-      education: "Master en Génie Informatique, INP-HB (2022)\nLicence en Génie Logiciel, INP-HB (2020)",
+      education: [
+        { degree: "Master", field: "Génie Informatique", gradYear: "2022", verified: true },
+        { degree: "Licence", field: "Génie Logiciel", gradYear: "2020", verified: false }
+      ],
     },
     { 
       name: "Ben Traoré", 
       slug: "ben-traore",
       school: "UFHB", 
-      field: "Administration des affaires", 
       email: "ben.traore@example.com",
       phone: "+225 02 03 04 05 06",
       skills: ["Marketing", "Gestion de projet", "Salesforce", "Analyse de marché"], 
       available: false,
       experience: "Stagiaire en marketing chez Finance & Forte. A assisté à la recherche de marché et à la création de campagnes marketing. A géré les comptes de médias sociaux et analysé les métriques d'engagement.",
-      education: "Licence en Administration des Affaires, UFHB (2023)",
+      education: [
+        { degree: "Licence", field: "Administration des Affaires", gradYear: "2023", verified: true }
+      ],
     },
     { 
       name: "Chloe Dubois", 
       slug: "chloe-dubois",
       school: "Groupe CSI", 
-      field: "Génie Électrique", 
       email: "chloe.dubois@example.com",
       phone: "+225 03 04 05 06 07",
       skills: ["AutoCAD", "API", "Matlab", "Conception de circuits", "Systèmes d'alimentation"], 
       available: true,
       experience: "Stagiaire à l'Ivoirienne d'Électricité. A participé à la conception et à la maintenance des réseaux électriques. A réalisé des simulations avec Matlab.",
-      education: "Licence en Génie Électrique, Groupe CSI (2023)",
+      education: [
+         { degree: "Licence", field: "Génie Électrique", gradYear: "2023", verified: false }
+      ],
     },
     { 
       name: "David Kone", 
       slug: "david-kone",
       school: "INP-HB", 
-      field: "Agronomie", 
       email: "david.kone@example.com",
       phone: "+225 04 05 06 07 08",
       skills: ["Phytotechnie", "Analyse de sol", "Lutte antiparasitaire", "SIG", "Agriculture durable"], 
       available: true,
       experience: "Agronome de terrain chez AgriBiz Côte d'Ivoire. A effectué des analyses de sol et de culture pour améliorer le rendement. A mis en œuvre des pratiques agricoles durables.",
-      education: "Master en Agronomie, INP-HB (2021)",
+      education: [
+        { degree: "Master", field: "Agronomie", gradYear: "2021", verified: true }
+      ],
     },
     { 
       name: "Elise Fofana", 
       slug: "elise-fofana",
       school: "UFHB", 
-      field: "Finance", 
       email: "elise.fofana@example.com",
       phone: "+225 05 06 07 08 09",
       skills: ["Modélisation financière", "Excel", "Évaluation", "Analyse des risques", "Terminal Bloomberg"], 
       available: true,
       experience: "Analyste financier chez Finance & Forte. A développé des modèles financiers pour l'évaluation des investissements. A effectué des études de marché et des analyses de risques.",
-      education: "Master en Finance, UFHB (2022)",
+      education: [
+        { degree: "Master", field: "Finance", gradYear: "2022", verified: true }
+      ],
     },
   ]
 };
@@ -232,6 +244,8 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
     })
   }
 
+  const mainFieldOfStudy = graduate.education.length > 0 ? graduate.education[0].field : "Graduate";
+
   return (
     <div className="space-y-8">
       <Card>
@@ -248,7 +262,7 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
               <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-3xl">{graduate.name}</CardTitle>
-                    <CardDescription className="text-lg">{t(graduate.field)}</CardDescription>
+                    <CardDescription className="text-lg">{t(mainFieldOfStudy)}</CardDescription>
                   </div>
                   <Badge variant={graduate.available ? "secondary" : "outline"}>
                     <span className={cn("mr-2 h-2 w-2 rounded-full", graduate.available ? "bg-green-500" : "bg-gray-400")}></span>
@@ -285,8 +299,19 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><GraduationCap /> {t('Education')}</CardTitle>
           </CardHeader>
-          <CardContent className="prose prose-sm text-muted-foreground whitespace-pre-line">
-            {t(localizedGraduate.education)}
+          <CardContent className="space-y-4">
+            {localizedGraduate.education.map((edu, index) => (
+                <div key={index} className="p-3 border rounded-lg">
+                    <p className="font-semibold">{t(edu.degree)} {t('in')} {t(edu.field)}</p>
+                    <p className="text-sm text-muted-foreground">{t('Graduated')}: {edu.gradYear}</p>
+                    {edu.verified && (
+                        <Badge variant="secondary" className="mt-2 gap-1.5">
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            {t('Verified by School')}
+                        </Badge>
+                    )}
+                </div>
+            ))}
           </CardContent>
         </Card>
       </div>

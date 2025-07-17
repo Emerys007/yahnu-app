@@ -3,11 +3,11 @@
 
 import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, useFieldArray } from "react-hook-form"
 import { z } from "zod"
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { useAuth } from "@/context/auth-context";
+import { useAuth, type EducationEntry } from "@/context/auth-context";
 import { parseResume, type ParseResumeOutput } from "@/ai/flows/resume-parser"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,14 +22,21 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Upload, Loader2 } from "lucide-react"
+import { Upload, Loader2, PlusCircle, Trash2 } from "lucide-react"
+
+const educationSchema = z.object({
+  degree: z.string().min(2, "Degree is required."),
+  field: z.string().min(2, "Field of study is required."),
+  gradYear: z.string().min(4, "Graduation year is required."),
+  verified: z.boolean().default(false),
+})
 
 const profileSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email(),
   phone: z.string().optional(),
   experience: z.string().optional(),
-  education: z.string().optional(),
+  education: z.array(educationSchema),
   skills: z.string().optional(),
 })
 
@@ -46,10 +53,15 @@ export default function ProfilePage() {
       email: "",
       phone: "",
       experience: "",
-      education: "",
+      education: [],
       skills: "",
     },
   })
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "education",
+  });
 
   useEffect(() => {
     if (user) {
@@ -58,7 +70,7 @@ export default function ProfilePage() {
             email: user.email || '',
             phone: user.phone || '',
             experience: user.experience || '',
-            education: user.education || '',
+            education: user.education || [],
             skills: Array.isArray(user.skills) ? user.skills.join(", ") : user.skills || '',
         });
     }
@@ -91,7 +103,20 @@ export default function ProfilePage() {
       form.setValue("email", result.email || "")
       form.setValue("phone", result.phone || "")
       form.setValue("experience", result.experience?.join("\n\n") || "")
-      form.setValue("education", result.education?.join("\n\n") || "")
+      // This part is tricky as resume parser gives an array of strings. 
+      // We will just set the first education entry if it exists.
+      if (result.education && result.education.length > 0) {
+        const firstEdu = result.education[0];
+        // This is a simplistic parse, would need more robust logic for real world
+        const [degree, field] = firstEdu.split(',').map(s => s.trim());
+        const gradYearMatch = firstEdu.match(/\d{4}/);
+        
+        if (fields.length > 0) {
+            remove(0); // remove existing if any
+        }
+        append({ degree: degree || "", field: field || "", gradYear: gradYearMatch ? gradYearMatch[0] : "", verified: false });
+
+      }
       form.setValue("skills", result.skills?.join(", ") || "")
 
       toast({
@@ -217,6 +242,74 @@ export default function ProfilePage() {
               />
             </CardContent>
           </Card>
+          
+          <Card>
+            <CardHeader>
+                <div className="flex justify-between items-center">
+                    <div>
+                        <CardTitle>Education</CardTitle>
+                        <CardDescription>Your academic background. Add each degree separately.</CardDescription>
+                    </div>
+                    <Button type="button" variant="outline" size="sm" onClick={() => append({ degree: '', field: '', gradYear: '', verified: false })}>
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Add Degree
+                    </Button>
+                </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                 {fields.map((field, index) => (
+                    <div key={field.id} className="p-4 border rounded-lg relative space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <FormField
+                                control={form.control}
+                                name={`education.${index}.degree`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Degree</FormLabel>
+                                        <FormControl><Input placeholder="e.g. Bachelor of Science" {...field} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name={`education.${index}.field`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Field of Study</FormLabel>
+                                        <FormControl><Input placeholder="e.g. Computer Science" {...field} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                             <FormField
+                                control={form.control}
+                                name={`education.${index}.gradYear`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Graduation Year</FormLabel>
+                                        <FormControl><Input type="number" placeholder="e.g. 2024" {...field} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                         <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-2 right-2 h-6 w-6"
+                            onClick={() => remove(index)}
+                        >
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    </div>
+                ))}
+                {fields.length === 0 && (
+                    <p className="text-sm text-muted-foreground text-center py-4">No education history added yet.</p>
+                )}
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>
@@ -238,49 +331,26 @@ export default function ProfilePage() {
               />
             </CardContent>
           </Card>
-
-          <div className="grid md:grid-cols-2 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Education</CardTitle>
-                  <CardDescription>Your academic background.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="education"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Textarea placeholder="List your degrees and schools..." rows={5} {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Skills</CardTitle>
-                  <CardDescription>Your key competencies.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                   <FormField
-                    control={form.control}
-                    name="skills"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Textarea placeholder="e.g., JavaScript, Product Management, ..." rows={5} {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-          </div>
+            <Card>
+            <CardHeader>
+                <CardTitle>Skills</CardTitle>
+                <CardDescription>Your key competencies.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <FormField
+                control={form.control}
+                name="skills"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormControl>
+                        <Textarea placeholder="e.g., JavaScript, Product Management, ..." rows={5} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+            </CardContent>
+            </Card>
           
           <div className="flex justify-end">
             <Button type="submit" disabled={isSaving || isParsing}>{isSaving ? "Saving..." : "Save Profile"}</Button>

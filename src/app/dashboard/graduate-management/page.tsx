@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { UserCheck, Check, X, Search, Loader2 } from "lucide-react"
+import { UserCheck, Check, X, Search, Loader2, Award } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Input } from "@/components/ui/input"
@@ -17,12 +17,19 @@ import { db } from "@/lib/firebase"
 
 
 type GraduateStatus = "pending" | "active"
+type EducationEntry = {
+    degree: string
+    field: string
+    gradYear: string
+    verified: boolean
+}
+
 type Graduate = {
   id: string
   name: string
   email: string
-  graduationYear?: number
   status: GraduateStatus
+  education?: EducationEntry[]
 }
 
 export default function GraduateManagementPage() {
@@ -50,8 +57,8 @@ export default function GraduateManagementPage() {
                 id: doc.id,
                 name: data.name,
                 email: data.email,
-                graduationYear: data.graduationYear,
                 status: data.status,
+                education: data.education || [],
             } as Graduate;
         });
         setGraduates(grads);
@@ -83,6 +90,23 @@ export default function GraduateManagementPage() {
     }
   }
 
+  const handleVerifyEducation = async (graduateId: string, eduIndex: number) => {
+    const graduate = graduates.find(g => g.id === graduateId);
+    if (!graduate || !graduate.education) return;
+    
+    const updatedEducation = [...graduate.education];
+    updatedEducation[eduIndex].verified = true;
+
+    try {
+        const userDocRef = doc(db, "users", graduateId);
+        await updateDoc(userDocRef, { education: updatedEducation });
+        toast({ title: t("Education Verified"), description: t("The degree has been marked as verified.") });
+    } catch (error) {
+        console.error("Failed to verify education:", error);
+        toast({ title: t('Error'), description: t('Failed to verify education.'), variant: "destructive" });
+    }
+  }
+
   const filteredGraduates = graduates.filter(g => 
     g.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     g.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -96,18 +120,37 @@ export default function GraduateManagementPage() {
         <TableHeader>
           <TableRow>
             <TableHead>{t('Name')}</TableHead>
-            <TableHead>{t('Email')}</TableHead>
-            <TableHead>{t('Graduation Year')}</TableHead>
+            <TableHead>{t('Education Details')}</TableHead>
             <TableHead className="text-right">{t('Actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
             {data.map(grad => (
             <TableRow key={grad.id}>
-              <TableCell className="font-medium">{grad.name}</TableCell>
-              <TableCell>{grad.email}</TableCell>
-              <TableCell>{grad.graduationYear || 'N/A'}</TableCell>
-              <TableCell className="text-right space-x-2">
+              <TableCell className="font-medium align-top">
+                <div className="font-semibold">{grad.name}</div>
+                <div className="text-sm text-muted-foreground">{grad.email}</div>
+              </TableCell>
+              <TableCell>
+                {grad.education && grad.education.length > 0 ? (
+                    <ul className="space-y-2">
+                        {grad.education.map((edu, index) => (
+                            <li key={index} className="text-sm p-2 border rounded-md bg-muted/50 flex items-center justify-between">
+                                <div>
+                                    <p className="font-medium">{edu.degree} {t('in')} {edu.field}</p>
+                                    <p className="text-muted-foreground">{t('Graduated')}: {edu.gradYear}</p>
+                                </div>
+                                {edu.verified ? (
+                                    <Badge variant="secondary" className="gap-1"><Check className="h-3 w-3"/>{t('Verified')}</Badge>
+                                ) : (
+                                    <Button size="xs" variant="outline" onClick={() => handleVerifyEducation(grad.id, index)}>{t('Verify')}</Button>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                ) : <p className="text-sm text-muted-foreground">{t('No education details provided.')}</p>}
+              </TableCell>
+              <TableCell className="text-right space-x-2 align-top">
                 {grad.status === 'pending' && (
                     <Button size="sm" onClick={() => handleStatusChange(grad.id, 'active')}>
                         <Check className="mr-2 h-4 w-4" /> {t('Activate')}
@@ -123,7 +166,7 @@ export default function GraduateManagementPage() {
           ))}
           {data.length === 0 && !isLoading && (
             <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center">{t('No graduates found.')}</TableCell>
+                <TableCell colSpan={3} className="h-24 text-center">{t('No graduates found.')}</TableCell>
             </TableRow>
           )}
         </TableBody>
@@ -138,7 +181,7 @@ export default function GraduateManagementPage() {
         </div>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{t('Graduate Management')}</h1>
-          <p className="text-muted-foreground mt-1">{t('Activate and manage graduate accounts from your institution.')}</p>
+          <p className="text-muted-foreground mt-1">{t('Activate accounts and verify academic credentials.')}</p>
         </div>
       </div>
 
