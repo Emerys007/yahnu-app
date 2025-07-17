@@ -38,11 +38,12 @@ import { useAuth, type Role } from "@/context/auth-context";
 const getNavItems = (t: (key: string) => string, role: Role) => {
   const baseNav = [
     { href: "/dashboard", icon: LayoutDashboard, label: t('Dashboard') },
-    { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
+    
   ];
 
   const graduateNav = [
     ...baseNav,
+    { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
     { href: "/dashboard/profile", icon: User, label: t('Profile') },
     { href: "/dashboard/jobs", icon: Briefcase, label: t('Job Search') },
     { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
@@ -51,6 +52,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
 
   const companyNav = [
     ...baseNav,
+    { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
     { href: "/dashboard/company-profile", icon: Building, label: t('Company Profile') },
     { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
     { href: "/dashboard/company-events", icon: Calendar, label: t('Event Management') },
@@ -63,6 +65,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   
   const schoolNav = [
     ...baseNav,
+    { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
     { href: "/dashboard/school-profile", icon: School, label: t('School Profile')},
     { href: "/dashboard/graduate-management", icon: UserCheck, label: t('Graduate Management')},
     { href: "/dashboard/school-events", icon: Calendar, label: t('Event Management')},
