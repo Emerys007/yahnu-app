@@ -75,11 +75,11 @@ export function MainNav() {
                     </Link>
                 ))}
             </nav>
-            <div className="flex items-center gap-2">
-                <Button variant="ghost" asChild className="hidden md:inline-flex">
+            <div className="hidden items-center gap-2 md:flex">
+                <Button variant="ghost" asChild>
                   <Link href="/login">{t('Login')}</Link>
                 </Button>
-                <Button asChild className="hidden md:inline-flex">
+                <Button asChild>
                   <Link href="/register">{t('Sign Up')}</Link>
                 </Button>
             </div>
