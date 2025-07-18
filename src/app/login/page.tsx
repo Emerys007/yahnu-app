@@ -29,6 +29,7 @@ export default function LoginPage() {
           width="800"
           height="600"
           className="rounded-xl shadow-2xl"
+          data-ai-hint="african professionals community"
         />
         <div className="mt-8 text-center max-w-lg">
           <h2 className="text-3xl font-bold tracking-tight">{t('Connect. Grow. Succeed.')}</h2>
@@ -39,6 +40,13 @@ export default function LoginPage() {
       </div>
       <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background">
         <div className="w-full max-w-md space-y-8">
+            <div className="flex flex-col items-center gap-2 mb-8 text-center lg:hidden">
+              <Link href="/">
+                <Logo className="h-16 w-16" />
+              </Link>
+              <h1 className="text-3xl font-bold text-primary">Yahnu</h1>
+              <p className="text-muted-foreground">{t('Your future starts here')}</p>
+            </div>
             {isLaunchCountry ? <LoginForm /> : <WaitlistForm />}
         </div>
       </div>
