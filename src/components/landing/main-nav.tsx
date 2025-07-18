@@ -67,11 +67,12 @@ export function MainNav() {
             <nav className="hidden md:flex items-center gap-6 text-sm">
                 {navLinks.map((link) => (
                     <Link
-                    key={link.href}
-                    href={link.href}
-                    className="font-medium text-muted-foreground transition-colors hover:text-foreground/80"
+                      key={link.href}
+                      href={link.href}
+                      className="group relative font-medium text-muted-foreground transition-colors hover:text-foreground"
                     >
-                    {link.label}
+                      {link.label}
+                      <span className="absolute bottom-[-2px] left-0 h-0.5 w-0 rounded-full bg-primary transition-all duration-300 group-hover:w-full" />
                     </Link>
                 ))}
             </nav>
