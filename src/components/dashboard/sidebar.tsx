@@ -186,18 +186,11 @@ export function DashboardSidebar() {
                   className={cn(
                       "w-full h-10 text-base font-normal", 
                       isCollapsed ? 'justify-center' : 'justify-start',
-                      isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                      isActive ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'
                     )}
                   asChild
                 >
                   <Link href={item.href}>
-                    {isActive && !isCollapsed && (
-                        <motion.div 
-                            layoutId="sidebar-active-bg"
-                            className="absolute inset-0 bg-primary/10 rounded-lg"
-                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                         />
-                    )}
                     <div className="relative z-10 flex items-center">
                         {buttonContent}
                     </div>
@@ -219,7 +212,7 @@ export function DashboardSidebar() {
     <>
       <div className={cn("flex h-16 items-center border-b px-4 shrink-0", isCollapsed && "h-16 justify-center px-0")}>
         <Link href="/dashboard" className={cn("flex items-center gap-3", isCollapsed && "justify-center")}>
-          <Logo className={cn("h-10 w-10 text-primary transition-all", isCollapsed && "h-8 w-8")} />
+          <Logo className={cn("h-12 w-12 text-primary transition-all", isCollapsed && "h-8 w-8")} />
           <div className={cn("flex flex-col transition-opacity duration-200", isCollapsed && "opacity-0 hidden")}>
             <h1 className="text-xl font-bold">Yahnu</h1>
             <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
@@ -245,7 +238,7 @@ export function DashboardSidebar() {
   }
 
   return (
-    <aside className={cn("hidden lg:flex flex-col border-r bg-card transition-all duration-300 ease-in-out sticky top-0 h-screen", isCollapsed ? "w-20" : "w-72")}>
+    <aside className={cn("hidden lg:block border-r bg-card transition-all duration-300 ease-in-out sticky top-0 h-screen", isCollapsed ? "w-20" : "w-72")}>
         {sidebarContent}
     </aside>
   )
