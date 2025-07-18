@@ -149,8 +149,8 @@ export function HeroSection() {
                             <Button size="lg" asChild className="text-base px-8 py-6">
                                 <Link href={slide.href}>
                                     <div className="flex items-center gap-2">
-                                        {slide.buttonIcon}
                                         {slide.buttonText}
+                                         <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
                                     </div>
                                 </Link>
                             </Button>
