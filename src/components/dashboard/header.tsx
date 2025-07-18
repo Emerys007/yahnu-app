@@ -200,13 +200,13 @@ export function DashboardHeader() {
         <Button
             variant="ghost"
             size="icon"
-            className="shrink-0 lg:hidden"
+            className="shrink-0"
             onClick={toggleSidebar}
           >
             <PanelLeft className="h-5 w-5" />
             <span className="sr-only">{t('Toggle navigation menu')}</span>
         </Button>
-      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 justify-end">
+      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
         <div className="ml-auto flex-1 md:grow-0">
           <SearchCommand />
         </div>
