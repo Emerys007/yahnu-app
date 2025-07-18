@@ -200,12 +200,6 @@ export default function SupportPage() {
                              {t('Email Support')}
                            </Link>
                         </Button>
-                         <Button asChild variant="outline" className="w-full justify-start">
-                           <Link href="tel:+2250102030405">
-                             <Phone className="mr-2 h-4 w-4" />
-                             {t('Call Us')}
-                           </Link>
-                        </Button>
                     </CardContent>
                 </Card>
                 {role === 'graduate' && (
