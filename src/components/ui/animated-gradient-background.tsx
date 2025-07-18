@@ -71,7 +71,7 @@ export const AnimatedGradientBackground = () => {
               repeatType: "mirror",
             }}
             style={{
-              background: `radial-gradient(ellipse at center, hsla(${color1}, 0.25) 0%, transparent 60%)`,
+              background: `radial-gradient(ellipse at center, hsla(${color1}, 0.35) 0%, transparent 55%)`,
             }}
           />
           <motion.div
@@ -91,7 +91,7 @@ export const AnimatedGradientBackground = () => {
               repeatType: "mirror",
             }}
             style={{
-              background: `radial-gradient(ellipse at center, hsla(${color2}, 0.25) 0%, transparent 65%)`,
+              background: `radial-gradient(ellipse at center, hsla(${color2}, 0.15) 0%, transparent 70%)`,
             }}
           />
            <motion.div
@@ -111,7 +111,7 @@ export const AnimatedGradientBackground = () => {
               repeatType: "mirror",
             }}
             style={{
-              background: `radial-gradient(ellipse at center, hsla(${color3}, 0.25) 0%, transparent 70%)`,
+              background: `radial-gradient(ellipse at center, hsla(${color3}, 0.20) 0%, transparent 75%)`,
             }}
           />
         </motion.div>
