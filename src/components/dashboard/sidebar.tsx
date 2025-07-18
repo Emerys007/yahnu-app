@@ -221,14 +221,16 @@ export function DashboardSidebar() {
             {navItems.map((item, index) => renderNavItem(item, index, isCollapsed, pathname))}
         </nav>
       </div>
-      <div className="mt-auto p-2">
-        <Separator className={cn("mb-2", isCollapsed ? "mx-2" : "mx-4")} />
-        <nav className="space-y-1 px-2 pb-2">
-            {footerNavItems.map((item, index) => renderNavItem(item, index, isCollapsed, pathname))}
-        </nav>
-         <div className={cn("text-center text-xs text-muted-foreground py-2", isCollapsed && "hidden")}>
-              <p>&copy; {new Date().getFullYear()} Yahnu.</p>
-          </div>
+      <div className="mt-auto">
+        <Separator />
+        <div className="p-2">
+            <nav className="space-y-1">
+                {footerNavItems.map((item, index) => renderNavItem(item, index, isCollapsed, pathname))}
+            </nav>
+            <div className={cn("text-center text-xs text-muted-foreground py-2 px-4", isCollapsed && "hidden")}>
+                  <p>&copy; {new Date().getFullYear()} Yahnu.</p>
+              </div>
+        </div>
       </div>
     </>
   );
