@@ -11,14 +11,14 @@ const variants = {
   animate: {
     opacity: 1,
     transition: {
-      duration: 1.5,
+      duration: 2,
       ease: "easeInOut",
     },
   },
   exit: {
     opacity: 0,
     transition: {
-      duration: 1.5,
+      duration: 2,
       ease: "easeInOut",
     },
   },
@@ -55,52 +55,12 @@ export const AnimatedGradientBackground = () => {
           exit="exit"
         >
           <motion.div
-            className="absolute inset-[-20%]"
+            className="absolute -bottom-1/2 -left-1/2 w-[200%] h-[200%]"
             animate={{
               transform: [
                 "translateX(0%) translateY(0%) rotate(0deg)",
-                "translateX(10%) translateY(-10%) rotate(45deg)",
-                "translateX(-10%) translateY(10%) rotate(-45deg)",
-                "translateX(0%) translateY(0%) rotate(0deg)",
-              ],
-            }}
-            transition={{
-              duration: 20,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "mirror",
-            }}
-            style={{
-              background: `radial-gradient(circle, hsla(${color1}, 0.2) 0%, transparent 50%)`,
-            }}
-          />
-          <motion.div
-            className="absolute inset-[-20%]"
-            animate={{
-              transform: [
-                "translateX(0%) translateY(0%) rotate(0deg)",
-                "translateX(-15%) translateY(5%) rotate(-60deg)",
-                "translateX(5%) translateY(-15%) rotate(60deg)",
-                "translateX(0%) translateY(0%) rotate(0deg)",
-              ],
-            }}
-            transition={{
-              duration: 25,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "mirror",
-            }}
-            style={{
-              background: `radial-gradient(circle, hsla(${color2}, 0.2) 0%, transparent 55%)`,
-            }}
-          />
-           <motion.div
-            className="absolute inset-[-20%]"
-            animate={{
-              transform: [
-                "translateX(0%) translateY(0%) rotate(0deg)",
-                "translateX(10%) translateY(10%) rotate(30deg)",
-                "translateX(-5%) translateY(-5%) rotate(-30deg)",
+                "translateX(10%) translateY(-10%) rotate(40deg)",
+                "translateX(-10%) translateY(10%) rotate(-40deg)",
                 "translateX(0%) translateY(0%) rotate(0deg)",
               ],
             }}
@@ -111,12 +71,52 @@ export const AnimatedGradientBackground = () => {
               repeatType: "mirror",
             }}
             style={{
-              background: `radial-gradient(circle, hsla(${color3}, 0.2) 0%, transparent 60%)`,
+              background: `radial-gradient(ellipse at center, hsla(${color1}, 0.25) 0%, transparent 60%)`,
+            }}
+          />
+          <motion.div
+            className="absolute -top-1/2 -right-1/2 w-[200%] h-[200%]"
+            animate={{
+              transform: [
+                "translateX(0%) translateY(0%) rotate(0deg)",
+                "translateX(-15%) translateY(5%) rotate(-50deg)",
+                "translateX(5%) translateY(-15%) rotate(50deg)",
+                "translateX(0%) translateY(0%) rotate(0deg)",
+              ],
+            }}
+            transition={{
+              duration: 35,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatType: "mirror",
+            }}
+            style={{
+              background: `radial-gradient(ellipse at center, hsla(${color2}, 0.25) 0%, transparent 65%)`,
+            }}
+          />
+           <motion.div
+            className="absolute -top-1/4 -left-1/4 w-[150%] h-[150%]"
+            animate={{
+              transform: [
+                "translateX(0%) translateY(0%) rotate(0deg)",
+                "translateX(10%) translateY(10%) rotate(60deg)",
+                "translateX(-5%) translateY(-5%) rotate(-60deg)",
+                "translateX(0%) translateY(0%) rotate(0deg)",
+              ],
+            }}
+            transition={{
+              duration: 40,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatType: "mirror",
+            }}
+            style={{
+              background: `radial-gradient(ellipse at center, hsla(${color3}, 0.25) 0%, transparent 70%)`,
             }}
           />
         </motion.div>
       </AnimatePresence>
-      <div className="absolute inset-0 backdrop-blur-2xl"></div>
+      <div className="absolute inset-0 backdrop-blur-3xl"></div>
     </div>
   );
 };
