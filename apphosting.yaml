@@ -7,3 +7,28 @@ runConfig:
   # Increase this value if you'd like to automatically spin up
   # more instances in response to increased traffic.
   maxInstances: 1
+  # Add environment variables to your App Hosting backend.
+  # https://firebase.google.com/docs/app-hosting/configure-backend#environment-variables
+  env:
+    - variable: NEXT_PUBLIC_OPENCAGE_API_KEY
+      # This value can be a string literal or a reference to a secret.
+      # Create a secret in Google Secret Manager by running this in your terminal:
+      # gcloud secrets create opencage-api-key --replication-policy="automatic"
+      # gcloud secrets versions add opencage-api-key --data-file="/path/to/your/key.txt"
+      value: "opencage-api-key"
+    - variable: GOOGLE_API_KEY
+      # This is a secret environment variable.
+      # Its value should be stored in Google Secret Manager.
+      # Create the secret by running this in your terminal:
+      # gcloud secrets create google-api-key --replication-policy="automatic"
+      # gcloud secrets versions add google-api-key --data-file="/path/to/your/google-api-key.txt"
+      secret: google-api-key
+
+# App Hosting uses Cloud Build to build and deploy your app.
+# By default, App Hosting runs `npm run build`. You can customize this.
+# https://firebase.google.com/docs/app-hosting/configure-backend#build-settings
+build:
+  # You can specify a different build command here.
+  # command: npm run custom-build-script
+  # You can also specify a different path to your package.json.
+  # packageJsonDir: /my-app
