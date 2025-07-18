@@ -51,7 +51,7 @@ export function Footer() {
               </div>
 
               {/* Contact Section */}
-              <div>
+              <div className="col-span-1">
                 <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{t('Contact Us')}</h3>
                 <ul className="mt-4 space-y-2 text-sm">
                     <li>
@@ -70,7 +70,7 @@ export function Footer() {
               </div>
               
               {/* Socials Section */}
-              <div className="col-span-2 md:col-span-1">
+              <div className="col-span-1">
                 <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{t('Follow Us')}</h3>
                 <div className="mt-4 flex gap-4">
                   <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
@@ -104,5 +104,3 @@ export function Footer() {
     </footer>
   )
 }
-
-    

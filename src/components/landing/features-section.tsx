@@ -120,7 +120,7 @@ const AnimatedTabs = () => {
   return (
     <div className="w-full">
       <div className="flex justify-center mb-12">
-        <div className="relative flex w-full max-w-lg items-center justify-center rounded-lg bg-muted p-2">
+        <div className="relative flex w-full max-w-lg items-center justify-center rounded-lg bg-muted p-2 flex-wrap sm:flex-nowrap">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -139,7 +139,7 @@ const AnimatedTabs = () => {
           ))}
           <motion.div
             layoutId="active-features-tab-highlight"
-            className="absolute inset-0 z-0 h-full p-1"
+            className="absolute inset-0 z-0 h-full p-1 hidden sm:block"
             style={{
                 width: `${100 / tabs.length}%`,
                 left: `${tabs.findIndex(t => t.id === activeTab) * (100 / tabs.length)}%`,
