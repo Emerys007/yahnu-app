@@ -37,7 +37,6 @@ import { useCountry, allCountries } from "@/context/country-context";
 import { Flag } from "../flag";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
-import { SearchCommand } from "../search-command";
 
 const getNavLinks = (t: (key: string) => string) => [
   { href: "/jobs", label: t("Jobs") },
@@ -77,9 +76,6 @@ export function MainNav() {
                 ))}
             </nav>
             <div className="flex items-center gap-2">
-                <div className="hidden md:block">
-                  <SearchCommand />
-                </div>
                 <Button variant="ghost" asChild className="hidden md:inline-flex">
                   <Link href="/login">{t('Login')}</Link>
                 </Button>
@@ -145,7 +141,6 @@ export function MainNav() {
             </div>
             
             <div className="md:hidden flex items-center">
-              <SearchCommand />
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="icon">

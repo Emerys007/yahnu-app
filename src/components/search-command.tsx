@@ -3,11 +3,8 @@
 
 import * as React from "react"
 import {
-  Calculator,
   Calendar,
-  CreditCard,
   Settings,
-  Smile,
   User,
   Search as SearchIcon,
   LayoutDashboard,
@@ -25,7 +22,6 @@ import {
   BrainCircuit,
   MessageSquare,
   Award,
-  HeartHandshake,
 } from "lucide-react"
 
 import {
@@ -35,7 +31,6 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
 } from "@/components/ui/command"
 import { useLocalization } from "@/context/localization-context"
 import { useRouter } from "next/navigation"
@@ -47,13 +42,6 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
         { href: "/dashboard", icon: LayoutDashboard, label: t('Dashboard') },
     ];
     
-    const loggedOutNav = [
-        { href: "/jobs", icon: Briefcase, label: t('Jobs') },
-        { href: "/companies", icon: Building, label: t('Companies') },
-        { href: "/schools", icon: School, label: t('Schools') },
-        { href: "/about", icon: Users2, label: t('About') },
-    ];
-
     const graduateNav = [
         ...baseNav,
         { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
@@ -108,7 +96,9 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
       case 'admin':
         return adminNav.concat(bottomNav);
       default:
-        return loggedOutNav;
+        // This case should ideally not be hit for a logged-in user
+        // but provides a safe fallback.
+        return baseNav.concat(bottomNav);
     }
 }
 
@@ -116,10 +106,10 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
 export function SearchCommand() {
   const [open, setOpen] = React.useState(false)
   const router = useRouter()
-  const { user, role } = useAuth();
+  const { role } = useAuth();
   const { t } = useLocalization();
 
-  const navItems = React.useMemo(() => getNavItems(t, user ? role : 'graduate'), [t, role, user]);
+  const navItems = React.useMemo(() => getNavItems(t, role), [t, role]);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
