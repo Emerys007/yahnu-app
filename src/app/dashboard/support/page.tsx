@@ -4,7 +4,7 @@
 import { useAuth, type Role } from "@/context/auth-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocalization } from "@/context/localization-context";
-import { LifeBuoy, Mail, Phone, Send, University } from "lucide-react";
+import { LifeBuoy, Mail, Send, University } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -215,7 +215,6 @@ export default function SupportPage() {
                             </Button>
                         </CardContent>
                     </Card>
-                </Card>
                 )}
             </div>
         </div>
