@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useMemo } from 'react'
@@ -190,6 +191,7 @@ export default function JobSearchPage() {
                 className="pl-8" 
                 value={filters.keywords}
                 onChange={(e) => handleFilterChange('keywords', e.target.value)}
+                data-hs-event-name="job_search_initiated"
               />
             </div>
           </div>

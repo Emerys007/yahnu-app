@@ -1,5 +1,4 @@
 
-
 "use client"
 
 import { useLocalization } from "@/context/localization-context";
@@ -115,7 +114,7 @@ export default function AssessmentsPage() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button asChild className="w-full">
+                        <Button asChild className="w-full" data-hs-event-name="assessment_started">
                             <Link href={`/dashboard/assessment/${assessment.id}`}>{t('Start Assessment')}</Link>
                         </Button>
                     </CardFooter>

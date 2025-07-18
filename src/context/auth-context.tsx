@@ -62,6 +62,18 @@ export function useAuth() {
   return context;
 }
 
+const identifyHubSpotUser = (user: UserProfile) => {
+    const _hsq = (window as any)._hsq = (window as any)._hsq || [];
+    _hsq.push(["identify", {
+        id: user.uid,
+        email: user.email,
+        firstname: user.firstName,
+        lastname: user.lastName,
+        role: user.role,
+        company: user.companyName,
+    }]);
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -83,6 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(profile);
     if (profile) {
       Cookies.set('userRole', profile.role, { expires: 7, path: '/' });
+      identifyHubSpotUser(profile);
     } else {
       Cookies.remove('userRole', { path: '/' });
     }

@@ -1,6 +1,7 @@
 
 import type {Metadata} from 'next';
 import { Inter } from 'next/font/google'
+import Script from 'next/script';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from "@/components/ui/theme-provider";
@@ -50,6 +51,11 @@ export default function RootLayout({
             </LocalizationProvider>
           </CountryProvider>
         </AuthProvider>
+        <Script
+          id="hs-script-loader"
+          src="//js.hs-scripts.com/8886743.js?businessUnitId=2764550"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

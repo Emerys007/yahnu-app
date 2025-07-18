@@ -372,7 +372,9 @@ export default function ProfilePage() {
                 </Card>
               
               <div className="flex justify-end">
-                <Button type="submit" disabled={isSaving || isParsing}>{isSaving ? t("Saving...") : t("Save Profile")}</Button>
+                <Button type="submit" disabled={isSaving || isParsing} data-hs-event-name="profile_updated">
+                  {isSaving ? t("Saving...") : t("Save Profile")}
+                </Button>
               </div>
             </div>
             <div className="lg:col-span-1 space-y-6">

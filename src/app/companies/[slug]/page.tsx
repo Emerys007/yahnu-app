@@ -97,7 +97,7 @@ export default async function CompanyPage({ params }: { params: { slug: string }
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background" data-hs-event-name="company_viewed">
       <MainNav />
       <main className="flex-1 container mx-auto py-12">
         <CompanyProfileClient company={company} />
