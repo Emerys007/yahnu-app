@@ -3,7 +3,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -518,21 +518,23 @@ const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestCompl
 }
 
 
-export default function TakeAssessmentPage({ params }: { params: { testId: string } }) {
+export default function TakeAssessmentPage() {
   const router = useRouter();
+  const params = useParams();
   const { t } = useLocalization();
   const [step, setStep] = useState<'setup' | 'test' | 'invalid'>('setup');
   
-  // This check now happens inside useEffect to avoid the Next.js warning
+  const testId = params.testId as string;
+
   useEffect(() => {
-    if (!Object.keys(testData).includes(params.testId)) {
+    if (!Object.keys(testData).includes(testId)) {
         setStep('invalid');
     }
-  }, [params.testId]);
+  }, [testId]);
 
   const handleTestComplete = (score: number) => {
     // In a real app, you would save the score to the database
-    router.push(`/dashboard/assessment/${params.testId}/result?score=${score}`);
+    router.push(`/dashboard/assessment/${testId}/result?score=${score}`);
   };
 
   if (step === 'invalid') {
@@ -542,7 +544,7 @@ export default function TakeAssessmentPage({ params }: { params: { testId: strin
   return (
     <div className="container mx-auto py-8">
         {step === 'setup' && <ProctoringSetup onSetupComplete={() => setStep('test')} />}
-        {step === 'test' && <TestInterface testId={params.testId as TestId} onTestComplete={handleTestComplete} />}
+        {step === 'test' && <TestInterface testId={testId as TestId} onTestComplete={handleTestComplete} />}
     </div>
   );
 }
