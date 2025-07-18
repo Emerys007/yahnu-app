@@ -44,11 +44,10 @@ export const CustomizableDashboard = ({ initialLayout, initialReports }: Customi
                 setLayouts(data.layouts || { lg: [] });
                 setReports(data.reports || {});
             }
-        };
-        loadDashboard().then(() => {
-            // Set hasMounted to true after initial data is loaded
+            // Set hasMounted to true after the first attempt to load data
             hasMounted.current = true;
-        });
+        };
+        loadDashboard();
     }, [user]);
 
     const saveDashboard = async (newLayouts: { lg: Layout[] }, newReports: ReportMap) => {
@@ -78,7 +77,7 @@ export const CustomizableDashboard = ({ initialLayout, initialReports }: Customi
         if (!hasMounted.current) {
             return;
         }
-
+        
         const cleanLayouts = {
             lg: allLayouts.lg.map(({ i, x, y, w, h }) => ({ i, x, y, w, h }))
         };

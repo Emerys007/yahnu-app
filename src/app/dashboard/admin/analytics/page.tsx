@@ -1,7 +1,11 @@
 
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart3 } from "lucide-react"
 import { AnalyticsClient } from "./analytics-client"
+import { CreateReportDialog } from "@/features/analytics/CreateReportDialog";
+import { Report, ReportMap } from "@/features/analytics/ReportWidget";
 
 const analyticsData = {
     totalUsers: 1256,
@@ -24,17 +28,27 @@ const analyticsData = {
     ]
 }
 
-export default async function AdminAnalyticsPage() {
+export default function AdminAnalyticsPage() {
+
+    const addReport = (report: Report) => {
+        // This function would typically update a shared state or context
+        // For now, we can just log it to see it working.
+        console.log("Adding report:", report);
+    };
+
   return (
     <div className="space-y-8">
-      <div className="flex items-start gap-4">
-        <div className="bg-primary/10 p-3 rounded-lg">
-            <BarChart3 className="h-6 w-6 text-primary" />
+      <div className="flex items-start justify-between">
+        <div className="flex items-start gap-4">
+            <div className="bg-primary/10 p-3 rounded-lg">
+                <BarChart3 className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+                <h1 className="text-3xl font-bold tracking-tight">Platform Analytics</h1>
+                <p className="text-muted-foreground mt-1">High-level insights into platform usage and growth.</p>
+            </div>
         </div>
-        <div>
-            <h1 className="text-3xl font-bold tracking-tight">Platform Analytics</h1>
-            <p className="text-muted-foreground mt-1">High-level insights into platform usage and growth.</p>
-        </div>
+        
       </div>
       
       <AnalyticsClient data={analyticsData} />

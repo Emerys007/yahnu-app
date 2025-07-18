@@ -65,7 +65,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/talent-pool", icon: Users2, label: t('Talent Pool') },
     { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
-    { href: "/dashboard/reports/custom-report-builder", icon: Wrench, label: t('Report Builder') },
+    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('Report Generator') },
   ];
   
   const schoolNav = [
@@ -76,7 +76,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/school-events", icon: Calendar, label: t('Event Management')},
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
-    { href: "/dashboard/reports/custom-report-builder", icon: Wrench, label: t('Report Builder') },
+    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('Report Generator') },
   ];
 
   const adminNav = [
@@ -84,7 +84,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/admin/users", icon: UserCog, label: t('Manage Users') },
     { href: "/dashboard/admin/team", icon: Users2, label: t('Manage Team') },
     { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Platform Analytics') },
-    { href: "/dashboard/reports/custom-report-builder", icon: Wrench, label: t('Report Builder') },
+    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('Report Generator') },
   ];
   
   const bottomNav = [

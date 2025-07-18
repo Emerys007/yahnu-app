@@ -60,7 +60,7 @@ export const CreateReportDialog = ({ onAddReport }: CreateReportDialogProps) => 
         }}>
             <DialogTrigger asChild>
                 <Button>
-                    <PlusCircle className="mr-2 h-4 w-4" /> Create Report
+                    <PlusCircle className="mr-2 h-4 w-4" /> Generate Report
                 </Button>
             </DialogTrigger>
             <DialogContent>

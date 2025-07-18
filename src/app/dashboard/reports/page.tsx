@@ -1,27 +1,9 @@
 
 
-"use client"
+import { redirect } from 'next/navigation'
 
-import { useLocalization } from "@/context/localization-context"
-import { useAuth } from "@/context/auth-context"
-import CompanyAnalyticsPage from "./company-analytics/page"
-import SchoolAnalyticsPage from "./school-analytics/page"
-import AdminAnalyticsPage from "../admin/analytics/page"
-
-
-const roleToAnalytics: Record<string, React.ComponentType> = {
-    company: CompanyAnalyticsPage,
-    school: SchoolAnalyticsPage,
-    admin: AdminAnalyticsPage,
-}
-
-export default function AnalyticsPage() {
-  const { role } = useAuth();
-  const AnalyticsComponent = roleToAnalytics[role];
-  
-  if (!AnalyticsComponent) {
-    return null; 
-  }
-
-  return <AnalyticsComponent />;
+// This page now redirects to the company analytics page by default.
+// The custom report builder is a separate, more advanced feature.
+export default function AnalyticsRedirectPage() {
+  redirect('/dashboard/reports/company-analytics')
 }

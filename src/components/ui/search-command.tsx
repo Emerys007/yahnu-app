@@ -22,6 +22,7 @@ import {
   BrainCircuit,
   MessageSquare,
   Award,
+  Wrench,
 } from "lucide-react"
 
 import {
@@ -35,7 +36,7 @@ import {
 } from "@/components/ui/command"
 import { useLocalization } from "@/context/localization-context"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { Button } from "./button"
 import { useAuth, type Role } from "@/context/auth-context"
 
 const getNavItems = (t: (key: string) => string, role: Role) => {
@@ -95,6 +96,14 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
             ],
             roles: ['admin', 'company', 'school'],
         },
+        {
+            group: t('Reporting'),
+            items: [
+                 { icon: BarChart3, text: t('Analytics'), onSelect: (router) => router.push('/dashboard/reports') },
+                 { icon: Wrench, text: t('Report Generator'), onSelect: (router) => router.push('/dashboard/reports/custom-report-generator') },
+            ],
+             roles: ['admin', 'company', 'school'],
+        }
     ];
 
     const filterByRole = (items: any[]) => items.filter(group => group.roles.includes(role));
