@@ -30,7 +30,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Sheet, SheetContent } from "../ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 import { useLocalization } from "@/context/localization-context";
 import { useAuth, type Role } from "@/context/auth-context";
@@ -46,7 +46,6 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
     { href: "/dashboard/profile", icon: User, label: t('Profile') },
     { href: "/dashboard/jobs", icon: Briefcase, label: t('Job Search') },
-    { href: "/dashboard/companies", icon: Building, label: t('Companies') },
     { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
     { href: "/dashboard/events", icon: Calendar, label: t('Events') },
     { type: "divider", label: t('AI & Assessments') },
@@ -213,7 +212,7 @@ export function DashboardSidebar() {
   const { main: navItems, footer: footerNavItems } = getNavItems(t, role);
 
   const sidebarContent = (
-    <>
+    <div className="flex flex-col h-full">
       <div className={cn("flex h-16 items-center border-b px-4 shrink-0", isCollapsed && "h-16 justify-center px-0")}>
         <Link href="/dashboard" className={cn("flex items-center gap-3", isCollapsed && "justify-center")}>
           <Logo className={cn("h-12 w-12 text-primary transition-all", isCollapsed && "h-8 w-8")} />
@@ -241,13 +240,16 @@ export function DashboardSidebar() {
               </div>
         </div>
       </div>
-    </>
+    </div>
   );
 
   if (isMobile) {
     return (
       <Sheet open={!isCollapsed} onOpenChange={toggleSidebar}>
         <SheetContent side="left" className="p-0 w-72 flex flex-col">
+           <SheetHeader>
+                <SheetTitle className="sr-only">Dashboard Navigation</SheetTitle>
+           </SheetHeader>
            {sidebarContent}
         </SheetContent>
       </Sheet>
