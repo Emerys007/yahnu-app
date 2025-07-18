@@ -2,11 +2,10 @@
 
 "use client"
 
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Award, CheckCircle, XCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useConfetti } from '@/context/confetti-context';
 import { useLocalization } from '@/context/localization-context';
 import React from 'react';
@@ -38,8 +37,9 @@ const testTitles: Record<string, Record<string, string>> = {
     }
 }
 
-export default function AssessmentResultPage({ params }: { params: { testId: string } }) {
-    const { testId } = params;
+export default function AssessmentResultPage() {
+    const params = useParams();
+    const testId = params.testId as string;
     const router = useRouter();
     const searchParams = useSearchParams();
     const score = searchParams.get('score');
