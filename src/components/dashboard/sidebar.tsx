@@ -5,7 +5,7 @@ import Link from "next/link"
 import React from 'react';
 import { usePathname, useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { Logo } from "@/components/ui/logo"
+import { DashboardLogo } from "@/components/ui/dashboard-logo"
 import { cn } from "@/lib/utils"
 import {
   LayoutDashboard,
@@ -243,7 +243,7 @@ export function DashboardSidebar() {
     <div className="flex flex-col h-full">
       <div className={cn("flex h-16 items-center border-b px-4 shrink-0", isCollapsed && "h-16 justify-center px-0")}>
         <Link href="/dashboard" className={cn("flex items-center gap-3", isCollapsed && "justify-center")}>
-          <Logo className={cn("h-12 w-12 text-primary transition-all", isCollapsed && "h-8 w-8")} />
+          <DashboardLogo className={cn("h-12 w-12 text-primary transition-all", isCollapsed && "h-8 w-8")} />
           <div className={cn("flex flex-col transition-opacity duration-200", isCollapsed && "opacity-0 hidden")}>
             <h1 className="text-xl font-bold">Yahnu</h1>
             <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
