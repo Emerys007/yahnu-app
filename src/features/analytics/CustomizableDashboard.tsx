@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Responsive, WidthProvider, type Layout } from "react-grid-layout";
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +30,7 @@ export const CustomizableDashboard = ({ initialLayout, initialReports }: Customi
     const [layouts, setLayouts] = useState<{ lg: Layout[] }>({ lg: initialLayout });
     const [reports, setReports] = useState<ReportMap>(initialReports);
     const [isSaving, setIsSaving] = useState(false);
+    const hasMounted = useRef(false);
 
     useEffect(() => {
         setIsMounted(true);
@@ -44,7 +45,10 @@ export const CustomizableDashboard = ({ initialLayout, initialReports }: Customi
                 setReports(data.reports || {});
             }
         };
-        loadDashboard();
+        loadDashboard().then(() => {
+            // Set hasMounted to true after initial data is loaded
+            hasMounted.current = true;
+        });
     }, [user]);
 
     const saveDashboard = async (newLayouts: { lg: Layout[] }, newReports: ReportMap) => {
@@ -70,7 +74,11 @@ export const CustomizableDashboard = ({ initialLayout, initialReports }: Customi
     };
 
     const onLayoutChange = (layout: Layout[], allLayouts: { lg: Layout[] }) => {
-        // Create a clean layout to avoid saving undefined properties from react-grid-layout
+        // Prevent saving on the very first layout change event which fires on mount
+        if (!hasMounted.current) {
+            return;
+        }
+
         const cleanLayouts = {
             lg: allLayouts.lg.map(({ i, x, y, w, h }) => ({ i, x, y, w, h }))
         };
@@ -93,7 +101,7 @@ export const CustomizableDashboard = ({ initialLayout, initialReports }: Customi
 
         setReports(newReports);
         setLayouts(newLayouts);
-        saveDashboard(newLayouts, reports);
+        saveDashboard(newLayouts, newReports);
     };
 
     const removeReport = (reportId: string) => {
