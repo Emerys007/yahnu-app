@@ -5,13 +5,16 @@ import { useAuth, type Role } from "@/context/auth-context"
 import { GraduateDashboard } from "@/components/dashboard/graduate-dashboard"
 import { CompanyDashboard } from "@/components/dashboard/company-dashboard"
 import { SchoolDashboard } from "@/components/dashboard/school-dashboard"
-import AdminPage from "./admin/page"
+import AdminOverviewPage from "./admin/overview/page"
 
-const dashboardComponents: Record<Role, React.ComponentType> = {
+const dashboardComponents: Record<string, React.ComponentType> = {
   graduate: GraduateDashboard,
   company: CompanyDashboard,
   school: SchoolDashboard,
-  admin: AdminPage,
+  admin: AdminOverviewPage,
+  super_admin: AdminOverviewPage,
+  content_moderator: AdminOverviewPage,
+  support_staff: AdminOverviewPage,
 };
 
 export default function DashboardPage() {

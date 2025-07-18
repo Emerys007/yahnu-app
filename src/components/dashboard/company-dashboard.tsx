@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Users, ClipboardCheck, BarChart3, ArrowUpRight, PlusCircle } from "lucide-react"
+import { Users, Briefcase, BarChart3, ArrowUpRight, PlusCircle, Handshake, FileText, Building, MessageSquare, Calendar } from "lucide-react"
 import Link from "next/link"
 import { useLocalization } from "@/context/localization-context"
 import { motion } from "framer-motion"
@@ -19,15 +19,18 @@ export function CompanyDashboard() {
   const { t } = useLocalization();
 
   const stats = [
-    { title: t('Active Job Postings'), value: 5, icon: ClipboardCheck, description: t('+1 this week') },
+    { title: t('Active Job Postings'), value: 5, icon: Briefcase, description: t('+1 this week') },
     { title: t('New Applicants'), value: 83, icon: Users, description: t('+15% from last month') },
     { title: t('Assessments Sent'), value: 25, icon: BarChart3, description: t('75% completion rate') },
   ];
 
   const quickActions = [
-      { title: t('Post a New Job'), href: '/dashboard/company-profile', icon: PlusCircle },
+      { title: t('Company Profile'), href: '/dashboard/organization-profile', icon: Building },
+      { title: t('Post a New Job'), href: '/dashboard/job-postings', icon: PlusCircle },
       { title: t('View Talent Pool'), href: '/dashboard/talent-pool', icon: Users },
-      { title: t('Track Applications'), href: '/dashboard/applications', icon: ClipboardCheck },
+      { title: t('Track Applications'), href: '/dashboard/applications', icon: FileText },
+      { title: t('Manage Events'), href: '/dashboard/company-events', icon: Calendar },
+      { title: t('Manage Partnerships'), href: '/dashboard/partnerships', icon: Handshake },
   ]
 
   const containerVariants = {
