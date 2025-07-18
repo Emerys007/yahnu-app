@@ -9,6 +9,7 @@ import {
   Sun,
   Moon,
   Monitor,
+  Search,
 } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
@@ -54,13 +55,15 @@ export function MainNav() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center">
-        <Link href="/" className="mr-6 flex items-center gap-3">
-            <Logo className="h-12 w-12" />
-            <div>
-              <p className="font-bold text-xl">Yahnu</p>
-              <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
-            </div>
-        </Link>
+        <div className="mr-6 flex-1 md:flex-initial">
+          <Link href="/" className="flex items-center gap-3">
+              <Logo className="h-12 w-12" />
+              <div>
+                <p className="font-bold text-xl">Yahnu</p>
+                <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
+              </div>
+          </Link>
+        </div>
         
         <div className="flex items-center gap-2 ml-auto">
             <nav className="hidden md:flex items-center gap-6 text-sm">
@@ -141,61 +144,9 @@ export function MainNav() {
             </div>
             
             <div className="md:hidden flex items-center gap-1">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <MoreVertical className="h-5 w-5" />
-                    <span className="sr-only">More options</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      <Languages className="mr-2 h-4 w-4" />
-                      <span>{t('Language')}</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setLanguage('fr')}>Français</DropdownMenuItem>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      <Sun className="mr-2 h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                      <Moon className="absolute mr-2 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                      <span>{t('Theme')}</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        <DropdownMenuItem onClick={() => setTheme("light")}>{t('Light')}</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setTheme("dark")}>{t('Dark')}</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setTheme("system")}>{t('System')}</DropdownMenuItem>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                       <Flag countryCode={country.code} />
-                       <span className="ml-2">{t('Country')}</span>
-                    </DropdownMenuSubTrigger>
-                     <DropdownMenuPortal>
-                      <DropdownMenuSubContent className="max-h-80 overflow-y-auto">
-                        {allCountries.map((c) => (
-                            <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
-                                <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
-                                <span>{c.name.en}</span>
-                            </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                </DropdownMenuContent>
-              </DropdownMenu>
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="outline" size="icon">
                     <Menu className="h-5 w-5" />
                     <span className="sr-only">{t('Open menu')}</span>
                   </Button>
@@ -227,21 +178,14 @@ export function MainNav() {
                       </SheetClose>
                     ))}
                     <Separator className="my-4" />
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col items-center gap-4">
                       <SheetClose asChild>
-                        <Button
-                          variant="ghost"
-                          className="justify-start text-lg"
-                          asChild
-                        >
-                          <Link href="/login">{t('Login')}</Link>
+                        <Button variant="outline" className="w-full text-lg" asChild>
+                            <Link href="/login">{t('Login')}</Link>
                         </Button>
                       </SheetClose>
                       <SheetClose asChild>
-                        <Button
-                          className="justify-start text-lg"
-                          asChild
-                        >
+                        <Button className="w-full text-lg" asChild>
                           <Link href="/register">{t('Sign Up')}</Link>
                         </Button>
                       </SheetClose>
