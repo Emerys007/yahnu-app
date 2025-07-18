@@ -37,8 +37,8 @@ const getSlides = (t: (key: string) => string) => [
         subtitle: t("Access a diverse pool of talented graduates from top schools. Find the perfect fit for your company's culture and goals."),
         buttonText: t("Post a Job Opening"),
         buttonIcon: <PlusCircle />,
-        imageUrl: "/images/Build_A_Team.jpeg",
-        imageHint: "diverse team collaborating in a modern office",
+        imageUrl: "/images/Build-A-Team.jpeg",
+        imageHint: "diverse business team",
         href: "/register"
       },
       {

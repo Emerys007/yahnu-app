@@ -194,7 +194,7 @@ export function MainNav() {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[80%]">
-                  <SheetHeader>
+                  <SheetHeader className="text-left">
                     <SheetTitle>
                       <SheetClose asChild>
                         <Link href="/">
