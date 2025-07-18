@@ -25,7 +25,7 @@ const getDashboardForRole = (role: Role) => {
     case 'support_staff':
       return <AdminDashboard />;
     default:
-      return <GraduateDashboard />;
+      return null;
   }
 }
 
@@ -47,7 +47,7 @@ export default function DashboardLayout({
               <DashboardHeader />
               <main className="flex-1 overflow-y-auto p-4 sm:p-6">
                   <DashboardContent>
-                    {children}
+                    {DashboardComponent ? DashboardComponent : children}
                   </DashboardContent>
               </main>
             </div>
