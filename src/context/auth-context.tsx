@@ -5,12 +5,13 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { app } from '@/lib/firebase'; // Ensure your firebase config is correctly exported from here
+import Cookies from 'js-cookie';
 
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
-export type Role = 'graduate' | 'company' | 'school' | 'admin';
+export type Role = 'graduate' | 'company' | 'school' | 'admin' | 'super_admin' | 'content_moderator' | 'support_staff';
 export type UserStatus = 'pending' | 'active' | 'suspended' | 'declined';
 
 export type EducationEntry = {
@@ -77,20 +78,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     return null;
   }
+  
+  const updateUserState = (profile: UserProfile | null) => {
+    setUser(profile);
+    if (profile) {
+      Cookies.set('userRole', profile.role, { expires: 7, path: '/' });
+    } else {
+      Cookies.remove('userRole', { path: '/' });
+    }
+  }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
       if (firebaseUser) {
         const userProfile = await fetchUserDocument(firebaseUser);
          if (userProfile && userProfile.status === 'active') {
-          setUser(userProfile);
+          updateUserState(userProfile);
         } else {
-           // For pending/suspended/non-existent-doc users, keep them signed out of the app state
-           // This also prevents users who haven't been approved from accessing the dashboard.
-           setUser(null);
+           updateUserState(null);
         }
       } else {
-        setUser(null);
+        updateUserState(null);
       }
       setLoading(false);
     });
@@ -150,7 +158,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }
     
-    setUser(userProfile);
+    updateUserState(userProfile);
   };
 
   const signInWithGoogle = async () => {
@@ -158,7 +166,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             const result = await linkWithPopup(auth.currentUser, googleProvider);
             const userProfile = await fetchUserDocument(result.user);
-            if(userProfile) setUser(userProfile);
+            if(userProfile) updateUserState(userProfile);
         } catch (error: any) {
              console.error("Failed to link Google account:", error);
             if(error.code === 'auth/credential-already-in-use') {
@@ -198,14 +206,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
         }
         
-        if (userProfile) setUser(userProfile);
+        if (userProfile) updateUserState(userProfile);
     }
   };
 
 
   const signOut = async () => {
     await firebaseSignOut(auth);
-    setUser(null);
+    updateUserState(null);
   };
 
   const isGoogleProvider = () => {
