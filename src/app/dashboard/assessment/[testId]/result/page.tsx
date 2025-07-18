@@ -39,6 +39,7 @@ const testTitles: Record<string, Record<string, string>> = {
 }
 
 export default function AssessmentResultPage({ params }: { params: { testId: string } }) {
+    const { testId } = params;
     const router = useRouter();
     const searchParams = useSearchParams();
     const score = searchParams.get('score');
@@ -50,11 +51,11 @@ export default function AssessmentResultPage({ params }: { params: { testId: str
     const passed = scoreValue >= 70;
 
     React.useEffect(() => {
-        setTestTitle(testTitles[params.testId]?.[language] || "Assessment");
+        setTestTitle(testTitles[testId]?.[language] || "Assessment");
         if(passed) {
             fire();
         }
-    }, [params, language, passed, fire]);
+    }, [testId, language, passed, fire]);
     
     // In a real app, you'd save this result and badge to the user's profile in the DB here.
     // For now, we simulate this by just showing the result.
