@@ -1,4 +1,5 @@
 
+
 {
     "Jobs": "Jobs",
     "Companies": "Companies",
@@ -655,6 +656,9 @@
     "Verified Skills": "Verified Skills",
     "Certifications": "Certifications",
     "Filter by badges...": "Filter by badges...",
-    "Search skills...": "Search skills..."
+    "Search skills...": "Search skills...",
+    "Customer Service Excellence": "Customer Service Excellence",
+    "Prove your ability to handle customer inquiries and resolve issues effectively.": "Prove your ability to handle customer inquiries and resolve issues effectively.",
+    "General Professional": "General Professional"
 }
 

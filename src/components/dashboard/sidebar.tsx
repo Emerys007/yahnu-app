@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import Link from "next/link"
@@ -27,7 +28,8 @@ import {
   MessageSquare,
   UserCog,
   Calendar,
-  Award
+  Award,
+  HeartHandshake
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";

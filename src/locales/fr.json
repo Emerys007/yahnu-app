@@ -1,4 +1,5 @@
 
+
 {
     "Jobs": "Emplois",
     "Companies": "Entreprises",
@@ -654,5 +655,9 @@
     "Verified Skills": "Compétences vérifiées",
     "Certifications": "Certifications",
     "Filter by badges...": "Filtrer par badges...",
-    "Search skills...": "Rechercher des compétences..."
+    "Search skills...": "Rechercher des compétences...",
+    "Customer Service Excellence": "Excellence du Service Client",
+    "Prove your ability to handle customer inquiries and resolve issues effectively.": "Prouvez votre capacité à traiter les demandes des clients et à résoudre les problèmes efficacement.",
+    "General Professional": "Professionnel Général"
 }
+

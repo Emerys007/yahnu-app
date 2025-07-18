@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { useSearchParams } from 'next/navigation';
@@ -30,6 +31,10 @@ const testTitles: Record<string, Record<string, string>> = {
         en: 'Cognitive Aptitude Test',
         fr: 'Test d\'Aptitude Cognitive'
     },
+    'customer-service': {
+        en: 'Customer Service Excellence',
+        fr: 'Excellence du Service Client'
+    }
 }
 
 export default function AssessmentResultPage({ params }: { params: { testId: string } }) {
@@ -92,3 +97,4 @@ export default function AssessmentResultPage({ params }: { params: { testId: str
         </div>
     )
 }
+

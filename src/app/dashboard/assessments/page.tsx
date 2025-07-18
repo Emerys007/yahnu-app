@@ -1,10 +1,11 @@
 
+
 "use client"
 
 import { useLocalization } from "@/context/localization-context";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Award, BrainCircuit, Code, DollarSign, Leaf, Truck } from "lucide-react";
+import { Award, BrainCircuit, Code, DollarSign, Leaf, Truck, HeartHandshake } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
 
@@ -13,8 +14,8 @@ const assessments = [
     id: "frontend-basics",
     title: "Frontend Development (React)",
     description: "Validate your fundamental skills in React, JavaScript, and modern CSS.",
-    questions: 10,
-    time: 20,
+    questions: 15,
+    time: 25,
     icon: Code,
     category: "IT & Telecoms"
   },
@@ -22,8 +23,8 @@ const assessments = [
     id: "financial-analysis",
     title: "Financial Analysis Fundamentals",
     description: "Test your knowledge of financial statements, valuation, and modeling.",
-    questions: 10,
-    time: 20,
+    questions: 15,
+    time: 25,
     icon: DollarSign,
     category: "Finance & Banking"
   },
@@ -31,8 +32,8 @@ const assessments = [
     id: "agronomy-principles",
     title: "Modern Agronomy Principles",
     description: "Assess your understanding of crop science, soil management, and sustainable practices.",
-    questions: 10,
-    time: 15,
+    questions: 15,
+    time: 20,
     icon: Leaf,
     category: "Agriculture"
   },
@@ -40,25 +41,34 @@ const assessments = [
     id: "supply-chain",
     title: "Supply Chain Essentials",
     description: "Demonstrate your expertise in logistics, inventory management, and transportation.",
-    questions: 10,
-    time: 15,
+    questions: 15,
+    time: 20,
     icon: Truck,
     category: "Logistics"
+  },
+  {
+    id: "customer-service",
+    title: "Customer Service Excellence",
+    description: "Prove your ability to handle customer inquiries and resolve issues effectively.",
+    questions: 15,
+    time: 20,
+    icon: HeartHandshake,
+    category: "General Professional"
   },
   {
     id: "cognitive-aptitude",
     title: "Cognitive Aptitude Test",
     description: "Measure your problem-solving, critical thinking, and numerical reasoning skills.",
-    questions: 10,
-    time: 15,
+    questions: 15,
+    time: 20,
     icon: BrainCircuit,
-    category: "General Aptitude"
+    category: "General Professional"
   }
 ];
 
 export default function AssessmentsPage() {
     const { t } = useLocalization();
-    const categories = [...new Set(assessments.map(a => a.category))];
+    const categories = [...new Set(assessments.map(a => a.category))].sort((a, b) => a.localeCompare(b));
     
     return (
     <div className="space-y-8">
@@ -106,3 +116,4 @@ export default function AssessmentsPage() {
     </div>
     )
 }
+
