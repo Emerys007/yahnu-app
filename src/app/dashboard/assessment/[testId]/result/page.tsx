@@ -9,6 +9,7 @@ import { Award, CheckCircle, XCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useConfetti } from '@/context/confetti-context';
 import { useLocalization } from '@/context/localization-context';
+import React from 'react';
 
 const testTitles: Record<string, Record<string, string>> = {
     'frontend-basics': {
@@ -43,14 +44,17 @@ export default function AssessmentResultPage({ params }: { params: { testId: str
     const score = searchParams.get('score');
     const { fire } = useConfetti();
     const { t, language } = useLocalization();
+    const [testTitle, setTestTitle] = React.useState("Assessment");
 
     const scoreValue = score ? parseInt(score, 10) : 0;
     const passed = scoreValue >= 70;
-    const testTitle = testTitles[params.testId]?.[language] || "Assessment";
 
-    if(passed) {
-        fire();
-    }
+    React.useEffect(() => {
+        setTestTitle(testTitles[params.testId]?.[language] || "Assessment");
+        if(passed) {
+            fire();
+        }
+    }, [params.testId, language, passed, fire]);
     
     // In a real app, you'd save this result and badge to the user's profile in the DB here.
     // For now, we simulate this by just showing the result.
@@ -97,4 +101,5 @@ export default function AssessmentResultPage({ params }: { params: { testId: str
         </div>
     )
 }
+
 
