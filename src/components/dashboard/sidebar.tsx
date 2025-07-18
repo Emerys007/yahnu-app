@@ -201,7 +201,7 @@ export function DashboardSidebar() {
     const commonButtonProps = {
         variant: "ghost" as const,
         className: cn(
-            "w-full h-auto min-h-11 text-base font-normal py-2", 
+            "w-full h-auto min-h-11 text-base font-normal py-2 px-3", 
             isCollapsed ? 'justify-center' : 'justify-start',
             isActive ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'
         )
