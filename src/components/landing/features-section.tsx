@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { GraduationCap, Building, School } from "lucide-react"
 import { useLocalization } from "@/context/localization-context"
 import { cn } from "@/lib/utils"
+import { AnimatedGradientBackground } from "../ui/animated-gradient-background"
 
 const getFeaturesData = (t: (key: string) => string) => ({
   graduates: {
@@ -221,8 +222,9 @@ export function FeaturesSection() {
     const isInView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
-    <section ref={ref} className="py-24 bg-secondary/50" id="features">
-      <div className="container mx-auto">
+    <section ref={ref} className="py-24 relative overflow-hidden" id="features">
+      <AnimatedGradientBackground />
+      <div className="container mx-auto relative z-10">
         <motion.div 
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
