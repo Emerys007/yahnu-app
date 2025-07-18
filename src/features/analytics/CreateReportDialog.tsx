@@ -43,13 +43,21 @@ export const CreateReportDialog = ({ onAddReport }: CreateReportDialogProps) => 
 
     const reset = () => {
         setIsOpen(false);
-        setStep(1);
-        setSelectedSource(null);
-        setSelectedViz(null);
+        setTimeout(() => {
+            setStep(1);
+            setSelectedSource(null);
+            setSelectedViz(null);
+        }, 200); // Delay reset to allow dialog to close smoothly
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog open={isOpen} onOpenChange={(open) => {
+            if (!open) {
+                reset();
+            } else {
+                setIsOpen(true);
+            }
+        }}>
             <DialogTrigger asChild>
                 <Button>
                     <PlusCircle className="mr-2 h-4 w-4" /> Create Report
@@ -57,15 +65,15 @@ export const CreateReportDialog = ({ onAddReport }: CreateReportDialogProps) => 
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>
+                    <DialogTitle className="flex items-center">
                         {step > 1 && (
-                            <Button variant="ghost" size="icon" className="mr-2" onClick={() => setStep(step - 1)}>
+                            <Button variant="ghost" size="icon" className="mr-2 h-8 w-8" onClick={() => setStep(step - 1)}>
                                 <ChevronLeft className="h-4 w-4" />
                             </Button>
                         )}
                         {step === 1 ? "Select Data Source" : "Select Visualization"}
                     </DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription className={step > 1 ? "pl-10" : ""}>
                          {step === 1 ? "Choose the data you want to report on." : "Choose how you want to visualize your data."}
                     </DialogDescription>
                 </DialogHeader>
