@@ -11,7 +11,7 @@ import {
   Monitor,
   Search,
 } from "lucide-react";
-import { Logo } from "@/components/logo";
+import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
