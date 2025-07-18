@@ -79,7 +79,7 @@ export function MainNav() {
                 ))}
             </nav>
             <div className="hidden items-center gap-2 md:flex md:ml-6">
-                <Button variant="ghost" asChild>
+                <Button variant="outline" asChild>
                   <Link href="/login">{t('Login')}</Link>
                 </Button>
                 <Button asChild>
@@ -89,30 +89,29 @@ export function MainNav() {
             
             <div className="hidden md:flex">
               <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                          <Flag countryCode={country.code} />
-                          <span className="sr-only">Select Country</span>
-                      </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-40 max-h-80 overflow-y-auto" align="end">
-                      {allCountries.map((c) => (
-                          <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
-                              <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
-                              <span>{c.name.en}</span>
-                          </DropdownMenuItem>
-                      ))}
-                  </DropdownMenuContent>
-              </DropdownMenu>
-
-              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="outline" size="icon">
                     <MoreVertical className="h-5 w-5" />
                     <span className="sr-only">More options</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      <Flag countryCode={country.code} className="mr-2"/>
+                      <span>{country.name.en}</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent className="w-40 max-h-80 overflow-y-auto">
+                        {allCountries.map((c) => (
+                          <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
+                              <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
+                              <span>{c.name.en}</span>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger>
                       <Languages className="mr-2 h-4 w-4" />
@@ -160,7 +159,6 @@ export function MainNav() {
                             <Logo className="h-6 w-6" />
                             <span className="font-bold">Yahnu</span>
                           </div>
-                          <p className="text-xs font-normal text-muted-foreground mt-1 text-left">{t('Your future starts here')}</p>
                         </Link>
                       </SheetClose>
                     </SheetTitle>
