@@ -194,14 +194,14 @@ export function DashboardSidebar() {
     const buttonContent = (
       <>
         <item.icon className={cn("h-5 w-5 shrink-0", isCollapsed && "mx-auto")} />
-        <span className={cn("ml-3 whitespace-nowrap", isCollapsed && "hidden")}>{item.label}</span>
+        <span className={cn("ml-3 text-left", isCollapsed && "hidden")}>{item.label}</span>
       </>
     );
 
     const commonButtonProps = {
         variant: "ghost" as const,
         className: cn(
-            "w-full h-10 text-base font-normal", 
+            "w-full h-auto min-h-11 text-base font-normal py-2", 
             isCollapsed ? 'justify-center' : 'justify-start',
             isActive ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'
         )
