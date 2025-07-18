@@ -64,7 +64,7 @@ export function MainNav() {
         </Link>
         
         <div className="flex items-center gap-2 ml-auto">
-            <nav className="hidden md:flex items-center gap-4 text-sm">
+            <nav className="hidden md:flex items-center gap-6 text-sm">
                 {navLinks.map((link) => (
                     <Link
                     key={link.href}
@@ -75,7 +75,7 @@ export function MainNav() {
                     </Link>
                 ))}
             </nav>
-            <div className="hidden items-center gap-2 md:flex">
+            <div className="hidden items-center gap-2 md:flex md:ml-6">
                 <Button variant="ghost" asChild>
                   <Link href="/login">{t('Login')}</Link>
                 </Button>
