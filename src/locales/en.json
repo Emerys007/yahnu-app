@@ -320,9 +320,9 @@
     "Deactivate": "Deactivate",
     "No graduates found.": "No graduates found.",
     "Account activated": "Account activated",
-    "account has been activated.": "account has been activated.",
+    "account has been activated.": "le compte a été activé.",
     "Account deactivated": "Account deactivated",
-    "account has been deactivated.": "account has been deactivated.",
+    "account has been deactivated.": "le compte a été désactivé.",
     "Account pending": "Account pending",
     "Your account is pending approval from your school's administrator. We'll notify you once it's active.": "Your account is pending approval from your school's administrator. We'll notify you once it's active.",
     "Your registration is pending approval from a Yahnu administrator. We'll notify you once it's active.": "Your registration is pending approval from a Yahnu administrator. We'll notify you once it's active.",
@@ -650,7 +650,7 @@
     "Find the ideal candidates for your company.": "Find the ideal candidates for your company.",
     "Filter Talent": "Filter Talent",
     "View Full Profile": "View Full Profile",
-    "Redirecting to messages...": "Redirection vers les messages...",
+    "Redirecting to messages...": "Redirecting to messages...",
     "Skills & Certifications": "Skills & Certifications",
     "Self-Reported Skills": "Self-Reported Skills",
     "Verified Skills": "Verified Skills",
@@ -659,6 +659,14 @@
     "Search skills...": "Search skills...",
     "Customer Service Excellence": "Customer Service Excellence",
     "Prove your ability to handle customer inquiries and resolve issues effectively.": "Prove your ability to handle customer inquiries and resolve issues effectively.",
-    "General Professional": "General Professional"
+    "General Professional": "General Professional",
+    "Find Your Dream Job Today": "Find Your Dream Job Today",
+    "Explore thousands of job opportunities tailored for you in Côte d'Ivoire. Your next career move is just a click away.": "Explore thousands of job opportunities tailored for you in Côte d'Ivoire. Your next career move is just a click away.",
+    "Search for Jobs": "Search for Jobs",
+    "Build Your Dream Team": "Build Your Dream Team",
+    "Access a diverse pool of talented graduates from top schools. Find the perfect fit for your company's culture and goals.": "Access a diverse pool of talented graduates from top schools. Find the perfect fit for your company's culture and goals.",
+    "Post a Job Opening": "Post a Job Opening",
+    "Universities": "Universities",
+    "Collaborate with leading academic institutions to shape the future of talent. Connect with the brightest minds and drive innovation.": "Collaborate with leading academic institutions to shape the future of talent. Connect with the brightest minds and drive innovation.",
+    "Become a Partner": "Become a Partner"
 }
-
