@@ -1,6 +1,8 @@
 import { Shield } from "lucide-react";
 import { AdminClient } from "../admin-client";
 import { type UserStatus } from "@/context/auth-context";
+import { db } from "@/lib/firebase";
+import { collection, query, where, getDocs, DocumentData } from "firebase/firestore";
 
 type User = {
   id: string
@@ -11,11 +13,34 @@ type User = {
   date: string
 }
 
-type AdminOverviewPageProps = {
-    pendingRequests: User[];
+async function getPendingRequests(): Promise<User[]> {
+    const usersRef = collection(db, "users");
+    const q = query(
+        usersRef, 
+        where('status', '==', 'pending'), 
+        where('role', 'in', ['company', 'school'])
+    );
+    const querySnapshot = await getDocs(q);
+
+    const requests = querySnapshot.docs.map(doc => {
+        const data = doc.data() as DocumentData;
+        const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+        return {
+            id: doc.id,
+            name: data.name,
+            email: data.email,
+            accountType: data.role.charAt(0).toUpperCase() + data.role.slice(1),
+            status: data.status,
+            date: createdAt.toISOString().split('T')[0],
+        } as User;
+    });
+
+    return requests;
 }
 
-export default function AdminOverviewPage({ pendingRequests }: AdminOverviewPageProps) {
+export default async function AdminOverviewPage() {
+    const pendingRequests = await getPendingRequests();
+
     return (
         <div className="space-y-8">
             <div className="flex items-start gap-4">

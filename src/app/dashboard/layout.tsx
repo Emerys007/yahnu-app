@@ -8,37 +8,15 @@ import { ScrollToTop } from '@/components/ui/scroll-to-top';
 import { GraduateDashboard } from '@/components/dashboard/graduate-dashboard';
 import { CompanyDashboard } from '@/components/dashboard/company-dashboard';
 import { SchoolDashboard } from '@/components/dashboard/school-dashboard';
-import { AdminDashboard } from '@/components/dashboard/admin-dashboard';
 import { type Role } from '@/context/auth-context';
 
-const getDashboardForRole = (role: Role) => {
-  switch (role) {
-    case 'graduate':
-      return <GraduateDashboard />;
-    case 'company':
-      return <CompanyDashboard />;
-    case 'school':
-      return <SchoolDashboard />;
-    case 'admin':
-    case 'super_admin':
-    case 'content_moderator':
-    case 'support_staff':
-      return <AdminDashboard />;
-    default:
-      return null;
-  }
-}
-
+// The layout no longer needs to decide which dashboard to show.
+// It will simply render the child page, which will be determined by the URL.
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const cookieStore = cookies();
-  const role = (cookieStore.get('userRole')?.value as Role) || 'graduate';
-  
-  const DashboardComponent = getDashboardForRole(role);
-
   return (
       <SidebarProvider>
         <div className="relative min-h-screen lg:grid lg:grid-cols-[auto_1fr]">
@@ -47,7 +25,7 @@ export default function DashboardLayout({
               <DashboardHeader />
               <main className="flex-1 overflow-y-auto p-4 sm:p-6">
                   <DashboardContent>
-                    {DashboardComponent ? DashboardComponent : children}
+                    {children}
                   </DashboardContent>
               </main>
             </div>
