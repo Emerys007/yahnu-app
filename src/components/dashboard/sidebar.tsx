@@ -5,7 +5,7 @@ import Link from "next/link"
 import React from 'react';
 import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
-import { Logo } from "@/components/logo"
+import { Logo } from "@/components/ui/logo"
 import { cn } from "@/lib/utils"
 import {
   LayoutDashboard,
