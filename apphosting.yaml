@@ -14,14 +14,17 @@ runConfig:
       # This value can be a string literal or a reference to a secret.
       # Create a secret in Google Secret Manager by running this in your terminal:
       # gcloud secrets create opencage-api-key --replication-policy="automatic"
-      # gcloud secrets versions add opencage-api-key --data-file="/path/to/your/key.txt"
-      value: "opencage-api-key"
+      # Then add your key from .env.local:
+      # gcloud secrets versions add opencage-api-key --data-file="/home/user/studio/.env.local" (assuming key is in this file)
+      # Or directly: gcloud secrets versions add opencage-api-key --data="YOUR_OPENCAGE_KEY"
+      secret: opencage-api-key
     - variable: GOOGLE_API_KEY
       # This is a secret environment variable.
       # Its value should be stored in Google Secret Manager.
       # Create the secret by running this in your terminal:
       # gcloud secrets create google-api-key --replication-policy="automatic"
-      # gcloud secrets versions add google-api-key --data-file="/path/to/your/google-api-key.txt"
+      # Then add your key from .env.local:
+      # gcloud secrets versions add google-api-key --data="YOUR_GOOGLE_API_KEY"
       secret: google-api-key
 
 # App Hosting uses Cloud Build to build and deploy your app.
