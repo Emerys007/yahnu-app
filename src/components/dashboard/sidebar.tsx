@@ -13,23 +13,20 @@ import {
   User,
   Briefcase,
   Building,
-  ClipboardCheck,
+  FileText,
+  Users2,
+  Handshake,
   BarChart3,
   LifeBuoy,
   Settings,
   School,
-  FileText,
-  Users2,
-  Handshake,
   Shield,
   UserCheck,
-  Users,
+  UserCog,
   BrainCircuit,
   MessageSquare,
-  UserCog,
-  Calendar,
   Award,
-  HeartHandshake
+  Calendar,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -37,6 +34,7 @@ import { Sheet, SheetContent } from "../ui/sheet";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 import { useLocalization } from "@/context/localization-context";
 import { useAuth, type Role } from "@/context/auth-context";
+import { Separator } from "../ui/separator";
 
 const getNavItems = (t: (key: string) => string, role: Role) => {
   const baseNav = [
@@ -85,22 +83,21 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   ];
   
   const bottomNav = [
-      { type: "divider", label: t('Help & Settings')},
       { href: "/dashboard/settings", icon: Settings, label: t('Settings') },
       { href: "/dashboard/support", icon: LifeBuoy, label: t('Support') },
   ]
 
   switch (role) {
     case 'graduate':
-      return [...graduateNav, ...bottomNav];
+      return { main: graduateNav, footer: bottomNav };
     case 'company':
-      return [...companyNav, ...bottomNav];
+      return { main: companyNav, footer: bottomNav };
     case 'school':
-      return [...schoolNav, ...bottomNav];
+      return { main: schoolNav, footer: bottomNav };
     case 'admin':
-      return [...adminNav, ...bottomNav];
+      return { main: adminNav, footer: bottomNav };
     default:
-      return [...baseNav, ...bottomNav];
+      return { main: baseNav, footer: bottomNav };
   }
 }
 
@@ -141,15 +138,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   return <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>;
 }
 
-export function DashboardSidebar() {
-  const pathname = usePathname()
-  const { isCollapsed, isMobile, toggleSidebar } = useSidebar();
-  const { t } = useLocalization();
-  const { role } = useAuth();
-
-  const navItems = getNavItems(t, role);
-
-  const renderNavItem = (item: any, index: number) => {
+const renderNavItem = (item: any, index: number, isCollapsed: boolean, pathname: string) => {
     if (item.type === 'divider') {
         return (
              <motion.div 
@@ -206,7 +195,15 @@ export function DashboardSidebar() {
           </Tooltip>
         </TooltipProvider>
     )
-  }
+}
+
+export function DashboardSidebar() {
+  const pathname = usePathname()
+  const { isCollapsed, isMobile, toggleSidebar } = useSidebar();
+  const { t } = useLocalization();
+  const { role } = useAuth();
+
+  const { main: navItems, footer: footerNavItems } = getNavItems(t, role);
 
   const sidebarContent = (
     <>
@@ -221,8 +218,17 @@ export function DashboardSidebar() {
       </div>
       <div className="flex-1 overflow-y-auto overflow-x-hidden">
         <nav className="flex-1 px-2 py-4 space-y-1">
-            {navItems.map(renderNavItem)}
+            {navItems.map((item, index) => renderNavItem(item, index, isCollapsed, pathname))}
         </nav>
+      </div>
+      <div className="mt-auto p-2">
+        <Separator className={cn("mb-2", isCollapsed ? "mx-2" : "mx-4")} />
+        <nav className="space-y-1 px-2 pb-2">
+            {footerNavItems.map((item, index) => renderNavItem(item, index, isCollapsed, pathname))}
+        </nav>
+         <div className={cn("text-center text-xs text-muted-foreground py-2", isCollapsed && "hidden")}>
+              <p>&copy; {new Date().getFullYear()} Yahnu.</p>
+          </div>
       </div>
     </>
   );
@@ -238,7 +244,7 @@ export function DashboardSidebar() {
   }
 
   return (
-    <aside className={cn("hidden lg:block border-r bg-card transition-all duration-300 ease-in-out sticky top-0 h-screen", isCollapsed ? "w-20" : "w-72")}>
+    <aside className={cn("hidden lg:flex flex-col border-r bg-card transition-all duration-300 ease-in-out sticky top-0 h-screen", isCollapsed ? "w-20" : "w-72")}>
         {sidebarContent}
     </aside>
   )

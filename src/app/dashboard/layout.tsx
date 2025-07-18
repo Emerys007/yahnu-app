@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { DashboardSidebar, SidebarProvider } from '@/components/dashboard/sidebar';
 import { DashboardHeader } from '@/components/dashboard/header';
-import { Footer } from '@/components/landing/footer';
 import { DashboardContent } from '@/components/dashboard/dashboard-content';
 import { ScrollToTop } from '@/components/ui/scroll-to-top';
 
@@ -22,7 +21,6 @@ export default function DashboardLayout({
                   <DashboardContent>
                     {children}
                   </DashboardContent>
-                  <Footer />
               </main>
             </div>
         </div>
