@@ -29,7 +29,7 @@ const getSlides = (t: (key: string) => string) => [
         buttonIcon: <Search />,
         imageUrl: "/images/dream-job.jpg",
         imageHint: "confident graduate looking towards the future",
-        href: "/jobs"
+        href: "/register"
       },
       {
         role: "Companies",
@@ -37,7 +37,7 @@ const getSlides = (t: (key: string) => string) => [
         subtitle: t("Access a diverse pool of talented graduates from top schools. Find the perfect fit for your company's culture and goals."),
         buttonText: t("Post a Job Opening"),
         buttonIcon: <PlusCircle />,
-        imageUrl: "/images/uni-partnership.jpg",
+        imageUrl: "/images/Build_A_Team.jpeg",
         imageHint: "diverse team collaborating in a modern office",
         href: "/register"
       },
@@ -112,7 +112,7 @@ export function HeroSection() {
                   <AnimatePresence>
                   {current === index && (
                     <motion.div
-                      className="max-w-4xl space-y-8"
+                      className="max-w-4xl mx-auto space-y-8"
                       initial="hidden"
                       animate="visible"
                       exit="hidden"
@@ -130,7 +130,7 @@ export function HeroSection() {
                         {slide.headline}
                       </motion.h1>
                       <motion.p
-                        className="text-lg md:text-2xl text-white/90 drop-shadow-xl max-w-3xl"
+                        className="text-lg md:text-2xl text-white/90 drop-shadow-xl max-w-3xl mx-auto"
                          variants={{
                           hidden: { opacity: 0, y: 20 },
                           visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeInOut", delay: 0.2 } },
@@ -155,16 +155,6 @@ export function HeroSection() {
                                 </Link>
                             </Button>
                           </motion.div>
-                          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Button size="lg" variant="gooey" asChild className="text-base px-8 py-6 border-white hover:border-primary">
-                                <Link href="/register">
-                                    <div className="flex items-center gap-2">
-                                        {t('Create an Account')}
-                                        <ArrowRight />
-                                    </div>
-                                </Link>
-                            </Button>
-                           </motion.div>
                       </motion.div>
                     </motion.div>
                   )}
