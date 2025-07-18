@@ -740,7 +740,6 @@
     "Your academic background. Add each degree separately.": "Your academic background. Add each degree separately.",
     "Add Degree": "Add Degree",
     "Degree": "Degree",
-    "Field of Study": "Field of Study",
     "No education history added yet.": "No education history added yet.",
     "Detail your professional journey.": "Detail your professional journey.",
     "Describe your work experience...": "Describe your work experience...",
@@ -757,5 +756,6 @@
     "My Applications": "My Applications",
     "An overview of all the jobs you have applied for.": "An overview of all the jobs you have applied for.",
     "Job Title": "Job Title",
-    "RSVP": "RSVP"
+    "RSVP": "RSVP",
+    "Log out": "Log out"
 }

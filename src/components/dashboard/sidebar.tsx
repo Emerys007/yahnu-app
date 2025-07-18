@@ -3,7 +3,7 @@
 
 import Link from "next/link"
 import React from 'react';
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { Logo } from "@/components/ui/logo"
 import { cn } from "@/lib/utils"
@@ -26,7 +26,8 @@ import {
   MessageSquare,
   Award,
   Calendar,
-  Wrench
+  Wrench,
+  LogOut,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -35,6 +36,7 @@ import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "../ui/
 import { useLocalization } from "@/context/localization-context";
 import { useAuth, type Role } from "@/context/auth-context";
 import { Separator } from "../ui/separator";
+import { useToast } from "@/hooks/use-toast";
 
 const getNavItems = (t: (key: string) => string, role: Role) => {
   const baseNav = [
@@ -59,7 +61,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/organization-profile", icon: Building, label: t('Company Profile') },
     { href: "/dashboard/job-postings", icon: Briefcase, label: t('Job Postings')},
     { href: "/dashboard/applicants", icon: FileText, label: t('Applicants') },
-    { href: "/dashboard/events", icon: Calendar, label: t('Event Management') },
+    { href: "/dashboard/company-events", icon: Calendar, label: t('Event Management') },
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/talent-pool", icon: Users2, label: t('Talent Pool') },
     { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
@@ -71,7 +73,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
     { href: "/dashboard/organization-profile", icon: School, label: t('School Profile')},
     { href: "/dashboard/graduates", icon: UserCheck, label: t('Manage Graduates')},
-    { href: "/dashboard/events", icon: Calendar, label: t('Event Management')},
+    { href: "/dashboard/school-events", icon: Calendar, label: t('Event Management')},
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
     { href: "/dashboard/reports/custom-report-builder", icon: Wrench, label: t('Report Builder') },
@@ -88,6 +90,8 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   const bottomNav = [
       { href: "/dashboard/settings", icon: Settings, label: t('Settings') },
       { href: "/dashboard/support", icon: LifeBuoy, label: t('Support') },
+      { type: "divider" },
+      { action: "logout", icon: LogOut, label: t('Log out') },
   ]
 
   switch (role) {
@@ -139,12 +143,39 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     isCollapsed,
     isMobile,
     toggleSidebar,
-  }), [isCollapsed, isMobile, toggleSidebar]);
+  }), [isCollapsed, isMobile]);
 
   return <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>;
 }
 
-const renderNavItem = (item: any, index: number, isCollapsed: boolean, pathname: string) => {
+export function DashboardSidebar() {
+  const pathname = usePathname()
+  const router = useRouter();
+  const { isCollapsed, isMobile, toggleSidebar } = useSidebar();
+  const { t } = useLocalization();
+  const { role, signOut } = useAuth();
+  const { toast } = useToast();
+
+  const { main: navItems, footer: footerNavItems } = getNavItems(t, role);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push('/');
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out.",
+      });
+    } catch (error) {
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem logging you out.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const renderNavItem = (item: any, index: number) => {
     if (item.type === 'divider') {
         return (
              <motion.div 
@@ -153,12 +184,12 @@ const renderNavItem = (item: any, index: number, isCollapsed: boolean, pathname:
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, transition: { delay: index * 0.05 } }}
             >
-                {isCollapsed ? <hr className="border-t border-muted-foreground/20" /> : <h2 className="text-xs font-semibold tracking-wider uppercase text-muted-foreground">{item.label}</h2>}
+                {isCollapsed ? <hr className="border-t border-muted-foreground/20" /> : item.label ? <h2 className="text-xs font-semibold tracking-wider uppercase text-muted-foreground">{item.label}</h2> : <Separator />}
             </motion.div>
         )
     }
 
-    const isActive = pathname === item.href
+    const isActive = item.href && pathname === item.href;
 
     const buttonContent = (
       <>
@@ -167,8 +198,17 @@ const renderNavItem = (item: any, index: number, isCollapsed: boolean, pathname:
       </>
     );
 
+    const commonButtonProps = {
+        variant: "ghost" as const,
+        className: cn(
+            "w-full h-10 text-base font-normal", 
+            isCollapsed ? 'justify-center' : 'justify-start',
+            isActive ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'
+        )
+    };
+
     return (
-        <TooltipProvider key={item.href} delayDuration={0}>
+        <TooltipProvider key={item.label || `action-${index}`} delayDuration={0}>
           <Tooltip>
             <TooltipTrigger asChild>
                 <motion.div
@@ -176,21 +216,17 @@ const renderNavItem = (item: any, index: number, isCollapsed: boolean, pathname:
                     animate={{ opacity: 1, x: 0, transition: { delay: index * 0.05 } }}
                     className="relative"
                 >
-                <Button
-                  variant="ghost"
-                  className={cn(
-                      "w-full h-10 text-base font-normal", 
-                      isCollapsed ? 'justify-center' : 'justify-start',
-                      isActive ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'
-                    )}
-                  asChild
-                >
-                  <Link href={item.href}>
-                    <div className="relative z-10 flex items-center">
-                        {buttonContent}
-                    </div>
-                  </Link>
-                </Button>
+                {item.href ? (
+                    <Button {...commonButtonProps} asChild>
+                      <Link href={item.href}>
+                        <div className="relative z-10 flex items-center">{buttonContent}</div>
+                      </Link>
+                    </Button>
+                ) : (
+                    <Button {...commonButtonProps} onClick={item.action === 'logout' ? handleSignOut : undefined}>
+                        <div className="relative z-10 flex items-center">{buttonContent}</div>
+                    </Button>
+                )}
                 </motion.div>
             </TooltipTrigger>
             {isCollapsed && (
@@ -201,15 +237,7 @@ const renderNavItem = (item: any, index: number, isCollapsed: boolean, pathname:
           </Tooltip>
         </TooltipProvider>
     )
-}
-
-export function DashboardSidebar() {
-  const pathname = usePathname()
-  const { isCollapsed, isMobile, toggleSidebar } = useSidebar();
-  const { t } = useLocalization();
-  const { role } = useAuth();
-
-  const { main: navItems, footer: footerNavItems } = getNavItems(t, role);
+  }
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
@@ -224,21 +252,16 @@ export function DashboardSidebar() {
       </div>
       <div className="flex-1 overflow-y-auto overflow-x-hidden">
         <nav className="flex-1 px-2 py-4 space-y-1">
-            {navItems.map((item, index) => renderNavItem(item, index, isCollapsed, pathname))}
+            {navItems.map((item, index) => renderNavItem(item, index))}
         </nav>
       </div>
-      <div className="mt-auto">
-        <div className="px-2">
-            <Separator/>
-        </div>
-        <div className="p-2">
-            <nav className="space-y-1">
-                {footerNavItems.map((item, index) => renderNavItem(item, index, isCollapsed, pathname))}
-            </nav>
-            <div className={cn("text-center text-xs text-muted-foreground py-2 px-4", isCollapsed && "hidden")}>
-                  <p>&copy; {new Date().getFullYear()} Yahnu.</p>
-              </div>
-        </div>
+      <div className="mt-auto p-2">
+        <nav className="space-y-1">
+            {footerNavItems.map((item, index) => renderNavItem(item, index))}
+        </nav>
+        <div className={cn("text-center text-xs text-muted-foreground py-2 px-4", isCollapsed && "hidden")}>
+              <p>&copy; {new Date().getFullYear()} Yahnu.</p>
+          </div>
       </div>
     </div>
   );

@@ -739,7 +739,6 @@
     "Your academic background. Add each degree separately.": "Votre parcours académique. Ajoutez chaque diplôme séparément.",
     "Add Degree": "Ajouter un diplôme",
     "Degree": "Diplôme",
-    "Field of Study": "Domaine d'études",
     "No education history added yet.": "Aucun historique de formation ajouté pour le moment.",
     "Detail your professional journey.": "Détaillez votre parcours professionnel.",
     "Describe your work experience...": "Décrivez votre expérience professionnelle...",
@@ -756,5 +755,6 @@
     "My Applications": "Mes candidatures",
     "An overview of all the jobs you have applied for.": "Un aperçu de toutes les offres auxquelles vous avez postulé.",
     "Job Title": "Titre du poste",
-    "RSVP": "RSVP"
+    "RSVP": "RSVP",
+    "Log out": "Se déconnecter"
 }
