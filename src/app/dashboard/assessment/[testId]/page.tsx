@@ -521,16 +521,23 @@ const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestCompl
 export default function TakeAssessmentPage({ params }: { params: { testId: string } }) {
   const router = useRouter();
   const { t } = useLocalization();
-  const [step, setStep] = useState<'setup' | 'test'>('setup');
+  const [step, setStep] = useState<'setup' | 'test' | 'invalid'>('setup');
   
-  if (!Object.keys(testData).includes(params.testId)) {
-    return <div>{t('Test not found')}</div>;
-  }
+  // This check now happens inside useEffect to avoid the Next.js warning
+  useEffect(() => {
+    if (!Object.keys(testData).includes(params.testId)) {
+        setStep('invalid');
+    }
+  }, [params.testId]);
 
   const handleTestComplete = (score: number) => {
     // In a real app, you would save the score to the database
     router.push(`/dashboard/assessment/${params.testId}/result?score=${score}`);
   };
+
+  if (step === 'invalid') {
+    return <div>{t('Test not found')}</div>;
+  }
 
   return (
     <div className="container mx-auto py-8">
