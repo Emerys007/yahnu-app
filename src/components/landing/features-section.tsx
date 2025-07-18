@@ -121,7 +121,7 @@ const AnimatedTabs = () => {
     <div className="w-full">
       <div className="flex justify-center mb-12">
         {/* Desktop Tabs */}
-        <div className="hidden sm:flex relative w-full max-w-lg items-center justify-center rounded-lg bg-muted p-2">
+        <div className="hidden sm:flex relative w-full max-w-lg items-center justify-center rounded-lg border bg-background/50 p-1">
             {tabs.map((tab) => (
                 <button
                 key={tab.id}
@@ -157,8 +157,8 @@ const AnimatedTabs = () => {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={cn(
-                        "relative w-full rounded-lg px-4 py-3 text-md font-medium transition-colors duration-300",
-                        activeTab === tab.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                        "relative w-full rounded-lg px-4 py-3 text-md font-medium transition-colors duration-300 border",
+                        activeTab === tab.id ? "bg-primary text-primary-foreground border-transparent" : "bg-background/50 text-muted-foreground hover:bg-muted/80"
                     )}
                     >
                     <div className="flex items-center justify-center gap-2">
