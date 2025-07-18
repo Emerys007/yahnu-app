@@ -54,7 +54,7 @@ export default function AssessmentResultPage({ params }: { params: { testId: str
         if(passed) {
             fire();
         }
-    }, [params.testId, language, passed, fire]);
+    }, [params, language, passed, fire]);
     
     // In a real app, you'd save this result and badge to the user's profile in the DB here.
     // For now, we simulate this by just showing the result.
@@ -101,5 +101,6 @@ export default function AssessmentResultPage({ params }: { params: { testId: str
         </div>
     )
 }
+
 
 
