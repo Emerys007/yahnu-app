@@ -198,8 +198,8 @@ export function MainNav() {
                     <SheetTitle>
                       <SheetClose asChild>
                         <Link href="/">
-                          <div className="flex items-center gap-2">
-                            <Logo className="h-8 w-8" />
+                          <div className="flex items-center gap-3">
+                            <Logo className="h-10 w-10" />
                             <div>
                                 <p className="font-bold text-lg">Yahnu</p>
                                 <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
