@@ -4,24 +4,15 @@ import Link from "next/link"
 import React from "react"
 import {
   Menu,
-  Search,
   Languages,
   PanelLeft,
-  Users,
   Bell,
-  Briefcase,
-  UserCheck,
-  Handshake,
   Check,
-  X,
-  Shield,
   School,
   Building,
-  Calendar
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { UserNav } from "@/components/dashboard/user-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 import {
@@ -37,8 +28,9 @@ import { useSidebar } from "./sidebar"
 import { useLocalization } from "@/context/localization-context"
 import { useAuth, type Role } from "@/context/auth-context"
 import { cn } from "@/lib/utils"
-import { collection, query, where, getDocs, onSnapshot, orderBy, limit, DocumentData } from "firebase/firestore";
+import { collection, query, where, onSnapshot, limit, DocumentData } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { SearchCommand } from "../search-command"
 
 
 type NotificationItem = {
@@ -123,7 +115,7 @@ export function DashboardHeader() {
                 icon = School;
             } else if (data.role === 'graduate') {
                 notificationText = t("New graduate \"{name}\" requires activation", { name: data.name });
-                icon = UserCheck;
+                icon = Building; // TODO: Change to a more appropriate icon for a graduate
             }
             
             fetchedNotifications.push({
@@ -174,16 +166,9 @@ export function DashboardHeader() {
             <span className="sr-only">{t('Toggle navigation menu')}</span>
         </Button>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 justify-end">
-        <form className="ml-auto hidden sm:flex-initial">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder={t('Search...')}
-              className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
-            />
-          </div>
-        </form>
+        <div className="ml-auto">
+          <SearchCommand />
+        </div>
         
         <DropdownMenu>
             <DropdownMenuTrigger asChild>

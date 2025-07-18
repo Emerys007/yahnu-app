@@ -1,5 +1,4 @@
 
-
 {
     "Jobs": "Jobs",
     "Companies": "Companies",
@@ -551,6 +550,10 @@
     "Technical Questions": "Technical Questions",
     "Tests specific hard skills and role-related knowledge.": "Tests specific hard skills and role-related knowledge.",
     "Tip": "Tip",
+    "Search...": "Search...",
+    "Type a command or search...": "Type a command or search...",
+    "No results found.": "No results found.",
+    "Links": "Links",
     "Search for jobs, companies...": "Search for jobs, companies...",
     "Select a state": "Select a state",
     "School Support": "School Support",

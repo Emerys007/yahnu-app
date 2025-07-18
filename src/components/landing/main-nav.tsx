@@ -37,7 +37,7 @@ import { useCountry, allCountries } from "@/context/country-context";
 import { Flag } from "../flag";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
-import { Input } from "../ui/input";
+import { SearchCommand } from "../search-command";
 
 const getNavLinks = (t: (key: string) => string) => [
   { href: "/jobs", label: t("Jobs") },
@@ -63,11 +63,6 @@ export function MainNav() {
               <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
             </div>
         </Link>
-
-        <div className="relative hidden md:block flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input placeholder={t("Search for jobs, companies...")} className="pl-10 w-full max-w-sm" />
-        </div>
         
         <div className="flex items-center gap-2 ml-auto">
             <nav className="hidden md:flex items-center gap-4 text-sm">
@@ -81,11 +76,14 @@ export function MainNav() {
                     </Link>
                 ))}
             </nav>
-            <div className="hidden md:flex items-center gap-2">
-                <Button variant="ghost" asChild>
+            <div className="flex items-center gap-2">
+                <div className="hidden md:block">
+                  <SearchCommand />
+                </div>
+                <Button variant="ghost" asChild className="hidden md:inline-flex">
                   <Link href="/login">{t('Login')}</Link>
                 </Button>
-                <Button asChild>
+                <Button asChild className="hidden md:inline-flex">
                   <Link href="/register">{t('Sign Up')}</Link>
                 </Button>
             </div>
@@ -147,59 +145,7 @@ export function MainNav() {
             </div>
             
             <div className="md:hidden flex items-center">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <MoreVertical className="h-5 w-5" />
-                    <span className="sr-only">More options</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuSub>
-                        <DropdownMenuSubTrigger>
-                            <Flag countryCode={country.code} className="mr-2 h-4 w-4" />
-                            <span>{country.name.en}</span>
-                        </DropdownMenuSubTrigger>
-                        <DropdownMenuPortal>
-                            <DropdownMenuSubContent className="w-40 max-h-80 overflow-y-auto">
-                                {allCountries.map((c) => (
-                                    <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
-                                        <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
-                                        <span>{c.name.en}</span>
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuSubContent>
-                        </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                    <DropdownMenuSub>
-                      <DropdownMenuSubTrigger>
-                        <Languages className="mr-2 h-4 w-4" />
-                        <span>{t('Language')}</span>
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
-                          <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => setLanguage('fr')}>Français</DropdownMenuItem>
-                        </DropdownMenuSubContent>
-                      </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                    <DropdownMenuSub>
-                      <DropdownMenuSubTrigger>
-                        <Sun className="mr-2 h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                        <Moon className="absolute mr-2 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                        <span>{t('Theme')}</span>
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
-                          <DropdownMenuItem onClick={() => setTheme("light")}>{t('Light')}</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => setTheme("dark")}>{t('Dark')}</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => setTheme("system")}>{t('System')}</DropdownMenuItem>
-                        </DropdownMenuSubContent>
-                      </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
+              <SearchCommand />
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="icon">

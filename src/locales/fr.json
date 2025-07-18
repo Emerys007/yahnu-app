@@ -1,5 +1,4 @@
 
-
 {
     "Jobs": "Emplois",
     "Companies": "Entreprises",
@@ -550,6 +549,10 @@
     "Technical Questions": "Questions techniques",
     "Tests specific hard skills and role-related knowledge.": "Teste les compétences techniques spécifiques et les connaissances liées au rôle.",
     "Tip": "Conseil",
+    "Search...": "Recherche...",
+    "Type a command or search...": "Tapez une commande ou une recherche...",
+    "No results found.": "Aucun résultat trouvé.",
+    "Links": "Liens",
     "Search for jobs, companies...": "Rechercher des emplois, des entreprises...",
     "Select a state": "Sélectionner un état",
     "School Support": "Support de l'école",
