@@ -11,8 +11,9 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, Video, ShieldAlert } from 'lucide-react';
+import { Loader2, Video, ShieldAlert, TriangleAlert } from 'lucide-react';
 import { useLocalization } from '@/context/localization-context';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 const testData = {
     'frontend-basics': {
@@ -393,12 +394,15 @@ const ProctoringSetup = ({ onSetupComplete }: { onSetupComplete: () => void }) =
 };
 
 
-const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestComplete: (score: number) => void }) => {
+const TestInterface = ({ testId, onTestComplete, onDisqualify }: { testId: TestId; onTestComplete: (score: number) => void, onDisqualify: () => void }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { toast } = useToast();
   const { language, t } = useLocalization();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
+  const [warningCount, setWarningCount] = useState(0);
+  const [showWarningModal, setShowWarningModal] = useState(false);
+  const [disqualified, setDisqualified] = useState(false);
   
   const testContent = testData[testId][language as keyof typeof testData[TestId]];
   const totalQuestions = testContent.questions.length;
@@ -409,27 +413,35 @@ const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestCompl
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        toast({
-          variant: "destructive",
-          title: t("Warning: Focus Lost"),
-          description: t("You have navigated away from the test. This event has been logged."),
-        });
+        const newWarningCount = warningCount + 1;
+        setWarningCount(newWarningCount);
+        
+        if (newWarningCount === 1) {
+            setShowWarningModal(true);
+        } else if (newWarningCount >= 2) {
+            setDisqualified(true);
+            onDisqualify();
+        }
       }
     };
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    if (!disqualified) {
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+    }
+    
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [toast, t]);
+  }, [warningCount, disqualified, onDisqualify]);
 
   // Timer
   useEffect(() => {
-    if (timeLeft <= 0) {
-      handleSubmit();
+    if (timeLeft <= 0 || disqualified) {
+      if (!disqualified) handleSubmit();
       return;
     }
     const timer = setInterval(() => setTimeLeft(timeLeft - 1), 1000);
     return () => clearInterval(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeLeft]);
+  }, [timeLeft, disqualified]);
   
   useEffect(() => {
     const getCamera = async () => {
@@ -474,46 +486,63 @@ const TestInterface = ({ testId, onTestComplete }: { testId: TestId; onTestCompl
   const q = testContent.questions[currentQuestion];
 
   return (
-    <div className="grid md:grid-cols-[1fr_300px] gap-8 items-start">
-        <div>
-            <Card>
-                <CardHeader>
-                    <div className="flex justify-between items-center">
-                        <CardTitle>{testContent.title}</CardTitle>
-                        <div className="font-mono text-lg">{`${Math.floor(timeLeft / 60).toString().padStart(2, '0')}:${(timeLeft % 60).toString().padStart(2, '0')}`}</div>
-                    </div>
-                    <Progress value={progress} className="w-full" />
-                    <CardDescription>{t('Question {current} of {total}', {current: currentQuestion + 1, total: totalQuestions})}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <p className="font-semibold text-lg mb-6">{q.question}</p>
-                    <RadioGroup onValueChange={handleAnswer} value={answers[currentQuestion]}>
-                        {q.options.map(opt => (
-                            <div key={opt} className="flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors">
-                                <RadioGroupItem value={opt} id={opt} />
-                                <Label htmlFor={opt} className="font-normal flex-1 cursor-pointer py-1">{opt}</Label>
-                            </div>
-                        ))}
-                    </RadioGroup>
-                </CardContent>
-                <CardFooter>
-                    <Button onClick={handleNext} className="ml-auto">
-                        {currentQuestion < totalQuestions - 1 ? t('Next Question') : t('Finish & Submit')}
-                    </Button>
-                </CardFooter>
-            </Card>
-        </div>
-        <div className="sticky top-24 space-y-4">
-            <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted />
-            <Alert>
-                <ShieldAlert className="h-4 w-4" />
-                <AlertTitle>{t('Proctoring Enabled')}</AlertTitle>
-                <AlertDescription>
-                    {t('Your session is being monitored. Please remain focused on the test.')}
-                </AlertDescription>
-            </Alert>
-        </div>
-    </div>
+    <>
+      <div className="grid md:grid-cols-[1fr_300px] gap-8 items-start">
+          <div>
+              <Card>
+                  <CardHeader>
+                      <div className="flex justify-between items-center">
+                          <CardTitle>{testContent.title}</CardTitle>
+                          <div className="font-mono text-lg">{`${Math.floor(timeLeft / 60).toString().padStart(2, '0')}:${(timeLeft % 60).toString().padStart(2, '0')}`}</div>
+                      </div>
+                      <Progress value={progress} className="w-full" />
+                      <CardDescription>{t('Question {current} of {total}', {current: currentQuestion + 1, total: totalQuestions})}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                      <p className="font-semibold text-lg mb-6">{q.question}</p>
+                      <RadioGroup onValueChange={handleAnswer} value={answers[currentQuestion]}>
+                          {q.options.map(opt => (
+                              <div key={opt} className="flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors">
+                                  <RadioGroupItem value={opt} id={opt} />
+                                  <Label htmlFor={opt} className="font-normal flex-1 cursor-pointer py-1">{opt}</Label>
+                              </div>
+                          ))}
+                      </RadioGroup>
+                  </CardContent>
+                  <CardFooter>
+                      <Button onClick={handleNext} className="ml-auto">
+                          {currentQuestion < totalQuestions - 1 ? t('Next Question') : t('Finish & Submit')}
+                      </Button>
+                  </CardFooter>
+              </Card>
+          </div>
+          <div className="sticky top-24 space-y-4">
+              <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted />
+              <Alert>
+                  <ShieldAlert className="h-4 w-4" />
+                  <AlertTitle>{t('Proctoring Enabled')}</AlertTitle>
+                  <AlertDescription>
+                      {t('Your session is being monitored. Please remain focused on the test.')}
+                  </AlertDescription>
+              </Alert>
+          </div>
+      </div>
+
+       <AlertDialog open={showWarningModal} onOpenChange={setShowWarningModal}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-2">
+                        <TriangleAlert className="h-6 w-6 text-yellow-500" />
+                        First Warning
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                        You have navigated away from the test window. This is the first and only warning. If this happens again, your test will be automatically failed, and you will be unable to retake this assessment for 3 months.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogAction onClick={() => setShowWarningModal(false)}>I Understand</AlertDialogAction>
+            </AlertDialogContent>
+        </AlertDialog>
+    </>
   )
 }
 
@@ -537,6 +566,11 @@ export default function TakeAssessmentPage() {
     router.push(`/dashboard/assessment/${testId}/result?score=${score}`);
   };
 
+  const handleDisqualify = () => {
+    // In a real app, you would save the disqualification status and lockout period to the database here.
+    router.push(`/dashboard/assessment/${testId}/result?score=0&disqualified=true`);
+  };
+
   if (step === 'invalid') {
     return <div>{t('Test not found')}</div>;
   }
@@ -544,7 +578,9 @@ export default function TakeAssessmentPage() {
   return (
     <div className="container mx-auto py-8">
         {step === 'setup' && <ProctoringSetup onSetupComplete={() => setStep('test')} />}
-        {step === 'test' && <TestInterface testId={testId as TestId} onTestComplete={handleTestComplete} />}
+        {step === 'test' && <TestInterface testId={testId as TestId} onTestComplete={handleTestComplete} onDisqualify={handleDisqualify} />}
     </div>
   );
 }
+
+    

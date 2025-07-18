@@ -43,12 +43,13 @@ export default function AssessmentResultPage({ params }: { params: { testId: str
     const router = useRouter();
     const searchParams = useSearchParams();
     const score = searchParams.get('score');
+    const disqualified = searchParams.get('disqualified') === 'true';
     const { fire } = useConfetti();
     const { t, language } = useLocalization();
     const [testTitle, setTestTitle] = React.useState("Assessment");
 
     const scoreValue = score ? parseInt(score, 10) : 0;
-    const passed = scoreValue >= 70;
+    const passed = scoreValue >= 70 && !disqualified;
 
     React.useEffect(() => {
         setTestTitle(testTitles[testId]?.[language] || "Assessment");
@@ -72,26 +73,34 @@ export default function AssessmentResultPage({ params }: { params: { testId: str
                         )}
                     </div>
                     <CardTitle className="text-3xl">
-                        {passed ? t("Congratulations!") : t("Assessment Complete")}
+                        {disqualified ? "Test Disqualified" : passed ? t("Congratulations!") : t("Assessment Complete")}
                     </CardTitle>
                     <CardDescription>
                         {t('You have completed the {testTitle} assessment.', {testTitle})}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <div className="text-6xl font-bold">
-                        {scoreValue}%
-                    </div>
-                    {passed ? (
-                        <div className="flex items-center justify-center gap-2 text-green-600">
-                            <CheckCircle className="h-5 w-5" />
-                            <p className="font-semibold">{t('You passed! A new badge has been added to your profile.')}</p>
-                        </div>
-                    ) : (
-                        <p className="text-destructive">
-                            {t('You did not meet the passing score of 70%. You can try again in 30 days.')}
+                     {disqualified ? (
+                        <p className="text-destructive font-semibold">
+                            Your test was disqualified due to leaving the browser window. You will be unable to retake this assessment for 3 months.
                         </p>
-                    )}
+                     ) : (
+                        <>
+                            <div className="text-6xl font-bold">
+                                {scoreValue}%
+                            </div>
+                            {passed ? (
+                                <div className="flex items-center justify-center gap-2 text-green-600">
+                                    <CheckCircle className="h-5 w-5" />
+                                    <p className="font-semibold">{t('You passed! A new badge has been added to your profile.')}</p>
+                                </div>
+                            ) : (
+                                <p className="text-destructive">
+                                    {t('You did not meet the passing score of 70%. You can try again in 30 days.')}
+                                </p>
+                            )}
+                        </>
+                     )}
                 </CardContent>
                 <CardFooter className="flex justify-center">
                     <Button onClick={() => router.push('/dashboard/profile')}>
@@ -102,3 +111,5 @@ export default function AssessmentResultPage({ params }: { params: { testId: str
         </div>
     )
 }
+
+    
