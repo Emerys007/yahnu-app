@@ -9,7 +9,6 @@ import {
   Sun,
   Moon,
   Monitor,
-  Search,
 } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
