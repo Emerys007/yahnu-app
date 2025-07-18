@@ -5,9 +5,11 @@ import { useState } from "react";
 import { useLocalization } from "@/context/localization-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, MapPin, Tag, Users, Check, Star, X } from "lucide-react";
+import { Calendar, Clock, MapPin, Check, Star, X, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 type EventType = "Career Fair" | "Workshop" | "Networking" | "Webinar";
 type RsvpStatus = "going" | "interested" | "not_going" | null;
@@ -67,6 +69,11 @@ const eventTypeColors: Record<EventType, string> = {
     "Webinar": "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300",
 };
 
+const rsvpOptions: { status: RsvpStatus, label: string, icon: React.ElementType }[] = [
+    { status: "going", label: "Going", icon: Check },
+    { status: "interested", label: "Interested", icon: Star },
+    { status: "not_going", label: "Not Going", icon: X },
+];
 
 export default function GraduateEventsPage() {
   const { t } = useLocalization();
@@ -80,6 +87,19 @@ export default function GraduateEventsPage() {
         description: t("Your response has been recorded."),
     });
   }
+
+  const getRsvpButtonContent = (status: RsvpStatus) => {
+    if (!status) {
+        return <>{t('RSVP')}</>;
+    }
+    const option = rsvpOptions.find(o => o.status === status);
+    if (!option) {
+        return <>{t('RSVP')}</>;
+    }
+    const Icon = option.icon;
+    return <><Icon className="mr-2 h-4 w-4" /> {t(option.label)}</>;
+  }
+
 
   return (
     <div className="space-y-8">
@@ -96,7 +116,7 @@ export default function GraduateEventsPage() {
         {events.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {events.map((event) => (
-                <Card key={event.id} className="flex flex-col">
+                <Card key={event.id} className="flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                     <CardHeader>
                         <div className="flex justify-between items-center">
                             <Badge variant="secondary" className={`self-start ${eventTypeColors[event.type]}`}>{t(event.type)}</Badge>
@@ -112,13 +132,23 @@ export default function GraduateEventsPage() {
                             <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-muted-foreground" /> {t(event.location)}</div>
                         </div>
                     </CardContent>
-                    <CardFooter className="flex flex-col items-start gap-2">
-                         <p className="text-xs font-semibold text-muted-foreground">{t('Will you attend?')}</p>
-                         <div className="flex gap-2 w-full">
-                            <Button size="sm" variant={event.rsvp === 'going' ? 'default' : 'outline'} className="flex-1" onClick={() => handleRsvp(event.id, 'going')}><Check className="mr-2 h-4 w-4" />{t('Going')}</Button>
-                            <Button size="sm" variant={event.rsvp === 'interested' ? 'default' : 'outline'} className="flex-1" onClick={() => handleRsvp(event.id, 'interested')}><Star className="mr-2 h-4 w-4" />{t('Interested')}</Button>
-                            <Button size="sm" variant={event.rsvp === 'not_going' ? 'default' : 'outline'} className="flex-1" onClick={() => handleRsvp(event.id, 'not_going')}><X className="mr-2 h-4 w-4" />{t('Not Going')}</Button>
-                         </div>
+                    <CardFooter>
+                         <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant={event.rsvp ? 'default' : 'outline'} className="w-full">
+                                    {getRsvpButtonContent(event.rsvp)}
+                                    <ChevronDown className="ml-auto h-4 w-4"/>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-[--radix-dropdown-menu-trigger-width]">
+                                {rsvpOptions.map(option => (
+                                    <DropdownMenuItem key={option.status} onClick={() => handleRsvp(event.id, option.status)}>
+                                        <option.icon className="mr-2 h-4 w-4" />
+                                        <span>{t(option.label)}</span>
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                         </DropdownMenu>
                     </CardFooter>
                 </Card>
             ))}

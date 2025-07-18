@@ -1,10 +1,9 @@
 
 "use client"
 
-import { useAuth, type Role } from "@/context/auth-context"
+import { useAuth } from "@/context/auth-context"
 import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Table,
   TableBody,
@@ -21,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Briefcase, Building, User, FileText } from "lucide-react"
+import { FileText } from "lucide-react"
 
 // Mock Data
 const graduateApplications = [
@@ -120,11 +119,16 @@ export default function ApplicationsPage() {
 
   return (
     <div className="space-y-8">
-       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('Application Tracking')}</h1>
-        <p className="text-muted-foreground mt-1">
-            {isCompany ? t('Manage applicants for your job postings.') : t('Track the status of your job applications.')}
-        </p>
+       <div className="flex items-start gap-4">
+        <div className="bg-primary/10 p-3 rounded-lg">
+          <FileText className="h-6 w-6 text-primary" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{t('Application Tracking')}</h1>
+          <p className="text-muted-foreground mt-1">
+              {isCompany ? t('Manage applicants for your job postings.') : t('Track the status of your job applications.')}
+          </p>
+        </div>
       </div>
 
        <Card>

@@ -23,9 +23,10 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Upload, Loader2, PlusCircle, Trash2, Award, Eye, EyeOff } from "lucide-react"
+import { Upload, Loader2, PlusCircle, Trash2, Award, Eye, EyeOff, User as UserIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
+import { useLocalization } from "@/context/localization-context"
 
 const educationSchema = z.object({
   degree: z.string().min(2, "Degree is required."),
@@ -50,6 +51,7 @@ const earnedBadges = [
 ]
 
 export default function ProfilePage() {
+  const { t } = useLocalization();
   const { toast } = useToast()
   const { user, loading } = useAuth();
   const [isParsing, setIsParsing] = useState(false)
@@ -183,14 +185,19 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-start">
-        <div>
-            <h1 className="text-3xl font-bold tracking-tight">Professional Profile</h1>
-            <p className="text-muted-foreground mt-1">Build and maintain your professional identity.</p>
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+        <div className="flex items-start gap-4">
+            <div className="bg-primary/10 p-3 rounded-lg">
+                <UserIcon className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+                <h1 className="text-3xl font-bold tracking-tight">{t('Professional Profile')}</h1>
+                <p className="text-muted-foreground mt-1">{t('Build and maintain your professional identity.')}</p>
+            </div>
         </div>
-        <div className="relative">
-            <Button disabled={isParsing}>
+        <div className="relative shrink-0 w-full sm:w-auto">
+            <Button disabled={isParsing} className="w-full">
                 <Upload className="mr-2 h-4 w-4" />
                 {isParsing ? "Parsing..." : "Upload Resume"}
             </Button>
@@ -209,8 +216,8 @@ export default function ProfilePage() {
             <div className="lg:col-span-2 space-y-8">
               <Card>
                 <CardHeader>
-                  <CardTitle>Personal Information</CardTitle>
-                  <CardDescription>This information will be visible on your public profile.</CardDescription>
+                  <CardTitle>{t('Personal Information')}</CardTitle>
+                  <CardDescription>{t('This information will be visible on your public profile.')}</CardDescription>
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-2 gap-6">
                   <FormField
@@ -218,7 +225,7 @@ export default function ProfilePage() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Full Name</FormLabel>
+                        <FormLabel>{t('Full Name')}</FormLabel>
                         <FormControl>
                           <Input placeholder="John Doe" {...field} />
                         </FormControl>
@@ -231,7 +238,7 @@ export default function ProfilePage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email Address</FormLabel>
+                        <FormLabel>{t('Email Address')}</FormLabel>
                         <FormControl>
                           <Input placeholder="you@example.com" {...field} disabled />
                         </FormControl>
@@ -244,7 +251,7 @@ export default function ProfilePage() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Phone Number (Optional)</FormLabel>
+                        <FormLabel>{t('Phone Number (Optional)')}</FormLabel>
                         <FormControl>
                           <Input placeholder="(123) 456-7890" {...field} />
                         </FormControl>
@@ -259,12 +266,12 @@ export default function ProfilePage() {
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <div>
-                            <CardTitle>Education</CardTitle>
-                            <CardDescription>Your academic background. Add each degree separately.</CardDescription>
+                            <CardTitle>{t('Education')}</CardTitle>
+                            <CardDescription>{t('Your academic background. Add each degree separately.')}</CardDescription>
                         </div>
                         <Button type="button" variant="outline" size="sm" onClick={() => append({ degree: '', field: '', gradYear: '', verified: false })}>
                             <PlusCircle className="mr-2 h-4 w-4" />
-                            Add Degree
+                            {t('Add Degree')}
                         </Button>
                     </div>
                 </CardHeader>
@@ -277,7 +284,7 @@ export default function ProfilePage() {
                                     name={`education.${index}.degree`}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Degree</FormLabel>
+                                            <FormLabel>{t('Degree')}</FormLabel>
                                             <FormControl><Input placeholder="e.g. Bachelor of Science" {...field} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -288,7 +295,7 @@ export default function ProfilePage() {
                                     name={`education.${index}.field`}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Field of Study</FormLabel>
+                                            <FormLabel>{t('Field of Study')}</FormLabel>
                                             <FormControl><Input placeholder="e.g. Computer Science" {...field} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -299,7 +306,7 @@ export default function ProfilePage() {
                                     name={`education.${index}.gradYear`}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Graduation Year</FormLabel>
+                                            <FormLabel>{t('Graduation Year')}</FormLabel>
                                             <FormControl><Input type="number" placeholder="e.g. 2024" {...field} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -318,15 +325,15 @@ export default function ProfilePage() {
                         </div>
                     ))}
                     {fields.length === 0 && (
-                        <p className="text-sm text-muted-foreground text-center py-4">No education history added yet.</p>
+                        <p className="text-sm text-muted-foreground text-center py-4">{t('No education history added yet.')}</p>
                     )}
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Work Experience</CardTitle>
-                  <CardDescription>Detail your professional journey.</CardDescription>
+                  <CardTitle>{t('Work Experience')}</CardTitle>
+                  <CardDescription>{t('Detail your professional journey.')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <FormField
@@ -335,7 +342,7 @@ export default function ProfilePage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Textarea placeholder="Describe your work experience..." rows={10} {...field} />
+                          <Textarea placeholder={t("Describe your work experience...")} rows={10} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -345,8 +352,8 @@ export default function ProfilePage() {
               </Card>
                 <Card>
                 <CardHeader>
-                    <CardTitle>Skills</CardTitle>
-                    <CardDescription>Your key competencies.</CardDescription>
+                    <CardTitle>{t('Skills')}</CardTitle>
+                    <CardDescription>{t('Your key competencies.')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <FormField
@@ -355,7 +362,7 @@ export default function ProfilePage() {
                     render={({ field }) => (
                         <FormItem>
                         <FormControl>
-                            <Textarea placeholder="e.g., JavaScript, Product Management, ..." rows={5} {...field} />
+                            <Textarea placeholder={t("e.g., JavaScript, Product Management, ...")} rows={5} {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -365,21 +372,21 @@ export default function ProfilePage() {
                 </Card>
               
               <div className="flex justify-end">
-                <Button type="submit" disabled={isSaving || isParsing}>{isSaving ? "Saving..." : "Save Profile"}</Button>
+                <Button type="submit" disabled={isSaving || isParsing}>{isSaving ? t("Saving...") : t("Save Profile")}</Button>
               </div>
             </div>
             <div className="lg:col-span-1 space-y-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Award /> Certifications & Badges</CardTitle>
-                        <CardDescription>Manage the visibility of your earned skill badges.</CardDescription>
+                        <CardTitle className="flex items-center gap-2"><Award /> {t('Certifications & Badges')}</CardTitle>
+                        <CardDescription>{t('Manage the visibility of your earned skill badges.')}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {badges.length > 0 ? badges.map(badge => (
                             <div key={badge.id} className="flex items-center justify-between p-3 border rounded-lg">
                                 <div className="flex items-center gap-2">
                                     <Award className="h-5 w-5 text-primary" />
-                                    <span className="font-medium">{badge.name}</span>
+                                    <span className="font-medium">{t(badge.name)}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                      {badge.visible ? <Eye className="h-4 w-4 text-muted-foreground" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
@@ -391,10 +398,10 @@ export default function ProfilePage() {
                                 </div>
                             </div>
                         )) : (
-                            <p className="text-sm text-muted-foreground text-center py-4">No badges earned yet. Take an assessment to get started!</p>
+                            <p className="text-sm text-muted-foreground text-center py-4">{t('No badges earned yet. Take an assessment to get started!')}</p>
                         )}
                         <Button variant="secondary" asChild className="w-full">
-                            <Link href="/dashboard/assessments">Take a New Assessment</Link>
+                            <Link href="/dashboard/assessments">{t('Take a New Assessment')}</Link>
                         </Button>
                     </CardContent>
                 </Card>

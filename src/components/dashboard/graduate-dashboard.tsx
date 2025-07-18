@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Briefcase, User, Building, ArrowUpRight, FileText } from "lucide-react"
+import { Briefcase, User, Building, FileText, BrainCircuit, Award } from "lucide-react"
 import Link from "next/link"
 import { useLocalization } from "@/context/localization-context"
 import { motion } from "framer-motion"
@@ -28,6 +28,8 @@ export function GraduateDashboard() {
     { title: t('Update My Profile'), href: '/dashboard/profile', icon: User },
     { title: t('Search for Jobs'), href: '/dashboard/jobs', icon: Briefcase },
     { title: t('Track My Applications'), href: '/dashboard/applications', icon: FileText },
+    { title: t('Take an Assessment'), href: '/dashboard/assessments', icon: Award },
+    { title: t('Practice for Interview'), href: '/dashboard/interview-prep', icon: BrainCircuit },
 ]
 
   const containerVariants = {
