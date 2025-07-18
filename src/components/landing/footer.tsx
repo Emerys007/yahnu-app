@@ -32,7 +32,7 @@ export function Footer() {
 
               {/* Platform Links */}
               <div>
-                <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{t('Platform')}</h3>
+                <h3 className="text-sm font-semibold tracking-wider text-foreground">{t('Platform')}</h3>
                 <ul className="mt-4 space-y-2 text-sm">
                   <li><Link href="/jobs" className="text-muted-foreground hover:text-primary transition-colors">{t('Jobs')}</Link></li>
                   <li><Link href="/companies" className="text-muted-foreground hover:text-primary transition-colors">{t('Companies')}</Link></li>
@@ -43,7 +43,7 @@ export function Footer() {
               
               {/* Legal Links */}
               <div>
-                <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{t('Legal')}</h3>
+                <h3 className="text-sm font-semibold tracking-wider text-foreground">{t('Legal')}</h3>
                 <ul className="mt-4 space-y-2 text-sm">
                   <li><Link href="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">{t('Privacy Policy')}</Link></li>
                   <li><Link href="/terms-of-service" className="text-muted-foreground hover:text-primary transition-colors">{t('Terms of Service')}</Link></li>
@@ -51,8 +51,8 @@ export function Footer() {
               </div>
 
               {/* Contact Section */}
-              <div className="col-span-1">
-                <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{t('Contact Us')}</h3>
+              <div>
+                <h3 className="text-sm font-semibold tracking-wider text-foreground">{t('Contact Us')}</h3>
                 <ul className="mt-4 space-y-2 text-sm">
                     <li>
                       <a href="mailto:contact@yahnu.ci" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
@@ -70,8 +70,8 @@ export function Footer() {
               </div>
               
               {/* Socials Section */}
-              <div className="col-span-1">
-                <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{t('Follow Us')}</h3>
+              <div className="col-span-2 md:col-span-1">
+                <h3 className="text-sm font-semibold tracking-wider text-foreground">{t('Follow Us')}</h3>
                 <div className="mt-4 flex gap-4">
                   <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                     <span className="sr-only">Twitter</span>

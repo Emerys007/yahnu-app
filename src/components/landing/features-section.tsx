@@ -120,34 +120,53 @@ const AnimatedTabs = () => {
   return (
     <div className="w-full">
       <div className="flex justify-center mb-12">
-        <div className="relative flex w-full max-w-lg items-center justify-center rounded-lg bg-muted p-2 flex-wrap sm:flex-nowrap">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                "relative z-10 flex-1 rounded-md px-4 py-2.5 text-md font-medium transition-colors duration-300",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-muted",
-                activeTab === tab.id ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-              )}
+        {/* Desktop Tabs */}
+        <div className="hidden sm:flex relative w-full max-w-lg items-center justify-center rounded-lg bg-muted p-2">
+            {tabs.map((tab) => (
+                <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                    "relative z-10 flex-1 rounded-md px-4 py-2.5 text-md font-medium transition-colors duration-300",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-muted",
+                    activeTab === tab.id ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                )}
+                >
+                <div className="flex items-center justify-center gap-2">
+                    <tab.icon className="h-5 w-5" />
+                    <span>{tab.label}</span>
+                </div>
+                </button>
+            ))}
+            <motion.div
+                layoutId="active-features-tab-highlight"
+                className="absolute inset-0 z-0 h-full p-1"
+                style={{
+                    width: `${100 / tabs.length}%`,
+                    left: `${tabs.findIndex(t => t.id === activeTab) * (100 / tabs.length)}%`,
+                }}
+                transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
             >
-              <div className="flex items-center justify-center gap-2">
-                <tab.icon className="h-5 w-5" />
-                <span>{tab.label}</span>
-              </div>
-            </button>
-          ))}
-          <motion.div
-            layoutId="active-features-tab-highlight"
-            className="absolute inset-0 z-0 h-full p-1 hidden sm:block"
-            style={{
-                width: `${100 / tabs.length}%`,
-                left: `${tabs.findIndex(t => t.id === activeTab) * (100 / tabs.length)}%`,
-            }}
-            transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
-          >
-              <div className="h-full w-full rounded-md bg-primary shadow-md" />
-          </motion.div>
+                <div className="h-full w-full rounded-md bg-primary shadow-md" />
+            </motion.div>
+        </div>
+        {/* Mobile Tabs */}
+        <div className="sm:hidden flex flex-col w-full gap-2">
+            {tabs.map((tab) => (
+                 <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={cn(
+                        "relative w-full rounded-lg px-4 py-3 text-md font-medium transition-colors duration-300",
+                        activeTab === tab.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                    )}
+                    >
+                    <div className="flex items-center justify-center gap-2">
+                        <tab.icon className="h-5 w-5" />
+                        <span>{tab.label}</span>
+                    </div>
+                </button>
+            ))}
         </div>
       </div>
       <AnimatePresence mode="wait">
