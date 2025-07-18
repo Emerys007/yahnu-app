@@ -1,6 +1,6 @@
 
 import { UserCog } from "lucide-react";
-import { UserManagementClient } from "./user-management-client";
+import { UserManagementClient } from "../user-management/user-management-client";
 import { db } from "@/lib/firebase";
 import { collection, query, getDocs, DocumentData, where } from "firebase/firestore";
 import { type Role, type UserStatus } from "@/context/auth-context";
