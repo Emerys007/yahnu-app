@@ -111,7 +111,7 @@ export default function SchoolsPage() {
                     <h2 className="text-2xl font-bold mb-2">{t('Want to Partner With Us?')}</h2>
                     <p className="text-muted-foreground max-w-md mx-auto mb-6">{t('Join our network to connect your graduates with leading companies and track their success.')}</p>
                     <Button asChild size="lg">
-                        <Link href="/register">{t('Partner With Us')}</Link>
+                        <Link href="/signup">{t('Partner With Us')}</Link>
                     </Button>
                 </Card>
             </div>

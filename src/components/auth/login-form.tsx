@@ -166,7 +166,7 @@ export function LoginForm() {
         </Form>
         <div className="mt-4 text-center text-sm">
             {t("Don't have an account?")}
-            <Link href="/register" className="underline ml-1">
+            <Link href="/signup" className="underline ml-1">
                 {t('Sign up')}
             </Link>
         </div>

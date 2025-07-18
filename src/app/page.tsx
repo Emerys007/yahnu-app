@@ -144,7 +144,7 @@ export default function HomePage() {
                 }}
               >
                   <Button size="lg" asChild>
-                      <Link href="/register">{t('Get Started Now')}</Link>
+                      <Link href="/signup">{t('Get Started Now')}</Link>
                   </Button>
               </motion.div>
           </motion.div>

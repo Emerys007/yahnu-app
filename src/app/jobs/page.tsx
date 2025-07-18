@@ -282,7 +282,7 @@ export default function PublicJobSearchPage() {
                         </CardDescription>
                       </div>
                       <Button asChild className="shrink-0">
-                        <Link href="/register">{t('View Job')}</Link>
+                        <Link href="/signup">{t('View Job')}</Link>
                       </Button>
                     </div>
                   </CardHeader>
@@ -307,7 +307,7 @@ export default function PublicJobSearchPage() {
                     <h3 className="text-2xl font-bold">{t('Unlock More Opportunities')}</h3>
                     <p className="text-muted-foreground mt-2 mb-4">{t('Create a free account to view full job details and apply directly.')}</p>
                     <Button asChild size="lg">
-                        <Link href="/register">
+                        <Link href="/signup">
                             {t('Sign Up Now')} <ArrowRight className="ml-2 h-4 w-4"/>
                         </Link>
                     </Button>

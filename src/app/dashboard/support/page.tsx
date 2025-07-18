@@ -195,7 +195,7 @@ export default function SupportPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <Button asChild className="w-full justify-start">
-                           <Link href="mailto:contact@yahnu.ci">
+                           <Link href="mailto:support@yahnu.org">
                              <Mail className="mr-2 h-4 w-4" />
                              {t('Email Support')}
                            </Link>
@@ -215,6 +215,7 @@ export default function SupportPage() {
                             </Button>
                         </CardContent>
                     </Card>
+                </Card>
                 )}
             </div>
         </div>

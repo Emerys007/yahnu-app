@@ -1,5 +1,4 @@
 
-
 "use client"
 
 import Link from "next/link"
@@ -39,7 +38,6 @@ import { Separator } from "../ui/separator";
 const getNavItems = (t: (key: string) => string, role: Role) => {
   const baseNav = [
     { href: "/dashboard", icon: LayoutDashboard, label: t('Dashboard') },
-    
   ];
 
   const graduateNav = [
@@ -47,6 +45,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
     { href: "/dashboard/profile", icon: User, label: t('Profile') },
     { href: "/dashboard/jobs", icon: Briefcase, label: t('Job Search') },
+    { href: "/dashboard/companies", icon: Building, label: t('Companies') },
     { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
     { href: "/dashboard/events", icon: Calendar, label: t('Events') },
     { type: "divider", label: t('AI & Assessments') },
@@ -57,9 +56,10 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   const companyNav = [
     ...baseNav,
     { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
-    { href: "/dashboard/company-profile", icon: Building, label: t('Company Profile') },
-    { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
-    { href: "/dashboard/company-events", icon: Calendar, label: t('Event Management') },
+    { href: "/dashboard/organization-profile", icon: Building, label: t('Company Profile') },
+    { href: "/dashboard/job-postings", icon: Briefcase, label: t('Job Postings')},
+    { href: "/dashboard/applicants", icon: FileText, label: t('Applicants') },
+    { href: "/dashboard/events", icon: Calendar, label: t('Event Management') },
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/talent-pool", icon: Users2, label: t('Talent Pool') },
     { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
@@ -68,17 +68,17 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   const schoolNav = [
     ...baseNav,
     { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
-    { href: "/dashboard/school-profile", icon: School, label: t('School Profile')},
-    { href: "/dashboard/graduate-management", icon: UserCheck, label: t('Graduate Management')},
-    { href: "/dashboard/school-events", icon: Calendar, label: t('Event Management')},
+    { href: "/dashboard/organization-profile", icon: School, label: t('School Profile')},
+    { href: "/dashboard/graduates", icon: UserCheck, label: t('Manage Graduates')},
+    { href: "/dashboard/events", icon: Calendar, label: t('Event Management')},
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
   ];
 
   const adminNav = [
     { href: "/dashboard/admin/overview", icon: Shield, label: t('Overview') },
-    { href: "/dashboard/admin/user-management", icon: UserCog, label: t('Manage Users') },
-    { href: "/dashboard/admin/manage-team", icon: Users2, label: t('Manage Team') },
+    { href: "/dashboard/admin/users", icon: UserCog, label: t('Manage Users') },
+    { href: "/dashboard/admin/team", icon: Users2, label: t('Manage Team') },
     { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Platform Analytics') },
   ];
   
@@ -222,7 +222,9 @@ export function DashboardSidebar() {
         </nav>
       </div>
       <div className="mt-auto">
-        <Separator />
+        <div className="px-2">
+            <Separator/>
+        </div>
         <div className="p-2">
             <nav className="space-y-1">
                 {footerNavItems.map((item, index) => renderNavItem(item, index, isCollapsed, pathname))}

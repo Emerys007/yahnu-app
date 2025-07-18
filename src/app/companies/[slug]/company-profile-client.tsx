@@ -77,7 +77,7 @@ export function CompanyProfileClient({ company }: { company: CompanyProfile }) {
                                     <p className="text-muted-foreground">{t(job.type)} &middot; {job.location}</p>
                                 </div>
                                 <Button asChild>
-                                    <Link href="/register">{t('Apply Now')}</Link>
+                                    <Link href="/signup">{t('Apply Now')}</Link>
                                 </Button>
                             </Card>
                         ))}

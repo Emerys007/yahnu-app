@@ -32,7 +32,7 @@ export function Footer() {
 
               {/* Platform Links */}
               <div>
-                <h3 className="text-sm font-semibold tracking-wider text-foreground">{t('Platform')}</h3>
+                <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{t('Platform')}</h3>
                 <ul className="mt-4 space-y-2 text-sm">
                   <li><Link href="/jobs" className="text-muted-foreground hover:text-primary transition-colors">{t('Jobs')}</Link></li>
                   <li><Link href="/companies" className="text-muted-foreground hover:text-primary transition-colors">{t('Companies')}</Link></li>
@@ -43,54 +43,50 @@ export function Footer() {
               
               {/* Legal Links */}
               <div>
-                <h3 className="text-sm font-semibold tracking-wider text-foreground">{t('Legal')}</h3>
+                <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{t('Legal')}</h3>
                 <ul className="mt-4 space-y-2 text-sm">
                   <li><Link href="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">{t('Privacy Policy')}</Link></li>
                   <li><Link href="/terms-of-service" className="text-muted-foreground hover:text-primary transition-colors">{t('Terms of Service')}</Link></li>
                 </ul>
               </div>
 
-              {/* Contact and Socials Container */}
-              <div className="col-span-2 md:col-span-2 grid grid-cols-2 gap-8">
-                {/* Contact Section */}
-                <div>
-                  <h3 className="text-sm font-semibold tracking-wider text-foreground">{t('Contact Us')}</h3>
-                  <ul className="mt-4 space-y-2 text-sm">
-                      <li>
-                        <a href="mailto:contact@yahnu.ci" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-                          <Mail className="h-4 w-4" />
-                          contact@yahnu.ci
-                        </a>
-                      </li>
-                      <li>
-                        <a href="tel:+2250102030405" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-                          <Phone className="h-4 w-4" />
-                          +225 0102030405
-                        </a>
-                      </li>
-                  </ul>
-                </div>
-                
-                {/* Socials Section */}
-                <div>
-                  <h3 className="text-sm font-semibold tracking-wider text-foreground">{t('Follow Us')}</h3>
-                  <div className="mt-4 flex gap-4">
-                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                      <span className="sr-only">Twitter</span>
-                      <Twitter className="h-6 w-6" />
-                    </a>
-                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                      <span className="sr-only">LinkedIn</span>
-                      <Linkedin className="h-6 w-6" />
-                    </a>
-                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                      <span className="sr-only">Facebook</span>
-                      <Facebook className="h-6 w-6" />
-                    </a>
-                  </div>
+              {/* Contact Section */}
+              <div>
+                <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{t('Contact Us')}</h3>
+                <ul className="mt-4 space-y-2 text-sm">
+                    <li>
+                      <a href="mailto:contact@yahnu.org" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                        <Mail className="h-4 w-4" />
+                        contact@yahnu.org
+                      </a>
+                    </li>
+                    <li>
+                      <a href="tel:+2250102030405" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                        <Phone className="h-4 w-4" />
+                        +225 0102030405
+                      </a>
+                    </li>
+                </ul>
+              </div>
+              
+              {/* Socials Section */}
+              <div className="col-span-2 md:col-span-1">
+                <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{t('Follow Us')}</h3>
+                <div className="mt-4 flex gap-4">
+                  <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                    <span className="sr-only">Twitter</span>
+                    <Twitter className="h-6 w-6" />
+                  </a>
+                  <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                    <span className="sr-only">LinkedIn</span>
+                    <Linkedin className="h-6 w-6" />
+                  </a>
+                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                    <span className="sr-only">Facebook</span>
+                    <Facebook className="h-6 w-6" />
+                  </a>
                 </div>
               </div>
-
             </div>
             <div className="mt-12 pt-8 border-t">
                 <div className="text-center text-sm text-muted-foreground">

@@ -135,7 +135,7 @@ export function MainNav() {
                   <Link href="/login">{t('Login')}</Link>
                 </Button>
                 <Button asChild>
-                  <Link href="/register">{t('Sign Up')}</Link>
+                  <Link href="/signup">{t('Sign Up')}</Link>
                 </Button>
             </div>
             
@@ -230,7 +230,7 @@ export function MainNav() {
                       </SheetClose>
                       <SheetClose asChild>
                         <Button className="w-full text-lg" asChild>
-                          <Link href="/register">{t('Sign Up')}</Link>
+                          <Link href="/signup">{t('Sign Up')}</Link>
                         </Button>
                       </SheetClose>
                     </div>

@@ -69,7 +69,7 @@ export default function PrivacyPolicyPage() {
                     <h2>Contact Us</h2>
                     <p>If you have any questions about this Privacy Policy, You can contact us:</p>
                     <ul>
-                        <li>By email: <strong>contact@yahnu.ci</strong></li>
+                        <li>By email: <strong>contact@yahnu.org</strong></li>
                     </ul>
                 </div>
             </CardContent>
