@@ -1,6 +1,6 @@
 
 import { Users } from "lucide-react";
-import { ManageTeamClient } from "./manage-team-client";
+import { ManageTeamClient } from "../manage-team/manage-team-client";
 import { db } from "@/lib/firebase";
 import { collection, query, where, getDocs, DocumentData } from "firebase/firestore";
 import { type Role } from "@/context/auth-context";
