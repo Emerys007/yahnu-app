@@ -3,7 +3,7 @@
 
 runConfig:
   # The region to run your App Hosting backend in.
-  location: europe-west1
+  location: europe-west4
   # Increase this value if you'd like to automatically spin up
   # more instances in response to increased traffic.
   maxInstances: 1
