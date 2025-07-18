@@ -98,6 +98,12 @@ const WhyChooseYahnu = () => {
 
 export default function HomePage() {
   const { t } = useLocalization();
+
+  const textVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeInOut" } },
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <MainNav />
@@ -108,17 +114,40 @@ export default function HomePage() {
 
         <section className="py-20 relative overflow-hidden">
           <AnimatedGradientBackground />
-          <div className="container mx-auto text-center relative z-10">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('Ready to Join the Elite?')}</h2>
-              <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto">
+          <motion.div 
+            className="container mx-auto text-center relative z-10"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={{ visible: { transition: { staggerChildren: 0.2 } } }}
+          >
+              <motion.h2 
+                className="text-3xl font-bold tracking-tight sm:text-4xl"
+                variants={textVariants}
+              >
+                {t('Ready to Join the Elite?')}
+              </motion.h2>
+              <motion.p 
+                className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto"
+                variants={{
+                    ...textVariants,
+                    visible: { ...textVariants.visible, transition: { ...textVariants.visible.transition, delay: 0.2 } }
+                }}
+              >
                   {t("Create your account today and unlock a world of opportunities. Whether you're a graduate, a company, or a school, Yahnu is your gateway to success.")}
-              </p>
-              <div className="mt-8 flex justify-center">
+              </motion.p>
+              <motion.div 
+                className="mt-8 flex justify-center"
+                variants={{
+                    ...textVariants,
+                    visible: { ...textVariants.visible, transition: { ...textVariants.visible.transition, delay: 0.4 } }
+                }}
+              >
                   <Button size="lg" asChild>
                       <Link href="/register">{t('Get Started Now')}</Link>
                   </Button>
-              </div>
-          </div>
+              </motion.div>
+          </motion.div>
         </section>
       </main>
       <Footer />
