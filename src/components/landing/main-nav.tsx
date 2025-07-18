@@ -141,10 +141,62 @@ export function MainNav() {
               </DropdownMenu>
             </div>
             
-            <div className="md:hidden flex items-center">
+            <div className="md:hidden flex items-center gap-1">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <MoreVertical className="h-5 w-5" />
+                    <span className="sr-only">More options</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      <Languages className="mr-2 h-4 w-4" />
+                      <span>{t('Language')}</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setLanguage('fr')}>Français</DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      <Sun className="mr-2 h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                      <Moon className="absolute mr-2 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                      <span>{t('Theme')}</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem onClick={() => setTheme("light")}>{t('Light')}</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setTheme("dark")}>{t('Dark')}</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setTheme("system")}>{t('System')}</DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                       <Flag countryCode={country.code} />
+                       <span className="ml-2">{t('Country')}</span>
+                    </DropdownMenuSubTrigger>
+                     <DropdownMenuPortal>
+                      <DropdownMenuSubContent className="max-h-80 overflow-y-auto">
+                        {allCountries.map((c) => (
+                            <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
+                                <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
+                                <span>{c.name.en}</span>
+                            </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="outline" size="icon">
+                  <Button variant="ghost" size="icon">
                     <Menu className="h-5 w-5" />
                     <span className="sr-only">{t('Open menu')}</span>
                   </Button>
