@@ -108,9 +108,11 @@ export default function MessagesPage() {
              // Clean up URL
             router.replace('/dashboard/messages');
         } else if (conversations.length > 0 && !selectedConversation) {
-            setSelectedConversation(conversations[0]);
+            if (!isMobile) {
+                setSelectedConversation(conversations[0]);
+            }
         }
-    }, [searchParams, conversations, router, selectedConversation]);
+    }, [searchParams, conversations, router, selectedConversation, isMobile]);
 
     const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
@@ -259,3 +261,4 @@ export default function MessagesPage() {
     )
 }
 
+    
