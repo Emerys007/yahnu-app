@@ -475,6 +475,15 @@ const TestInterface = ({ testId, onTestComplete, onDisqualify }: { testId: TestI
   }
 
   const handleNext = () => {
+    if (answers[currentQuestion] === undefined) {
+        toast({
+            title: "Please answer the question",
+            description: "You must select an answer before proceeding.",
+            variant: "destructive",
+        });
+        return;
+    }
+
     if (currentQuestion < totalQuestions - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
