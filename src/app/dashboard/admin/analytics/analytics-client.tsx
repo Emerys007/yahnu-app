@@ -80,16 +80,19 @@ const CustomDistributionTooltip = ({ active, payload, label }: TooltipProps<numb
     const { t } = useLocalization();
     if (active && payload && payload.length) {
         const data: UserDistributionDataPoint = payload[0].payload;
-        const total = payload.reduce((acc, curr) => acc + (curr.payload?.value || 0), 0)
-        const percentage = total > 0 ? ((data.value / total) * 100).toFixed(1) : 0;
+        // Calculate total for percentage. Find all values from the initial data passed to the chart.
+        const total = payload.reduce((acc, curr) => acc + (curr.payload.value), 0);
+        
+        const thisData = payload.find(p => p.dataKey === data.name) ?? payload[0];
+        const percentage = total > 0 ? ((thisData.payload?.value / total) * 100).toFixed(1) : 0;
         
         return (
         <Card className="w-56 shadow-lg">
             <CardHeader className="pb-2">
-                 <CardTitle className="text-base">{t(data.name)}</CardTitle>
+                 <CardTitle className="text-base">{t(thisData.payload.name)}</CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-sm">{t('User Count')}: <strong>{data.value}</strong> ({percentage}%)</p>
+                <p className="text-sm">{t('User Count')}: <strong>{thisData.payload.value}</strong> ({percentage}%)</p>
             </CardContent>
         </Card>
         );
@@ -131,9 +134,11 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
     }, [data.userGrowthData, t]);
     
     const translatedUserDistribution = React.useMemo(() => {
+        const total = data.userDistribution.reduce((acc, curr) => acc + curr.value, 0);
         return data.userDistribution.map(d => ({
             ...d,
-            name: t(d.name)
+            name: t(d.name),
+            total,
         }))
     }, [data.userDistribution, t])
 

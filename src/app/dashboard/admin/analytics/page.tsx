@@ -2,7 +2,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart3 } from "lucide-react"
 import { AnalyticsClient } from "./analytics-client"
-import { motion } from "framer-motion"
 
 const analyticsData = {
     totalUsers: 1256,
@@ -27,12 +26,7 @@ const analyticsData = {
 
 export default async function AdminAnalyticsPage() {
   return (
-    <motion.div 
-      className="space-y-8"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="space-y-8">
       <div className="flex items-start gap-4">
         <div className="bg-primary/10 p-3 rounded-lg">
             <BarChart3 className="h-6 w-6 text-primary" />
@@ -44,6 +38,6 @@ export default async function AdminAnalyticsPage() {
       </div>
       
       <AnalyticsClient data={analyticsData} />
-    </motion.div>
+    </div>
   )
 }
