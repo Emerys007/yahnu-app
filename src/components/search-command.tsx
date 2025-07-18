@@ -22,6 +22,7 @@ import {
   BrainCircuit,
   MessageSquare,
   Award,
+  Wrench,
 } from "lucide-react"
 
 import {
@@ -39,65 +40,75 @@ import { Button } from "./ui/button"
 import { useAuth, type Role } from "@/context/auth-context"
 
 const getNavItems = (t: (key: string) => string, role: Role) => {
-    const baseNav = [
-        { href: "/dashboard", icon: LayoutDashboard, label: t('Dashboard') },
-    ];
-    
-    const graduateNav = [
-        ...baseNav,
-        { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
-        { href: "/dashboard/profile", icon: User, label: t('Profile') },
-        { href: "/dashboard/jobs", icon: Briefcase, label: t('Job Search') },
-        { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
-        { href: "/dashboard/events", icon: Calendar, label: t('Events') },
-        { href: "/dashboard/assessments", icon: Award, label: t('Skill Certifications') },
-        { href: "/dashboard/interview-prep", icon: BrainCircuit, label: t('Interview Prep') },
-    ];
-
-    const companyNav = [
-        ...baseNav,
-        { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
-        { href: "/dashboard/company-profile", icon: Building, label: t('Company Profile') },
-        { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
-        { href: "/dashboard/company-events", icon: Calendar, label: t('Event Management') },
-        { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
-        { href: "/dashboard/talent-pool", icon: Users2, label: t('Talent Pool') },
-        { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
-    ];
-    
-    const schoolNav = [
-        ...baseNav,
-        { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
-        { href: "/dashboard/school-profile", icon: School, label: t('School Profile')},
-        { href: "/dashboard/graduate-management", icon: UserCheck, label: t('Graduate Management')},
-        { href: "/dashboard/school-events", icon: Calendar, label: t('Event Management')},
-        { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
-        { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
+    const main = [
+        {
+            group: t('Dashboard'),
+            items: [
+                { icon: LayoutDashboard, text: t('Home'), onSelect: (router) => router.push('/dashboard') },
+                { icon: User, text: t('Profile'), onSelect: (router) => router.push('/dashboard/profile') },
+            ],
+            roles: ['admin', 'graduate', 'company', 'school'],
+        },
+        {
+            group: t('Job Postings'),
+            items: [
+                { icon: Briefcase, text: t('My Applications'), onSelect: (router) => router.push('/dashboard/my-applications') },
+                { icon: Building, text: t('Company Profiles'), onSelect: (router) => router.push('/dashboard/company-profiles') },
+                { icon: School, text: t('School Profiles'), onSelect: (router) => router.push('/dashboard/school-profiles') },
+            ],
+            roles: ['admin', 'graduate'],
+        },
+        {
+            group: t('Recruitment'),
+            items: [
+                { icon: FileText, text: t('Post a Job'), onSelect: (router) => router.push('/dashboard/job-postings/new') },
+                { icon: Users2, text: t('Candidates'), onSelect: (router) => router.push('/dashboard/candidates') },
+                { icon: Handshake, text: t('Partnerships'), onSelect: (router) => router.push('/dashboard/partnerships') },
+            ],
+            roles: ['admin', 'company', 'school'],
+        },
     ];
 
-    const adminNav = [
-        { href: "/dashboard/admin/overview", icon: Shield, label: t('Overview') },
-        { href: "/dashboard/admin/user-management", icon: UserCog, label: t('Manage Users') },
-        { href: "/dashboard/admin/manage-team", icon: Users2, label: t('Manage Team') },
-        { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Platform Analytics') },
+    const footer = [
+        {
+            group: t('General'),
+            items: [
+                { icon: Settings, text: t('Settings'), onSelect: (router) => router.push('/dashboard/settings') },
+                { icon: LifeBuoy, text: t('Support'), onSelect: (router) => router.push('/dashboard/support') },
+            ],
+            roles: ['admin', 'graduate', 'company', 'school'],
+        },
+        {
+            group: t('Admin'),
+            items: [
+                { icon: Shield, text: t('Security'), onSelect: (router) => router.push('/dashboard/admin/security') },
+                { icon: UserCheck, text: t('Approvals'), onSelect: (router) => router.push('/dashboard/admin/approvals') },
+                { icon: UserCog, text: t('User Management'), onSelect: (router) => router.push('/dashboard/admin/user-management') },
+            ],
+            roles: ['admin'],
+        },
+        {
+            group: t('AI Tools'),
+            items: [
+                { icon: BrainCircuit, text: t('AI Insights'), onSelect: (router) => router.push('/dashboard/ai/insights') },
+                { icon: MessageSquare, text: t('Chatbot Builder'), onSelect: (router) => router.push('/dashboard/ai/chatbot-builder') },
+                { icon: Award, text: t('Assessment Generator'), onSelect: (router) => router.push('/dashboard/ai/assessment-generator') },
+            ],
+            roles: ['admin', 'company', 'school'],
+        },
+        {
+            group: t('Reporting'),
+            items: [
+                 { icon: BarChart3, text: t('Analytics'), onSelect: (router) => router.push('/dashboard/reports') },
+                 { icon: Wrench, text: t('Report Builder'), onSelect: (router) => router.push('/dashboard/reports/custom-report-builder') },
+            ],
+             roles: ['admin', 'company', 'school'],
+        }
     ];
-    
-    const bottomNav = [
-        { href: "/dashboard/settings", icon: Settings, label: t('Settings') },
-        { href: "/dashboard/support", icon: LifeBuoy, label: t('Support') },
-    ]
 
-    const allNavItems = {
-        'graduate': graduateNav,
-        'company': companyNav,
-        'school': schoolNav,
-        'admin': adminNav,
-    }
+    const filterByRole = (items: any[]) => items.filter(group => group.roles.includes(role));
 
-    return {
-        main: allNavItems[role] || graduateNav,
-        footer: bottomNav
-    }
+    return { main: filterByRole(main), footer: filterByRole(footer) };
 }
 
 
@@ -129,49 +140,53 @@ export function SearchCommand() {
     <>
       <Button
         variant="outline"
-        className="h-10 w-full md:w-64 px-3 flex items-center justify-start text-sm text-muted-foreground"
+        className="w-full justify-start text-muted-foreground sm:w-64"
         onClick={() => setOpen(true)}
       >
-        <SearchIcon className="h-4 w-4 mr-2" />
-        <span>{t("Search...")}</span>
-        <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 md:flex">
+        <SearchIcon className="mr-2 h-4 w-4" />
+        <span className="hidden lg:inline-flex">{t('Search...')}</span>
+        <span className="ml-auto hidden lg:inline-flex">
+          <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
             <span className="text-xs">⌘</span>K
-        </kbd>
+          </kbd>
+        </span>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder={t("Type a command or search...")} />
+        <CommandInput placeholder={t('Type a command or search...')} />
         <CommandList>
-          <CommandEmpty>{t("No results found.")}</CommandEmpty>
-          <CommandGroup heading={t("Links")}>
-            {mainItems.map(item => (
-                item.type !== 'divider' &&
+          <CommandEmpty>{t('No results found.')}</CommandEmpty>
+          
+          {mainItems.map((group) => (
+            <CommandGroup key={group.group} heading={group.group}>
+              {group.items.map((item) => (
                 <CommandItem
-                    key={item.href}
-                    value={item.label}
-                    onSelect={() => {
-                      runCommand(() => router.push(item.href))
-                    }}
+                  key={item.text}
+                  value={item.text}
+                  onSelect={() => runCommand(() => item.onSelect(router))}
                 >
-                    <item.icon className="mr-2 h-4 w-4" />
-                    <span>{item.label}</span>
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.text}
                 </CommandItem>
-            ))}
-          </CommandGroup>
-           <CommandSeparator />
-            <CommandGroup heading={t("Help & Settings")}>
-                {footerItems.map(item => (
-                    <CommandItem
-                        key={item.href}
-                        value={item.label}
-                        onSelect={() => {
-                        runCommand(() => router.push(item.href))
-                        }}
-                    >
-                        <item.icon className="mr-2 h-4 w-4" />
-                        <span>{item.label}</span>
-                    </CommandItem>
-                ))}
+              ))}
             </CommandGroup>
+          ))}
+
+          <CommandSeparator />
+          
+          {footerItems.map((group) => (
+            <CommandGroup key={group.group} heading={group.group}>
+              {group.items.map((item) => (
+                <CommandItem
+                  key={item.text}
+                  value={item.text}
+                  onSelect={() => runCommand(() => item.onSelect(router))}
+                >
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.text}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          ))}
         </CommandList>
       </CommandDialog>
     </>

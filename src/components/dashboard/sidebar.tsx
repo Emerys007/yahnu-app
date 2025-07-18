@@ -26,6 +26,7 @@ import {
   MessageSquare,
   Award,
   Calendar,
+  Wrench
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -63,6 +64,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/talent-pool", icon: Users2, label: t('Talent Pool') },
     { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
+    { href: "/dashboard/reports/custom-report-builder", icon: Wrench, label: t('Report Builder') },
   ];
   
   const schoolNav = [
@@ -73,6 +75,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/events", icon: Calendar, label: t('Event Management')},
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
+    { href: "/dashboard/reports/custom-report-builder", icon: Wrench, label: t('Report Builder') },
   ];
 
   const adminNav = [
@@ -80,6 +83,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/admin/users", icon: UserCog, label: t('Manage Users') },
     { href: "/dashboard/admin/team", icon: Users2, label: t('Manage Team') },
     { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Platform Analytics') },
+    { href: "/dashboard/reports/custom-report-builder", icon: Wrench, label: t('Report Builder') },
   ];
   
   const bottomNav = [
@@ -95,6 +99,9 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     case 'school':
       return { main: schoolNav, footer: bottomNav };
     case 'admin':
+    case 'super_admin':
+    case 'content_moderator':
+    case 'support_staff':
       return { main: adminNav, footer: bottomNav };
     default:
       return { main: baseNav, footer: bottomNav };

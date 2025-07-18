@@ -128,6 +128,8 @@ export function HeroSection() {
           ))}
         </CarouselContent>
         
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
             <div className="max-w-4xl space-y-8">
                 <AnimatePresence mode="wait">
