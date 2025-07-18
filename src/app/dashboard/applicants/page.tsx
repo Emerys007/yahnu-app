@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { FileText } from "lucide-react"
+import { motion } from "framer-motion"
 
 // Mock Data
 const graduateApplications = [
@@ -118,7 +119,12 @@ export default function ApplicantsPage() {
   const isCompany = role === 'company';
 
   return (
-    <div className="space-y-8">
+    <motion.div 
+        className="space-y-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+    >
        <div className="flex items-start gap-4">
         <div className="bg-primary/10 p-3 rounded-lg">
           <FileText className="h-6 w-6 text-primary" />
@@ -144,6 +150,6 @@ export default function ApplicantsPage() {
             {isCompany ? <CompanyApplications /> : <GraduateApplications />}
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   )
 }

@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { motion } from "framer-motion";
 
 type EventType = "Career Fair" | "Workshop" | "Networking" | "Webinar";
 type RsvpStatus = "going" | "interested" | "not_going" | null;
@@ -102,7 +103,12 @@ export default function GraduateEventsPage() {
 
 
   return (
-    <div className="space-y-8">
+    <motion.div 
+        className="space-y-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+    >
         <div className="flex items-start gap-4">
             <div className="bg-primary/10 p-3 rounded-lg">
                 <Calendar className="h-6 w-6 text-primary" />
@@ -114,45 +120,61 @@ export default function GraduateEventsPage() {
         </div>
         
         {events.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <motion.div 
+                className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+                variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.1 } }
+                }}
+                initial="hidden"
+                animate="visible"
+            >
             {events.map((event) => (
-                <Card key={event.id} className="flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                    <CardHeader>
-                        <div className="flex justify-between items-center">
-                            <Badge variant="secondary" className={`self-start ${eventTypeColors[event.type]}`}>{t(event.type)}</Badge>
-                            <p className="text-xs font-semibold text-muted-foreground">{t('Hosted by')} {event.host}</p>
-                        </div>
-                        <CardTitle className="pt-2">{t(event.title)}</CardTitle>
-                        <CardDescription className="flex items-center gap-2 text-sm"><Calendar className="h-4 w-4" /> {new Date(event.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex-grow">
-                        <p className="text-muted-foreground text-sm mb-4">{t(event.description)}</p>
-                        <div className="space-y-2 text-sm">
-                            <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-muted-foreground" /> {t(event.time)}</div>
-                            <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-muted-foreground" /> {t(event.location)}</div>
-                        </div>
-                    </CardContent>
-                    <CardFooter>
-                         <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant={event.rsvp ? 'default' : 'outline'} className="w-full">
-                                    {getRsvpButtonContent(event.rsvp)}
-                                    <ChevronDown className="ml-auto h-4 w-4"/>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-[--radix-dropdown-menu-trigger-width]">
-                                {rsvpOptions.map(option => (
-                                    <DropdownMenuItem key={option.status} onClick={() => handleRsvp(event.id, option.status)}>
-                                        <option.icon className="mr-2 h-4 w-4" />
-                                        <span>{t(option.label)}</span>
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                         </DropdownMenu>
-                    </CardFooter>
-                </Card>
+                <motion.div
+                    key={event.id}
+                    variants={{
+                        hidden: { opacity: 0, y: 20 },
+                        visible: { opacity: 1, y: 0 }
+                    }}
+                >
+                    <Card className="flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full">
+                        <CardHeader>
+                            <div className="flex justify-between items-center">
+                                <Badge variant="secondary" className={`self-start ${eventTypeColors[event.type]}`}>{t(event.type)}</Badge>
+                                <p className="text-xs font-semibold text-muted-foreground">{t('Hosted by')} {event.host}</p>
+                            </div>
+                            <CardTitle className="pt-2">{t(event.title)}</CardTitle>
+                            <CardDescription className="flex items-center gap-2 text-sm"><Calendar className="h-4 w-4" /> {new Date(event.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-grow">
+                            <p className="text-muted-foreground text-sm mb-4">{t(event.description)}</p>
+                            <div className="space-y-2 text-sm">
+                                <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-muted-foreground" /> {t(event.time)}</div>
+                                <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-muted-foreground" /> {t(event.location)}</div>
+                            </div>
+                        </CardContent>
+                        <CardFooter>
+                             <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant={event.rsvp ? 'default' : 'outline'} className="w-full">
+                                        {getRsvpButtonContent(event.rsvp)}
+                                        <ChevronDown className="ml-auto h-4 w-4"/>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-[--radix-dropdown-menu-trigger-width]">
+                                    {rsvpOptions.map(option => (
+                                        <DropdownMenuItem key={option.status} onClick={() => handleRsvp(event.id, option.status)}>
+                                            <option.icon className="mr-2 h-4 w-4" />
+                                            <span>{t(option.label)}</span>
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                             </DropdownMenu>
+                        </CardFooter>
+                    </Card>
+                </motion.div>
             ))}
-            </div>
+            </motion.div>
         ) : (
             <Card className="py-24">
                 <CardContent className="text-center">
@@ -162,6 +184,6 @@ export default function GraduateEventsPage() {
                 </CardContent>
             </Card>
         )}
-    </div>
+    </motion.div>
   )
 }

@@ -34,7 +34,7 @@ import { z } from "zod"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-
+import { motion } from "framer-motion"
 
 type EventType = "Career Fair" | "Workshop" | "Networking" | "Webinar";
 
@@ -204,7 +204,12 @@ export default function CompanyEventsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <motion.div 
+        className="space-y-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-start gap-4">
             <div className="bg-primary/10 p-3 rounded-lg">
@@ -269,6 +274,6 @@ export default function CompanyEventsPage() {
                 </Table>
             </CardContent>
         </Card>
-    </div>
+    </motion.div>
   )
 }

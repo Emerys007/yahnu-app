@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 interface FaqItem {
   question: string;
@@ -111,8 +112,6 @@ export default function SupportPage() {
 
   const handleContactSchool = () => {
     if (user?.schoolId) {
-        // This is a mock implementation. A real one would look up the school admin's name.
-        // For now, we'll use a placeholder ID.
         router.push(`/dashboard/messages?new=${user.schoolId}`);
     }
   }
@@ -145,25 +144,36 @@ export default function SupportPage() {
     { question: t('faq_q_event_management'), answer: t('faq_a_event_management') },
   ];
   
-  const roleFaqs: Record<Role, FaqItem[]> = {
+  const roleFaqs: Record<string, FaqItem[]> = {
       graduate: graduateFaqs,
       company: companyFaqs,
       school: schoolFaqs,
       admin: [],
+      super_admin: [],
+      content_moderator: [],
+      support_staff: [],
   };
   
-  const roleFaqTitles: Record<Role, string> = {
+  const roleFaqTitles: Record<string, string> = {
       graduate: t('faq_graduate_title'),
       company: t('faq_company_title'),
       school: t('faq_school_title'),
       admin: '',
+      super_admin: '',
+      content_moderator: '',
+      support_staff: '',
   };
 
   const specificFaqs = roleFaqs[role] || [];
   const specificFaqTitle = roleFaqTitles[role] || '';
 
   return (
-    <div className="space-y-8">
+    <motion.div 
+        className="space-y-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+    >
         <div className="flex items-start gap-4">
             <div className="bg-primary/10 p-3 rounded-lg">
                 <LifeBuoy className="h-6 w-6 text-primary" />
@@ -218,6 +228,6 @@ export default function SupportPage() {
                 )}
             </div>
         </div>
-    </div>
+    </motion.div>
   );
 }

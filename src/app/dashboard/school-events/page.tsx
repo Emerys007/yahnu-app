@@ -32,7 +32,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-
+import { motion } from "framer-motion"
 
 type EventType = "Career Fair" | "Workshop" | "Networking" | "Webinar";
 
@@ -190,7 +190,12 @@ export default function SchoolEventsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <motion.div 
+        className="space-y-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-start gap-4">
             <div className="bg-primary/10 p-3 rounded-lg">
@@ -233,6 +238,6 @@ export default function SchoolEventsPage() {
                 </Tabs>
             </CardHeader>
         </Card>
-    </div>
+    </motion.div>
   )
 }

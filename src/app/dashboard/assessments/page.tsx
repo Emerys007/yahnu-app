@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Award, BrainCircuit, Code, DollarSign, Leaf, Truck, HeartHandshake } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
+import { motion } from "framer-motion";
 
 const assessments = [
   {
@@ -72,7 +73,12 @@ export default function AssessmentsPage() {
     
     return (
     <div className="space-y-8">
-      <div className="flex items-start gap-4">
+       <motion.div 
+            className="flex items-start gap-4"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
         <div className="bg-primary/10 p-3 rounded-lg">
           <Award className="h-6 w-6 text-primary" />
         </div>
@@ -80,10 +86,15 @@ export default function AssessmentsPage() {
           <h1 className="text-3xl font-bold tracking-tight">{t('Skill Certifications')}</h1>
           <p className="text-muted-foreground mt-1">{t('Prove your skills by taking our proctored assessments and earn badges for your profile.')}</p>
         </div>
-      </div>
+      </motion.div>
 
-      {categories.map(category => (
-        <div key={category}>
+      {categories.map((category, i) => (
+        <motion.div 
+            key={category}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: i * 0.1 }}
+        >
             <h2 className="text-2xl font-bold tracking-tight mb-4">{t(category)}</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {assessments.filter(a => a.category === category).map((assessment) => (
@@ -111,7 +122,7 @@ export default function AssessmentsPage() {
                 </Card>
             ))}
             </div>
-        </div>
+        </motion.div>
       ))}
     </div>
     )
