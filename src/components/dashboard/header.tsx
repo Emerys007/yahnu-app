@@ -10,6 +10,9 @@ import {
   Check,
   School,
   Building,
+  MoreVertical,
+  Sun,
+  Moon,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -22,7 +25,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuFooter
+  DropdownMenuFooter,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuPortal
 } from "@/components/ui/dropdown-menu"
 import { useSidebar } from "./sidebar"
 import { useLocalization } from "@/context/localization-context"
@@ -31,6 +38,7 @@ import { cn } from "@/lib/utils"
 import { collection, query, where, onSnapshot, limit, DocumentData } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { SearchCommand } from "../search-command"
+import { useTheme } from "next-themes"
 
 
 type NotificationItem = {
@@ -71,6 +79,7 @@ const setReadNotificationIds = (ids: string[]) => {
 export function DashboardHeader() {
   const { toggleSidebar } = useSidebar();
   const { t, setLanguage } = useLocalization();
+  const { setTheme } = useTheme()
   const { user, role } = useAuth();
   
   const [notifications, setNotifications] = React.useState<NotificationItem[]>([]);
@@ -154,25 +163,57 @@ export function DashboardHeader() {
     setReadNotificationIds(allIds);
   };
 
+  const languageSelectorMenu = (
+     <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+           <Languages className="mr-2 h-4 w-4" />
+           <span>{t('Language')}</span>
+        </DropdownMenuSubTrigger>
+        <DropdownMenuPortal>
+           <DropdownMenuSubContent>
+              <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLanguage('fr')}>Français</DropdownMenuItem>
+            </DropdownMenuSubContent>
+        </DropdownMenuPortal>
+      </DropdownMenuSub>
+  )
+
+  const themeSelectorMenu = (
+     <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+           <Sun className="mr-2 h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+           <Moon className="absolute mr-2 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+           <span>{t('Theme')}</span>
+        </DropdownMenuSubTrigger>
+        <DropdownMenuPortal>
+           <DropdownMenuSubContent>
+              <DropdownMenuItem onClick={() => setTheme("light")}>{t('Light')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("dark")}>{t('Dark')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("system")}>{t('System')}</DropdownMenuItem>
+            </DropdownMenuSubContent>
+        </DropdownMenuPortal>
+     </DropdownMenuSub>
+  )
+
   return (
     <header className="flex h-16 items-center gap-4 border-b bg-card px-4 md:px-6 sticky top-0 z-30 shrink-0">
         <Button
             variant="ghost"
             size="icon"
-            className="shrink-0"
+            className="shrink-0 lg:hidden"
             onClick={toggleSidebar}
           >
             <PanelLeft className="h-5 w-5" />
             <span className="sr-only">{t('Toggle navigation menu')}</span>
         </Button>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 justify-end">
-        <div className="ml-auto">
+        <div className="ml-auto flex-1 md:grow-0">
           <SearchCommand />
         </div>
         
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="relative">
+                <Button variant="outline" size="icon" className="relative shrink-0">
                     <Bell className="h-[1.2rem] w-[1.2rem]" />
                     <span className="sr-only">{t('Notifications')}</span>
                     {unreadCount > 0 && (
@@ -210,17 +251,16 @@ export function DashboardHeader() {
 
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Languages className="h-[1.2rem] w-[1.2rem]" />
-                <span className="sr-only">{t('Switch language')}</span>
+              <Button variant="outline" size="icon" className="shrink-0">
+                <MoreVertical className="h-[1.2rem] w-[1.2rem]" />
+                <span className="sr-only">{t('More options')}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage('fr')}>Français</DropdownMenuItem>
+                {languageSelectorMenu}
+                {themeSelectorMenu}
             </DropdownMenuContent>
           </DropdownMenu>
-        <ThemeToggle />
         <UserNav />
       </div>
     </header>

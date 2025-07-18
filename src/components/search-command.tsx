@@ -31,6 +31,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
 } from "@/components/ui/command"
 import { useLocalization } from "@/context/localization-context"
 import { useRouter } from "next/navigation"
@@ -86,19 +87,16 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
         { href: "/dashboard/support", icon: LifeBuoy, label: t('Support') },
     ]
 
-    switch (role) {
-      case 'graduate':
-        return graduateNav.concat(bottomNav);
-      case 'company':
-        return companyNav.concat(bottomNav);
-      case 'school':
-        return schoolNav.concat(bottomNav);
-      case 'admin':
-        return adminNav.concat(bottomNav);
-      default:
-        // This case should ideally not be hit for a logged-in user
-        // but provides a safe fallback.
-        return baseNav.concat(bottomNav);
+    const allNavItems = {
+        'graduate': graduateNav,
+        'company': companyNav,
+        'school': schoolNav,
+        'admin': adminNav,
+    }
+
+    return {
+        main: allNavItems[role] || graduateNav,
+        footer: bottomNav
     }
 }
 
@@ -109,7 +107,7 @@ export function SearchCommand() {
   const { role } = useAuth();
   const { t } = useLocalization();
 
-  const navItems = React.useMemo(() => getNavItems(t, role), [t, role]);
+  const {main: mainItems, footer: footerItems} = React.useMemo(() => getNavItems(t, role), [t, role]);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -131,12 +129,12 @@ export function SearchCommand() {
     <>
       <Button
         variant="outline"
-        className="h-10 w-10 p-0 md:w-auto md:px-3 md:justify-start"
+        className="h-10 w-full md:w-64 px-3 flex items-center justify-start text-sm text-muted-foreground"
         onClick={() => setOpen(true)}
       >
-        <SearchIcon className="h-4 w-4" />
-        <span className="hidden md:inline-block md:ml-2 text-muted-foreground">{t("Search...")}</span>
-        <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 md:flex md:ml-4">
+        <SearchIcon className="h-4 w-4 mr-2" />
+        <span>{t("Search...")}</span>
+        <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 md:flex">
             <span className="text-xs">⌘</span>K
         </kbd>
       </Button>
@@ -145,7 +143,8 @@ export function SearchCommand() {
         <CommandList>
           <CommandEmpty>{t("No results found.")}</CommandEmpty>
           <CommandGroup heading={t("Links")}>
-            {navItems.map(item => (
+            {mainItems.map(item => (
+                item.type !== 'divider' &&
                 <CommandItem
                     key={item.href}
                     value={item.label}
@@ -158,6 +157,21 @@ export function SearchCommand() {
                 </CommandItem>
             ))}
           </CommandGroup>
+           <CommandSeparator />
+            <CommandGroup heading={t("Help & Settings")}>
+                {footerItems.map(item => (
+                    <CommandItem
+                        key={item.href}
+                        value={item.label}
+                        onSelect={() => {
+                        runCommand(() => router.push(item.href))
+                        }}
+                    >
+                        <item.icon className="mr-2 h-4 w-4" />
+                        <span>{item.label}</span>
+                    </CommandItem>
+                ))}
+            </CommandGroup>
         </CommandList>
       </CommandDialog>
     </>
