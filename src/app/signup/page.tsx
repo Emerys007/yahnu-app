@@ -4,7 +4,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { RegisterForm } from '@/components/auth/register-form';
-import { Logo } from '@/components/logo';
+import { Logo } from '@/components/ui/logo';
 import { useLocalization } from '@/context/localization-context';
 import { useCountry } from '@/context/country-context';
 import { WaitlistForm } from '@/components/auth/waitlist-form';

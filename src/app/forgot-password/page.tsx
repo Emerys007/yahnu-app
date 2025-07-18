@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Logo } from "@/components/logo";
+import { Logo } from "@/components/ui/logo";
 import { ChevronLeft } from "lucide-react";
 import { useLocalization } from "@/context/localization-context";
 
