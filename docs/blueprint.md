@@ -1,24 +1,73 @@
-# **App Name**: Yahnu
+# Project Blueprint: Yahnu
 
-## Core Features:
+This document outlines the core architectural and branding guidelines for the Yahnu platform.
 
-- User Authentication: Secure authentication system with role-based access (Graduate, Company, School, Super Admin) including email/password and Google sign-in.
-- Role Dashboards: Dedicated dashboards for each user role, offering role-specific functionalities and views.
-- Profile Creation: Allow Graduates to create detailed professional profiles including work experience, education, and skills.
-- AI Resume Parsing: Utilize a Genkit-powered AI tool to parse resumes uploaded by Graduates and pre-fill their profile information. This tool saves time and ensures completeness of profile data.
-- Job Search: Provide Graduates with robust search filters to find relevant job listings and an intuitive application process.
-- Company Profiles: Enable Companies to create comprehensive organizational profiles and post job listings with detailed requirements.
-- Localization: UI is available in both English and French.
-- AI Assessment Generator: An AI tool to create relevant skills assessments for companies, covering both "Basic Fit" and "Cognitive Aptitude" tests.
-- AI Custom Report Builder: An advanced feature allowing users (likely Companies/Schools/Admins) to generate custom charts and data visualizations by typing natural language queries (e.g., "Show me a bar chart of graduates by field of study").
-- AI Chatbot: An integrated chatbot to provide user assistance and answer frequently asked questions.
+## 1. Brand Identity
 
-## Style Guidelines:
+### 1.1. Mission Statement
 
-- Deep saffron (`#FF8C00`) to evoke warmth, growth, and intellectual engagement.
-- Light saffron (`#FFF3E0`) to provide a clean, inviting canvas that enhances readability and focus.
-- Golden yellow (`#FFC72C`) to represent ambition and achievement, used sparingly for key interactive elements.
-- 'Space Grotesk' for headlines and 'Inter' for body text.
-- A modern, professional, and intuitive icon set.
-- A responsive, grid-based layout with subtle, elegant animations and transitions to enhance user engagement and provide clear interaction feedback.
-- Subtle, elegant animations and transitions to enhance user engagement and provide clear interaction feedback.
+To be the leading platform for professional connection and opportunity in Africa, driving economic growth and individual success by bridging the gap between education and employment.
+
+### 1.2. Color System
+
+The Yahnu application utilizes a dynamic, theme-based color system built on CSS variables to provide a localized user experience. The color palette changes based on the user's selected country, with a primary and accent color reflecting the branding of that region.
+
+#### 1.2.1. Base Palette
+
+This is the default color set for the application. All color values are defined using HSL.
+
+- **Primary**: `34 90% 50%` (A vibrant, deep saffron)
+- **Primary Foreground**: `0 0% 100%` (White, for high contrast on the primary color)
+- **Accent**: `142 71% 90%` (A light, complementary green)
+
+#### 1.2.2. Country-Specific Themes
+
+The following themes are automatically applied when a user selects a country. The `--primary` and `--accent` variables are overridden to reflect the local brand identity.
+
+- **Côte d'Ivoire (`ivory-coast`)**
+  - `--primary`: `34 90% 50%` (Saffron)
+  - `--accent`: `142 71% 90%` (Light Green)
+
+- **Ghana (`ghana-gold`)**
+  - `--primary`: `45 100% 51%` (Gold)
+  - `--accent`: `45 100% 90%` (Light Gold)
+
+- **Nigeria (`nigeria-green`)**
+  - `--primary`: `122 60% 35%` (Forest Green)
+  - `--accent`: `122 60% 90%` (Light Mint)
+
+- **Senegal (`senegal-sun`)**
+    - `--primary`: `48 100% 50%` (Bright Yellow)
+    - `--accent`: `48 100% 90%` (Light Yellow)
+
+- **Cameroon (`cameroon-unity`)**
+    - `--primary`: `122 39% 49%` (Rich Green)
+    - `--accent`: `122 39% 90%` (Pastel Green)
+
+- **DRC (`drc-cobalt`)**
+    - `--primary`: `220 81% 51%` (Bright Blue)
+    - `--accent`: `220 81% 90%` (Light Sky Blue)
+
+
+## 2. Typography
+
+The application uses the 'Inter' sans-serif font as the primary font for all body and headline text. It is assigned via a CSS variable (`--font-inter`) in the main layout file.
+
+- **Body**: `var(--font-inter)`
+- **Headlines**: `var(--font-inter)`
+
+## 3. Tech Stack
+
+- **Framework**: Next.js (App Router)
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **Authentication**: Firebase Authentication
+- **Database**: Firebase Firestore
+- **AI**: Google AI Platform (via Genkit)
+- **Deployment**: Firebase App Hosting
+
+## 4. Architectural Patterns
+
+- **Component Organization**: Components are organized by feature in the `src/features` directory. Reusable, generic UI components are located in `src/components/ui`.
+- **State Management**: Global state (e.g., authentication, localization) is managed via React Context.
+- **Data Fetching**: Server-side rendering (SSR) and Server Components are used for static content, while client-side fetching is used for dynamic, real-time data from Firestore.
+- **Styling**: Utility-first styling is managed with Tailwind CSS. All colors, fonts, and spacing are defined as variables to ensure consistency.
