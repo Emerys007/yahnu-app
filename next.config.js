@@ -1,6 +1,6 @@
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  /* config options here */
+module.exports = {
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -15,12 +15,13 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      }
     ],
-    // Allow SVGs and local images
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 };
-
-module.exports = nextConfig;
