@@ -1,2 +1,6 @@
-// This directory is now obsolete and will be replaced by /signup.
-// This file can be removed.
+
+// This page is obsolete and has been replaced by a redirect in /register/route.ts
+// The content has been removed to prevent build errors.
+export default function RegisterPage() {
+    return null;
+}
