@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Loader2 } from "lucide-react";
+import { PlusCircle, Loader2, Trash2 } from "lucide-react";
 import { ReportWidget, type Report as ReportType } from "./ReportWidget";
 import { CreateReportDialog } from "./CreateReportDialog";
 import 'react-grid-layout/css/styles.css';
@@ -74,7 +74,7 @@ export const CustomizableDashboard = ({ initialLayout, initialReports }: Customi
 
     const onLayoutChange = (layout: Layout[], allLayouts: { lg: Layout[] }) => {
         // Prevent saving on the very first layout change event which fires on mount
-        if (!hasMounted.current) {
+        if (!hasMounted.current || JSON.stringify(layouts.lg) === JSON.stringify(allLayouts.lg)) {
             return;
         }
         
@@ -87,6 +87,13 @@ export const CustomizableDashboard = ({ initialLayout, initialReports }: Customi
 
     const addReport = (report: ReportType) => {
         const reportId = `report-${Date.now()}`;
+        
+        // Safeguard: ensure the report data is valid before adding
+        if (!report || !report.dataSource || !report.visualization) {
+            toast({ title: "Error", description: "Cannot add an invalid report.", variant: "destructive" });
+            return;
+        }
+
         const newReports = { ...reports, [reportId]: report };
         
         const newLayoutItem: Layout = {
@@ -132,13 +139,21 @@ export const CustomizableDashboard = ({ initialLayout, initialReports }: Customi
                 onLayoutChange={onLayoutChange}
                 isDraggable
                 isResizable
+                draggableHandle=".drag-handle"
             >
                 {layouts.lg.map(item => (
-                    <div key={item.i} className="bg-card rounded-lg shadow-sm">
+                    <div key={item.i} className="bg-card rounded-lg shadow-sm p-2 flex flex-col">
                         {reports[item.i] ? (
                             <ReportWidget report={reports[item.i]} onRemove={() => removeReport(item.i)} />
                         ) : (
-                            <div className="p-4">Loading report...</div>
+                            <div className="flex-1 flex flex-col items-center justify-center text-center p-4 text-destructive">
+                                <p className="font-semibold">Corrupted Report</p>
+                                <p className="text-xs mb-2">This report's data is missing. You can remove it.</p>
+                                <Button size="sm" variant="destructive" onClick={() => removeReport(item.i)}>
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Remove
+                                </Button>
+                            </div>
                         )}
                     </div>
                 ))}

@@ -11,12 +11,14 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface FaqItem {
   question: string;
@@ -45,18 +47,37 @@ const FAQSection = ({ title, faqs }: { title: string; faqs: FaqItem[] }) => (
 const ContactSupportForm = () => {
     const { t } = useLocalization();
     const { toast } = useToast();
+    const { user } = useAuth();
     const form = useForm<z.infer<typeof contactFormSchema>>({
         resolver: zodResolver(contactFormSchema),
         defaultValues: { subject: "", message: "" },
     });
 
-    const onSubmit = (values: z.infer<typeof contactFormSchema>) => {
-        console.log("Support form submitted:", values);
-        toast({
-            title: t('form_submitted_title'),
-            description: t('form_submitted_desc'),
-        });
-        form.reset();
+    const onSubmit = async (values: z.infer<typeof contactFormSchema>) => {
+        if (!user) {
+            toast({ title: t("Error"), description: t("You must be logged in to submit a ticket."), variant: "destructive" });
+            return;
+        }
+
+        try {
+            await addDoc(collection(db, "tickets"), {
+                userId: user.uid,
+                userName: user.name,
+                userEmail: user.email,
+                subject: values.subject,
+                message: values.message,
+                status: "new",
+                submittedAt: serverTimestamp(),
+            });
+            toast({
+                title: t('form_submitted_title'),
+                description: t('form_submitted_desc'),
+            });
+            form.reset();
+        } catch (error) {
+            console.error("Error submitting ticket:", error);
+            toast({ title: t("Error"), description: t("Failed to submit your support ticket."), variant: "destructive" });
+        }
     }
     
     return (
@@ -94,9 +115,8 @@ const ContactSupportForm = () => {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit" className="w-full">
-                            <Send className="mr-2 h-4 w-4" />
-                            {t('form_submit_button')}
+                        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                            {form.formState.isSubmitting ? t("Submitting...") : <><Send className="mr-2 h-4 w-4" />{t('form_submit_button')}</>}
                         </Button>
                     </form>
                 </Form>
@@ -150,7 +170,7 @@ export default function SupportPage() {
       school: schoolFaqs,
       admin: [],
       super_admin: [],
-      content_moderator: [],
+      content_manager: [],
       support_staff: [],
   };
   
@@ -160,7 +180,7 @@ export default function SupportPage() {
       school: t('faq_school_title'),
       admin: '',
       super_admin: '',
-      content_moderator: '',
+      content_manager: '',
       support_staff: '',
   };
 
@@ -186,30 +206,17 @@ export default function SupportPage() {
         
         <div className="grid lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-8">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{t('Frequently Asked Questions')}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        {specificFaqs.length > 0 && <FAQSection title={specificFaqTitle} faqs={specificFaqs} />}
-                        <FAQSection title={t('faq_general_title')} faqs={generalFaqs} />
-                    </CardContent>
-                </Card>
                  <ContactSupportForm />
             </div>
             <div className="lg:col-span-1 sticky top-24 space-y-4">
                  <Card>
                     <CardHeader>
-                        <CardTitle>{t('Contact Support')}</CardTitle>
-                        <CardDescription>{t('Can\'t find an answer? Reach out to us.')}</CardDescription>
+                        <CardTitle>{t('Frequently Asked Questions')}</CardTitle>
+                        <CardDescription>{t('Find answers to common questions here.')}</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <Button asChild className="w-full justify-start">
-                           <Link href="mailto:support@yahnu.org">
-                             <Mail className="mr-2 h-4 w-4" />
-                             {t('Email Support')}
-                           </Link>
-                        </Button>
+                    <CardContent>
+                        {specificFaqs.length > 0 && <FAQSection title={specificFaqTitle} faqs={specificFaqs} />}
+                        <FAQSection title={t('faq_general_title')} faqs={generalFaqs} />
                     </CardContent>
                 </Card>
                 {role === 'graduate' && (

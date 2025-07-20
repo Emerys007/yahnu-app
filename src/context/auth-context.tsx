@@ -3,7 +3,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, writeBatch } from "firebase/firestore";
 import { app } from '@/lib/firebase'; // Ensure your firebase config is correctly exported from here
 import Cookies from 'js-cookie';
 
@@ -11,7 +11,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
-export type Role = 'graduate' | 'company' | 'school' | 'admin' | 'super_admin' | 'content_moderator' | 'support_staff';
+export type Role = 'graduate' | 'company' | 'school' | 'admin' | 'super_admin' | 'content_manager' | 'support_staff';
 export type UserStatus = 'pending' | 'active' | 'suspended' | 'declined';
 
 export type EducationEntry = {
@@ -44,7 +44,7 @@ interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
   role: Role;
-  signUp: (profile: Omit<UserProfile, 'uid' | 'status'>, password: string) => Promise<void>;
+  signUp: (profile: Omit<UserProfile, 'uid' | 'status'>, password: string, inviteToken?: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
@@ -122,7 +122,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const userDocRef = doc(db, "users", firebaseUser.uid);
     
     // Graduates need approval from their school. Companies/Schools need admin approval. Admins are active immediately.
-    const status: UserStatus = profile.role === 'admin' ? 'active' : 'pending';
+    const status: UserStatus = (profile.role === 'admin' || profile.role === 'content_manager' || profile.role === 'support_staff' || profile.role === 'super_admin') ? 'active' : 'pending';
     
     await setDoc(userDocRef, {
         ...profile,
@@ -135,19 +135,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return status;
   }
 
-  const signUp = async (profile: Omit<UserProfile, 'uid' | 'status'>, password: string) => {
+  const signUp = async (profile: Omit<UserProfile, 'uid' | 'status'>, password: string, inviteToken?: string) => {
     if (!profile.email) throw new Error("Email is required for sign up.");
     
     const userCredential = await createUserWithEmailAndPassword(auth, profile.email, password);
     const firebaseUser = userCredential.user;
     
-    // Send email verification
     await sendEmailVerification(firebaseUser);
 
     const { email, ...profileData } = profile;
-    const status = await createUserDocument(firebaseUser, profileData, firebaseUser.email!);
     
-    // Sign out the user immediately after registration so they have to log in
+    const userDocRef = doc(db, "users", firebaseUser.uid);
+    const status: UserStatus = (profile.role === 'admin' || profile.role === 'content_manager' || profile.role === 'support_staff' || profile.role === 'super_admin') ? 'active' : 'pending';
+    
+    const batch = writeBatch(db);
+
+    batch.set(userDocRef, {
+        ...profileData,
+        uid: firebaseUser.uid,
+        email: firebaseUser.email!,
+        status: status,
+        createdAt: new Date(),
+    });
+
+    if (inviteToken) {
+        const inviteDocRef = doc(db, "invites", inviteToken);
+        batch.update(inviteDocRef, { status: "used", usedBy: firebaseUser.uid, usedAt: new Date() });
+    }
+    
+    await batch.commit();
+
     await firebaseSignOut(auth);
   };
 

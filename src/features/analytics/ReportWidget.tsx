@@ -2,10 +2,10 @@
 "use client";
 
 import React from "react";
-import { Bar, BarChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Trash2, MoreVertical, Download } from "lucide-react";
+import { Trash2, MoreVertical, Download, Settings, GripVertical } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { exportToCsv } from "@/lib/utils";
 
@@ -26,23 +26,27 @@ interface ReportWidgetProps {
 // Mock data for demonstration purposes
 const MOCK_DATA = {
     graduates: [
-        { name: "INP-HB", value: 40 },
-        { name: "UFHB", value: 30 },
-        { name: "CSI", value: 20 },
+        { name: "INP-HB", value: 40, fill: "hsl(var(--chart-1))" },
+        { name: "UFHB", value: 30, fill: "hsl(var(--chart-2))" },
+        { name: "CSI", value: 20, fill: "hsl(var(--chart-3))" },
     ],
     companies: [
-        { name: "Tech", value: 15 },
-        { name: "Finance", value: 12 },
-        { name: "Agro", value: 8 },
+        { name: "Tech", value: 15, fill: "hsl(var(--chart-1))" },
+        { name: "Finance", value: 12, fill: "hsl(var(--chart-2))" },
+        { name: "Agro", value: 8, fill: "hsl(var(--chart-3))" },
     ],
     applications: [
-        { name: "Jan", value: 50 },
-        { name: "Feb", value: 65 },
-        { name: "Mar", value: 80 },
+        { name: "Jan", value: 50, fill: "hsl(var(--chart-1))" },
+        { name: "Feb", value: 65, fill: "hsl(var(--chart-2))" },
+        { name: "Mar", value: 80, fill: "hsl(var(--chart-3))" },
     ],
 };
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+const renderColorfulLegendText = (value: string, entry: any) => {
+  const { color } = entry;
+  return <span style={{ color }}>{value}</span>;
+};
+
 
 export const ReportWidget = ({ report, onRemove }: ReportWidgetProps) => {
     const data = MOCK_DATA[report.dataSource];
@@ -68,8 +72,9 @@ export const ReportWidget = ({ report, onRemove }: ReportWidgetProps) => {
                 return (
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
-                             <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} fill="hsl(var(--primary))" />
+                            <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={'80%'} />
                             <Tooltip cursor={{fill: 'hsl(var(--muted))'}} contentStyle={{backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))', borderRadius: 'var(--radius)'}} />
+                            <Legend iconSize={10} layout="vertical" verticalAlign="middle" align="right" formatter={renderColorfulLegendText} />
                         </PieChart>
                     </ResponsiveContainer>
                 );
@@ -77,7 +82,7 @@ export const ReportWidget = ({ report, onRemove }: ReportWidgetProps) => {
                 const total = data.reduce((sum, item) => sum + item.value, 0);
                 return (
                     <div className="flex items-center justify-center h-full">
-                        <p className="text-4xl font-bold">{total}</p>
+                        <p className="text-5xl font-bold">{total}</p>
                     </div>
                 );
             default:
@@ -87,7 +92,7 @@ export const ReportWidget = ({ report, onRemove }: ReportWidgetProps) => {
 
     return (
         <Card className="h-full flex flex-col border-none shadow-none">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 drag-handle cursor-move">
                 <div>
                     <CardTitle className="text-sm font-medium">{report.title}</CardTitle>
                     <CardDescription>{report.dataSource}</CardDescription>
@@ -100,15 +105,21 @@ export const ReportWidget = ({ report, onRemove }: ReportWidgetProps) => {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                             <DropdownMenuItem>
+                                <Settings className="mr-2 h-4 w-4" />
+                                Configure
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={handleExport}>
                                 <Download className="mr-2 h-4 w-4" />
                                 Export as CSV
                             </DropdownMenuItem>
+                             <DropdownMenuItem onClick={onRemove} className="text-destructive focus:text-destructive">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Remove Report
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onRemove}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
+                    <GripVertical className="h-4 w-4 text-muted-foreground" />
                 </div>
             </CardHeader>
             <CardContent className="flex-1 pb-2">

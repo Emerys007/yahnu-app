@@ -28,6 +28,7 @@ import {
   Calendar,
   Wrench,
   LogOut,
+  Newspaper,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -64,7 +65,8 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/company-events", icon: Calendar, label: t('Event Management') },
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
     { href: "/dashboard/talent-pool", icon: Users2, label: t('Talent Pool') },
-    { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
+    { type: "divider", label: "Analytics" },
+    { href: "/dashboard/reports/company-analytics", icon: BarChart3, label: t('Analytics') },
     { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('Report Generator') },
   ];
   
@@ -75,16 +77,36 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/graduates", icon: UserCheck, label: t('Manage Graduates')},
     { href: "/dashboard/school-events", icon: Calendar, label: t('Event Management')},
     { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
-    { href: "/dashboard/reports", icon: BarChart3, label: t('Analytics') },
+    { type: "divider", label: "Analytics" },
+    { href: "/dashboard/reports/school-analytics", icon: BarChart3, label: t('Analytics') },
+    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('Report Generator') },
+  ];
+
+  const superAdminNav = [
+    { href: "/dashboard/admin/overview", icon: Shield, label: t('Overview') },
+    { href: "/dashboard/admin/user-management", icon: UserCog, label: t('Manage Users') },
+    { href: "/dashboard/admin/manage-team", icon: Users2, label: t('Manage Team') },
+    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Platform Analytics') },
+    { href: "/dashboard/content", icon: Newspaper, label: t('Content Management') },
+    { href: "/dashboard/support/center", icon: LifeBuoy, label: t('Support Center') },
     { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('Report Generator') },
   ];
 
   const adminNav = [
     { href: "/dashboard/admin/overview", icon: Shield, label: t('Overview') },
-    { href: "/dashboard/admin/users", icon: UserCog, label: t('Manage Users') },
-    { href: "/dashboard/admin/team", icon: Users2, label: t('Manage Team') },
+    { href: "/dashboard/admin/user-management", icon: UserCog, label: t('Manage Users') },
     { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Platform Analytics') },
+    { href: "/dashboard/content", icon: Newspaper, label: t('Content Management') },
+    { href: "/dashboard/support/center", icon: LifeBuoy, label: t('Support Center') },
     { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('Report Generator') },
+  ];
+  
+  const contentManagerNav = [
+    { href: "/dashboard/content", icon: Newspaper, label: t('Content Management') },
+  ];
+  
+  const supportStaffNav = [
+    { href: "/dashboard/support/center", icon: LifeBuoy, label: t('Support Center') },
   ];
   
   const bottomNav = [
@@ -92,6 +114,11 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
       { href: "/dashboard/support", icon: LifeBuoy, label: t('Support') },
       { type: "divider" },
       { action: "logout", icon: LogOut, label: t('Log out') },
+  ]
+  
+  const adminFooterNav = [
+       { href: "/dashboard/settings", icon: Settings, label: t('Settings') },
+       { action: "logout", icon: LogOut, label: t('Log out') },
   ]
 
   switch (role) {
@@ -101,11 +128,14 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
       return { main: companyNav, footer: bottomNav };
     case 'school':
       return { main: schoolNav, footer: bottomNav };
-    case 'admin':
     case 'super_admin':
-    case 'content_moderator':
+      return { main: superAdminNav, footer: adminFooterNav };
+    case 'admin':
+      return { main: adminNav, footer: adminFooterNav };
+    case 'content_manager':
+      return { main: contentManagerNav, footer: adminFooterNav };
     case 'support_staff':
-      return { main: adminNav, footer: bottomNav };
+        return { main: supportStaffNav, footer: adminFooterNav };
     default:
       return { main: baseNav, footer: bottomNav };
   }

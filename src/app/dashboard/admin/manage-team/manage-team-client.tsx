@@ -6,7 +6,7 @@ import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Crown, Trash2, UserPlus, Copy } from "lucide-react"
+import { Crown, Trash2, UserPlus, Copy, Loader2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Input } from "@/components/ui/input"
@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { type Role } from "@/context/auth-context"
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 
 
 type AdminUser = {
@@ -42,6 +44,8 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
     const [admins, setAdmins] = useState<AdminUser[]>(initialAdmins);
     const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
     const [inviteLink, setInviteLink] = useState("");
+    const [isInviting, setIsInviting] = useState(false);
+    const [inviteDetails, setInviteDetails] = useState({ email: "", role: "admin" as Role });
 
     const handleDeleteAdmin = (id: string) => {
         const adminToDelete = admins.find(a => a.id === id);
@@ -60,15 +64,30 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
         })
     }
 
-    const handleInviteAdmin = () => {
-        // In a real app, you would generate a secure, single-use token on the server
-        // and store it. For this example, we generate a client-side token.
-        const uniqueToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        const newInviteLink = `${window.location.origin}/register?invite=${uniqueToken}`;
-        setInviteLink(newInviteLink);
-        setIsInviteDialogOpen(true);
-        // Here you would also typically save the token on the server with the associated
-        // email and role to validate it upon registration.
+    const handleInviteAdmin = async () => {
+        if (!inviteDetails.email) {
+            toast({ title: t("Email required"), description: t("Please enter an email to send an invite."), variant: "destructive"});
+            return;
+        }
+        setIsInviting(true);
+        try {
+            const invitesCollection = collection(db, "invites");
+            const newInvite = {
+                email: inviteDetails.email,
+                role: inviteDetails.role,
+                status: "pending",
+                createdAt: serverTimestamp(),
+            };
+            const docRef = await addDoc(invitesCollection, newInvite);
+            const newInviteLink = `${window.location.origin}/register/${docRef.id}`;
+            setInviteLink(newInviteLink);
+            setIsInviteDialogOpen(true);
+        } catch (error) {
+            console.error("Failed to create invite:", error);
+            toast({ title: t("Error"), description: t("Could not create invitation link."), variant: "destructive"});
+        } finally {
+            setIsInviting(false);
+        }
     }
 
     const copyToClipboard = () => {
@@ -83,7 +102,7 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
         const roleMap: Record<Role, string> = {
             admin: 'Admin',
             super_admin: 'Super Admin',
-            content_moderator: 'Content Moderator',
+            content_manager: 'Content Manager',
             support_staff: 'Support Staff',
             graduate: 'Graduate',
             company: 'Company',
@@ -102,19 +121,39 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
                 <CardContent>
                      <div className="mb-6 p-4 border rounded-lg">
                         <h4 className="font-semibold mb-2">{t('Invite New Administrator')}</h4>
-                        <div className="flex flex-col sm:flex-row gap-2">
-                            <Input placeholder={t("New admin's email")} type="email" className="flex-grow" />
-                            <Select defaultValue="admin">
-                                <SelectTrigger className="w-full sm:w-[180px]">
-                                    <SelectValue placeholder={t('Select role')} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="admin">{t('Admin')}</SelectItem>
-                                    <SelectItem value="content_moderator">{t('Content Moderator')}</SelectItem>
-                                    <SelectItem value="support_staff">{t('Support Staff')}</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <Button onClick={handleInviteAdmin}><UserPlus className="mr-2 h-4 w-4" />{t('Send Invite')}</Button>
+                        <div className="flex flex-col sm:flex-row items-end gap-2">
+                            <div className="grid gap-2 flex-grow w-full">
+                                <Label htmlFor="invite-email">{t("New admin's email")}</Label>
+                                <Input 
+                                    id="invite-email" 
+                                    placeholder={t("New admin's email")} 
+                                    type="email" 
+                                    value={inviteDetails.email}
+                                    onChange={(e) => setInviteDetails(prev => ({...prev, email: e.target.value}))}
+                                    disabled={isInviting}
+                                />
+                            </div>
+                             <div className="grid gap-2 w-full sm:w-auto shrink-0">
+                                 <Label htmlFor="invite-role">{t('Select role')}</Label>
+                                <Select 
+                                    defaultValue={inviteDetails.role} 
+                                    onValueChange={(value) => setInviteDetails(prev => ({...prev, role: value as Role}))}
+                                    disabled={isInviting}
+                                >
+                                    <SelectTrigger id="invite-role" className="w-full sm:w-[180px]">
+                                        <SelectValue placeholder={t('Select role')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="admin">{t('Admin')}</SelectItem>
+                                        <SelectItem value="content_manager">{t('Content Manager')}</SelectItem>
+                                        <SelectItem value="support_staff">{t('Support Staff')}</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <Button onClick={handleInviteAdmin} className="w-full sm:w-auto px-4" disabled={isInviting}>
+                                {isInviting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
+                                {isInviting ? t('Sending...') : t('Send Invite')}
+                            </Button>
                         </div>
                     </div>
                     <Table>
@@ -179,5 +218,3 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
         </>
     );
 }
-
-    

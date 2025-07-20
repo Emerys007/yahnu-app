@@ -18,6 +18,12 @@ module.exports = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '8886743.fs1.hubspotusercontent-na1.net',
+        port: '',
+        pathname: '/**',
       }
     ],
     dangerouslyAllowSVG: true,

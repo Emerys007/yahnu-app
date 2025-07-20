@@ -13,7 +13,7 @@ type AdminUser = {
 }
 
 async function getAdmins(): Promise<AdminUser[]> {
-    const adminRoles: Role[] = ["admin", "super_admin", "content_moderator", "support_staff"];
+    const adminRoles: Role[] = ["admin", "super_admin", "content_manager", "support_staff"];
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("role", "in", adminRoles));
     

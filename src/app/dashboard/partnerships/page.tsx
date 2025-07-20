@@ -21,6 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { motion } from "framer-motion"
 
 type PartnershipStatus = "pending" | "accepted" | "declined"
 type School = {
@@ -210,14 +211,19 @@ const pageConfig: Record<string, {
 }
 
 
-export default function PartnershipsPage() {
+export default function PartnersPage() {
   const { role } = useAuth();
   const { t } = useLocalization();
   
   const { title, description, component: ActiveComponent } = pageConfig[role as keyof typeof pageConfig] || pageConfig.company;
 
   return (
-    <div className="space-y-8">
+    <motion.div 
+      className="space-y-8"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
         <div className="flex items-start gap-4">
             <div className="bg-primary/10 p-3 rounded-lg">
                 <Handshake className="h-6 w-6 text-primary" />
@@ -229,6 +235,6 @@ export default function PartnershipsPage() {
         </div>
         
         {ActiveComponent ? <ActiveComponent /> : <p>{t("This page is not available for your account type.")}</p>}
-    </div>
+    </motion.div>
   );
 }

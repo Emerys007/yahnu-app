@@ -59,7 +59,7 @@ const CustomGrowthTooltip = ({ active, payload, label }: TooltipProps<number, st
         return (
         <Card className="w-64 shadow-lg">
             <CardHeader className="pb-2">
-                <CardTitle className="text-base">{t(label)}</CardTitle>
+                <CardTitle className="text-base">{label}</CardTitle>
                 <CardDescription>{t('New users this month')}</CardDescription>
             </CardHeader>
             <CardContent>
@@ -76,23 +76,20 @@ const CustomGrowthTooltip = ({ active, payload, label }: TooltipProps<number, st
     return null;
 };
 
-const CustomDistributionTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+const CustomDistributionTooltip = ({ active, payload }: TooltipProps<number, string>) => {
     const { t } = useLocalization();
     if (active && payload && payload.length) {
-        const data: UserDistributionDataPoint = payload[0].payload;
-        // Calculate total for percentage. Find all values from the initial data passed to the chart.
-        const total = payload.reduce((acc, curr) => acc + (curr.payload.value), 0);
-        
-        const thisData = payload.find(p => p.dataKey === data.name) ?? payload[0];
-        const percentage = total > 0 ? ((thisData.payload?.value / total) * 100).toFixed(1) : 0;
+        const data: any = payload[0].payload;
+        const total = data.total;
+        const percentage = total > 0 ? ((data.value / total) * 100).toFixed(1) : 0;
         
         return (
         <Card className="w-56 shadow-lg">
             <CardHeader className="pb-2">
-                 <CardTitle className="text-base">{t(thisData.payload.name)}</CardTitle>
+                 <CardTitle className="text-base">{data.name}</CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-sm">{t('User Count')}: <strong>{thisData.payload.value}</strong> ({percentage}%)</p>
+                <p className="text-sm">{t('User Count')}: <strong>{data.value}</strong> ({percentage}%)</p>
             </CardContent>
         </Card>
         );
@@ -236,7 +233,6 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
                                 <ChartTooltip
                                     cursor={false}
                                     content={<CustomGrowthTooltip />}
-                                    position={{ y: -130 }}
                                 />
                                 <Line 
                                     type="monotone" 

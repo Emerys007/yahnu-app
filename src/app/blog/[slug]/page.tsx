@@ -1,12 +1,11 @@
 
+"use client"
+
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import Image from "next/image";
-import { getFirestore, collection, query, where, getDocs, DocumentData } from "firebase/firestore";
-import { app } from "@/lib/firebase";
-
-const db = getFirestore(app);
+import { useLocalization } from "@/context/localization-context";
 
 interface Post {
     id: string;
@@ -19,30 +18,50 @@ interface Post {
     content: string;
 }
 
-async function getPostBySlug(slug: string): Promise<Post | null> {
-    const q = query(collection(db, "posts"), where("slug", "==", slug));
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.empty) {
-        return null;
+const getMockPosts = (t: (key: string) => string): Post[] => [
+    {
+        id: "1",
+        slug: "navigating-job-market-ci",
+        title: t('blog_1_title'),
+        description: t('blog_1_desc'),
+        author: "A. Kouassi",
+        date: "July 15, 2024",
+        imageUrl: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2832&auto=format&fit=crop",
+        content: t('blog_1_content')
+    },
+    {
+        id: "2",
+        slug: "top-tech-skills-abidjan",
+        title: t('blog_2_title'),
+        description: t('blog_2_desc'),
+        author: "B. Traoré",
+        date: "July 10, 2024",
+        imageUrl: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2670&auto=format&fit=crop",
+        content: t('blog_2_content')
+    },
+    {
+        id: "3",
+        slug: "interview-tips-success-ci",
+        title: t('blog_3_title'),
+        description: t('blog_3_desc'),
+        author: "C. Fofana",
+        date: "July 5, 2024",
+        imageUrl: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2670&auto=format&fit=crop",
+        content: t('blog_3_content')
     }
-    const postDoc = querySnapshot.docs[0];
-    const data = postDoc.data() as DocumentData;
-    return { 
-        id: postDoc.id, 
-        slug: data.slug,
-        title: data.title,
-        description: data.description,
-        author: data.author,
-        date: data.date,
-        imageUrl: data.imageUrl,
-        content: data.content
-    } as Post;
+];
+
+function getPostBySlug(slug: string, t: (key: string) => string): Post | null {
+    const posts = getMockPosts(t);
+    const post = posts.find((p) => p.slug === slug);
+    return post || null;
 }
 
-// Note: This page would need a client component to use the localization hook.
-// For this static generation example, we'll assume the fetched content is already localized or doesn't need it.
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = await getPostBySlug(params.slug);
+export default function BlogPostPage() {
+  const params = useParams();
+  const { t } = useLocalization();
+  const slug = params.slug as string;
+  const post = getPostBySlug(slug, t);
 
   if (!post) {
     notFound();
