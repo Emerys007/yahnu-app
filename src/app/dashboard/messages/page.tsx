@@ -71,9 +71,10 @@ const initialConversations: Conversation[] = [
     },
 ];
 
-const getNewConvoName = (id: string) => {
+const getNewConvoName = (id: string, name?: string | null) => {
+    if (name) return name;
     if (id === 'inp-hb-admin') return 'INP-HB Admin';
-    return id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return id.replace(/-/g, ' ').replace(/\w/g, l => l.toUpperCase());
 }
 
 export default function MessagesPage() {
@@ -88,31 +89,43 @@ export default function MessagesPage() {
 
     useEffect(() => {
         const newConvoId = searchParams.get('new');
+        const newConvoName = searchParams.get('name');
+        
         if (newConvoId) {
-            const existingConvo = conversations.find(c => c.id === newConvoId);
-            if (existingConvo) {
-                setSelectedConversation(existingConvo);
-            } else {
-                 const newConvo: Conversation = {
+            setConversations(prev => {
+                if (prev.some(c => c.id === newConvoId)) {
+                    return prev;
+                }
+                const newConvo: Conversation = {
                     id: newConvoId,
-                    name: getNewConvoName(newConvoId),
+                    name: getNewConvoName(newConvoId, newConvoName),
                     avatar: newConvoId.includes('admin') ? "/images/University.png" : "https://placehold.co/100x100.png",
                     lastMessage: "",
                     time: "Now",
                     unread: 0,
                     messages: [],
                 };
-                setConversations(prev => [newConvo, ...prev]);
-                setSelectedConversation(newConvo);
-            }
-             // Clean up URL
+                return [newConvo, ...prev];
+            });
+
+            const convoToSelect = conversations.find(c => c.id === newConvoId) || {
+                id: newConvoId,
+                name: getNewConvoName(newConvoId, newConvoName),
+                avatar: newConvoId.includes('admin') ? "/images/University.png" : "https://placehold.co/100x100.png",
+                lastMessage: "",
+                time: "Now",
+                unread: 0,
+                messages: [],
+            };
+            
+            setSelectedConversation(convoToSelect);
+            
+            // Clean up URL
             router.replace('/dashboard/messages');
-        } else if (conversations.length > 0 && !selectedConversation) {
-            if (!isMobile) {
-                setSelectedConversation(conversations[0]);
-            }
+        } else if (conversations.length > 0 && !selectedConversation && !isMobile) {
+            setSelectedConversation(conversations[0]);
         }
-    }, [searchParams, conversations, router, selectedConversation, isMobile]);
+    }, [searchParams, router, isMobile, conversations]);
 
     const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
@@ -260,5 +273,3 @@ export default function MessagesPage() {
         </div>
     )
 }
-
-    

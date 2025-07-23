@@ -5,7 +5,7 @@ import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import Autoplay from "embla-carousel-autoplay"
-import { ArrowRight, Search, PlusCircle, Handshake } from "lucide-react"
+import { Search, PlusCircle, Handshake } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 import {
@@ -20,11 +20,11 @@ import { Button } from "@/components/ui/button"
 import { useLocalization } from "@/context/localization-context"
 import { cn } from "@/lib/utils"
 
-const getSlides = (t: (key: string) => string) => [
+const getSlides = (t: (key: string, args?: any) => string, country: string) => [
     {
         role: "Graduates",
         headline: t("Unlock Your Potential. Find Your Dream Job Today."),
-        subtitle: t("Yahnu connects you with thousands of exclusive job opportunities in Côte d'Ivoire tailored to your unique skills and aspirations. Your future starts here."),
+        subtitle: t("Yahnu connects you with thousands of exclusive job opportunities in {country} tailored to your unique skills and aspirations. Your future starts here.", { country }),
         buttonText: t("Explore Job Openings"),
         buttonIcon: <Search />,
         imageUrl: "/images/hero/dream-job.jpg",
@@ -34,8 +34,8 @@ const getSlides = (t: (key: string) => string) => [
       {
         role: "Companies",
         headline: t("Build Your Dream Team"),
-        subtitle: t("Tap into a curated network of exceptional graduates from premier institutions. Discover the perfect candidates to drive your company's growth and innovation."),
-        buttonText: t("Find Top Talent"),
+        subtitle: t("hero_company_subtitle"),
+        buttonText: t("Post a Job Opening"),
         buttonIcon: <PlusCircle />,
         imageUrl: "/images/hero/build-a-team.jpeg",
         imageHint: "diverse team collaborating in a modern office",
@@ -57,8 +57,8 @@ export function HeroSection() {
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   )
-  const { t } = useLocalization();
-  const slides = getSlides(t);
+  const { t, country } = useLocalization();
+  const slides = getSlides(t, country);
 
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)

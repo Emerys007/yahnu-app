@@ -16,25 +16,27 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/context/auth-context"
+import { useLocalization } from "@/context/localization-context"
 import { useToast } from "@/hooks/use-toast"
 
 export function UserNav() {
   const { user, signOut } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
+  const { t } = useLocalization()
 
   const handleSignOut = async () => {
     try {
       await signOut()
       router.push('/')
       toast({
-        title: "Logged Out",
-        description: "You have been successfully logged out.",
+        title: t("Logged Out"),
+        description: t("You have been successfully logged out."),
       })
     } catch (error) {
       toast({
-        title: "Uh oh! Something went wrong.",
-        description: "There was a problem logging you out.",
+        title: t("Uh oh! Something went wrong."),
+        description: t("There was a problem logging you out."),
         variant: "destructive",
       })
     }
@@ -68,27 +70,27 @@ export function UserNav() {
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
             <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+            <span>{t("Profile")}</span>
           </DropdownMenuItem>
           {user?.role === 'company' && (
             <DropdownMenuItem onClick={() => router.push('/dashboard/company-profile')}>
               <Building className="mr-2 h-4 w-4" />
-              <span>Company Profile</span>
+              <span>{t("Company Profile")}</span>
             </DropdownMenuItem>
           )}
            <DropdownMenuItem onClick={() => router.push('/dashboard/messages')}>
             <MessageSquare className="mr-2 h-4 w-4" />
-            <span>Messages</span>
+            <span>{t("Messages")}</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>
             <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+            <span>{t("Settings")}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
+          <span>{t("Log out")}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

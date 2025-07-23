@@ -1,6 +1,7 @@
 
 "use client"
 
+import { useState } from "react"
 import { useAuth, type Role } from "@/context/auth-context"
 import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,15 +11,59 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, School as SchoolIcon, KeyRound } from "lucide-react"
+import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, School as SchoolIcon, KeyRound, Check, ChevronsUpDown } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
 
 // #region Shared Settings
 const UserAccountSettings = () => {
     const { t } = useLocalization();
-    const { user, createPassword, isGoogleProvider } = useAuth();
+    const { user, createPassword, isGoogleProvider, updateProfile } = useAuth();
     const { toast } = useToast();
+    const [name, setName] = useState(user?.name || '');
+    const [email, setEmail] = useState(user?.email || '');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleSaveChanges = async () => {
+        if (!user) return;
+        setIsSubmitting(true);
+        try {
+            const updates: { name?: string; email?: string } = {};
+            if (name !== user.name) {
+                updates.name = name;
+            }
+            if (email !== user.email) {
+                updates.email = email;
+            }
+
+            if (Object.keys(updates).length > 0) {
+                await updateProfile(updates);
+                toast({
+                    title: t('Profile Updated'),
+                    description: t('Your changes have been saved successfully.'),
+                });
+                 if(updates.email) {
+                    toast({
+                        title: t('Verification email sent'),
+                        description: t('Please check your new email address to verify the change.'),
+                    });
+                }
+            } else {
+                 toast({
+                    title: t('No Changes'),
+                    description: t("You haven't made any changes."),
+                });
+            }
+        } catch (error: any) {
+            toast({
+                title: t('Error'),
+                description: error.message || t('Failed to update profile.'),
+                variant: 'destructive',
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     const handleCreatePassword = async () => {
         if (!user || !user.email) return;
@@ -47,17 +92,22 @@ const UserAccountSettings = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <Label htmlFor="name">{t('Full Name')}</Label>
-                  <Input id="name" defaultValue={user?.name} />
+                  <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="email">{t('Email Address')}</Label>
-                  <Input id="email" type="email" defaultValue={user?.email || ''} disabled />
+                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
               </div>
-              <Button variant="outline" onClick={handleCreatePassword}>
-                <KeyRound className="mr-2 h-4 w-4" />
-                {isGoogleProvider() ? t('Create Password') : t('Change Password')}
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={handleSaveChanges} disabled={isSubmitting}>
+                    {isSubmitting ? t('Saving...') : t('Save Changes')}
+                </Button>
+                <Button variant="outline" onClick={handleCreatePassword}>
+                    <KeyRound className="mr-2 h-4 w-4" />
+                    {isGoogleProvider() ? t('Create Password') : t('Change Password')}
+                </Button>
+              </div>
             </CardContent>
         </Card>
     )

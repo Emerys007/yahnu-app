@@ -29,6 +29,11 @@ import {
   Wrench,
   LogOut,
   Newspaper,
+  Ticket,
+  Search,
+  Megaphone,
+  HeartPulse,
+  BookOpen,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -89,6 +94,10 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Platform Analytics') },
     { href: "/dashboard/content", icon: Newspaper, label: t('Content Management') },
     { href: "/dashboard/support/center", icon: LifeBuoy, label: t('Support Center') },
+    { type: "divider", label: "Support Tools" },
+    { href: "/dashboard/support/announcements", icon: Megaphone, label: "Announcements" },
+    { href: "/dashboard/support/system-health", icon: HeartPulse, label: "System Health" },
+    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: "Knowledge Base" },
     { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('Report Generator') },
   ];
 
@@ -98,6 +107,10 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Platform Analytics') },
     { href: "/dashboard/content", icon: Newspaper, label: t('Content Management') },
     { href: "/dashboard/support/center", icon: LifeBuoy, label: t('Support Center') },
+    { type: "divider", label: "Support Tools" },
+    { href: "/dashboard/support/announcements", icon: Megaphone, label: "Announcements" },
+    { href: "/dashboard/support/system-health", icon: HeartPulse, label: "System Health" },
+    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: "Knowledge Base" },
     { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('Report Generator') },
   ];
   
@@ -107,6 +120,12 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   
   const supportStaffNav = [
     { href: "/dashboard/support/center", icon: LifeBuoy, label: t('Support Center') },
+    { type: "divider", label: "Tools" },
+    { href: "/dashboard/support/ticket-management", icon: Ticket, label: "Ticket Management" },
+    { href: "/dashboard/support/user-lookup", icon: Search, label: "User Lookup" },
+    { href: "/dashboard/support/announcements", icon: Megaphone, label: "Announcements" },
+    { href: "/dashboard/support/system-health", icon: HeartPulse, label: "System Health" },
+    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: "Knowledge Base" },
   ];
   
   const bottomNav = [

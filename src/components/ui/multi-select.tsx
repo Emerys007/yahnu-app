@@ -24,25 +24,21 @@ import { Badge } from "@/components/ui/badge"
 export type MultiSelectOption = {
   value: string
   label: string
+  icon?: React.ComponentType<{ className?: string }>
 }
 
-type GroupedOption = {
-    label: string;
-    options: MultiSelectOption[];
-}
-
-interface MultiSelectComboboxProps {
-  groups: GroupedOption[]
-  selected: MultiSelectOption[]
-  onChange: React.Dispatch<React.SetStateAction<MultiSelectOption[]>>
+interface MultiSelectProps {
+  options: MultiSelectOption[]
+  selected: string[]
+  onChange: React.Dispatch<React.SetStateAction<string[]>>
   placeholder?: string
   searchPlaceholder?: string
   emptyPlaceholder?: string
   className?: string
 }
 
-export function MultiSelectCombobox({
-  groups,
+export function MultiSelect({
+  options,
   selected,
   onChange,
   placeholder = "Select options...",
@@ -50,15 +46,14 @@ export function MultiSelectCombobox({
   emptyPlaceholder = "No results found.",
   className,
   ...props
-}: MultiSelectComboboxProps) {
+}: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
 
-  const handleUnselect = (item: MultiSelectOption) => {
-    onChange(selected.filter((s) => s.value !== item.value))
+  const handleUnselect = (value: string) => {
+    onChange(selected.filter((s) => s !== value))
   }
 
-  // Flatten all options for easy lookup
-  const allOptions = React.useMemo(() => groups.flatMap(group => group.options), [groups]);
+  const selectedOptions = selected.map(value => options.find(option => option.value === value)).filter(Boolean) as MultiSelectOption[];
 
   return (
     <Popover open={open} onOpenChange={setOpen} {...props}>
@@ -71,30 +66,30 @@ export function MultiSelectCombobox({
           onClick={() => setOpen(!open)}
         >
           <div className="flex gap-1 flex-wrap">
-            {selected.length > 0 ? (
-              selected.map((item) => (
+            {selectedOptions.length > 0 ? (
+              selectedOptions.map((option) => (
                 <Badge
                   variant="secondary"
-                  key={item.value}
+                  key={option.value}
                   className="mr-1"
                   onClick={(e) => {
-                    e.preventDefault(); // prevent popover from opening/closing
-                    handleUnselect(item)
+                    e.preventDefault();
+                    handleUnselect(option.value)
                   }}
                 >
-                  {item.label}
+                  {option.label}
                   <button
                     className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                        handleUnselect(item)
+                        handleUnselect(option.value)
                       }
                     }}
                     onMouseDown={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
                     }}
-                    onClick={() => handleUnselect(item)}
+                    onClick={() => handleUnselect(option.value)}
                   >
                     <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
                   </button>
@@ -112,18 +107,17 @@ export function MultiSelectCombobox({
           <CommandInput placeholder={searchPlaceholder} />
           <CommandList>
             <CommandEmpty>{emptyPlaceholder}</CommandEmpty>
-            {groups.map((group) => (
-                <CommandGroup key={group.label} heading={group.label}>
-                {group.options.map((option) => {
-                    const isSelected = selected.some((s) => s.value === option.value);
+            <CommandGroup>
+                {options.map((option) => {
+                    const isSelected = selected.includes(option.value);
                     return (
                         <CommandItem
                             key={option.value}
                             onSelect={() => {
                                 if (isSelected) {
-                                    handleUnselect(option)
+                                    handleUnselect(option.value)
                                 } else {
-                                    onChange([...selected, option])
+                                    onChange([...selected, option.value])
                                 }
                                 setOpen(true)
                             }}
@@ -134,16 +128,15 @@ export function MultiSelectCombobox({
                                 isSelected ? "opacity-100" : "opacity-0"
                             )}
                             />
+                             {option.icon && <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />}
                             {option.label}
                         </CommandItem>
                     )
                 })}
-                </CommandGroup>
-            ))}
+            </CommandGroup>
           </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
   )
 }
-

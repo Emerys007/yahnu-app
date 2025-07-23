@@ -2,7 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification } from "firebase/auth";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification, updateEmail as firebaseUpdateEmail } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, writeBatch } from "firebase/firestore";
 import { app } from '@/lib/firebase'; // Ensure your firebase config is correctly exported from here
 import Cookies from 'js-cookie';
@@ -50,6 +50,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   isGoogleProvider: () => boolean;
   createPassword: () => Promise<void>;
+  updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -258,6 +259,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await sendPasswordResetEmail(auth, auth.currentUser.email);
   }
 
+  const updateProfile = async (updates: Partial<UserProfile>) => {
+    if (!auth.currentUser) {
+        throw new Error("No user is currently signed in.");
+    }
+
+    const userDocRef = doc(db, "users", auth.currentUser.uid);
+
+    if (updates.email && updates.email !== auth.currentUser.email) {
+        try {
+            await firebaseUpdateEmail(auth.currentUser, updates.email);
+            await sendEmailVerification(auth.currentUser);
+        } catch (error: any) {
+            console.error("Error updating email in Firebase Auth:", error);
+            if (error.code === 'auth/requires-recent-login') {
+                throw new Error("Please sign out and sign in again to update your email.");
+            }
+            if (error.code === 'auth/email-already-in-use') {
+                throw new Error("This email is already in use by another account.");
+            }
+            throw new Error("Failed to update email.");
+        }
+    }
+
+    await updateDoc(userDocRef, updates);
+
+    const userProfile = await fetchUserDocument(auth.currentUser);
+    updateUserState(userProfile);
+  };
+
   const value = {
     user,
     loading,
@@ -268,6 +298,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signInWithGoogle,
     isGoogleProvider,
     createPassword,
+    updateProfile,
   };
 
   return (
