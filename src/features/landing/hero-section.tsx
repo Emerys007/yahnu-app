@@ -23,9 +23,9 @@ import { cn } from "@/lib/utils"
 const getSlides = (t: (key: string, args?: any) => string, country: string) => [
     {
         role: "Graduates",
-        headline: t("Unlock Your Potential. Find Your Dream Job Today."),
-        subtitle: t("Yahnu connects you with thousands of exclusive job opportunities in {country} tailored to your unique skills and aspirations. Your future starts here.", { country }),
-        buttonText: t("Explore Job Openings"),
+        headline: t("hero.graduates.headline"),
+        subtitle: t("hero.graduates.subtitle", { country }),
+        buttonText: t("hero.graduates.buttonText"),
         buttonIcon: <Search />,
         imageUrl: "/images/hero/dream-job.jpg",
         imageHint: "confident graduate looking towards the future",
@@ -33,9 +33,9 @@ const getSlides = (t: (key: string, args?: any) => string, country: string) => [
       },
       {
         role: "Companies",
-        headline: t("Build Your Dream Team"),
-        subtitle: t("hero_company_subtitle"),
-        buttonText: t("Post a Job Opening"),
+        headline: t("hero.companies.headline"),
+        subtitle: t("hero.companies.subtitle"),
+        buttonText: t("hero.companies.buttonText"),
         buttonIcon: <PlusCircle />,
         imageUrl: "/images/hero/build-a-team.jpeg",
         imageHint: "diverse team collaborating in a modern office",
@@ -43,9 +43,9 @@ const getSlides = (t: (key: string, args?: any) => string, country: string) => [
       },
       {
         role: "Universities",
-        headline: t("Forge Industry Partnerships"),
-        subtitle: t("Collaborate with leading academic institutions to shape the future of talent. Connect with the brightest minds and drive innovation."),
-        buttonText: t("Become a Partner"),
+        headline: t("hero.universities.headline"),
+        subtitle: t("hero.universities.subtitle"),
+        buttonText: t("hero.universities.buttonText"),
         buttonIcon: <Handshake />,
         imageUrl: "/images/hero/industry-partnership.webp",
         imageHint: "university building and a handshake representing partnership",
@@ -57,8 +57,8 @@ export function HeroSection() {
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   )
-  const { t, country } = useLocalization();
-  const slides = getSlides(t, country);
+  const { t, countryName } = useLocalization();
+  const slides = getSlides(t, countryName);
 
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)

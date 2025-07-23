@@ -2,7 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification, updateEmail as firebaseUpdateEmail } from "firebase/auth";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification, verifyBeforeUpdateEmail } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, writeBatch } from "firebase/firestore";
 import { app } from '@/lib/firebase'; // Ensure your firebase config is correctly exported from here
 import Cookies from 'js-cookie';
@@ -107,6 +107,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (firebaseUser) {
         const userProfile = await fetchUserDocument(firebaseUser);
          if (userProfile && userProfile.status === 'active') {
+          // Sync email from Firebase Auth to Firestore if they differ.
+          // This handles the case where a user verifies a new email.
+          if (userProfile.email !== firebaseUser.email) {
+            const userDocRef = doc(db, "users", firebaseUser.uid);
+            await updateDoc(userDocRef, { email: firebaseUser.email });
+            userProfile.email = firebaseUser.email; // Update in-memory profile
+          }
           updateUserState(userProfile);
         } else {
            updateUserState(null);
@@ -261,29 +268,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateProfile = async (updates: Partial<UserProfile>) => {
     if (!auth.currentUser) {
-        throw new Error("No user is currently signed in.");
+      throw new Error("No user is currently signed in.");
     }
 
+    const { email, ...otherUpdates } = updates;
     const userDocRef = doc(db, "users", auth.currentUser.uid);
 
-    if (updates.email && updates.email !== auth.currentUser.email) {
-        try {
-            await firebaseUpdateEmail(auth.currentUser, updates.email);
-            await sendEmailVerification(auth.currentUser);
-        } catch (error: any) {
-            console.error("Error updating email in Firebase Auth:", error);
-            if (error.code === 'auth/requires-recent-login') {
-                throw new Error("Please sign out and sign in again to update your email.");
-            }
-            if (error.code === 'auth/email-already-in-use') {
-                throw new Error("This email is already in use by another account.");
-            }
-            throw new Error("Failed to update email.");
+    // Handle email update separately.
+    if (email && email !== auth.currentUser.email) {
+      try {
+        await verifyBeforeUpdateEmail(auth.currentUser, email);
+        // Do NOT update the email in firestore here.
+        // It will be updated by onAuthStateChanged after verification.
+      } catch (error: any) {
+        console.error("Error sending verification email for email update:", error);
+        if (error.code === 'auth/requires-recent-login') {
+          throw new Error("Please sign out and sign in again to update your email.");
         }
+        if (error.code === 'auth/email-already-in-use') {
+          throw new Error("This email is already in use by another account.");
+        }
+        throw new Error("Failed to send verification email for email update.");
+      }
     }
 
-    await updateDoc(userDocRef, updates);
+    // Handle other profile updates.
+    if (Object.keys(otherUpdates).length > 0) {
+      await updateDoc(userDocRef, otherUpdates);
+    }
 
+    // Refresh the user state with the latest data.
     const userProfile = await fetchUserDocument(auth.currentUser);
     updateUserState(userProfile);
   };

@@ -47,7 +47,7 @@ const getNavLinks = (t: (key: string) => string) => [
 ];
 
 export function MainNav() {
-  const { t, setLanguage } = useLocalization();
+  const { t, setLanguage, countryName } = useLocalization();
   const { country, setCountry } = useCountry();
   const { setTheme } = useTheme();
   const navLinks = getNavLinks(t);
@@ -56,14 +56,14 @@ export function MainNav() {
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>
          <Flag countryCode={country.code} className="mr-2"/>
-         <span>{country.name.en}</span>
+         <span>{countryName}</span>
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent className="w-40 max-h-80 overflow-y-auto">
           {allCountries.map((c) => (
             <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
                 <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
-                <span>{c.name.en}</span>
+                <span>{t(c.name.en)}</span>
             </DropdownMenuItem>
           ))}
         </DropdownMenuSubContent>
@@ -144,7 +144,7 @@ export function MainNav() {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
                        <Flag countryCode={country.code} />
-                       {country.code}
+                       {countryName}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuPortal>
@@ -152,7 +152,7 @@ export function MainNav() {
                       {allCountries.map((c) => (
                         <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
                             <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
-                            <span>{c.name.en}</span>
+                            <span>{t(c.name.en)}</span>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>

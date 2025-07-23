@@ -12,62 +12,62 @@ import { cn } from "@/lib/utils"
 
 const getFeaturesData = (t: (key: string) => string) => ({
     graduates: {
-      title: t('For Graduates'),
+      title: t('features.graduates.title'),
       icon: <GraduationCap className="h-8 w-8 mb-4 text-primary" />,
       image: "/images/features/graduates-ci.jpg",
       imageHint: "A group of diverse, smiling graduates",
       items: [
         {
-          title: t('AI-Powered Profile Builder'),
-          description: t('Create a standout professional profile in minutes. Our AI helps you highlight your skills and experiences to attract top employers.'),
+          title: t('features.graduates.item1.title'),
+          description: t('features.graduates.item1.description'),
         },
         {
-          title: t('Personalized Job Matching'),
-          description: t('Receive job recommendations that align with your career goals and qualifications. Say goodbye to endless searching.'),
+          title: t('features.graduates.item2.title'),
+          description: t('features.graduates.item2.description'),
         },
         {
-          title: t('Skill Development Resources'),
-          description: t('Access a library of courses and assessments to enhance your skills and stay competitive in the job market.'),
+          title: t('features.graduates.item3.title'),
+          description: t('features.graduates.item3.description'),
         },
       ],
     },
     companies: {
-      title: t('For Companies'),
+      title: t('features.companies.title'),
       icon: <Briefcase className="h-8 w-8 mb-4 text-primary" />,
       image: "/images/features/companies-ci.jpg",
       imageHint: "A professional team collaborating in a modern office",
       items: [
         {
-          title: t('Targeted Talent Sourcing'),
-          description: t('Efficiently find qualified candidates from a pre-vetted pool of graduates from top schools.'),
+          title: t('features.companies.item1.title'),
+          description: t('features.companies.item1.description'),
         },
         {
-          title: t('Streamlined Recruitment'),
-          description: t('Manage your entire hiring process, from posting jobs to scheduling interviews, all on one platform.'),
+          title: t('features.companies.item2.title'),
+          description: t('features.companies.item2.description'),
         },
         {
-          title: t('Data-Driven Insights'),
-          description: t('Gain valuable insights into the talent market and make informed hiring decisions with our analytics tools.'),
+          title: t('features.companies.item3.title'),
+          description: t('features.companies.item3.description'),
         },
       ],
     },
     schools: {
-      title: t('For Schools'),
+      title: t('features.schools.title'),
       icon: <Building className="h-8 w-8 mb-4 text-primary" />,
       image: "/images/features/universities-ci.jpg",
       imageHint: "A modern university campus with students walking",
       items: [
         {
-          title: t('Strengthen Industry Ties'),
-          description: t('Forge strategic partnerships with leading companies to enhance your curriculum and create opportunities for your students.'),
+          title: t('features.schools.item1.title'),
+          description: t('features.schools.item1.description'),
         },
         {
-          title: t('Boost Graduate Employability'),
-          description: t("Track and improve your graduates' employment outcomes with our comprehensive reporting and analytics."),
+          title: t('features.schools.item2.title'),
+          description: t('features.schools.item2.description'),
         },
         {
-          title: t('Showcase Your Institution'),
-          description: t("Promote your school's programs and achievements to a wide audience of prospective students and corporate partners."),
+          title: t('features.schools.item3.title'),
+          description: t('features.schools.item3.description'),
         },
       ],
     },
@@ -116,9 +116,9 @@ export function FeaturesSection() {
     };
     
     const tabs = [
-        { id: "graduates", label: t("Graduates"), icon: GraduationCap },
-        { id: "companies", label: t("Companies"), icon: Briefcase },
-        { id: "schools", label: t("Schools"), icon: Building },
+        { id: "graduates", label: t("common.graduates"), icon: GraduationCap },
+        { id: "companies", label: t("common.companies"), icon: Briefcase },
+        { id: "schools", label: t("common.schools"), icon: Building },
       ];
 
   return (
@@ -131,9 +131,9 @@ export function FeaturesSection() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
         >
-          <h2 className="text-4xl font-bold tracking-tight">{t('Everything You Need to Succeed')}</h2>
+          <h2 className="text-4xl font-bold tracking-tight">{t('features.headline')}</h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-            {t('Yahnu is a comprehensive ecosystem designed to bridge the gap between education and employment. Explore the powerful features tailored for every user.')}
+            {t('features.subtitle')}
           </p>
         </motion.div>
 

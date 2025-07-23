@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -23,7 +22,8 @@ import { cn } from "@/lib/utils"
 const getSlides = (t: (key: string) => string) => [
     {
         role: "Graduates",
-        headline: t("Find Your Dream Job Today"),
+        // Corrected: Use the shorter key for the headline
+        headline: t("Find Your Dream Job Today."),
         subtitle: t("Explore thousands of job opportunities tailored for you in Côte d'Ivoire. Your next career move is just a click away."),
         buttonText: t("Search for Jobs"),
         buttonIcon: <Search />,
