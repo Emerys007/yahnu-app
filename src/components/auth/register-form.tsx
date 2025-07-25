@@ -5,7 +5,7 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -107,6 +107,7 @@ export function RegisterForm() {
     const { signUp, signInWithGoogle } = useAuth();
     const { toast } = useToast();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = React.useState(false);
     const [schools, setSchools] = React.useState<SchoolOption[]>([]);
 
@@ -136,7 +137,7 @@ export function RegisterForm() {
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      role: "graduate",
+      role: searchParams.get('type') === 'school' ? 'school' : searchParams.get('type') === 'company' ? 'company' : "graduate",
       email: "",
       password: "",
       confirmPassword: "",

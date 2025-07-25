@@ -9,25 +9,15 @@ module.exports = {
   },
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '8886743.fs1.hubspotusercontent-na1.net',
-        port: '',
-        pathname: '/**',
-      }
+      { protocol: 'https', hostname: 'www.inphb.ci' },
+      { protocol: 'https', hostname: 'ufhb.edu.ci' },
+      { protocol: 'https', hostname: 'csipolytechnique.ci' },
+      { protocol: 'https', hostname: 'upload.wikimedia.org' },
+      { protocol: 'https', hostname: 'www.sifca.ci' },
+      { protocol: 'https', hostname: 'bridgebankgroup.com' },
+      { protocol: 'https', hostname: 'www.bollore-logistics.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: '8886743.fs1.hubspotusercontent-na1.net' },
     ],
-    dangerouslyAllowSVG: true,
-    contentDispositionType: 'attachment',
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 };

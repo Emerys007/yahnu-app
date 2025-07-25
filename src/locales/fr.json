@@ -715,5 +715,11 @@
     "form_message_placeholder": "Veuillez décrire votre problème en détail...",
     "form_submit_button": "Envoyer le message",
     "form_submitted_title": "Message envoyé !",
-    "form_submitted_desc": "Merci de nous avoir contactés. Notre équipe vous répondra sous peu."
+    "form_submitted_desc": "Merci de nous avoir contactés. Notre équipe vous répondra sous peu.",
+    "legal_privacy_title": "Privacy Policy",
+    "legal_privacy_last_updated": "Last updated: January 15, 2025",
+    "legal_privacy_content": "<p>This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p><h2>Interpretation and Definitions</h2><h3>Interpretation</h3><p>The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p>",
+    "legal_terms_title": "Terms of Service",
+    "legal_terms_last_updated": "Last updated: January 15, 2025",
+    "legal_terms_content": "<p>Please read these terms and conditions carefully before using Our Service.</p><h2>Acknowledgment</h2><p>These are the Terms and Conditions governing the use of this Service and the agreement that operates between You and the Company. These Terms and Conditions set out the rights and obligations of all users regarding the use of the Service.</p>"
 }

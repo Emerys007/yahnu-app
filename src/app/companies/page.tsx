@@ -127,7 +127,7 @@ export default function CompaniesPage() {
                         <h2 className="text-2xl font-bold mb-2">{t('Is Your Company Next?')}</h2>
                         <p className="text-muted-foreground max-w-md mx-auto mb-6">{t('Join Yahnu to access a pool of pre-vetted, top-tier talent from the best institutions in {country}.')}</p>
                         <Button asChild size="lg">
-                            <Link href="/signup">{t('Become a Partner Company')}</Link>
+                            <Link href="/signup?type=company">{t('Become a Partner Company')}</Link>
                         </Button>
                     </CardContent>
                 </Card>

@@ -49,7 +49,7 @@ const getSlides = (t: (key: string, args?: any) => string, country: string) => [
         buttonIcon: <Handshake />,
         imageUrl: "/images/hero/industry-partnership.webp",
         imageHint: "university building and a handshake representing partnership",
-        href: "/register"
+        href: "/signup"
       },
 ]
 

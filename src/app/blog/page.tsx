@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import React from "react";
 import { useLocalization } from "@/context/localization-context";
+import { cn } from "@/lib/utils";
 
 interface Post {
     id: string;
@@ -65,10 +66,25 @@ export default function BlogPage() {
             </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post) => (
-                <Link href={`/blog/${post.slug}`} key={post.id} className="group">
-                    <Card className="h-full overflow-hidden transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
+            {posts.map((post, index) => {
+                const total = posts.length;
+                const classNames = ['md:col-span-2'];
+
+                // Mobile: Center last item if uneven
+                if (total % 2 !== 0 && index === total - 1) {
+                    classNames.push('col-span-2 flex justify-center');
+                }
+
+                // Desktop: Center last 1 or 2 items
+                if (total % 3 === 1 && index === total - 1) {
+                    classNames.push('md:col-start-3');
+                } else if (total % 3 === 2 && index === total - 2) {
+                    classNames.push('md:col-start-2');
+                }
+               return (
+                <Link href={`/blog/${post.slug}`} key={post.id} className={cn(classNames)}>
+                    <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group w-full max-w-sm">
                         <CardHeader className="p-0">
                            <div className="relative w-full h-48">
                              <Image
@@ -77,6 +93,7 @@ export default function BlogPage() {
                                 fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 className="object-cover"
+                                priority={index === 0}
                             />
                            </div>
                         </CardHeader>
@@ -93,7 +110,7 @@ export default function BlogPage() {
                         </CardContent>
                     </Card>
                 </Link>
-            ))}
+            )})}
         </div>
       </main>
       <Footer />

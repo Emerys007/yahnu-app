@@ -5,12 +5,15 @@ import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import Image from "next/image";
 import { useLocalization } from "@/context/localization-context";
-import { Card, CardContent } from "@/components/ui/card";
-import { Users, Lightbulb, Target, Loader2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Users, Lightbulb, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc, DocumentData } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { cn } from "@/lib/utils";
+import { BullseyeAnimation } from "@/components/ui/bullseye-animation";
+import { SparklingLightbulb } from "@/components/ui/sparkling-lightbulb";
 
 interface TeamMember {
     name: string;
@@ -197,6 +200,22 @@ export default function AboutPage() {
 
     const teamMembers = content.teamMembers || [];
 
+    const iconVariants = {
+        hidden: { scale: 0.5, opacity: 0, y: 20 },
+        visible: { 
+            scale: 1, 
+            opacity: 1, 
+            y: 0,
+            transition: { type: "spring", stiffness: 150, damping: 10, mass: 0.5 } 
+        },
+        hover: { 
+            scale: 1.15, 
+            rotate: [0, 10, -10, 10, 0], 
+            transition: { type: "spring", stiffness: 300, damping: 5, mass: 1 } 
+        }
+    };
+    
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <MainNav />
@@ -218,8 +237,7 @@ export default function AboutPage() {
         <section className="py-20 bg-background">
             <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center">
                 <AnimatedStoryGraphic text={t(content.storyTitle)} />
-                <div>
-                    <h2 className="text-3xl font-bold tracking-tight mb-4">{t(content.storyTitle)}</h2>
+                <div className="text-center md:text-left">
                     <motion.div
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
@@ -244,21 +262,23 @@ export default function AboutPage() {
                  <div className="grid md:grid-cols-3 gap-8 text-center">
                     <motion.div variants={cardItemVariants} whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.08)" }} transition={{ type: 'spring', stiffness: 300 }}>
                         <Card className="p-6 h-full">
-                            <Target className="h-12 w-12 text-primary mx-auto mb-4" />
+                            <BullseyeAnimation />
                             <h3 className="text-2xl font-bold mb-2">{t(content.missionTitle)}</h3>
                             <div className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: t(content.missionContent) }} />
                         </Card>
                     </motion.div>
                      <motion.div variants={cardItemVariants} whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.08)" }} transition={{ type: 'spring', stiffness: 300 }}>
                         <Card className="p-6 h-full">
-                            <Lightbulb className="h-12 w-12 text-primary mx-auto mb-4" />
+                            <SparklingLightbulb />
                             <h3 className="text-2xl font-bold mb-2">{t(content.visionTitle)}</h3>
                             <div className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: t(content.visionContent) }} />
                         </Card>
                      </motion.div>
                      <motion.div variants={cardItemVariants} whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.08)" }} transition={{ type: 'spring', stiffness: 300 }}>
                         <Card className="p-6 h-full">
-                            <Users className="h-12 w-12 text-primary mx-auto mb-4" />
+                            <motion.div variants={iconVariants} initial="hidden" animate="visible" whileHover="hover">
+                                <Users className="h-12 w-12 text-primary mx-auto mb-4" />
+                            </motion.div>
                             <h3 className="text-2xl font-bold mb-2">{t(content.valuesTitle)}</h3>
                             <div className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: t(content.valuesContent) }} />
                         </Card>
@@ -273,20 +293,35 @@ export default function AboutPage() {
                     <h2 className="text-3xl font-bold tracking-tight">{t('Meet the Team')}</h2>
                     <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">{t('The passionate individuals dedicated to building Yahnu.')}</p>
                  </div>
-                 <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-                    {teamMembers.map(member => (
-                        <div key={member.name} className="text-center">
-                            <motion.div 
-                                className="relative h-40 w-40 mx-auto rounded-full overflow-hidden mb-4 shadow-lg"
-                                whileHover={{ scale: 1.05, boxShadow: "0px 10px 20px rgba(0,0,0,0.1)"}}
-                                transition={{ type: "spring", stiffness: 300 }}
-                            >
-                                 <Image src={member.imageUrl || 'https://placehold.co/160x160.png'} alt={member.name} fill sizes="160px" className="object-cover" />
-                            </motion.div>
-                            <h4 className="font-semibold text-lg">{member.name}</h4>
-                            <p className="text-primary">{t(member.role)}</p>
-                        </div>
-                    ))}
+                 <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
+                    {teamMembers.map((member, index) => {
+                        const total = teamMembers.length;
+                        const classNames = ['text-center', 'md:col-span-2'];
+
+                        if (total % 2 !== 0 && index === total - 1) {
+                            classNames.push('col-span-2');
+                        }
+
+                        if (total % 3 === 1 && index === total - 1) {
+                            classNames.push('md:col-start-3');
+                        } else if (total % 3 === 2 && index === total - 2) {
+                            classNames.push('md:col-start-2');
+                        }
+
+                        return (
+                            <div key={member.name} className={cn(classNames)}>
+                                <motion.div 
+                                    className="relative h-40 w-40 mx-auto rounded-full overflow-hidden mb-4 shadow-lg"
+                                    whileHover={{ scale: 1.05, boxShadow: "0px 10px 20px rgba(0,0,0,0.1)"}}
+                                    transition={{ type: "spring", stiffness: 300 }}
+                                >
+                                     <Image src={member.imageUrl || 'https://placehold.co/160x160.png'} alt={member.name} fill sizes="160px" className="object-cover" />
+                                </motion.div>
+                                <h4 className="font-semibold text-lg">{member.name}</h4>
+                                <p className="text-primary">{t(member.role)}</p>
+                            </div>
+                        )
+                    })}
                  </div>
              </div>
         </section>
