@@ -85,13 +85,11 @@ const PostForm = ({ post, onSave, onFinished }: { post?: Post, onSave: (data: Po
             <FormMessage />
           </FormItem>
         )} />
-        <FormField control={form.control} name="content" render={({ field }) => (
-          <FormItem>
-            <FormLabel>{t('Content')}</FormLabel>
-            <FormControl><RichTextEditor placeholder={t('form_message_placeholder')} {...field} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
+        <RichTextEditor
+            value={form.watch('content')}
+            onChange={(value) => form.setValue('content', value)}
+            placeholder={t('form_message_placeholder')}
+        />
         <DialogFooter>
           <Button type="submit" disabled={isSaving}>
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -237,7 +235,7 @@ export default function ContentManagementPage() {
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{t('Content Management')}</h1>
-            <p className="text-muted-foreground mt-1">{t('Manage your platform\'s blog and page content.')}</p>
+            <p className="text-muted-foreground mt-1">{t('Manage your platform's blog and page content.')}</p>
           </div>
         </div>
       </div>

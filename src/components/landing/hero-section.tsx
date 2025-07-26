@@ -105,7 +105,7 @@ export function HeroSection() {
                   sizes="100vw"
                   className="object-cover"
                   data-ai-hint={slide.imageHint}
-                  priority={index === 0 || index === 1}
+                  priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">

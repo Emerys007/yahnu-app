@@ -10,50 +10,29 @@ import { ArrowRight } from "lucide-react";
 import React from "react";
 import { useLocalization } from "@/context/localization-context";
 import { cn } from "@/lib/utils";
+import { allPosts } from "@/lib/demo-data";
+import { allPosts as frPosts } from "@/lib/fr";
 
 interface Post {
-    id: string;
     slug: string;
     title: string;
-    description: string;
+    brief: string;
     author: string;
     date: string;
-    imageUrl: string;
+    image: string;
 }
 
-const getMockPosts = (t: (key: string) => string): Post[] => [
-    {
-        id: "1",
-        slug: "navigating-job-market-ci",
-        title: t('blog_1_title'),
-        description: t('blog_1_desc'),
-        author: "A. Kouassi",
-        date: "July 15, 2024",
-        imageUrl: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2832&auto=format&fit=crop",
-    },
-    {
-        id: "2",
-        slug: "top-tech-skills-abidjan",
-        title: t('blog_2_title'),
-        description: t('blog_2_desc'),
-        author: "B. Traoré",
-        date: "July 10, 2024",
-        imageUrl: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2670&auto=format&fit=crop",
-    },
-    {
-        id: "3",
-        slug: "interview-tips-success-ci",
-        title: t('blog_3_title'),
-        description: t('blog_3_desc'),
-        author: "C. Fofana",
-        date: "July 5, 2024",
-        imageUrl: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2670&auto=format&fit=crop",
-    }
-];
+const getMockPosts = (lang: string, t: (key: string) => string): Post[] => {
+    const posts = lang === 'fr' ? frPosts : allPosts;
+    return posts.map(post => ({
+        ...post,
+        author: t(post.author),
+    }));
+};
 
 export default function BlogPage() {
-  const { t } = useLocalization();
-  const posts = getMockPosts(t);
+  const { t, lang } = useLocalization();
+  const posts = getMockPosts(lang, t);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -66,51 +45,38 @@ export default function BlogPage() {
             </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
-            {posts.map((post, index) => {
-                const total = posts.length;
-                const classNames = ['md:col-span-2'];
-
-                // Mobile: Center last item if uneven
-                if (total % 2 !== 0 && index === total - 1) {
-                    classNames.push('col-span-2 flex justify-center');
-                }
-
-                // Desktop: Center last 1 or 2 items
-                if (total % 3 === 1 && index === total - 1) {
-                    classNames.push('md:col-start-3');
-                } else if (total % 3 === 2 && index === total - 2) {
-                    classNames.push('md:col-start-2');
-                }
-               return (
-                <Link href={`/blog/${post.slug}`} key={post.id} className={cn(classNames)}>
-                    <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group w-full max-w-sm">
-                        <CardHeader className="p-0">
-                           <div className="relative w-full h-48">
-                             <Image
-                                src={post.imageUrl}
-                                alt={post.title}
-                                fill
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                className="object-cover"
-                                priority={index === 0}
-                            />
-                           </div>
-                        </CardHeader>
-                        <CardContent className="p-6">
-                            <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-                            <p className="text-muted-foreground mb-4 text-sm">{post.description}</p>
-                            <div className="flex items-center justify-between text-sm text-muted-foreground">
-                                <span>By {post.author}</span>
-                                <span>{post.date}</span>
-                            </div>
-                             <div className="flex items-center mt-4 font-semibold text-primary">
-                                {t('Read More')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                            </div>
-                        </CardContent>
-                    </Card>
-                </Link>
-            )})}
+        <div className="flex flex-wrap justify-center -m-4">
+            {posts.map((post, index) => (
+                <div key={post.slug} className="w-full sm:w-1/2 lg:w-1/3 p-4 flex">
+                    <Link href={`/blog/${post.slug}`} className="block h-full w-full">
+                        <Card className="h-full w-full overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
+                            <CardHeader className="p-0">
+                               <div className="relative w-full h-48">
+                                 <Image
+                                    src={post.image}
+                                    alt={post.title}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    className="object-cover"
+                                    priority={index < 3}
+                                />
+                               </div>
+                            </CardHeader>
+                            <CardContent className="p-6">
+                                <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
+                                <p className="text-muted-foreground mb-4 text-sm line-clamp-3">{post.brief}</p>
+                                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                                    <span>{t('By')} {post.author}</span>
+                                    <span>{new Date(post.date).toLocaleDateString()}</span>
+                                </div>
+                                 <div className="flex items-center mt-4 font-semibold text-primary">
+                                    {t('Read More')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </Link>
+                </div>
+            ))}
         </div>
       </main>
       <Footer />
