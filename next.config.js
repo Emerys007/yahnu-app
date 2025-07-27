@@ -18,8 +18,10 @@ module.exports = {
       { protocol: 'https', hostname: 'www.bollore-logistics.com' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: '8886743.fs1.hubspotusercontent-na1.net' },
-      { protocol: 'https', hostname: 'images.pexels.com' },
+      { protocol: 'https'
+      , hostname: 'images.pexels.com' },
       { protocol: 'https', hostname: 'placehold.co' },
+      { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
     ],
   },
 };
