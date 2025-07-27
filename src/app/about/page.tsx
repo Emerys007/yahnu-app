@@ -154,17 +154,17 @@ export default function AboutPage() {
     const teamMembers: TeamMember[] = [
         {
             name: "Colombe Koffi",
-            role: "Founder & CEO",
+            role: "about.team.roles.founder_ceo",
             imageUrl: "/images/Colombe Koffi.jpeg"
         },
         {
             name: "Joël K",
-            role: "Head of Product & Lead Engineer",
+            role: "about.team.roles.head_of_product",
             imageUrl: "/images/Joel K.jpeg"
         },
         {
             name: "Bethel Touman",
-            role: "Data Engineer",
+            role: "about.team.roles.data_engineer",
             imageUrl: "/images/Bethel_Touman.jpeg"
         }
     ];
