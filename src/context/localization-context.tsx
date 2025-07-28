@@ -38,16 +38,27 @@ export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
   const countryName = language === 'fr' ? country.name.fr : country.name.en;
 
   const t = (key: string, values?: { [key: string]: string | number }): string => {
-    let translation = translations[language]?.[key] || key;
+    const keys = key.split('.');
+    let translation = translations[language];
+    for (const k of keys) {
+      translation = translation?.[k];
+    }
+
+    if (translation === undefined) {
+      return key;
+    }
+    
+    let result = String(translation);
+
     if (values) {
         Object.keys(values).forEach(valueKey => {
             const regex = new RegExp(`{${valueKey}}`, 'g');
-            translation = translation.replace(regex, String(values[valueKey]));
+            result = result.replace(regex, String(values[valueKey]));
         });
     }
     // Always replace country placeholder
-    translation = translation.replace(/{country}/g, countryName);
-    return translation;
+    result = result.replace(/{country}/g, countryName);
+    return result;
   };
 
   return (

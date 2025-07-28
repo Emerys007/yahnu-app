@@ -54,153 +54,106 @@ import {
   
   export const allPosts = [
     {
-      title: 'The Future of Work in Africa is Remote',
       slug: 'future-of-work-remote',
       author: 'blog_author',
       date: '2024-07-22',
       image: '/images/Blog/remote-work.jpg',
-      brief: "The global shift towards remote work presents a massive opportunity for Africa's talented youth. Discover the trends, benefits, and challenges.",
-      content: `
-        <p class="lead mb-6">The global pandemic accelerated a trend that was already simmering: the rise of remote work. For Africa, this isn't just a passing phase; it's a paradigm shift that holds the potential to unlock unprecedented opportunities for its vibrant and youthful population.</p>
-        
-        <h3 class="text-2xl font-bold mt-8 mb-4">A World of Opportunity for Graduates</h3>
-        <p class="mb-4">For the first time, a graduate in Lagos, Accra, or Nairobi can compete for a role in a company based in New York, London, or Tokyo without leaving their home city. This breaks down geographical barriers that have long limited career prospects. The benefits are immense:</p>
-        <ul class="list-disc list-inside mb-4 space-y-2">
-          <li><strong>Access to Global Job Markets:</strong> Talented individuals are no longer restricted to their local job market, dramatically expanding their career options.</li>
-          <li><strong>Competitive Salaries:</strong> Working for international companies often means access to better pay, boosting local economies.</li>
-          <li><strong>Work-Life Balance:</strong> Eliminating the daily commute and offering flexible hours can lead to a significant improvement in quality of life.</li>
-        </ul>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">A Strategic Advantage for Companies</h3>
-        <p class="mb-4">The remote work revolution is a two-way street. Companies, both local and international, stand to gain significantly by embracing it:</p>
-        <ul class="list-disc list-inside mb-4 space-y-2">
-          <li><strong>Vast Talent Pool:</strong> Businesses can now recruit from across the entire continent, finding the perfect skills for their needs without geographic limitation.</li>
-          <li><strong>Reduced Costs:</strong> Less need for large office spaces translates to lower overhead costs, a critical advantage for startups and scaling businesses.</li>
-          <li><strong>Increased Diversity and Productivity:</strong> Diverse teams are more innovative. Furthermore, many studies show that remote workers are often more focused and productive.</li>
-        </ul>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">Navigating the Challenges</h3>
-        <p class="mb-4">Of course, the transition is not without its hurdles. Challenges like reliable internet connectivity and consistent power supply are real concerns in many parts of the continent. However, these are rapidly improving. The rise of co-working spaces, solar power solutions, and expanding fiber optic networks are paving the way for a more connected future. Graduates, in turn, must cultivate self-discipline, proactivity, and excellent digital communication skills to thrive in a remote setting.</p>
-        
-        <p class="mt-6">The future of work in Africa is here, and it is flexible, distributed, and digital. At Yahnu, we are committed to equipping graduates with the skills and connections needed to succeed in this new era of opportunity.</p>
-      `
+      title: {
+        en: 'The Future of Work in Africa is Remote',
+        fr: "L'avenir du travail en Afrique est à distance",
+      },
+      brief: {
+        en: "The global shift towards remote work presents a massive opportunity for Africa's talented youth. Discover the trends, benefits, and challenges.",
+        fr: `Le passage mondial au travail à distance représente une opportunité massive pour la jeunesse talentueuse d'Afrique. Découvrez les tendances, les avantages et les défis.`,
+      },
+      content: {
+        en: `
+          <p class="lead mb-6">The global pandemic accelerated a trend that was already simmering: the rise of remote work. For Africa, this isn't just a passing phase; it's a paradigm shift that holds the potential to unlock unprecedented opportunities for its vibrant and youthful population.</p>
+          <h3 class="text-2xl font-bold mt-8 mb-4">A World of Opportunity for Graduates</h3>
+          <p class="mb-4">For the first time, a graduate in Lagos, Accra, or Nairobi can compete for a role in a company based in New York, London, or Tokyo without leaving their home city. This breaks down geographical barriers that have long limited career prospects. The benefits are immense:</p>
+          <ul class="list-disc list-inside mb-4 space-y-2">
+            <li><strong>Access to Global Job Markets:</strong> Talented individuals are no longer restricted to their local job market, dramatically expanding their career options.</li>
+            <li><strong>Competitive Salaries:</strong> Working for international companies often means access to better pay, boosting local economies.</li>
+            <li><strong>Work-Life Balance:</strong> Eliminating the daily commute and offering flexible hours can lead to a significant improvement in quality of life.</li>
+          </ul>
+          <h3 class="text-2xl font-bold mt-8 mb-4">A Strategic Advantage for Companies</h3>
+          <p class="mb-4">The remote work revolution is a two-way street. Companies, both local and international, stand to gain significantly by embracing it:</p>
+          <ul class="list-disc list-inside mb-4 space-y-2">
+            <li><strong>Vast Talent Pool:</strong> Businesses can now recruit from across the entire continent, finding the perfect skills for their needs without geographic limitation.</li>
+            <li><strong>Reduced Costs:</strong> Less need for large office spaces translates to lower overhead costs, a critical advantage for startups and scaling businesses.</li>
+            <li><strong>Increased Diversity and Productivity:</strong> Diverse teams are more innovative. Furthermore, many studies show that remote workers are often more focused and productive.</li>
+          </ul>
+          <h3 class="text-2xl font-bold mt-8 mb-4">Navigating the Challenges</h3>
+          <p class="mb-4">Of course, the transition is not without its hurdles. Challenges like reliable internet connectivity and consistent power supply are real concerns in many parts of the continent. However, these are rapidly improving. The rise of co-working spaces, solar power solutions, and expanding fiber optic networks are paving the way for a more connected future. Graduates, in turn, must cultivate self-discipline, proactivity, and excellent digital communication skills to thrive in a remote setting.</p>
+          <p class="mt-6">The future of work in Africa is here, and it is flexible, distributed, and digital. At Yahnu, we are committed to equipping graduates with the skills and connections needed to succeed in this new era of opportunity.</p>
+        `,
+        fr: `
+          <p class="lead mb-6">La pandémie mondiale a accéléré une tendance qui couvait déjà : l'essor du travail à distance. Pour l'Afrique, ce n'est pas seulement une phase passagère ; c'est un changement de paradigme qui pourrait débloquer des opportunités sans précédent pour sa population jeune et dynamique.</p>
+          <h3 class="text-2xl font-bold mt-8 mb-4">Un monde d'opportunités pour les diplômés</h3>
+          <p class="mb-4">Pour la première fois, un diplômé de Lagos, Accra ou Nairobi peut postuler à un poste dans une entreprise basée à New York, Londres ou Tokyo sans quitter sa ville natale. Cela brise les barrières géographiques qui ont longtemps limité les perspectives de carrière. Les avantages sont immenses :</p>
+          <ul class="list-disc list-inside mb-4 space-y-2">
+            <li><strong>Accès aux marchés du travail mondiaux :</strong> Les personnes talentueuses ne sont plus limitées à leur marché du travail local, ce qui élargit considérablement leurs options de carrière.</li>
+            <li><strong>Salaires compétitifs :</strong> Travailler pour des entreprises internationales signifie souvent accéder à de meilleurs salaires, stimulant ainsi les économies locales.</li>
+            <li><strong>Équilibre travail-vie personnelle :</strong> La suppression des trajets quotidiens et l'offre d'horaires flexibles peuvent entraîner une amélioration significative de la qualité de vie.</li>
+          </ul>
+          <h3 class="text-2xl font-bold mt-8 mb-4">Un avantage stratégique pour les entreprises</h3>
+          <p class="mb-4">La révolution du travail à distance est à double sens. Les entreprises, locales et internationales, ont beaucoup à gagner à l'adopter :</p>
+          <ul class="list-disc list-inside mb-4 space-y-2">
+            <li><strong>Vaste bassin de talents :</strong> Les entreprises peuvent désormais recruter sur tout le continent, trouvant les compétences parfaites pour leurs besoins sans limitation géographique.</li>
+            <li><strong>Coûts réduits :</strong> Moins de besoin de grands espaces de bureaux se traduit par des frais généraux moins élevés, un avantage essentiel pour les startups et les entreprises en croissance.</li>
+            <li><strong>Diversité et productivité accrues :</strong> Les équipes diversifiées sont plus innovantes. De plus, de nombreuses études montrent que les travailleurs à distance sont souvent plus concentrés et productifs.</li>
+          </ul>
+          <h3 class="text-2xl font-bold mt-8 mb-4">Naviguer les défis</h3>
+          <p class="mb-4">Bien sûr, la transition n'est pas sans obstacles. Des défis tels qu'une connectivité Internet fiable et une alimentation électrique constante sont de réelles préoccupations dans de nombreuses régions du continent. Cependant, ceux-ci s'améliorent rapidement. L'essor des espaces de coworking, des solutions d'énergie solaire et l'expansion des réseaux de fibre optique ouvrent la voie à un avenir plus connecté. Les diplômés, à leur tour, doivent cultiver l'autodiscipline, la proactivité et d'excellentes compétences en communication numérique pour s'épanouir dans un environnement distant.</p>
+          <p class="mt-6">L'avenir du travail en Afrique est là, et il est flexible, distribué et numérique. Chez Yahnu, nous nous engageons à doter les diplômés des compétences et des relations nécessaires pour réussir dans cette nouvelle ère d'opportunités.</p>
+        `,
+      },
     },
     {
-      title: 'Bridging the Gap: How Yahnu Connects Graduates with Industry',
       slug: 'bridging-the-gap',
       author: 'blog_author',
       date: '2024-07-20',
       image: '/images/Blog/Yahnu-Connects-Graduates-with-Industry.jpg',
-      brief: 'The "skills gap" is a major hurdle for graduates. Learn how Yahnu is building the bridge between education and the professional world.',
-      content: `
-        <p class="lead mb-6">In discussions about employment in Africa, one term comes up repeatedly: the "skills gap." It refers to the disconnect between the knowledge acquired in educational institutions and the practical, evolving skills demanded by the modern industry. This gap is a significant barrier, leaving talented graduates underemployed and companies struggling to find job-ready candidates. Yahnu was founded to be the bridge across this divide.</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">The Core of the Problem</h3>
-        <p class="mb-4">Universities provide essential theoretical foundations, but often curricula can't keep pace with the rapid technological and methodological shifts in the workplace. Graduates may leave with a degree but without hands-on experience in the latest software, an understanding of current industry workflows, or the specific "soft skills" that are critical for collaboration and innovation. The result is a frustrating cycle of rejection for graduates and a costly, time-consuming recruitment process for employers.</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">Yahnu's Three-Pillar Solution</h3>
-        <p class="mb-4">We tackle this problem by creating a symbiotic ecosystem that benefits all stakeholders: graduates, companies, and schools.</p>
-        
-        <h4 class="text-xl font-semibold mt-6 mb-2">1. Empowering Graduates</h4>
-        <p class="mb-4">We provide graduates with the tools to showcase their true potential. A Yahnu profile is more than a CV; it's a dynamic portfolio. Through our platform, graduates can take industry-relevant skills assessments, earn certifications, and clearly demonstrate their capabilities to potential employers. This moves the focus from just having a degree to proving applicable skills.</p>
-  
-        <h4 class="text-xl font-semibold mt-6 mb-2">2. Equipping Companies</h4>
-        <p class="mb-4">For companies, Yahnu is a talent pipeline of vetted candidates. Instead of sifting through hundreds of generic applications, recruiters can filter for specific, verified skills. Our platform provides rich data points on each candidate, drastically reducing the time and uncertainty of the hiring process. It's about finding not just a candidate, but the right candidate, efficiently.</p>
-  
-        <h4 class="text-xl font-semibold mt-6 mb-2">3. Engaging Schools</h4>
-        <p class="mb-4">We close the loop by providing universities with valuable, data-driven insights. By seeing which skills are most in-demand by employers, schools can better tailor their curricula and career services. Yahnu facilitates meaningful partnerships between academia and industry, ensuring that education is truly aligned with the needs of the economy.</p>
-  
-        <p class="mt-6">By creating these connections, Yahnu is not just filling jobs. We are building futures, fostering a more agile and prepared workforce, and ensuring that the immense talent of Africa's youth is not just recognized, but fully realized.</p>
-      `
+      title: {
+        en: 'Bridging the Gap: How Yahnu Connects Graduates with Industry',
+        fr: "Combler le fossé : Comment Yahnu connecte les diplômés à l'industrie",
+      },
+      brief: {
+        en: 'The "skills gap" is a major hurdle for graduates. Learn how Yahnu is building the bridge between education and the professional world.',
+        fr: `Le "déficit de compétences" est un obstacle majeur pour les diplômés. Découvrez comment Yahnu construit le pont entre l'éducation et le monde professionnel.`,
+      },
+      content: {
+        en: `
+          <p class="lead mb-6">In discussions about employment in Africa, one term comes up repeatedly: the "skills gap." It refers to the disconnect between the knowledge acquired in educational institutions and the practical, evolving skills demanded by the modern industry. This gap is a significant barrier, leaving talented graduates underemployed and companies struggling to find job-ready candidates. Yahnu was founded to be the bridge across this divide.</p>
+          <h3 class="text-2xl font-bold mt-8 mb-4">The Core of the Problem</h3>
+          <p class="mb-4">Universities provide essential theoretical foundations, but often curricula can't keep pace with the rapid technological and methodological shifts in the workplace. Graduates may leave with a degree but without hands-on experience in the latest software, an understanding of current industry workflows, or the specific "soft skills" that are critical for collaboration and innovation. The result is a frustrating cycle of rejection for graduates and a costly, time-consuming recruitment process for employers.</p>
+          <h3 class="text-2xl font-bold mt-8 mb-4">Yahnu's Three-Pillar Solution</h3>
+          <p class="mb-4">We tackle this problem by creating a symbiotic ecosystem that benefits all stakeholders: graduates, companies, and schools.</p>
+          <h4 class="text-xl font-semibold mt-6 mb-2">1. Empowering Graduates</h4>
+          <p class="mb-4">We provide graduates with the tools to showcase their true potential. A Yahnu profile is more than a CV; it's a dynamic portfolio. Through our platform, graduates can take industry-relevant skills assessments, earn certifications, and clearly demonstrate their capabilities to potential employers. This moves the focus from just having a degree to proving applicable skills.</p>
+          <h4 class="text-xl font-semibold mt-6 mb-2">2. Equipping Companies</h4>
+          <p class="mb-4">For companies, Yahnu is a talent pipeline of vetted candidates. Instead of sifting through hundreds of generic applications, recruiters can filter for specific, verified skills. Our platform provides rich data points on each candidate, drastically reducing the time and uncertainty of the hiring process. It's about finding not just a candidate, but the right candidate, efficiently.</p>
+          <h4 class="text-xl font-semibold mt-6 mb-2">3. Engaging Schools</h4>
+          <p class="mb-4">We close the loop by providing universities with valuable, data-driven insights. By seeing which skills are most in-demand by employers, schools can better tailor their curricula and career services. Yahnu facilitates meaningful partnerships between academia and industry, ensuring that education is truly aligned with the needs of the economy.</p>
+          <p class="mt-6">By creating these connections, Yahnu is not just filling jobs. We are building futures, fostering a more agile and prepared workforce, and ensuring that the immense talent of Africa's youth is not just recognized, but fully realized.</p>
+        `,
+        fr: `
+          <p class="lead mb-6">Dans les discussions sur l'emploi en Afrique, un terme revient sans cesse : le "déficit de compétences". Il désigne le décalage entre les connaissances acquises dans les établissements d'enseignement et les compétences pratiques et évolutives exigées par l'industrie moderne. Ce fossé est un obstacle important, qui laisse des diplômés talentueux sous-employés et des entreprises qui peinent à trouver des candidats prêts à l'emploi. Yahnu a été fondée pour jeter un pont sur ce fossé.</p>
+          <h3 class="text-2xl font-bold mt-8 mb-4">Le cœur du problème</h3>
+          <p class="mb-4">Les universités fournissent des bases théoriques essentielles, mais les programmes d'études ne peuvent souvent pas suivre le rythme des changements technologiques et méthodologiques rapides du lieu de travail. Les diplômés peuvent obtenir un diplôme mais sans expérience pratique des derniers logiciels, sans compréhension des flux de travail actuels de l'industrie ou sans les "compétences non techniques" spécifiques qui sont essentielles à la collaboration et à l'innovation. Le résultat est un cycle frustrant de rejet pour les diplômés et un processus de recrutement coûteux et long pour les employeurs.</p>
+          <h3 class="text-2xl font-bold mt-8 mb-4">La solution à trois piliers de Yahnu</h3>
+          <p class="mb-4">Nous nous attaquons à ce problème en créant un écosystème symbiotique qui profite à toutes les parties prenantes : les diplômés, les entreprises et les écoles.</p>
+          <h4 class="text-xl font-semibold mt-6 mb-2">1. Autonomiser les diplômés</h4>
+          <p class="mb-4">Nous fournissons aux diplômés les outils nécessaires pour mettre en valeur leur véritable potentiel. Un profil Yahnu est plus qu'un CV ; c'est un portfolio dynamique. Grâce à notre plateforme, les diplômés peuvent passer des évaluations de compétences pertinentes pour l'industrie, obtenir des certifications et démontrer clairement leurs capacités aux employeurs potentiels. L'accent n'est plus mis sur le simple fait d'avoir un diplôme, mais sur la preuve de compétences applicables.</p>
+          <h4 class="text-xl font-semibold mt-6 mb-2">2. Équiper les entreprises</h4>
+          <p class="mb-4">Pour les entreprises, Yahnu est un vivier de talents de candidats sélectionnés. Au lieu de passer au crible des centaines de candidatures génériques, les recruteurs peuvent filtrer les compétences spécifiques et vérifiées. Notre plateforme fournit des points de données riches sur chaque candidat, ce qui réduit considérablement le temps et l'incertitude du processus d'embauche. Il s'agit de trouver non seulement un candidat, mais le bon candidat, de manière efficace.</p>
+          <h4 class="text-xl font-semibold mt-6 mb-2">3. Engager les écoles</h4>
+          <p class="mb-4">Nous bouclons la boucle en fournissant aux universités des informations précieuses basées sur des données. En voyant quelles compétences sont les plus demandées par les employeurs, les écoles peuvent mieux adapter leurs programmes d'études et leurs services d'orientation professionnelle. Yahnu facilite les partenariats significatifs entre le monde universitaire et l'industrie, en veillant à ce que l'éducation soit véritablement alignée sur les besoins de l'économie.</p>
+          <p class="mt-6">En créant ces liens, Yahnu ne se contente pas de pourvoir des postes. Nous construisons des avenirs, nous favorisons une main-d'œuvre plus agile et mieux préparée, et nous veillons à ce que l'immense talent de la jeunesse africaine ne soit pas seulement reconnu, mais pleinement réalisé.</p>
+        `,
+      },
     },
-    {
-      title: 'Top 5 In-Demand Skills for Graduates in 2025',
-      slug: 'top-5-skills-2025',
-      author: 'blog_author',
-      date: '2024-07-18',
-      image: '/images/Blog/jobs-2025.png',
-      brief: 'The job market is evolving. Are you prepared? We break down the top 5 skills you need to cultivate for a successful career.',
-      content: `
-        <p class="lead mb-6">As the global economy continues to transform, the skills required to succeed are evolving faster than ever. For graduates entering the workforce, simply having a degree is no longer enough. To stand out and build a resilient career, it's crucial to focus on cultivating the skills that are most valued by modern employers. Here are the top 5 skills domains to focus on for 2025 and beyond.</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">1. Digital Literacy & Fluency</h3>
-        <p class="mb-4">This goes far beyond knowing how to use a word processor. True digital fluency means understanding the entire digital ecosystem. This includes social media marketing, content creation, SEO/SEM principles, and proficiency in digital collaboration tools like Slack, Trello, and Asana. Every company is now a tech company in some way, and they need employees who can navigate the digital world with confidence.</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">2. Data Science & Analytics</h3>
-        <p class="mb-4">Data is the new oil, and companies are desperate for people who can refine it. The ability to collect, analyze, and interpret data to make informed business decisions is one of the most sought-after skills across all industries, from finance and marketing to agriculture and healthcare. Learning tools like SQL, Python for data analysis, and visualization software like Tableau or Power BI can make you an invaluable asset.</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">3. Software Development & AI</h3>
-        <p class="mb-4">The demand for software developers continues to surge across Africa. Whether it's building websites, developing mobile applications, or working on complex enterprise software, coding skills remain a golden ticket. Furthermore, a foundational understanding of Artificial Intelligence (AI) and Machine Learning (ML) principles is becoming increasingly important as more companies integrate these technologies into their operations.</p>
-        
-        <h3 class="text-2xl font-bold mt-8 mb-4">4. Green Skills & Sustainability Management</h3>
-        <p class="mb-4">As the world grapples with climate change, a new "green economy" is emerging. This has created a demand for professionals who understand sustainability practices, renewable energy, waste management, and environmental policy. Companies are increasingly looking for employees who can help them operate more sustainably, both to meet regulations and to appeal to environmentally-conscious consumers.</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">5. Power Skills (Advanced Soft Skills)</h3>
-        <p class="mb-4">Technical skills can get you an interview, but power skills will get you the job and help you grow in your career. These are the uniquely human skills that are difficult to automate:</p>
-        <ul class="list-disc list-inside mb-4 space-y-2">
-          <li><strong>Critical Thinking:</strong> The ability to analyze problems and devise effective solutions.</li>
-          <li><strong>Communication:</strong> Clearly articulating ideas, both verbally and in writing.</li>
-          <li><strong>Collaboration:</strong> Working effectively in a team, especially in a remote or hybrid environment.</li>
-          <li><strong>Adaptability:</strong> The ability to learn quickly and pivot in a fast-changing world.</li>
-          <li><strong>Emotional Intelligence:</strong> Understanding and managing your own emotions and recognizing them in others.</li>
-        </ul>
-  
-        <p class="mt-6">The future belongs to those who commit to lifelong learning. By focusing on these five key areas, you can future-proof your career and position yourself for success in the dynamic African job market. Yahnu's skills assessments can help you identify your strengths and areas for growth on this journey.</p>
-      `
-    },
-    {
-      title: "The Importance of Internships for Career Success",
-      slug: "importance-of-internships",
-      author: "blog_author",
-      date: "2024-06-15",
-      image: "/images/Blog/internship.jpg",
-      brief: "Internships are a crucial stepping stone from academia to a professional career. Learn why they are so valuable and how to make the most of the experience.",
-      content: `
-        <p class="lead mb-6">If your degree is the key that starts the engine, an internship is the map that shows you how to navigate the road to career success. For many graduates, the leap from the academic world to the professional one can be daunting. An internship is the single most effective tool for bridging this gap, transforming theoretical knowledge into tangible, career-building experience.</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">Gain Real-World Experience</h3>
-        <p class="mb-4">Classrooms teach you the 'what' and the 'why,' but internships teach you the 'how.' It's where you learn to apply theories to real-world problems, use industry-standard tools, and understand the day-to-day rhythm of a professional environment. This hands-on experience is what employers are looking for and what makes your CV stand out from the crowd.</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">Build Your Professional Network</h3>
-        <p class="mb-4">The people you meet during your internship—from fellow interns to senior managers—are the first connections in your professional network. A strong performance can lead to mentorship, glowing recommendations, and even a full-time job offer. These relationships can be invaluable throughout your career, providing advice, support, and new opportunities down the line.</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">Test-Drive a Career Path</h3>
-        <p class="mb-4">Are you unsure if marketing is the right fit for you? Is a career in finance as you imagined? An internship allows you to test-drive a career path with a relatively low commitment. It's a chance to explore your interests and discover what you're truly passionate about, helping you make more informed decisions about your long-term career goals.</p>
-        
-        <h3 class="text-2xl font-bold mt-8 mb-4">Develop Crucial Soft Skills</h3>
-        <p class="mb-4">Beyond technical skills, internships are a training ground for the soft skills essential for workplace success: communication, teamwork, problem-solving, and time management. Mastering these in a professional context is a sign of maturity and readiness that employers value highly.</p>
-  
-        <p class="mt-6">Don't view an internship as just a summer job; see it as the first, most critical step in your professional journey. At Yahnu, we connect talented graduates with companies offering meaningful internship experiences. Start building your future today.</p>
-      `
-    },
-    {
-      title: "Networking in the Digital Age: A Guide for Graduates",
-      slug: "digital-networking-guide",
-      author: "blog_author",
-      date: "2024-06-10",
-      image: "https://images.pexels.com/photos/5989933/pexels-photo-5989933.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      brief: "Your network is your net worth. In today's digital world, building professional connections online is more important than ever. Here's how to do it effectively.",
-      content: `
-        <p class="lead mb-6">The old adage, "It's not what you know, it's who you know," has been supercharged in the digital era. Your professional network is one of your most valuable career assets, and platforms like LinkedIn have made it possible to connect with industry leaders across the globe. For a recent graduate, mastering digital networking isn't just an option—it's essential.</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">1. Your LinkedIn Profile is Your Digital Handshake</h3>
-        <p class="mb-4">Before you do anything else, make your profile shine. This is your digital storefront. Ensure you have a professional headshot, a compelling headline that says more than just "Student," and a summary that tells your story and highlights your aspirations. Detail your experiences, both academic and professional, and list your skills. A complete profile is a credible profile.</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">2. Personalize Your Connection Requests</h3>
-        <p class="mb-4">Never send a generic connection request. A blank request is easily ignored. Take 30 seconds to add a personal note. Mention a mutual connection, a shared interest, or a piece of their work you admire. For example: "Hello [Name], I'm a recent Computer Science graduate and was very impressed by the work your team at [Company] is doing in AI. I'd be honored to connect and follow your work."</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">3. Engage Authentically</h3>
-        <p class="mb-4">Networking is not just about collecting connections. It's about building relationships. Follow companies you're interested in and engage with the content posted by people in your target industry. A thoughtful comment on a post can be more effective than a dozen connection requests. Share articles relevant to your field with your own insights. This positions you as a passionate and engaged member of the community.</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">4. The Power of the Informational Interview</h3>
-        <p class="mb-4">Once connected, don't be afraid to ask for a brief, 15-minute "informational interview." This is not a job interview; it's a chance to ask for advice. People are often happy to share their story and offer guidance to those starting out. Be respectful of their time, come prepared with smart questions, and always send a thank-you note afterward.</p>
-  
-        <h3 class="text-2xl font-bold mt-8 mb-4">5. Look Beyond LinkedIn</h3>
-        <p class="mb-4">While LinkedIn is key, don't ignore other platforms. Join industry-specific groups on Facebook, follow thought leaders on X (formerly Twitter), and participate in virtual events and webinars. Every interaction is an opportunity to learn and connect.</p>
-  
-        <p class="mt-6">Digital networking is a marathon, not a sprint. It's about consistently planting seeds, providing value to others, and building a community of professional contacts. Start today, and you'll reap the rewards for years to come.</p>
-      `
-    }
+    // Add other blog posts here...
   ];
   
   export const dashboardNavItems = {
@@ -244,4 +197,3 @@ import {
       { label: 'Team', href: '/dashboard/admin/team', icon: Users2 },
     ],
   };
-  
