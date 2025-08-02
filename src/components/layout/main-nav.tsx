@@ -39,15 +39,15 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 const getNavLinks = (t: (key: string) => string) => [
-  { href: "/jobs", label: t("Jobs") },
-  { href: "/companies", label: t("Companies") },
-  { href: "/schools", label: t("Schools") },
-  { href: "/blog", label: t("Blog") },
-  { href: "/about", label: t("About") },
+  { href: "/jobs", label: t("nav.jobs") },
+  { href: "/companies", label: t("nav.companies") },
+  { href: "/schools", label: t("nav.schools") },
+  { href: "/blog", label: t("nav.blog") },
+  { href: "/about", label: t("common.about") },
 ];
 
 export function MainNav() {
-  const { t, setLanguage } = useLocalization();
+  const { t, setLanguage, language } = useLocalization();
   const { country, setCountry } = useCountry();
   const { setTheme } = useTheme();
   const navLinks = getNavLinks(t);
@@ -56,14 +56,14 @@ export function MainNav() {
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>
          <Flag countryCode={country.code} className="mr-2"/>
-         <span>{country.name.en}</span>
+         <span>{language === 'fr' ? country.name.fr : country.name.en}</span>
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent className="w-40 max-h-80 overflow-y-auto">
           {allCountries.map((c) => (
             <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
                 <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
-                <span>{c.name.en}</span>
+                <span>{language === 'fr' ? c.name.fr : c.name.en}</span>
             </DropdownMenuItem>
           ))}
         </DropdownMenuSubContent>
@@ -75,12 +75,12 @@ export function MainNav() {
      <DropdownMenuSub>
         <DropdownMenuSubTrigger>
            <Languages className="mr-2 h-4 w-4" />
-           <span>{t('Language')}</span>
+           <span>{t('common.language')}</span>
         </DropdownMenuSubTrigger>
         <DropdownMenuPortal>
            <DropdownMenuSubContent>
-              <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage('fr')}>Français</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLanguage('en')}>{t('common.english')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLanguage('fr')}>{t('common.french')}</DropdownMenuItem>
             </DropdownMenuSubContent>
         </DropdownMenuPortal>
       </DropdownMenuSub>
@@ -91,13 +91,13 @@ export function MainNav() {
         <DropdownMenuSubTrigger>
            <Sun className="mr-2 h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
            <Moon className="absolute mr-2 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-           <span>{t('Theme')}</span>
+           <span>{t('common.theme')}</span>
         </DropdownMenuSubTrigger>
         <DropdownMenuPortal>
            <DropdownMenuSubContent>
-              <DropdownMenuItem onClick={() => setTheme("light")}>{t('Light')}</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>{t('Dark')}</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")}>{t('System')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("light")}>{t('common.light')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("dark")}>{t('common.dark')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("system")}>{t('common.system')}</DropdownMenuItem>
             </DropdownMenuSubContent>
         </DropdownMenuPortal>
      </DropdownMenuSub>
@@ -112,7 +112,7 @@ export function MainNav() {
               <Logo className="h-12 w-12" />
               <div>
                 <p className="font-bold text-xl">Yahnu</p>
-                <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
+                <p className="text-xs text-muted-foreground">{t('landing.hero.title')}</p>
               </div>
           </Link>
         </div>
@@ -132,10 +132,10 @@ export function MainNav() {
             </nav>
             <div className="hidden items-center gap-2 md:flex md:ml-6">
                 <Button variant="outline" asChild>
-                  <Link href="/login">{t('Login')}</Link>
+                  <Link href="/login">{t('common.login')}</Link>
                 </Button>
                 <Button asChild>
-                  <Link href="/signup">{t('Sign Up')}</Link>
+                  <Link href="/signup">{t('common.sign_up')}</Link>
                 </Button>
             </div>
             
@@ -152,7 +152,7 @@ export function MainNav() {
                       {allCountries.map((c) => (
                         <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
                             <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
-                            <span>{c.name.en}</span>
+                            <span>{language === 'fr' ? c.name.fr : c.name.en}</span>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
@@ -162,7 +162,7 @@ export function MainNav() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="icon">
                     <MoreVertical className="h-5 w-5" />
-                    <span className="sr-only">More options</span>
+                    <span className="sr-only">{t('common.more_options')}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -177,7 +177,7 @@ export function MainNav() {
                   <DropdownMenuTrigger asChild>
                      <Button variant="outline" size="icon">
                         <MoreVertical className="h-5 w-5" />
-                        <span className="sr-only">More options</span>
+                        <span className="sr-only">{t('common.more_options')}</span>
                      </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -190,7 +190,7 @@ export function MainNav() {
                 <SheetTrigger asChild>
                   <Button variant="outline" size="icon">
                     <Menu className="h-5 w-5" />
-                    <span className="sr-only">{t('Open menu')}</span>
+                    <span className="sr-only">{t('common.open_menu')}</span>
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[80%]">
@@ -202,7 +202,7 @@ export function MainNav() {
                             <Logo className="h-10 w-10" />
                             <div>
                                 <p className="font-bold text-lg">Yahnu</p>
-                                <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
+                                <p className="text-xs text-muted-foreground">{t('landing.hero.title')}</p>
                             </div>
                           </div>
                         </Link>
@@ -225,12 +225,12 @@ export function MainNav() {
                     <div className="flex flex-col items-center gap-4">
                       <SheetClose asChild>
                         <Button variant="outline" className="w-full text-lg" asChild>
-                            <Link href="/login">{t('Login')}</Link>
+                            <Link href="/login">{t('common.login')}</Link>
                         </Button>
                       </SheetClose>
                       <SheetClose asChild>
                         <Button className="w-full text-lg" asChild>
-                          <Link href="/signup">{t('Sign Up')}</Link>
+                          <Link href="/signup">{t('common.sign_up')}</Link>
                         </Button>
                       </SheetClose>
                     </div>

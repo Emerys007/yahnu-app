@@ -92,7 +92,27 @@
     "loading": "Loading...",
     "coming_soon": "Coming Soon!",
     "no_results_found": "No results found.",
-    "slogan": "Connect. Grow. Succeed."
+    "slogan": "Connect. Grow. Succeed.",
+    "toggle_nav": "Toggle navigation menu",
+    "more_options": "More options",
+    "english": "English",
+    "french": "French",
+    "time": {
+      "years_ago": "years ago",
+      "months_ago": "months ago",
+      "days_ago": "days ago",
+      "hours_ago": "hours ago",
+      "minutes_ago": "minutes ago",
+      "seconds_ago": "seconds ago"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "no_new": "No new notifications",
+      "mark_all_read": "Mark all as read",
+      "new_company_approval": "New company \"{name}\" requires approval",
+      "new_school_approval": "New school \"{name}\" requires approval",
+      "new_graduate_activation": "New graduate \"{name}\" requires activation"
+    }
   },
   "auth": {
     "forgot_password_desc": "No problem. Enter your email address and we'll send you a link to reset your password.",
@@ -112,7 +132,22 @@
     "hero": {
       "title": "Your future starts here",
       "subtitle": "Unlock Your Potential. Find Your Dream Job Today.",
-      "promo_text": "Yahnu connects you with thousands of exclusive job opportunities in {country} tailored to your unique skills and aspirations. Your future starts here."
+      "promo_text": "Yahnu connects you with thousands of exclusive job opportunities in {country} tailored to your unique skills and aspirations. Your future starts here.",
+      "graduates": {
+        "headline": "Find Your Dream Job Today.",
+        "subtitle": "Explore thousands of job opportunities tailored for you in {country}. Your next career move is just a click away.",
+        "buttonText": "Search for Jobs"
+      },
+      "companies": {
+        "headline": "Build Your Dream Team",
+        "subtitle": "Access a diverse pool of talented graduates from top schools. Find the perfect fit for your company's culture and goals.",
+        "buttonText": "Post a Job Opening"
+      },
+      "universities": {
+        "headline": "Forge Industry Partnerships",
+        "subtitle": "Collaborate with leading academic institutions to shape the future of talent. Connect with the brightest minds and drive innovation.",
+        "buttonText": "Become a Partner"
+      }
     },
     "features": {
       "title": "Everything You Need to Succeed",

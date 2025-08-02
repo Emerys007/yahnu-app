@@ -92,7 +92,27 @@
     "loading": "Chargement...",
     "coming_soon": "Bientôt disponible !",
     "no_results_found": "Aucun résultat trouvé.",
-    "slogan": "Connectez. Croissez. Réussissez."
+    "slogan": "Connectez. Croissez. Réussissez.",
+    "toggle_nav": "Basculer le menu de navigation",
+    "more_options": "Plus d'options",
+    "english": "Anglais",
+    "french": "Français",
+    "time": {
+      "years_ago": "il y a des années",
+      "months_ago": "il y a des mois",
+      "days_ago": "il y a des jours",
+      "hours_ago": "il y a des heures",
+      "minutes_ago": "il y a quelques minutes",
+      "seconds_ago": "il y a quelques secondes"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "no_new": "Aucune nouvelle notification",
+      "mark_all_read": "Marquer tout comme lu",
+      "new_company_approval": "La nouvelle entreprise \"{name}\" nécessite une approbation",
+      "new_school_approval": "La nouvelle école \"{name}\" nécessite une approbation",
+      "new_graduate_activation": "Le nouveau diplômé \"{name}\" nécessite une activation"
+    }
   },
   "auth": {
     "forgot_password_desc": "Aucun problème. Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
@@ -112,7 +132,22 @@
     "hero": {
       "title": "Votre avenir commence ici",
       "subtitle": "Révélez votre potentiel. Trouvez l'emploi de vos rêves aujourd'hui.",
-      "promo_text": "Yahnu vous connecte à des milliers d'opportunités d'emploi exclusives en {country} adaptées à vos compétences et aspirations uniques. Votre avenir commence ici."
+      "promo_text": "Yahnu vous connecte à des milliers d'opportunités d'emploi exclusives en {country} adaptées à vos compétences et aspirations uniques. Votre avenir commence ici.",
+      "graduates": {
+        "headline": "Trouvez l'emploi de vos rêves aujourd'hui.",
+        "subtitle": "Explorez des milliers d'opportunités d'emploi conçues pour vous en {country}. Votre prochain carrièredéplacement est à portée de clic.",
+        "buttonText": "Rechercher des emplois"
+      },
+      "companies": {
+        "headline": "Constituez votre équipe de rêve",
+        "subtitle": "Accédez à un pool diversifié de diplômés talentueux des meilleures écoles. Trouvez l'ajustement parfait pour la culture et les objectifs de votre entreprise.",
+        "buttonText": "Publier une offre d'emploi"
+      },
+      "universities": {
+        "headline": "Forger des partenariats industriels",
+        "subtitle": "Collaborez avec des établissements universitaires de premier plan pour façonner l'avenir des talents. Connectez-vous avec les esprits les plus brillants et stimulez l'innovation.",
+        "buttonText": "Devenir partenaire"
+      }
     },
     "features": {
       "title": "Tout ce dont vous avez besoin pour réussir",

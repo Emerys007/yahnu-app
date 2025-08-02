@@ -52,16 +52,16 @@ type NotificationItem = {
 const formatDistanceToNow = (date: Date, t: (key: string) => string): string => {
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
     let interval = seconds / 31536000;
-    if (interval > 1) return `${Math.floor(interval)} ${t('years ago')}`;
+    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.years_ago')}`;
     interval = seconds / 2592000;
-    if (interval > 1) return `${Math.floor(interval)} ${t('months ago')}`;
+    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.months_ago')}`;
     interval = seconds / 86400;
-    if (interval > 1) return `${Math.floor(interval)} ${t('days ago')}`;
+    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.days_ago')}`;
     interval = seconds / 3600;
-    if (interval > 1) return `${Math.floor(interval)} ${t('hours ago')}`;
+    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.hours_ago')}`;
     interval = seconds / 60;
-    if (interval > 1) return `${Math.floor(interval)} ${t('minutes ago')}`;
-    return `${Math.floor(seconds)} ${t('seconds ago')}`;
+    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.minutes_ago')}`;
+    return `${Math.floor(seconds)} ${t('common.time.seconds_ago')}`;
 };
 
 const getReadNotificationIds = (): string[] => {
@@ -117,13 +117,13 @@ export function DashboardHeader() {
             let notificationText = '';
             let icon = Building;
             if (data.role === 'company') {
-                notificationText = t("New company \"{name}\" requires approval", { name: data.name });
+                notificationText = t("common.notifications.new_company_approval", { name: data.name });
                 icon = Building;
             } else if (data.role === 'school') {
-                notificationText = t("New school \"{name}\" requires approval", { name: data.name });
+                notificationText = t("common.notifications.new_school_approval", { name: data.name });
                 icon = School;
             } else if (data.role === 'graduate') {
-                notificationText = t("New graduate \"{name}\" requires activation", { name: data.name });
+                notificationText = t("common.notifications.new_graduate_activation", { name: data.name });
                 icon = Building; // TODO: Change to a more appropriate icon for a graduate
             }
             
@@ -167,12 +167,12 @@ export function DashboardHeader() {
      <DropdownMenuSub>
         <DropdownMenuSubTrigger>
            <Languages className="mr-2 h-4 w-4" />
-           <span>{t('Language')}</span>
+           <span>{t('common.language')}</span>
         </DropdownMenuSubTrigger>
         <DropdownMenuPortal>
            <DropdownMenuSubContent>
-              <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage('fr')}>Français</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLanguage('en')}>{t('common.english')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLanguage('fr')}>{t('common.french')}</DropdownMenuItem>
             </DropdownMenuSubContent>
         </DropdownMenuPortal>
       </DropdownMenuSub>
@@ -183,13 +183,13 @@ export function DashboardHeader() {
         <DropdownMenuSubTrigger>
            <Sun className="mr-2 h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
            <Moon className="absolute mr-2 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-           <span>{t('Theme')}</span>
+           <span>{t('common.theme')}</span>
         </DropdownMenuSubTrigger>
         <DropdownMenuPortal>
            <DropdownMenuSubContent>
-              <DropdownMenuItem onClick={() => setTheme("light")}>{t('Light')}</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>{t('Dark')}</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")}>{t('System')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("light")}>{t('common.light')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("dark")}>{t('common.dark')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("system")}>{t('common.system')}</DropdownMenuItem>
             </DropdownMenuSubContent>
         </DropdownMenuPortal>
      </DropdownMenuSub>
@@ -204,7 +204,7 @@ export function DashboardHeader() {
             onClick={toggleSidebar}
           >
             <PanelLeft className="h-5 w-5" />
-            <span className="sr-only">{t('Toggle navigation menu')}</span>
+            <span className="sr-only">{t('common.toggle_nav')}</span>
         </Button>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
         <div className="ml-auto flex-1 md:grow-0">
@@ -215,7 +215,7 @@ export function DashboardHeader() {
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon" className="relative shrink-0">
                     <Bell className="h-[1.2rem] w-[1.2rem]" />
-                    <span className="sr-only">{t('Notifications')}</span>
+                    <span className="sr-only">{t('common.notifications.title')}</span>
                     {unreadCount > 0 && (
                         <div className="absolute top-0 right-0 -mt-1 -mr-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                             {unreadCount}
@@ -224,7 +224,7 @@ export function DashboardHeader() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80">
-                <DropdownMenuLabel>{t('Notifications')}</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('common.notifications.title')}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {notifications.length > 0 ? (
                     notifications.map((item) => (
@@ -238,12 +238,12 @@ export function DashboardHeader() {
                         </DropdownMenuItem>
                     ))
                 ) : (
-                     <DropdownMenuItem disabled>{t('No new notifications')}</DropdownMenuItem>
+                     <DropdownMenuItem disabled>{t('common.notifications.no_new')}</DropdownMenuItem>
                 )}
                  <DropdownMenuSeparator />
                  <DropdownMenuFooter>
                     <Button variant="ghost" className="w-full" onClick={handleReadAll} disabled={unreadCount === 0}>
-                        <Check className="mr-2 h-4 w-4" /> {t('Mark all as read')}
+                        <Check className="mr-2 h-4 w-4" /> {t('common.notifications.mark_all_read')}
                     </Button>
                  </DropdownMenuFooter>
             </DropdownMenuContent>
@@ -253,7 +253,7 @@ export function DashboardHeader() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon" className="shrink-0">
                 <MoreVertical className="h-[1.2rem] w-[1.2rem]" />
-                <span className="sr-only">{t('More options')}</span>
+                <span className="sr-only">{t('common.more_options')}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">

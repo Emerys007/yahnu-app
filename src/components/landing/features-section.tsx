@@ -12,62 +12,62 @@ import { AnimatedGradientBackground } from "../ui/animated-gradient-background"
 
 const getFeaturesData = (t: (key: string) => string) => ({
   graduates: {
-    title: t('For Graduates'),
+    title: t('landing.features.for_graduates.title'),
     icon: <GraduationCap className="h-8 w-8 mb-4 text-primary" />,
     image: "/images/uni-partnership.jpg",
     imageHint: "african graduate students",
     items: [
       {
-        title: t('AI-Powered Profile Builder'),
-        description: t('Create a standout professional profile in minutes. Our AI helps you highlight your skills and experiences to attract top employers.'),
+        title: t('landing.features.for_graduates.ai_profile_builder'),
+        description: t('landing.features.for_graduates.ai_profile_builder_desc'),
       },
       {
-        title: t('Personalized Job Matching'),
-        description: t('Receive job recommendations that align with your career goals and qualifications. Say goodbye to endless searching.'),
+        title: t('landing.features.for_graduates.job_matching'),
+        description: t('landing.features.for_graduates.job_matching_desc'),
       },
       {
-        title: t('Skill Development Resources'),
-        description: t('Access a library of courses and assessments to enhance your skills and stay competitive in the job market.'),
+        title: t('landing.features.for_graduates.skill_development'),
+        description: t('landing.features.for_graduates.skill_development_desc'),
       },
     ],
   },
   companies: {
-    title: t('For Companies'),
+    title: t('landing.features.for_companies.title'),
     icon: <Building className="h-8 w-8 mb-4 text-primary" />,
     image: "/images/IndustryPartnership.jpeg",
     imageHint: "recruitment dashboard",
     items: [
       {
-        title: t('Targeted Talent Sourcing'),
-        description: t('Efficiently find qualified candidates from a pre-vetted pool of graduates from top schools.'),
+        title: t('landing.features.for_companies.talent_sourcing'),
+        description: t('landing.features.for_companies.talent_sourcing_desc'),
       },
       {
-        title: t('Streamlined Recruitment'),
-        description: t('Manage your entire hiring process, from posting jobs to scheduling interviews, all on one platform.'),
+        title: t('landing.features.for_companies.streamlined_recruitment'),
+        description: t('landing.features.for_companies.streamlined_recruitment_desc'),
       },
       {
-        title: t('Data-Driven Insights'),
-        description: t('Gain valuable insights into the talent market and make informed hiring decisions with our analytics tools.'),
+        title: t('landing.features.for_companies.data_insights'),
+        description: t('landing.features.for_companies.data_insights_desc'),
       },
     ],
   },
   schools: {
-    title: t('For Schools'),
+    title: t('landing.features.for_schools.title'),
     icon: <School className="h-8 w-8 mb-4 text-primary" />,
     image: "/images/University.png",
     imageHint: "academic analytics",
     items: [
       {
-        title: t('Strengthen Industry Ties'),
-        description: t('Forge strategic partnerships with leading companies to enhance your curriculum and create opportunities for your students.'),
+        title: t('landing.features.for_schools.industry_ties'),
+        description: t('landing.features.for_schools.industry_ties_desc'),
       },
       {
-        title: t('Boost Graduate Employability'),
-        description: t('Track and improve your graduates\' employment outcomes with our comprehensive reporting and analytics.'),
+        title: t('landing.features.for_schools.boost_graduate_employability'),
+        description: t('landing.features.for_schools.graduate_employability_desc'),
       },
       {
-        title: t('Showcase Your Institution'),
-        description: t('Promote your school\'s programs and achievements to a wide audience of prospective students and corporate partners.'),
+        title: t('landing.features.for_schools.showcase_institution'),
+        description: t('landing.features.for_schools.showcase_institution_desc'),
       },
     ],
   },
@@ -108,9 +108,9 @@ const AnimatedTabs = () => {
   const featuresData = getFeaturesData(t);
 
   const tabs = [
-    { id: 'graduates', label: t('Graduates'), icon: GraduationCap },
-    { id: 'companies', label: t('Companies'), icon: Building },
-    { id: 'schools', label: t('Schools'), icon: School },
+    { id: 'graduates', label: t('landing.features.for_graduates.title'), icon: GraduationCap },
+    { id: 'companies', label: t('landing.features.for_companies.title'), icon: Building },
+    { id: 'schools', label: t('landing.features.for_schools.title'), icon: School },
   ];
 
   const imageVariants = {
@@ -232,9 +232,9 @@ export function FeaturesSection() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
         >
-          <h2 className="text-4xl font-bold tracking-tight">{t('Everything You Need to Succeed')}</h2>
+          <h2 className="text-4xl font-bold tracking-tight">{t('landing.features.title')}</h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-            {t('Yahnu is a comprehensive ecosystem designed to bridge the gap between education and employment. Explore the powerful features tailored for every user.')}
+            {t('landing.features.description')}
           </p>
         </motion.div>
         

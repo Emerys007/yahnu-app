@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -22,10 +23,9 @@ import { cn } from "@/lib/utils"
 const getSlides = (t: (key: string) => string) => [
     {
         role: "Graduates",
-        // Corrected: Use the shorter key for the headline
-        headline: t("Find Your Dream Job Today."),
-        subtitle: t("Explore thousands of job opportunities tailored for you in Côte d'Ivoire. Your next career move is just a click away."),
-        buttonText: t("Search for Jobs"),
+        headline: t("landing.hero.graduates.headline"),
+        subtitle: t("landing.hero.graduates.subtitle"),
+        buttonText: t("landing.hero.graduates.buttonText"),
         buttonIcon: <Search />,
         imageUrl: "/images/dream-job.jpg",
         imageHint: "confident graduate looking towards the future",
@@ -33,9 +33,9 @@ const getSlides = (t: (key: string) => string) => [
       },
       {
         role: "Companies",
-        headline: t("Build Your Dream Team"),
-        subtitle: t("Access a diverse pool of talented graduates from top schools. Find the perfect fit for your company's culture and goals."),
-        buttonText: t("Post a Job Opening"),
+        headline: t("landing.hero.companies.headline"),
+        subtitle: t("landing.hero.companies.subtitle"),
+        buttonText: t("landing.hero.companies.buttonText"),
         buttonIcon: <PlusCircle />,
         imageUrl: "/images/Build-A-Team.jpeg",
         imageHint: "diverse business team",
@@ -43,9 +43,9 @@ const getSlides = (t: (key: string) => string) => [
       },
       {
         role: "Universities",
-        headline: t("Forge Industry Partnerships"),
-        subtitle: t("Collaborate with leading academic institutions to shape the future of talent. Connect with the brightest minds and drive innovation."),
-        buttonText: t("Become a Partner"),
+        headline: t("landing.hero.universities.headline"),
+        subtitle: t("landing.hero.universities.subtitle"),
+        buttonText: t("landing.hero.universities.buttonText"),
         buttonIcon: <Handshake />,
         imageUrl: "/images/Industry.webp",
         imageHint: "university building and a handshake representing partnership",
