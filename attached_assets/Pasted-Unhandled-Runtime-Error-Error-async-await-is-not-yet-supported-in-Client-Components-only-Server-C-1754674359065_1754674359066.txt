@@ -1,0 +1,37 @@
+Unhandled Runtime Error
+Error: async/await is not yet supported in Client Components, only Server Components. This error is often caused by accidentally adding `'use client'` to a module that was originally written for the server.
+
+Call Stack
+React
+trackUsedThenable
+node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js (9157:1)
+unwrapThenable
+node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js (9346:1)
+reconcileChildFibersImpl
+node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js (10540:1)
+reconcileChildFibers
+node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js (10573:1)
+reconcileChildren
+node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js (15802:1)
+mountIndeterminateComponent
+node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js (16938:1)
+beginWork$1
+node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js (18458:1)
+beginWork
+node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js (26927:1)
+performUnitOfWork
+webpack-internal:/(app-pages-browser)/node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js
+workLoopSync
+webpack-internal:/(app-pages-browser)/node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js
+renderRootSync
+webpack-internal:/(app-pages-browser)/node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js
+recoverFromConcurrentError
+webpack-internal:/(app-pages-browser)/node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js
+performConcurrentWorkOnRoot
+webpack-internal:/(app-pages-browser)/node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js
+workLoop
+webpack-internal:/(app-pages-browser)/node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js
+flushWork
+webpack-internal:/(app-pages-browser)/node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js
+MessagePort.performWorkUntilDeadline
+webpack-internal:/(app-pages-browser)/node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js
