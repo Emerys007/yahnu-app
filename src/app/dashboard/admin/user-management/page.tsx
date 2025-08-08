@@ -4,7 +4,8 @@ import { UserManagementClient } from "./user-management-client";
 import { db } from "@/lib/firebase";
 import { collection, query, getDocs, DocumentData, where } from "firebase/firestore";
 import { type Role, type UserStatus } from "@/context/auth-context";
-import { getTranslations } from '@/context/localization-context';
+import en from '@/locales/en.json';
+import fr from '@/locales/fr.json';
 
 type User = {
   id: string;
@@ -37,7 +38,22 @@ async function getUsers(): Promise<User[]> {
 
 export default async function ManageUsersPage() {
     const users = await getUsers();
-    const t = await getTranslations('fr'); // Default to French as per your localization context
+    
+    // Simple translation function for server component
+    const t = (key: string): string => {
+        const keys = key.split('.');
+        let value = fr; // Default to French
+        
+        for (const k of keys) {
+            if (value && typeof value === 'object' && k in value) {
+                value = value[k];
+            } else {
+                return key; // Return key if not found
+            }
+        }
+        
+        return typeof value === 'string' ? value : key;
+    };
 
     return (
         <div className="space-y-8">
