@@ -1,23 +1,9 @@
-
 import { UserCog } from "lucide-react";
 import { UserManagementClient } from "./user-management-client";
+import { UserManagementHeader } from "./user-management-header";
 import { db } from "@/lib/firebase";
 import { collection, query, getDocs, DocumentData, where } from "firebase/firestore";
 import { type Role, type UserStatus } from "@/context/auth-context";
-import { useLocalization } from "@/context/localization-context";
-import en from '@/locales/en.json';
-import fr from '@/locales/fr.json';
-
-// Client component for the header that respects language context
-function UserManagementHeader() {
-    const { t } = useLocalization();
-    return (
-        <>
-            <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.user_management.title')}</h1>
-            <p className="text-muted-foreground mt-1">{t('dashboard.user_management.description')}</p>
-        </>
-    );
-}
 
 type User = {
   id: string;
@@ -50,14 +36,20 @@ async function getUsers(): Promise<User[]> {
 
 export default async function ManageUsersPage() {
     const users = await getUsers();
-    
+
     // Simple translation function for server component
     // Note: In a real app, you'd get the user's language preference from cookies or headers
     // For now, we'll use a simple approach that checks both locales
     const t = (key: string, preferredLocale: 'en' | 'fr' = 'en'): string => {
         const keys = key.split('.');
-        let value = preferredLocale === 'fr' ? fr : en;
-        
+        let value = preferredLocale === 'fr' ? {
+            "dashboard.user_management.title": "Gestion des utilisateurs",
+            "dashboard.user_management.description": "Gérer les comptes utilisateurs de votre organisation."
+        } : {
+            "dashboard.user_management.title": "User Management",
+            "dashboard.user_management.description": "Manage your organization's user accounts."
+        };
+
         for (const k of keys) {
             if (value && typeof value === 'object' && k in value) {
                 value = value[k];
@@ -65,7 +57,7 @@ export default async function ManageUsersPage() {
                 return key; // Return key if not found
             }
         }
-        
+
         return typeof value === 'string' ? value : key;
     };
 
