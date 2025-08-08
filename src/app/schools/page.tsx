@@ -53,7 +53,7 @@ const schoolsData: School[] = [
 ];
 
 export default function SchoolsPage() {
-  const { t, countryName } = useLocalization();
+  const { t, countryName, language } = useLocalization();
   const { country } = useCountry();
 
   const isLaunchCountry = country.code === 'CI';
