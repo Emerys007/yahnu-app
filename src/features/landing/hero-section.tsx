@@ -39,7 +39,7 @@ const getSlides = (t: (key: string, args?: any) => string, country: string) => [
         buttonIcon: <PlusCircle />,
         imageUrl: "/images/hero/build-a-team.jpeg",
         imageHint: "diverse team collaborating in a modern office",
-        href: "/dashboard/company-profile"
+        href: "/signup?role=company"
       },
       {
         role: "Universities",
@@ -49,7 +49,7 @@ const getSlides = (t: (key: string, args?: any) => string, country: string) => [
         buttonIcon: <Handshake />,
         imageUrl: "/images/hero/industry-partnership.webp",
         imageHint: "university building and a handshake representing partnership",
-        href: "/signup"
+        href: "/signup?role=school_administrator"
       },
 ]
 
