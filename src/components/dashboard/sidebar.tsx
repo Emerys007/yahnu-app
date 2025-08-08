@@ -88,11 +88,11 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   ];
 
   const superAdminNav = [
-    { href: "/dashboard/admin/overview", icon: Shield, label: t('dashboard.admin.overview.title') },
-    { href: "/dashboard/admin/user-management", icon: UserCog, label: t('dashboard.admin.user_management') },
+    { href: "/dashboard/admin/overview", icon: Shield, label: t('dashboard.overview.title') },
+    { href: "/dashboard/admin/user-management", icon: UserCog, label: t('dashboard.user_management.title') },
     { href: "/dashboard/admin/manage-team", icon: Users2, label: t('dashboard.admin.manage_team') },
-    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('dashboard.admin.system_analytics') },
-    { href: "/dashboard/content", icon: Newspaper, label: t('dashboard.admin.content_moderation') },
+    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('dashboard.analytics.title') },
+    { href: "/dashboard/content", icon: Newspaper, label: t('dashboard.content.title') },
     { href: "/dashboard/support/center", icon: LifeBuoy, label: t('common.support') },
     { type: "divider", label: t('dashboard.admin.support_tools') },
     { href: "/dashboard/support/announcements", icon: Megaphone, label: t('dashboard.admin.announcements') },
@@ -102,10 +102,10 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   ];
 
   const adminNav = [
-    { href: "/dashboard/admin/overview", icon: Shield, label: t('dashboard.admin.overview.title') },
-    { href: "/dashboard/admin/user-management", icon: UserCog, label: t('dashboard.admin.user_management') },
-    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('dashboard.admin.system_analytics') },
-    { href: "/dashboard/content", icon: Newspaper, label: t('dashboard.admin.content_moderation') },
+    { href: "/dashboard/admin/overview", icon: Shield, label: t('dashboard.overview.title') },
+    { href: "/dashboard/admin/user-management", icon: UserCog, label: t('dashboard.user_management.title') },
+    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('dashboard.analytics.title') },
+    { href: "/dashboard/content", icon: Newspaper, label: t('dashboard.content.title') },
     { href: "/dashboard/support/center", icon: LifeBuoy, label: t('common.support') },
     { type: "divider", label: t('dashboard.admin.support_tools') },
     { href: "/dashboard/support/announcements", icon: Megaphone, label: t('dashboard.admin.announcements') },
