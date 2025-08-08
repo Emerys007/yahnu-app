@@ -1,6 +1,4 @@
 
-"use client"
-
 import { UserCog } from "lucide-react";
 import { UserManagementClient } from "./user-management-client";
 import { db } from "@/lib/firebase";

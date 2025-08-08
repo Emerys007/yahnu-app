@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -42,66 +41,67 @@ import { useAuth, type Role } from "@/context/auth-context"
 const getNavItems = (t: (key: string) => string, role: Role) => {
     const main = [
         {
-            group: t('Dashboard'),
+            group: t('dashboard.nav.dashboard'),
             items: [
-                { icon: LayoutDashboard, text: t('Home'), onSelect: (router) => router.push('/dashboard') },
-                { icon: User, text: t('Profile'), onSelect: (router) => router.push('/dashboard/profile') },
+                { icon: LayoutDashboard, text: t('dashboard.nav.home'), onSelect: (router) => router.push('/dashboard') },
+                { icon: User, text: t('dashboard.nav.profile'), onSelect: (router) => router.push('/dashboard/profile') },
             ],
-            roles: ['admin', 'graduate', 'company', 'school', 'super_admin', 'content_manager', 'support_staff'],
+            roles: ['admin', 'graduate', 'company', 'school'],
         },
         {
-            group: t('Job Postings'),
+            group: t('dashboard.nav.job_postings'),
             items: [
-                { icon: Briefcase, text: t('My Applications'), onSelect: (router) => router.push('/dashboard/applications') },
-                { icon: Building, text: t('Company Profiles'), onSelect: (router) => router.push('/dashboard/companies') },
-                { icon: School, text: t('School Profiles'), onSelect: (router) => router.push('/dashboard/schools') },
+                { icon: Briefcase, text: t('dashboard.nav.my_applications'), onSelect: (router) => router.push('/dashboard/my-applications') },
+                { icon: Building, text: t('dashboard.nav.company_profiles'), onSelect: (router) => router.push('/dashboard/company-profiles') },
+                { icon: School, text: t('dashboard.nav.school_profiles'), onSelect: (router) => router.push('/dashboard/school-profiles') },
             ],
-            roles: ['graduate'],
+            roles: ['admin', 'graduate'],
         },
         {
-            group: t('Recruitment'),
+            group: t('dashboard.nav.recruitment'),
             items: [
-                { icon: FileText, text: t('Post a Job'), onSelect: (router) => router.push('/dashboard/job-postings') },
-                { icon: Users2, text: t('Candidates'), onSelect: (router) => router.push('/dashboard/talent-pool') },
-                { icon: Handshake, text: t('Partnerships'), onSelect: (router) => router.push('/dashboard/partnerships') },
+                { icon: FileText, text: t('dashboard.nav.post_job'), onSelect: (router) => router.push('/dashboard/job-postings/new') },
+                { icon: Users2, text: t('dashboard.nav.candidates'), onSelect: (router) => router.push('/dashboard/candidates') },
+                { icon: Handshake, text: t('dashboard.nav.partnerships'), onSelect: (router) => router.push('/dashboard/partnerships') },
             ],
-            roles: ['company', 'school'],
+            roles: ['admin', 'company', 'school'],
         },
     ];
 
     const footer = [
         {
-            group: t('General'),
+            group: t('dashboard.nav.general'),
             items: [
-                { icon: Settings, text: t('Settings'), onSelect: (router) => router.push('/dashboard/settings') },
-                { icon: LifeBuoy, text: t('Support'), onSelect: (router) => router.push('/dashboard/support') },
+                { icon: Settings, text: t('dashboard.nav.settings'), onSelect: (router) => router.push('/dashboard/settings') },
+                { icon: LifeBuoy, text: t('dashboard.nav.support'), onSelect: (router) => router.push('/dashboard/support') },
             ],
-            roles: ['admin', 'graduate', 'company', 'school', 'super_admin', 'content_manager', 'support_staff'],
+            roles: ['admin', 'graduate', 'company', 'school'],
         },
         {
-            group: t('Admin'),
+            group: t('dashboard.nav.admin'),
             items: [
-                { icon: Shield, text: t('Overview'), onSelect: (router) => router.push('/dashboard/admin/overview') },
-                { icon: UserCog, text: t('Manage Users'), onSelect: (router) => router.push('/dashboard/admin/user-management') },
-                { icon: Users2, text: t('Manage Team'), onSelect: (router) => router.push('/dashboard/admin/manage-team') },
+                { icon: Shield, text: t('dashboard.nav.security'), onSelect: (router) => router.push('/dashboard/admin/security') },
+                { icon: UserCheck, text: t('dashboard.nav.approvals'), onSelect: (router) => router.push('/dashboard/admin/approvals') },
+                { icon: UserCog, text: t('dashboard.nav.user_management'), onSelect: (router) => router.push('/dashboard/admin/user-management') },
             ],
-            roles: ['super_admin', 'admin'],
+            roles: ['admin'],
         },
         {
-            group: t('AI Tools'),
+            group: t('dashboard.nav.ai_tools'),
             items: [
-                { icon: BrainCircuit, text: t('Interview Prep'), onSelect: (router) => router.push('/dashboard/interview-prep') },
-                { icon: Award, text: t('Skill Certifications'), onSelect: (router) => router.push('/dashboard/assessments') },
+                { icon: BrainCircuit, text: t('dashboard.nav.ai_insights'), onSelect: (router) => router.push('/dashboard/ai/insights') },
+                { icon: MessageSquare, text: t('dashboard.nav.chatbot_builder'), onSelect: (router) => router.push('/dashboard/ai/chatbot-builder') },
+                { icon: Award, text: t('dashboard.nav.assessment_generator'), onSelect: (router) => router.push('/dashboard/ai/assessment-generator') },
             ],
-            roles: ['graduate'],
+            roles: ['admin', 'company', 'school'],
         },
         {
-            group: t('Reporting'),
+            group: t('dashboard.nav.reporting'),
             items: [
-                 { icon: BarChart3, text: t('Analytics'), onSelect: (router) => router.push('/dashboard/reports') },
-                 { icon: Wrench, text: t('Report Generator'), onSelect: (router) => router.push('/dashboard/reports/custom-report-generator') },
+                 { icon: BarChart3, text: t('dashboard.nav.analytics'), onSelect: (router) => router.push('/dashboard/reports') },
+                 { icon: Wrench, text: t('dashboard.nav.report_generator'), onSelect: (router) => router.push('/dashboard/reports/custom-report-generator') },
             ],
-             roles: ['company', 'school', 'admin', 'super_admin'],
+             roles: ['admin', 'company', 'school'],
         }
     ];
 
@@ -154,7 +154,7 @@ export function SearchCommand() {
         <CommandInput placeholder={t('Type a command or search...')} />
         <CommandList>
           <CommandEmpty>{t('No results found.')}</CommandEmpty>
-          
+
           {mainItems.map((group) => (
             <CommandGroup key={group.group} heading={group.group}>
               {group.items.map((item) => (
@@ -171,7 +171,7 @@ export function SearchCommand() {
           ))}
 
           <CommandSeparator />
-          
+
           {footerItems.map((group) => (
             <CommandGroup key={group.group} heading={group.group}>
               {group.items.map((item) => (
