@@ -171,7 +171,23 @@
       "system_health": "Santé du système",
       "user_management": "Gestion des utilisateurs",
       "system_analytics": "Analyses du système",
-      "content_moderation": "Modération du contenu"
+      "content_moderation": "Modération du contenu",
+      "overview": {
+        "title": "Aperçu Administrateur",
+        "description": "Surveillez et gérez la plateforme Yahnu.",
+        "totalUsers": "Total des utilisateurs",
+        "totalUsersDescription": "Utilisateurs inscrits sur la plateforme",
+        "activeCompanies": "Entreprises actives",
+        "activeCompaniesDescription": "Entreprises avec des offres d'emploi actives",
+        "partnerSchools": "Écoles partenaires",
+        "partnerSchoolsDescription": "Institutions éducatives partenaires",
+        "pendingRequests": "Demandes d'inscription en attente",
+        "pendingRequestsDescription": "Approuver ou rejeter les nouvelles inscriptions d'entreprises et d'écoles.",
+        "recentActivity": "Activité récente",
+        "organizationName": "Nom de l'organisation",
+        "actions": "Actions",
+        "noPendingRequests": "Aucune demande en attente."
+      }
     }
   },
   "auth": {

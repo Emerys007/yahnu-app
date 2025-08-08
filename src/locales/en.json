@@ -171,7 +171,23 @@
       "system_health": "System Health",
       "user_management": "User Management",
       "system_analytics": "System Analytics",
-      "content_moderation": "Content Moderation"
+      "content_moderation": "Content Moderation",
+      "overview": {
+        "title": "Admin Overview",
+        "description": "Monitor and manage the Yahnu platform.",
+        "totalUsers": "Total Users",
+        "totalUsersDescription": "Registered users on the platform",
+        "activeCompanies": "Active Companies",
+        "activeCompaniesDescription": "Companies with active job postings",
+        "partnerSchools": "Partner Schools",
+        "partnerSchoolsDescription": "Educational institution partners",
+        "pendingRequests": "Pending Registration Requests",
+        "pendingRequestsDescription": "Approve or reject new company and school registrations.",
+        "recentActivity": "Recent Activity",
+        "organizationName": "Organization Name",
+        "actions": "Actions",
+        "noPendingRequests": "No pending requests."
+      }
     }
   },
   "auth": {

@@ -1,6 +1,6 @@
 "use client"
 
-import { Shield, Users, Building, School, UserPlus, Briefcase } from "lucide-react";
+import { Shield, Users, Building, GraduationCap, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
 import { AdminClient } from "../admin-client";
 import { type UserStatus } from "@/context/auth-context";
 import { db } from "@/lib/firebase";
@@ -32,12 +32,12 @@ type Activity = {
 // In a real-world scenario, this data would come from a more complex query or pre-aggregated data.
 async function getAdminDashboardData() {
     const usersRef = collection(db, "users");
-    
+
     // Fetch counts
     const graduateQuery = query(usersRef, where("role", "==", "graduate"), where("status", "==", "active"));
     const companyQuery = query(usersRef, where("role", "==", "company"), where("status", "==", "active"));
     const schoolQuery = query(usersRef, where("role", "==", "school"), where("status", "==", "active"));
-    
+
     const [graduateSnapshot, companySnapshot, schoolSnapshot] = await Promise.all([
         getDocs(graduateQuery),
         getDocs(companyQuery),
@@ -52,8 +52,8 @@ async function getAdminDashboardData() {
 
     // Fetch pending requests
     const pendingQuery = query(
-        usersRef, 
-        where('status', '==', 'pending'), 
+        usersRef,
+        where('status', '==', 'pending'),
         where('role', 'in', ['company', 'school'])
     );
     const pendingSnapshot = await getDocs(pendingQuery);
@@ -85,7 +85,7 @@ async function getAdminDashboardData() {
             time: timeAgo
         }
     });
-    
+
     // Adding a mock job post for variety
     recentActivity.push({
         id: 'job-1',
@@ -152,7 +152,7 @@ export default function AdminOverviewPage() {
                  <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">{t('dashboard.admin.overview.partnerSchools')}</CardTitle>
-                        <School className="h-4 w-4 text-muted-foreground" />
+                        <GraduationCap className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold"><CountUp end={stats.activeSchools} /></div>
@@ -163,7 +163,17 @@ export default function AdminOverviewPage() {
 
             <div className="grid lg:grid-cols-3 gap-8 items-start">
                 <div className="lg:col-span-2">
-                    <AdminClient initialRequests={pendingRequests} />
+                    <Card className="md:col-span-2">
+                        <CardHeader>
+                            <CardTitle>{t('dashboard.admin.overview.pendingRequests')}</CardTitle>
+                            <CardDescription>
+                                {t('dashboard.admin.overview.pendingRequestsDescription')}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <AdminClient initialRequests={pendingRequests} />
+                        </CardContent>
+                    </Card>
                 </div>
                 <div className="lg:col-span-1">
                      <Card>
