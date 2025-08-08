@@ -103,7 +103,7 @@ export function HeroSection() {
                   alt={slide.headline}
                   fill
                   sizes="100vw"
-                  className="object-cover"
+                  className="object-contain"
                   data-ai-hint={slide.imageHint}
                   priority
                 />
