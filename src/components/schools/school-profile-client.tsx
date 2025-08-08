@@ -48,13 +48,13 @@ export function SchoolProfileClient({ school }: { school: School }) {
 
                 <div className="grid md:grid-cols-3 gap-8 mt-8">
                     <div className="md:col-span-2">
-                        <h2 className="text-2xl font-bold mb-4">{t('About')} {school.acronym}</h2>
+                        <h2 className="text-2xl font-bold mb-4">{t('common.about')} {school.acronym}</h2>
                         <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: t(school.description) }} />
                     </div>
                     <div>
                         <Card>
                             <CardHeader>
-                                <CardTitle>{t('Institution Details')}</CardTitle>
+                                <CardTitle>{t('pages.schools.Institution Details')}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-center gap-3"><MapPin className="h-5 w-5 text-muted-foreground"/> <span>{school.location}</span></div>
@@ -65,7 +65,7 @@ export function SchoolProfileClient({ school }: { school: School }) {
                 </div>
 
                 <div className="mt-12">
-                     <h2 className="text-2xl font-bold mb-4">{t('Featured Programs')}</h2>
+                     <h2 className="text-2xl font-bold mb-4">{t('pages.schools.Featured Programs')}</h2>
                      <div className="space-y-4">
                         {school.programs.map((program, index) => (
                             <Card key={program} className="p-4 flex justify-between items-center">
@@ -73,7 +73,7 @@ export function SchoolProfileClient({ school }: { school: School }) {
                                     <h3 className="font-semibold text-lg">{t(program)}</h3>
                                 </div>
                                  <Button asChild variant="secondary">
-                                    <Link href={`/schools/${school.slug}`}>{t('Learn More')}</Link>
+                                    <Link href={`/schools/${school.slug}`}>{t('common.learn_more')}</Link>
                                  </Button>
                             </Card>
                         ))}
