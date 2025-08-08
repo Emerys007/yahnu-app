@@ -207,13 +207,10 @@
       "removed_from_platform": "a été supprimé de la plateforme.",
       "failed_delete_user": "Échec de la suppression de l'utilisateur.",
       "no_users_found": "Aucun utilisateur trouvé.",
-      "filter_role": "Filtrer par rôle",
-      "filter_status": "Filtrer par statut",
-      "all_roles": "Tous les rôles",
-      "all_statuses": "Tous les statuts",
-      "graduate": "Diplômé",
-      "company": "Entreprise",
-      "school": "École"
+      "active": "Actif",
+      "pending": "En attente",
+      "rejected": "Rejeté",
+      "suspended": "Suspendu"
     },
     "analytics": {
       "title": "Analyses de la plateforme",

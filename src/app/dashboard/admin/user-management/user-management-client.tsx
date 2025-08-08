@@ -194,9 +194,9 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">{t('dashboard.user_management.all_roles')}</SelectItem>
-                        <SelectItem value="graduate">{t('dashboard.user_management.graduate')}</SelectItem>
-                        <SelectItem value="company">{t('dashboard.user_management.company')}</SelectItem>
-                        <SelectItem value="school">{t('dashboard.user_management.school')}</SelectItem>
+                        <SelectItem value="graduate">{t('common.graduate')}</SelectItem>
+                        <SelectItem value="company">{t('common.company')}</SelectItem>
+                        <SelectItem value="school">{t('common.school')}</SelectItem>
                     </SelectContent>
                 </Select>
                 <Select value={filters.status} onValueChange={(v) => handleFilterChange('status', v)}>
@@ -238,7 +238,7 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                                         {user.accountType === 'company' && <Building className="h-3 w-3" />}
                                         {user.accountType === 'school' && <School className="h-3 w-3" />}
                                         {user.accountType === 'graduate' && <Users className="h-3 w-3" />}
-                                        {t(`dashboard.user_management.${user.accountType}`)}
+                                        {t(`common.${user.accountType}`)}
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
