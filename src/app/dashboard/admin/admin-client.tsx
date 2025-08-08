@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from "react"
@@ -22,7 +21,11 @@ type User = {
   date: string
 }
 
-export const AdminClient = ({ initialRequests }: { initialRequests: User[] }) => {
+type AdminClientProps = {
+    initialRequests: User[];
+};
+
+export const AdminClient = ({ initialRequests }: AdminClientProps) => {
     const { t } = useLocalization();
     const { toast } = useToast();
     const [requests, setRequests] = useState(initialRequests);
@@ -35,7 +38,7 @@ export const AdminClient = ({ initialRequests }: { initialRequests: User[] }) =>
             const userDocRef = doc(db, "users", id);
             const newStatus = action === "approve" ? "active" : "declined";
             await updateDoc(userDocRef, { status: newStatus });
-            
+
             setRequests(requests.filter(r => r.id !== id))
             toast({
                 title: t(action === "approve" ? "Request Approved" : "Request Rejected"),
@@ -50,16 +53,16 @@ export const AdminClient = ({ initialRequests }: { initialRequests: User[] }) =>
     return (
         <Card>
             <CardHeader>
-                <CardTitle>{t('Pending Registration Requests')}</CardTitle>
-                <CardDescription>{t('Approve or reject new company and school registrations.')}</CardDescription>
+                <CardTitle>{t('dashboard.admin.overview.pendingRegistrationRequests')}</CardTitle>
+                <CardDescription>{t('dashboard.admin.overview.approveOrRejectNewRegistrations')}</CardDescription>
             </CardHeader>
             <CardContent>
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>{t('Organization Name')}</TableHead>
-                            <TableHead>{t('Type')}</TableHead>
-                            <TableHead className="text-right">{t('Actions')}</TableHead>
+                            <TableHead>{t('dashboard.admin.overview.organizationName')}</TableHead>
+                            <TableHead>{t('common.type')}</TableHead>
+                            <TableHead className="text-right">{t('dashboard.admin.overview.actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -69,7 +72,7 @@ export const AdminClient = ({ initialRequests }: { initialRequests: User[] }) =>
                                 <TableCell>
                                     <Badge variant="outline" className="gap-1">
                                         {req.accountType === 'Company' ? <Building className="h-3 w-3" /> : <School className="h-3 w-3" />}
-                                        {t(req.accountType)}
+                                        {t(`accountType.${req.accountType}`)}
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="text-right space-x-2">
@@ -80,7 +83,7 @@ export const AdminClient = ({ initialRequests }: { initialRequests: User[] }) =>
                         ))}
                         {requests.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={3} className="h-24 text-center">{t('No pending requests.')}</TableCell>
+                                <TableCell colSpan={3} className="h-24 text-center">{t('dashboard.admin.overview.noPendingRequests')}</TableCell>
                             </TableRow>
                         )}
                     </TableBody>
