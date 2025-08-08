@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, GraduationCap, Clock, Users } from "lucide-react";
 import Link from "next/link";
+import { useLocalization } from "@/context/localization-context";
 
 interface School {
     id: string;
@@ -15,7 +16,12 @@ interface School {
     location: string;
     website: string;
     description: string;
-    programs: { name: string; duration: string; capacity: string; description: string }[];
+    programs: { 
+        nameKey: string; 
+        duration: string; 
+        capacity: string; 
+        descriptionKey: string;
+    }[];
     slug: string;
 }
 
@@ -30,28 +36,28 @@ const schoolsData: School[] = [
         description: "school_1_description",
         programs: [
             {
-                name: "Civil Engineering",
+                nameKey: "school_1_program_1",
                 duration: "5 years",
                 capacity: "150 students",
-                description: "Comprehensive program covering structural engineering, construction management, and infrastructure development."
+                descriptionKey: "school_1_program_1_description"
             },
             {
-                name: "Electrical Engineering",
+                nameKey: "school_1_program_2",
                 duration: "5 years", 
                 capacity: "120 students",
-                description: "Focus on power systems, electronics, telecommunications, and renewable energy technologies."
+                descriptionKey: "school_1_program_2_description"
             },
             {
-                name: "Computer Science",
+                nameKey: "school_1_program_3",
                 duration: "5 years",
                 capacity: "200 students",
-                description: "Modern curriculum covering software development, AI, cybersecurity, and data science."
+                descriptionKey: "school_1_program_3_description"
             },
             {
-                name: "Telecommunications",
+                nameKey: "school_1_program_4",
                 duration: "5 years",
                 capacity: "100 students",
-                description: "Specialized program in network engineering, wireless communications, and digital systems."
+                descriptionKey: "school_1_program_4_description"
             }
         ],
         slug: "inp-hb",
@@ -66,28 +72,28 @@ const schoolsData: School[] = [
         description: "school_2_description",
         programs: [
             {
-                name: "Medicine",
+                nameKey: "school_2_program_1",
                 duration: "7 years",
                 capacity: "300 students",
-                description: "Comprehensive medical training with clinical rotations and research opportunities."
+                descriptionKey: "school_2_program_1_description"
             },
             {
-                name: "Law",
+                nameKey: "school_2_program_2",
                 duration: "4 years",
                 capacity: "250 students",
-                description: "Legal studies covering civil law, business law, and international law."
+                descriptionKey: "school_2_program_2_description"
             },
             {
-                name: "Economics",
+                nameKey: "school_2_program_3",
                 duration: "3 years",
                 capacity: "400 students",
-                description: "Economic theory, financial analysis, and development economics."
+                descriptionKey: "school_2_program_3_description"
             },
             {
-                name: "Applied Sciences",
+                nameKey: "school_2_program_4",
                 duration: "3 years",
                 capacity: "200 students",
-                description: "Interdisciplinary program combining mathematics, physics, and computer science."
+                descriptionKey: "school_2_program_4_description"
             }
         ],
         slug: "ufhb",
@@ -102,28 +108,28 @@ const schoolsData: School[] = [
         description: "school_3_description",
         programs: [
             {
-                name: "Software Engineering",
+                nameKey: "school_3_program_1",
                 duration: "3 years",
                 capacity: "180 students",
-                description: "Practical software development with industry partnerships and internships."
+                descriptionKey: "school_3_program_1_description"
             },
             {
-                name: "Business Administration",
+                nameKey: "school_3_program_2",
                 duration: "3 years",
                 capacity: "200 students",
-                description: "Management, entrepreneurship, and business strategy for the African market."
+                descriptionKey: "school_3_program_2_description"
             },
             {
-                name: "Industrial Engineering",
+                nameKey: "school_3_program_3",
                 duration: "3 years",
                 capacity: "120 students",
-                description: "Process optimization, quality management, and manufacturing systems."
+                descriptionKey: "school_3_program_3_description"
             },
             {
-                name: "Digital Marketing",
+                nameKey: "school_3_program_4",
                 duration: "2 years",
                 capacity: "100 students",
-                description: "Modern marketing strategies, social media, and e-commerce."
+                descriptionKey: "school_3_program_4_description"
             }
         ],
         slug: "csi",
@@ -138,28 +144,28 @@ const schoolsData: School[] = [
         description: "school_4_description",
         programs: [
             {
-                name: "Computer Science",
+                nameKey: "school_4_program_1",
                 duration: "3 years",
                 capacity: "250 students",
-                description: "Advanced computing with focus on artificial intelligence and machine learning."
+                descriptionKey: "school_4_program_1_description"
             },
             {
-                name: "Network Engineering",
+                nameKey: "school_4_program_2",
                 duration: "3 years",
                 capacity: "150 students",
-                description: "Network infrastructure, cloud computing, and system administration."
+                descriptionKey: "school_4_program_2_description"
             },
             {
-                name: "Cybersecurity",
+                nameKey: "school_4_program_3",
                 duration: "3 years",
                 capacity: "100 students",
-                description: "Information security, ethical hacking, and digital forensics."
+                descriptionKey: "school_4_program_3_description"
             },
             {
-                name: "Data Science",
+                nameKey: "school_4_program_4",
                 duration: "2 years",
                 capacity: "80 students",
-                description: "Big data analytics, machine learning, and business intelligence."
+                descriptionKey: "school_4_program_4_description"
             }
         ],
         slug: "esatic",
@@ -174,28 +180,28 @@ const schoolsData: School[] = [
         description: "school_5_description",
         programs: [
             {
-                name: "Statistics",
+                nameKey: "school_5_program_1",
                 duration: "3 years",
                 capacity: "120 students",
-                description: "Applied statistics, biostatistics, and survey methodology."
+                descriptionKey: "school_5_program_1_description"
             },
             {
-                name: "Applied Economics",
+                nameKey: "school_5_program_2",
                 duration: "3 years",
                 capacity: "150 students",
-                description: "Economic modeling, policy analysis, and development economics."
+                descriptionKey: "school_5_program_2_description"
             },
             {
-                name: "Actuarial Science",
+                nameKey: "school_5_program_3",
                 duration: "3 years",
                 capacity: "80 students",
-                description: "Risk assessment, insurance mathematics, and financial modeling."
+                descriptionKey: "school_5_program_3_description"
             },
             {
-                name: "Business Analytics",
+                nameKey: "school_5_program_4",
                 duration: "2 years",
                 capacity: "100 students",
-                description: "Data-driven decision making and predictive analytics for business."
+                descriptionKey: "school_5_program_4_description"
             }
         ],
         slug: "ensea",
@@ -205,6 +211,56 @@ const schoolsData: School[] = [
 function getSchoolBySlug(slug: string): School | null {
     const school = schoolsData.find(s => s.slug === slug);
     return school || null;
+}
+
+function SchoolProgramsPageClient({ school }: { school: School }) {
+  const { t } = useLocalization();
+
+  return (
+    <>
+      <div className="mb-8">
+        <Button asChild variant="ghost" className="mb-4">
+          <Link href={`/schools/${school.slug}`} className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            {t('common.go_back_to_homepage')} {school.acronym}
+          </Link>
+        </Button>
+        <h1 className="text-4xl font-bold mb-2">{school.acronym} {t('pages.schools.explore_programs')}</h1>
+        <p className="text-lg text-muted-foreground">{school.name}</p>
+      </div>
+
+      <div className="grid gap-6">
+        {school.programs.map((program, index) => (
+          <Card key={index} className="overflow-hidden">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <GraduationCap className="h-6 w-6 text-primary" />
+                {t(program.nameKey)}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">{t(program.descriptionKey)}</p>
+              <div className="flex flex-wrap gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span>{program.duration}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span>{program.capacity}</span>
+                </div>
+              </div>
+              <div className="mt-6">
+                <Button asChild>
+                  <Link href="/signup">{t('common.apply_now')}</Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </>
+  );
 }
 
 export default async function SchoolProgramsPage({ params }: { params: { slug: string } }) {
@@ -218,47 +274,7 @@ export default async function SchoolProgramsPage({ params }: { params: { slug: s
     <div className="flex flex-col min-h-screen bg-background">
       <MainNav />
       <main className="flex-1 container mx-auto py-12">
-        <div className="mb-8">
-          <Button asChild variant="ghost" className="mb-4">
-            <Link href={`/schools/${school.slug}`} className="flex items-center gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              Back to {school.acronym}
-            </Link>
-          </Button>
-          <h1 className="text-4xl font-bold mb-2">{school.acronym} Programs</h1>
-          <p className="text-lg text-muted-foreground">{school.name}</p>
-        </div>
-
-        <div className="grid gap-6">
-          {school.programs.map((program, index) => (
-            <Card key={index} className="overflow-hidden">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <GraduationCap className="h-6 w-6 text-primary" />
-                  {program.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">{program.description}</p>
-                <div className="flex flex-wrap gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>{program.duration}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span>{program.capacity}</span>
-                  </div>
-                </div>
-                <div className="mt-6">
-                  <Button asChild>
-                    <Link href="/signup">Apply Now</Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <SchoolProgramsPageClient school={school} />
       </main>
       <Footer />
     </div>
