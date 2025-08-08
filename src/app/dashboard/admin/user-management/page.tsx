@@ -1,9 +1,12 @@
+"use client"
+
 import { UserCog } from "lucide-react";
 import { UserManagementClient } from "./user-management-client";
 import { UserManagementHeader } from "./user-management-header";
 import { db } from "@/lib/firebase";
 import { collection, query, getDocs, DocumentData, where } from "firebase/firestore";
 import { type Role, type UserStatus } from "@/context/auth-context";
+import { useLocalization } from "@/context/localization-context"
 
 type User = {
   id: string;
@@ -36,11 +39,12 @@ async function getUsers(): Promise<User[]> {
 
 export default async function ManageUsersPage() {
     const users = await getUsers();
+    const { t } = useLocalization()
 
     // Simple translation function for server component
     // Note: In a real app, you'd get the user's language preference from cookies or headers
     // For now, we'll use a simple approach that checks both locales
-    const t = (key: string, preferredLocale: 'en' | 'fr' = 'en'): string => {
+    const tServer = (key: string, preferredLocale: 'en' | 'fr' = 'en'): string => {
         const keys = key.split('.');
         let value = preferredLocale === 'fr' ? {
             "dashboard.user_management.title": "Gestion des utilisateurs",

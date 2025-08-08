@@ -11,6 +11,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useLocalization } from "@/context/localization-context";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button"
+import { Clock, XCircle, Eye } from "lucide-react"
 
 type User = {
   id: string
@@ -128,8 +130,9 @@ export default function AdminOverviewPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                 <Card>
+            {/* Stats Cards */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">{t('dashboard.admin.overview.totalUsers')}</CardTitle>
                         <Users className="h-4 w-4 text-muted-foreground" />
@@ -139,7 +142,8 @@ export default function AdminOverviewPage() {
                         <p className="text-xs text-muted-foreground">{t('dashboard.admin.overview.totalUsersDescription')}</p>
                     </CardContent>
                 </Card>
-                 <Card>
+
+                <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">{t('dashboard.admin.overview.activeCompanies')}</CardTitle>
                         <Building className="h-4 w-4 text-muted-foreground" />
@@ -149,7 +153,8 @@ export default function AdminOverviewPage() {
                         <p className="text-xs text-muted-foreground">{t('dashboard.admin.overview.activeCompaniesDescription')}</p>
                     </CardContent>
                 </Card>
-                 <Card>
+
+                <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">{t('dashboard.admin.overview.partnerSchools')}</CardTitle>
                         <GraduationCap className="h-4 w-4 text-muted-foreground" />
@@ -159,26 +164,66 @@ export default function AdminOverviewPage() {
                          <p className="text-xs text-muted-foreground">{t('dashboard.admin.overview.partnerSchoolsDescription')}</p>
                     </CardContent>
                 </Card>
+
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">{t('dashboard.admin.system_health')}</CardTitle>
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">99.8%</div>
+                        <p className="text-xs text-muted-foreground">Platform uptime this month</p>
+                    </CardContent>
+                </Card>
             </div>
 
+            {/* Pending Requests and Recent Activity */}
             <div className="grid lg:grid-cols-3 gap-8 items-start">
                 <div className="lg:col-span-2">
                     <Card className="md:col-span-2">
                         <CardHeader>
-                            <CardTitle>{t('dashboard.admin.overview.pendingRequests')}</CardTitle>
-                            <CardDescription>
-                                {t('dashboard.admin.overview.pendingRequestsDescription')}
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <AdminClient initialRequests={pendingRequests} />
-                        </CardContent>
+                            <CardTitle className="flex items-center gap-2">
+                              <Clock className="h-5 w-5" />
+                              {t('dashboard.overview.pendingRequests')}
+                            </CardTitle>
+                            <CardDescription>{t('dashboard.overview.pendingRequestsDescription')}</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-4">
+                              {pendingRequests.length === 0 ? (
+                                <p className="text-center text-muted-foreground py-4">{t('dashboard.overview.noPendingRequests')}</p>
+                              ) : (
+                                pendingRequests.map((request) => (
+                                  <div key={request.id} className="flex items-center justify-between p-3 border rounded-lg">
+                                    <div>
+                                      <p className="font-medium">{request.name}</p>
+                                      <p className="text-sm text-muted-foreground capitalize">{t(`dashboard.user_management.${request.type}`)} • {request.date}</p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <Button size="sm" variant="outline">
+                                        <Eye className="h-4 w-4 mr-1" />
+                                        {t('common.view_profile')}
+                                      </Button>
+                                      <Button size="sm" variant="outline">
+                                        <CheckCircle className="h-4 w-4 mr-1" />
+                                        Approve
+                                      </Button>
+                                      <Button size="sm" variant="destructive">
+                                        <XCircle className="h-4 w-4 mr-1" />
+                                        Reject
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          </CardContent>
                     </Card>
                 </div>
                 <div className="lg:col-span-1">
                      <Card>
                         <CardHeader>
-                            <CardTitle>{t('dashboard.admin.overview.recentActivity')}</CardTitle>
+                            <CardTitle>{t('dashboard.overview.recentActivity')}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                              {recentActivity.map((activity) => {

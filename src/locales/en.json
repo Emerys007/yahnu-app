@@ -180,12 +180,12 @@
   },
   "support_tickets": {
     "profile_visibility_issue": "Problem with my profile visibility",
-    "cannot_apply_job": "Cannot apply for a job", 
+    "cannot_apply_job": "Cannot apply for a job",
     "billing_question": "Question about billing",
     "password_reset_failed": "Password Reset Failed",
     "2_hours_ago": "2 hours ago",
     "8_hours_ago": "8 hours ago",
-    "1_day_ago": "1 day ago", 
+    "1_day_ago": "1 day ago",
     "3_days_ago": "3 days ago"
   },
   "dashboard": {
@@ -193,7 +193,7 @@
     "messages": {
       "description": "Communicate with candidates and companies directly.",
       "search_conversations": "Search conversations...",
-      "type_message": "Type your message...", 
+      "type_message": "Type your message...",
       "select_conversation": "Select a conversation to start chatting.",
       "conversations": {
         "amina_diallo": {
@@ -403,7 +403,7 @@
       "knowledge_base": "Knowledge Base",
       "report_generator": "Report Generator",
       "tools": "Tools",
-      "ticket_management": "Ticket Management", 
+      "ticket_management": "Ticket Management",
       "user_lookup": "User Lookup",
       "support_center": {
         "description": "Manage user inquiries and resolve support tickets.",
@@ -420,7 +420,7 @@
         "description": "Monitor system performance and health metrics."
       },
       "knowledge_base_editor": {
-        "title": "Knowledge Base Editor", 
+        "title": "Knowledge Base Editor",
         "description": "Create and edit help articles and documentation."
       },
       "ticket_management": {

@@ -334,10 +334,6 @@
         "knowledge_base_editor": {
           "title": "Éditeur de base de connaissances",
           "description": "Créer et modifier les articles d'aide et la documentation."
-        },
-        "ticket_management": {
-          "title": "Gestion des tickets",
-          "description": "Gérer et résoudre les tickets de support utilisateur."
         }
       },
       "reports": {
