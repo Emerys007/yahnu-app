@@ -1,6 +1,6 @@
 "use client"
 
-import { Shield, Users, Building, GraduationCap, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
+import { Shield, Users, Building, GraduationCap, TrendingUp, AlertCircle, CheckCircle, UserPlus, Briefcase } from "lucide-react";
 import { AdminClient } from "../admin-client";
 import { type UserStatus } from "@/context/auth-context";
 import { db } from "@/lib/firebase";
