@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Briefcase, MapPin, Building, Globe } from "lucide-react";
+import { Briefcase, MapPin, Building, Globe, ArrowLeft } from "lucide-react";
 import { useLocalization } from "@/context/localization-context";
 
 interface CompanyProfile {
@@ -24,12 +24,22 @@ export function CompanyProfileClient({ company }: { company: CompanyProfile }) {
     const { t } = useLocalization();
 
     return (
-        <Card className="overflow-hidden">
-            <CardHeader className="p-0">
-                 <div className="relative w-full h-48 md:h-64 bg-muted">
-                    {/* Placeholder for a banner image */}
-                 </div>
-            </CardHeader>
+        <div className="space-y-6">
+            <div className="flex items-center gap-4">
+                <Button variant="outline" asChild>
+                    <Link href="/companies" className="flex items-center gap-2">
+                        <ArrowLeft className="h-4 w-4" />
+                        {t('common.back_to_companies')}
+                    </Link>
+                </Button>
+            </div>
+            
+            <Card className="overflow-hidden">
+                <CardHeader className="p-0">
+                     <div className="relative w-full h-48 md:h-64 bg-muted">
+                        {/* Placeholder for a banner image */}
+                     </div>
+                </CardHeader>
             <CardContent className="p-6 md:p-8 -mt-20">
                 <div className="flex items-end gap-6">
                     <div className="relative h-32 w-32 rounded-full overflow-hidden border-8 border-background shrink-0 bg-gradient-to-br from-slate-50 to-slate-100 p-3 flex items-center justify-center">
@@ -89,5 +99,6 @@ export function CompanyProfileClient({ company }: { company: CompanyProfile }) {
                 </div>
             </CardContent>
         </Card>
+        </div>
     )
 }

@@ -124,7 +124,8 @@
       "new_school_approval": "New school \"{name}\" requires approval",
       "new_graduate_activation": "New graduate \"{name}\" requires activation"
     },
-    "back_to_schools": "Back to Schools"
+    "back_to_schools": "Back to Schools",
+    "back_to_companies": "Back to Companies"
   },
   "dashboard": {
     "welcome": "Welcome",

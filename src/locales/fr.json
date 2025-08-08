@@ -124,7 +124,8 @@
       "new_school_approval": "La nouvelle école \"{name}\" nécessite une approbation",
       "new_graduate_activation": "Le nouveau diplômé \"{name}\" nécessite une activation"
     },
-    "back_to_schools": "Retour aux écoles"
+    "back_to_schools": "Retour aux écoles",
+    "back_to_companies": "Retour aux entreprises"
   },
   "dashboard": {
     "welcome": "Bienvenue",
