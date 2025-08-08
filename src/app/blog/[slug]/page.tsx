@@ -1,4 +1,3 @@
-
 "use client"
 
 import { MainNav } from "@/components/landing/main-nav";
@@ -42,7 +41,9 @@ export default function BlogPostPage() {
             />
           </div>
           <h1 className="text-4xl font-bold tracking-tight">{localizedPost.title}</h1>
-          <p className="text-muted-foreground">{t('common.by')} {localizedPost.author} on {new Date(localizedPost.date).toLocaleDateString()}</p>
+          <p className="text-muted-foreground mb-6">
+            {t('common.by')} {t('blog.author_name')} • {new Date(localizedPost.date).toLocaleDateString()}
+          </p>
           <div className="mt-8" dangerouslySetInnerHTML={{ __html: localizedPost.content }} />
         </article>
       </main>

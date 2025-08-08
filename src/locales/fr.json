@@ -120,7 +120,7 @@
     "back_to_login": "Retour à la connexion"
   },
   "blog": {
-    "blog_author_name": "L'équipe Yahnu"
+    "author_name": "L'équipe Yahnu"
   },
   "nav": {
     "jobs": "Emplois",
@@ -180,6 +180,15 @@
         "showcase_institution_desc": "Faites la promotion des programmes et des réalisations de votre école auprès d'un large public d'étudiants potentiels et de partenaires corporatifs."
       }
     },
+    "why_choose": {
+      "title": "Pourquoi choisir Yahnu ?",
+      "trusted_platform": "Plateforme de confiance",
+      "trusted_platform_desc": "Rejoignez des milliers de diplômés et d'entreprises qui font confiance à Yahnu pour leurs besoins de carrière et de recrutement.",
+      "exclusive_opportunities": "Opportunités exclusives",
+      "exclusive_opportunities_desc": "Accédez à des offres d'emploi et des pools de talents que vous ne trouverez nulle part ailleurs.",
+      "ai_powered": "Correspondance alimentée par l'IA",
+      "ai_powered_desc": "Nos algorithmes avancés garantissent des correspondances parfaites entre les candidats et les opportunités."
+    },
     "cta": {
       "title": "Prêt à rejoindre l'élite ?",
       "description": "Créez votre compte aujourd'hui et débloquez un monde d'opportunités. Que vous soyez un diplômé, une entreprise ou une école, Yahnu est votre passerelle vers le succès."
@@ -210,5 +219,13 @@
         "partnerships_manager": "Responsable des partenariats"
       }
     }
+  },
+  "legal": {
+    "privacy_title": "Politique de confidentialité",
+    "privacy_last_updated": "Dernière mise à jour : 1er janvier 2024",
+    "privacy_content": "<h2>Informations que nous collectons</h2><p>Nous collectons les informations que vous nous fournissez directement, par exemple lorsque vous créez un compte, remplissez un formulaire ou nous contactez.</p><h2>Comment nous utilisons vos informations</h2><p>Nous utilisons les informations que nous collectons pour fournir, maintenir et améliorer nos services.</p><h2>Partage d'informations</h2><p>Nous ne vendons, n'échangeons ou ne transférons pas vos informations personnelles à des tiers sans votre consentement.</p><h2>Sécurité des données</h2><p>Nous mettons en place des mesures de sécurité appropriées pour protéger vos informations personnelles.</p><h2>Nous contacter</h2><p>Si vous avez des questions concernant cette politique de confidentialité, veuillez nous contacter.</p>",
+    "terms_title": "Conditions d'utilisation",
+    "terms_last_updated": "Dernière mise à jour : 1er janvier 2024",
+    "terms_content": "<h2>Acceptation des conditions</h2><p>En utilisant notre service, vous acceptez ces conditions.</p><h2>Utilisation du service</h2><p>Vous ne pouvez utiliser notre service qu'à des fins légales et conformément à ces conditions.</p><h2>Comptes d'utilisateur</h2><p>Vous êtes responsable du maintien de la confidentialité de vos identifiants de compte.</p><h2>Utilisations interdites</h2><p>Vous ne pouvez pas utiliser notre service à des fins illégales ou pour violer des lois.</p><h2>Résiliation</h2><p>Nous pouvons résilier votre accès au service à tout moment pour toute raison.</p><h2>Informations de contact</h2><p>Pour toute question concernant ces conditions, veuillez nous contacter.</p>"
   }
 }

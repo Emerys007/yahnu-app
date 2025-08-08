@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -39,10 +38,10 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 const getNavLinks = (t: (key: string) => string) => [
-  { href: "/jobs", label: t("Jobs") },
-  { href: "/companies", label: t("Companies") },
-  { href: "/schools", label: t("Schools") },
-  { href: "/blog", label: t("Blog") },
+  { href: "/jobs", label: t("common.jobs") },
+  { href: "/companies", label: t("common.companies") },
+  { href: "/schools", label: t("common.schools") },
+  { href: "/blog", label: t("common.blog") },
   { href: "/about", label: t("About") },
 ];
 
@@ -112,11 +111,11 @@ export function MainNav() {
               <Logo className="h-12 w-12" />
               <div>
                 <p className="font-bold text-xl">Yahnu</p>
-                <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
+                <p className="text-xs text-muted-foreground">{t('landing.hero.title')}</p>
               </div>
           </Link>
         </div>
-        
+
         <div className="flex items-center gap-2 ml-auto">
             <nav className="hidden md:flex items-center gap-6 text-sm">
                 {navLinks.map((link) => (
@@ -138,7 +137,7 @@ export function MainNav() {
                   <Link href="/signup">{t('Sign Up')}</Link>
                 </Button>
             </div>
-            
+
             <div className="hidden md:flex items-center gap-2">
               <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -171,7 +170,7 @@ export function MainNav() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            
+
             <div className="md:hidden flex items-center gap-1">
               <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -202,7 +201,7 @@ export function MainNav() {
                             <Logo className="h-10 w-10" />
                             <div>
                                 <p className="font-bold text-lg">Yahnu</p>
-                                <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
+                                <p className="text-xs text-muted-foreground">{t('landing.hero.title')}</p>
                             </div>
                           </div>
                         </Link>

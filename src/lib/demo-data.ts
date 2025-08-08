@@ -34,7 +34,7 @@ import {
     },
     {
       name: 'Béthel T',
-      role: 'about.team.roles.product_manager',
+      role: 'about.team.roles.head_of_product',
       image: '/images/Bethel_Touman.jpeg',
       social: {
         linkedin: 'https://www.linkedin.com/in/bethel-touman',
@@ -43,7 +43,7 @@ import {
     },
     {
       name: 'Colombe K',
-      role: 'about.team.roles.community_manager',
+      role: 'about.team.roles.partnerships_manager',
       image: '/images/Colombe Koffi.jpeg',
       social: {
         linkedin: 'https://www.linkedin.com/in/colombekoffi',
