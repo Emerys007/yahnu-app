@@ -1,4 +1,3 @@
-
 {
   "countries": {
     "CI": "Côte d'Ivoire",
@@ -182,7 +181,7 @@
     "billing_question": "Question sur la facturation",
     "password_reset_failed": "Échec de la réinitialisation du mot de passe",
     "2_hours_ago": "il y a 2 heures",
-    "8_hours_ago": "il y a 8 heures", 
+    "8_hours_ago": "il y a 8 heures",
     "1_day_ago": "il y a 1 jour",
     "3_days_ago": "il y a 3 jours"
   },
@@ -322,6 +321,30 @@
       "support_center": {
         "description": "Gérer les demandes des utilisateurs et résoudre les tickets de support.",
         "queue_description": "Traiter les demandes de support entrantes des utilisateurs."
+      },
+      "support": {
+        "announcements": {
+          "title": "Annonces",
+          "description": "Gérer les annonces et notifications de la plateforme."
+        },
+        "system_health": {
+          "title": "Santé du système",
+          "description": "Surveiller les performances et métriques de santé du système."
+        },
+        "knowledge_base_editor": {
+          "title": "Éditeur de base de connaissances",
+          "description": "Créer et modifier les articles d'aide et la documentation."
+        },
+        "ticket_management": {
+          "title": "Gestion des tickets",
+          "description": "Gérer et résoudre les tickets de support utilisateur."
+        }
+      },
+      "reports": {
+        "custom_generator": {
+          "title": "Générateur de rapports personnalisés",
+          "description": "Créer et générer des rapports d'analyse personnalisés."
+        }
       }
     },
     "user_management": {

@@ -272,7 +272,13 @@
       "new_users_this_month": "New users this month",
       "user_count": "User Count",
       "total": "Total",
-      "export_as_csv": "Export as CSV"
+      "export_as_csv": "Export as CSV",
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June"
     },
     "user_management": {
       "title": "User Management",
@@ -402,6 +408,30 @@
       "support_center": {
         "description": "Manage user inquiries and resolve support tickets.",
         "queue_description": "Address incoming support requests from users."
+      }
+    },
+    "support": {
+      "announcements": {
+        "title": "Announcements",
+        "description": "Manage platform announcements and notifications."
+      },
+      "system_health": {
+        "title": "System Health",
+        "description": "Monitor system performance and health metrics."
+      },
+      "knowledge_base_editor": {
+        "title": "Knowledge Base Editor", 
+        "description": "Create and edit help articles and documentation."
+      },
+      "ticket_management": {
+        "title": "Ticket Management",
+        "description": "Manage and resolve user support tickets."
+      }
+    },
+    "reports": {
+      "custom_generator": {
+        "title": "Custom Report Generator",
+        "description": "Create and generate custom analytics reports."
       }
     }
   },

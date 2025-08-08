@@ -1,15 +1,17 @@
 
+"use client"
+
 import { Wrench } from "lucide-react";
 import { CustomizableDashboard } from "@/features/analytics/CustomizableDashboard";
-import { getTranslations } from '@/context/localization-context';
+import { useLocalization } from "@/context/localization-context";
 
-export default async function CustomReportGeneratorPage() {
+export default function CustomReportGeneratorPage() {
+    const { t } = useLocalization();
     // In a real application, you would fetch the user's saved dashboard layout
     // and report configurations from Firestore here based on the logged-in user's ID.
     // For this example, we'll pass empty initial data to the client component.
     const initialLayout = [];
     const initialReports = {};
-    const t = await getTranslations();
 
     return (
         <div className="space-y-8">
