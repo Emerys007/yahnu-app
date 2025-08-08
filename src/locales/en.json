@@ -2,6 +2,10 @@
 {
   "common": {
     "jobs": "Jobs",
+    "full_time": "Full-time",
+    "part_time": "Part-time", 
+    "contract": "Contract",
+    "internship": "Internship",
     "companies": "Companies",
     "schools": "Schools",
     "blog": "Blog",
