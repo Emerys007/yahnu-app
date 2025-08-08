@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from "next/image";
@@ -52,7 +51,7 @@ export function CompanyProfileClient({ company }: { company: CompanyProfile }) {
                         <p className="text-muted-foreground text-lg">"{t(company.tagline)}"</p>
                     </div>
                 </div>
-                
+
                 <div className="grid md:grid-cols-3 gap-8 mt-8">
                     <div className="md:col-span-2">
                         <h2 className="text-2xl font-bold mb-4">{t('About')} {company.name}</h2>
@@ -82,7 +81,7 @@ export function CompanyProfileClient({ company }: { company: CompanyProfile }) {
                                     <p className="text-muted-foreground">{t(`common.${job.type}`)} &middot; {job.location}</p>
                                 </div>
                                 <Button asChild>
-                                    <Link href="/signup">{t('common.apply_now')}</Link>
+                                    <Link href="/signup?role=graduate">{t('common.apply_now')}</Link>
                                 </Button>
                             </Card>
                         ))}

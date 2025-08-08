@@ -136,7 +136,7 @@ export function RegisterForm() {
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      role: searchParams.get('role') === 'school_administrator' ? 'school' : searchParams.get('type') === 'school' ? 'school' : searchParams.get('type') === 'company' ? 'company' : "graduate",
+      role: searchParams.get('role') === 'school_administrator' ? 'school' : searchParams.get('role') === 'graduate' ? 'graduate' : searchParams.get('type') === 'school' ? 'school' : searchParams.get('type') === 'company' ? 'company' : "graduate",
       email: "",
       password: "",
       confirmPassword: "",
