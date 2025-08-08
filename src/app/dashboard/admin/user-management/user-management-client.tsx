@@ -94,7 +94,7 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{t('dashboard.user_management.manage_user', { name: user.name })}</DialogTitle>
+                    <DialogTitle>{t('dashboard.user_management.manage_user').replace('{{name}}', user.name)}</DialogTitle>
                     <DialogDescription>{t('dashboard.user_management.manage_user_description')}</DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
