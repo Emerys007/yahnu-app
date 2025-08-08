@@ -235,7 +235,7 @@ export default function ContentManagementPage() {
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{t('Content Management')}</h1>
-            <p className="text-muted-foreground mt-1">{t('Manage your platform's blog and page content.')}</p>
+            <p className="text-muted-foreground mt-1">{t('Manage your platform\'s blog and page content.')}</p>
           </div>
         </div>
       </div>
