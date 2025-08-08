@@ -1,4 +1,6 @@
 
+"use client"
+
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import { notFound } from "next/navigation";
@@ -263,7 +265,7 @@ function SchoolProgramsPageClient({ school }: { school: School }) {
   );
 }
 
-export default async function SchoolProgramsPage({ params }: { params: { slug: string } }) {
+export default function SchoolProgramsPage({ params }: { params: { slug: string } }) {
   const school = getSchoolBySlug(params.slug);
 
   if (!school) {
