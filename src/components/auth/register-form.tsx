@@ -415,7 +415,7 @@ export function RegisterForm() {
           )}
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? t("auth.creating_account") : t("common.create_an_account")}
+            {isLoading ? t('auth.creating_account') : t('auth.create_account')}
         </Button>
 
         {role === 'graduate' && (

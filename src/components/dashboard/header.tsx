@@ -1,4 +1,3 @@
-
 "use client"
 import Link from "next/link"
 import React from "react"
@@ -81,9 +80,9 @@ export function DashboardHeader() {
   const { t, setLanguage } = useLocalization();
   const { setTheme } = useTheme()
   const { user, role } = useAuth();
-  
+
   const [notifications, setNotifications] = React.useState<NotificationItem[]>([]);
-  
+
   React.useEffect(() => {
     if (!user) return;
 
@@ -126,7 +125,7 @@ export function DashboardHeader() {
                 notificationText = t("common.notifications.new_graduate_activation", { name: data.name });
                 icon = Building; // TODO: Change to a more appropriate icon for a graduate
             }
-            
+
             fetchedNotifications.push({
                 id: doc.id,
                 text: notificationText,
@@ -142,19 +141,19 @@ export function DashboardHeader() {
 
     return () => unsubscribe();
   }, [user, role, t]);
-  
+
   const unreadCount = notifications.filter(n => !n.read).length;
-  
+
   const handleRead = (id: string) => {
     const updatedNotifications = notifications.map(n => n.id === id ? { ...n, read: true } : n);
     setNotifications(updatedNotifications);
-    
+
     const readIds = getReadNotificationIds();
     if (!readIds.includes(id)) {
         setReadNotificationIds([...readIds, id]);
     }
   };
-  
+
   const handleReadAll = () => {
     const updatedNotifications = notifications.map(n => ({ ...n, read: true }));
     setNotifications(updatedNotifications);
@@ -210,7 +209,7 @@ export function DashboardHeader() {
         <div className="ml-auto flex-1 md:grow-0">
           <SearchCommand />
         </div>
-        
+
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon" className="relative shrink-0">

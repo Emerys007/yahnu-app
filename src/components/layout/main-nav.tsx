@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -116,7 +115,7 @@ export function MainNav() {
               </div>
           </Link>
         </div>
-        
+
         <div className="flex items-center gap-2 ml-auto">
             <nav className="hidden md:flex items-center gap-6 text-sm">
                 {navLinks.map((link) => (
@@ -138,7 +137,7 @@ export function MainNav() {
                   <Link href="/signup">{t('common.sign_up')}</Link>
                 </Button>
             </div>
-            
+
             <div className="hidden md:flex items-center gap-2">
               <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -171,7 +170,7 @@ export function MainNav() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            
+
             <div className="md:hidden flex items-center gap-1">
               <DropdownMenu>
                   <DropdownMenuTrigger asChild>

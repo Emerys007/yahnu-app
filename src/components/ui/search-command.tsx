@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -28,8 +27,8 @@ import {
 import {
   CommandDialog,
   CommandEmpty,
-  CommandGroup,
   CommandInput,
+  CommandGroup,
   CommandItem,
   CommandList,
   CommandSeparator,
@@ -152,10 +151,9 @@ export function SearchCommand() {
         </span>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder={t('Type a command or search...')} />
-        <CommandList>
-          <CommandEmpty>{t('No results found.')}</CommandEmpty>
-          
+        <CommandInput placeholder={t ? t('common.search_placeholder') : 'Type a command or search...'} />
+        <CommandEmpty>{t ? t('common.no_results_found') : 'No results found.'}</CommandEmpty>
+
           {mainItems.map((group) => (
             <CommandGroup key={group.group} heading={group.group}>
               {group.items.map((item) => (
@@ -172,7 +170,7 @@ export function SearchCommand() {
           ))}
 
           <CommandSeparator />
-          
+
           {footerItems.map((group) => (
             <CommandGroup key={group.group} heading={group.group}>
               {group.items.map((item) => (

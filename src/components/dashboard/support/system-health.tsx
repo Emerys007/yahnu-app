@@ -1,36 +1,35 @@
+'use client';
 
-'use client'
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Activity, Server, Database, Cpu, HardDrive, RefreshCw, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { useTranslations } from '@/context/localization-context';
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
-import { Activity, Server, Database, Cpu, HardDrive, RefreshCw, AlertTriangle, CheckCircle, XCircle } from 'lucide-react'
-import { useLocalization } from '@/context/localization-context'
-
-type SystemStatus = 'operational' | 'degraded' | 'major_outage'
+type SystemStatus = 'operational' | 'degraded' | 'major_outage';
 
 type Metric = {
-  name: string
-  value: number
-  unit: string
-  status: 'good' | 'warning' | 'critical'
-  icon: React.ElementType
-}
+  name: string;
+  value: number;
+  unit: string;
+  status: 'good' | 'warning' | 'critical';
+  icon: React.ElementType;
+};
 
 type Incident = {
-  id: string
-  title: string
-  description: string
-  status: 'investigating' | 'identified' | 'monitoring' | 'resolved'
-  timestamp: string
-}
+  id: string;
+  title: string;
+  description: string;
+  status: 'investigating' | 'identified' | 'monitoring' | 'resolved';
+  timestamp: string;
+};
 
 export default function SystemHealth() {
-  const { t } = useLocalization()
-  const [systemStatus, setSystemStatus] = useState<SystemStatus>('operational')
-  const [lastUpdated, setLastUpdated] = useState(new Date())
+  const { t } = useTranslations();
+  const [systemStatus, setSystemStatus] = useState<SystemStatus>('operational');
+  const [lastUpdated, setLastUpdated] = useState(new Date());
   const [metrics, setMetrics] = useState<Metric[]>([
     { name: t('dashboard.support.system_health.server_uptime'), value: 99.9, unit: '%', status: 'good', icon: Server },
     { name: t('dashboard.support.system_health.response_time'), value: 245, unit: 'ms', status: 'good', icon: Activity },
@@ -40,46 +39,46 @@ export default function SystemHealth() {
     { name: t('dashboard.support.system_health.memory_usage'), value: 67, unit: '%', status: 'warning', icon: Activity },
     { name: t('dashboard.support.system_health.cpu_usage'), value: 34, unit: '%', status: 'good', icon: Cpu },
     { name: t('dashboard.support.system_health.disk_usage'), value: 78, unit: '%', status: 'warning', icon: HardDrive },
-  ])
-  const [incidents, setIncidents] = useState<Incident[]>([])
+  ]);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
 
   const getStatusColor = (status: SystemStatus) => {
     switch (status) {
-      case 'operational': return 'bg-green-500'
-      case 'degraded': return 'bg-yellow-500'
-      case 'major_outage': return 'bg-red-500'
-      default: return 'bg-gray-500'
+      case 'operational': return 'bg-green-500';
+      case 'degraded': return 'bg-yellow-500';
+      case 'major_outage': return 'bg-red-500';
+      default: return 'bg-gray-500';
     }
-  }
+  };
 
   const getStatusIcon = (status: SystemStatus) => {
     switch (status) {
-      case 'operational': return CheckCircle
-      case 'degraded': return AlertTriangle
-      case 'major_outage': return XCircle
-      default: return AlertTriangle
+      case 'operational': return CheckCircle;
+      case 'degraded': return AlertTriangle;
+      case 'major_outage': return XCircle;
+      default: return AlertTriangle;
     }
-  }
+  };
 
   const getMetricStatusColor = (status: string) => {
     switch (status) {
-      case 'good': return 'text-green-600'
-      case 'warning': return 'text-yellow-600'
-      case 'critical': return 'text-red-600'
-      default: return 'text-gray-600'
+      case 'good': return 'text-green-600';
+      case 'warning': return 'text-yellow-600';
+      case 'critical': return 'text-red-600';
+      default: return 'text-gray-600';
     }
-  }
+  };
 
   const refreshMetrics = () => {
-    setLastUpdated(new Date())
+    setLastUpdated(new Date());
     // Simulate metric updates
-    setMetrics(prevMetrics => 
+    setMetrics(prevMetrics =>
       prevMetrics.map(metric => ({
         ...metric,
         value: metric.value + (Math.random() - 0.5) * 10
       }))
-    )
-  }
+    );
+  };
 
   return (
     <div className="space-y-8">
@@ -133,8 +132,8 @@ export default function SystemHealth() {
                   {metric.unit}
                 </div>
                 {metric.unit === '%' && (
-                  <Progress 
-                    value={metric.value} 
+                  <Progress
+                    value={metric.value}
                     className="mt-2"
                   />
                 )}
@@ -179,5 +178,5 @@ export default function SystemHealth() {
         )}
       </div>
     </div>
-  )
+  );
 }

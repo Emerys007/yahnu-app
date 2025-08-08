@@ -431,7 +431,10 @@
     "contact_person_name": "Nom de la personne de contact",
     "creating_account": "Création du compte...",
     "create_account": "Créer un compte",
-    "or_continue_with": "Ou continuer avec"
+    "or_continue_with": "Ou continuer avec",
+    "get_started_now": "Commencez maintenant",
+    "logout": "Se déconnecter",
+    "search_placeholder": "Tapez une commande ou recherchez..."
   },
   "blog": {
     "author_name": "L'équipe Yahnu"

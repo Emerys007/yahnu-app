@@ -1,4 +1,3 @@
-
 "use client"
 
 import Link from "next/link"
@@ -40,7 +39,7 @@ export function Footer() {
                   <li><Link href="/blog" className="text-muted-foreground hover:text-primary transition-colors">{t('common.blog')}</Link></li>
                 </ul>
               </div>
-              
+
               {/* Legal Links */}
               <div>
                 <h3 className="text-sm font-semibold tracking-wider text-foreground">{t('common.legal')}</h3>
@@ -70,7 +69,7 @@ export function Footer() {
                         </li>
                     </ul>
                 </div>
-                
+
                 {/* Socials Section */}
                 <div className="w-1/2">
                     <h3 className="text-sm font-semibold tracking-wider text-foreground">{t('common.follow_us')}</h3>

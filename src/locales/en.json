@@ -110,6 +110,7 @@
     "english": "English",
     "french": "French",
     "support": "Support",
+    "get_started_now": "Get Started Now",
     "time": {
       "years_ago": "years ago",
       "months_ago": "months ago",
@@ -221,7 +222,9 @@
     "contact_person_name": "Contact Person Name",
     "creating_account": "Creating Account...",
     "create_account": "Create Account",
-    "or_continue_with": "Or continue with"
+    "or_continue_with": "Or continue with",
+    "logout": "Log out",
+    "search_placeholder": "Type a command or search..."
   },
   "blog": {
     "author_name": "Yahnu Staff"

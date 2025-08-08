@@ -1,4 +1,3 @@
-
 "use client"
 
 import { LogOut, User, Settings, Building, MessageSquare } from "lucide-react"
