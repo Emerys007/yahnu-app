@@ -143,7 +143,7 @@ export function MainNav() {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
                        <Flag countryCode={country.code} />
-                       {countryName}
+                       {t(`countries.${country.code}`)}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuPortal>
@@ -151,7 +151,7 @@ export function MainNav() {
                       {allCountries.map((c) => (
                         <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
                             <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
-                            <span>{t(c.name.en)}</span>
+                            <span>{t(`countries.${c.code}`)}</span>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>

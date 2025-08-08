@@ -1,11 +1,11 @@
 {
   "countries": {
-    "CI": "Côte d'Ivoire",
+    "CI": "Ivory Coast",
     "GH": "Ghana",
     "NG": "Nigeria",
     "SN": "Senegal",
     "CM": "Cameroon",
-    "CD": "Democratic Republic of Congo"
+    "CD": "DR Congo"
   },
   "common": {
     "jobs": "Jobs",
