@@ -38,7 +38,24 @@ export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
   const countryName = language === 'fr' ? country.name.fr : country.name.en;
 
   const t = (key: string, values?: { [key: string]: string | number }): string => {
-    let translation = translations[language]?.[key] || key;
+    // Handle nested keys by splitting on '.' and traversing the object
+    const keys = key.split('.');
+    let translation: any = translations[language];
+    
+    for (const k of keys) {
+      if (translation && typeof translation === 'object' && k in translation) {
+        translation = translation[k];
+      } else {
+        translation = key; // Fallback to the key itself if not found
+        break;
+      }
+    }
+    
+    // Ensure translation is a string
+    if (typeof translation !== 'string') {
+      translation = key;
+    }
+    
     if (values) {
         Object.keys(values).forEach(valueKey => {
             const regex = new RegExp(`{${valueKey}}`, 'g');
@@ -64,7 +81,24 @@ export const useLocalization = (): LocalizationContextType => {
       language: 'en',
       setLanguage: () => {},
       t: (key: string, values?: { [key: string]: string | number }) => {
-          let translation = key;
+          // Handle nested keys by splitting on '.' and using fallback English translations
+          const keys = key.split('.');
+          let translation: any = translations['en'];
+          
+          for (const k of keys) {
+            if (translation && typeof translation === 'object' && k in translation) {
+              translation = translation[k];
+            } else {
+              translation = key; // Fallback to the key itself if not found
+              break;
+            }
+          }
+          
+          // Ensure translation is a string
+          if (typeof translation !== 'string') {
+            translation = key;
+          }
+          
           if (values) {
               Object.keys(values).forEach(valueKey => {
                   const regex = new RegExp(`{${valueKey}}`, 'g');
