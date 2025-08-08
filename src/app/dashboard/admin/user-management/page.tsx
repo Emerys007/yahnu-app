@@ -6,7 +6,8 @@ import { UserManagementHeader } from "./user-management-header";
 import { db } from "@/lib/firebase";
 import { collection, query, getDocs, DocumentData, where } from "firebase/firestore";
 import { type Role, type UserStatus } from "@/context/auth-context";
-import { useLocalization } from "@/context/localization-context"
+import { useLocalization } from "@/context/localization-context";
+import React, { useState, useEffect } from 'react';
 
 type User = {
   id: string;
@@ -14,59 +15,67 @@ type User = {
   email: string;
   accountType: Role;
   status: UserStatus;
-  date: string;
+  joinDate: string;
 };
 
-async function getUsers(): Promise<User[]> {
-    const usersRef = collection(db, "users");
-    // Only fetch non-admin roles for this page
-    const q = query(usersRef, where("role", "in", ["graduate", "company", "school"]));
-    const querySnapshot = await getDocs(q);
+export default function ManageUsersPage() {
+    const { t } = useLocalization();
+    const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    return querySnapshot.docs.map(doc => {
-        const data = doc.data() as DocumentData;
-        const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
-        return {
-            id: doc.id,
-            name: data.name || data.email,
-            email: data.email,
-            accountType: data.role,
-            status: data.status,
-            date: createdAt.toISOString().split('T')[0],
-        } as User;
-    });
-}
+    useEffect(() => {
+        async function getUsers(): Promise<User[]> {
+            try {
+                const usersRef = collection(db, "users");
+                // Only fetch non-admin roles for this page
+                const q = query(usersRef, where("role", "in", ["graduate", "company", "school"]));
+                const usersSnapshot = await getDocs(q);
 
-export default async function ManageUsersPage() {
-    const users = await getUsers();
-    const { t } = useLocalization()
+                const users: User[] = [];
+                usersSnapshot.forEach((doc) => {
+                    const data = doc.data() as DocumentData;
+                    const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+                    users.push({
+                        id: doc.id,
+                        name: data.name || data.email,
+                        email: data.email,
+                        accountType: data.role,
+                        status: data.status,
+                        joinDate: createdAt.toISOString().split('T')[0],
+                    } as User);
+                });
 
-    // Simple translation function for server component
-    // Note: In a real app, you'd get the user's language preference from cookies or headers
-    // For now, we'll use a simple approach that checks both locales
-    const tServer = (key: string, preferredLocale: 'en' | 'fr' = 'en'): string => {
-        const keys = key.split('.');
-        let value = preferredLocale === 'fr' ? {
-            "dashboard.user_management.title": "Gestion des utilisateurs",
-            "dashboard.user_management.description": "Gérer les comptes utilisateurs de votre organisation."
-        } : {
-            "dashboard.user_management.title": "User Management",
-            "dashboard.user_management.description": "Manage your organization's user accounts."
-        };
-
-        for (const k of keys) {
-            if (value && typeof value === 'object' && k in value) {
-                value = value[k];
-            } else {
-                return key; // Return key if not found
+                return users; // No need to sort here if the original didn't
+            } catch (error) {
+                console.error("Error fetching users:", error);
+                return [];
             }
         }
 
-        return typeof value === 'string' ? value : key;
-    };
+        getUsers().then((fetchedUsers) => {
+            setUsers(fetchedUsers);
+            setLoading(false);
+        });
+    }, []);
 
-    // For demonstration, we'll render both language versions
-    // In a real app, you'd determine the user's language preference
+    if (loading) {
+        return (
+            <div className="space-y-8">
+                <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-4">
+                        <div className="bg-primary/10 p-3 rounded-lg">
+                            <UserCog className="h-6 w-6 text-primary" />
+                        </div>
+                        <div>
+                            {/* Client-side rendered title and description to respect language context */}
+                            <UserManagementHeader />
+                        </div>
+                    </div>
+                </div>
+                <div className="text-center">Loading...</div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8">
