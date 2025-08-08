@@ -184,7 +184,7 @@ export default function AdminOverviewPage() {
                              {recentActivity.map((activity) => {
                                 let displayText = "";
                                 let displayTime = "";
-                                
+
                                 if (activity.type === 'new_user') {
                                     const [name, role] = activity.text.split('|');
                                     displayText = `${name} ${t('dashboard.admin.overview.signedUpAs')} ${t(`common.${role}`)}.`;
@@ -196,7 +196,7 @@ export default function AdminOverviewPage() {
                                     const minutes = parseInt(activity.time);
                                     displayTime = `${minutes} ${t('common.time.minutes_ago')}`;
                                 }
-                                
+
                                 return (
                                     <div key={activity.id} className="flex items-center gap-4">
                                         <Avatar className="h-9 w-9">
