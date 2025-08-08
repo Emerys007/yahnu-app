@@ -29,9 +29,9 @@ const companiesData: CompanyProfile[] = [
         website: "https://www.orange.ci",
         description: "company_1_description",
         jobs: [
-            { title: "company_1_job_1", type: "Full-time", location: "Abidjan" },
-            { title: "company_1_job_2", type: "Full-time", location: "Abidjan" },
-            { title: "company_1_job_3", type: "Full-time", location: "Abidjan" }
+            { title: "company_1_job_1", type: "full_time", location: "Abidjan" },
+            { title: "company_1_job_2", type: "full_time", location: "Abidjan" },
+            { title: "company_1_job_3", type: "full_time", location: "Abidjan" }
         ],
     },
     {
@@ -45,9 +45,9 @@ const companiesData: CompanyProfile[] = [
         website: "https://www.groupesifca.com",
         description: "company_2_description",
         jobs: [
-            { title: "company_2_job_1", type: "Full-time", location: "Yamoussoukro" },
-            { title: "company_2_job_2", type: "Full-time", location: "Abidjan" },
-            { title: "company_2_job_3", type: "Full-time", location: "Abidjan" }
+            { title: "company_2_job_1", type: "full_time", location: "Yamoussoukro" },
+            { title: "company_2_job_2", type: "full_time", location: "Abidjan" },
+            { title: "company_2_job_3", type: "full_time", location: "Abidjan" }
         ],
     },
      {
@@ -61,9 +61,9 @@ const companiesData: CompanyProfile[] = [
         website: "https://www.bridgebankgroup.com",
         description: "company_3_description",
         jobs: [
-            { title: "company_3_job_1", type: "Full-time", location: "Abidjan" },
-            { title: "company_3_job_2", type: "Full-time", location: "Abidjan" },
-            { title: "company_3_job_3", type: "Full-time", location: "Abidjan" }
+            { title: "company_3_job_1", type: "full_time", location: "Abidjan" },
+            { title: "company_3_job_2", type: "full_time", location: "Abidjan" },
+            { title: "company_3_job_3", type: "full_time", location: "Abidjan" }
         ],
     },
      {
@@ -77,9 +77,9 @@ const companiesData: CompanyProfile[] = [
         website: "https://www.bollore-logistics.com",
         description: "company_4_description",
         jobs: [
-            { title: "company_4_job_1", type: "Full-time", location: "San-Pédro" },
-            { title: "company_4_job_2", type: "Full-time", location: "Abidjan" },
-            { title: "company_4_job_3", type: "Full-time", location: "Abidjan" }
+            { title: "company_4_job_1", type: "full_time", location: "San-Pédro" },
+            { title: "company_4_job_2", type: "full_time", location: "Abidjan" },
+            { title: "company_4_job_3", type: "full_time", location: "Abidjan" }
         ],
     },
 ];

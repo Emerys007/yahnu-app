@@ -74,10 +74,10 @@ export function CompanyProfileClient({ company }: { company: CompanyProfile }) {
                             <Card key={job.title} className="p-4 flex justify-between items-center">
                                 <div>
                                     <h3 className="font-semibold text-lg">{t(job.title)}</h3>
-                                    <p className="text-muted-foreground">{t(job.type)} &middot; {job.location}</p>
+                                    <p className="text-muted-foreground">{t(`common.${job.type}`)} &middot; {job.location}</p>
                                 </div>
                                 <Button asChild>
-                                    <Link href="/signup">{t('Apply Now')}</Link>
+                                    <Link href="/signup">{t('common.apply_now')}</Link>
                                 </Button>
                             </Card>
                         ))}
