@@ -35,7 +35,7 @@ export function SchoolProfileClient({ school }: { school: School }) {
                     <div className="relative h-32 w-32 rounded-full overflow-hidden border-8 border-background shrink-0 bg-white p-2">
                          <Image
                             src={school.logoUrl}
-                            alt={`${t(school.name)} logo`}
+                            alt={`${school.name} logo`}
                             fill
                             sizes="128px"
                             className="object-contain"
@@ -43,7 +43,7 @@ export function SchoolProfileClient({ school }: { school: School }) {
                     </div>
                     <div>
                         <h1 className="text-3xl md:text-4xl font-bold">{school.acronym}</h1>
-                        <p className="text-muted-foreground text-lg">{t(school.name)}</p>
+                        <p className="text-muted-foreground text-lg">{school.name}</p>
                     </div>
                 </div>
                 

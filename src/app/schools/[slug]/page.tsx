@@ -19,7 +19,7 @@ interface School {
 const schoolsData: School[] = [
     {
         id: "1",
-        name: "school_1_name",
+        name: "Institut National Polytechnique Félix Houphouët-Boigny",
         acronym: "INP-HB",
         logoUrl: "/images/University.png",
         location: "Yamoussoukro",
@@ -30,9 +30,9 @@ const schoolsData: School[] = [
     },
     {
         id: "2",
-        name: "school_2_name",
+        name: "Université Félix Houphouët-Boigny",
         acronym: "UFHB",
-        logoUrl: "/images/UFHB.png",
+        logoUrl: "/images/University.png",
         location: "Abidjan",
         website: "https://www.univ-fhb.edu.ci",
         description: "school_2_description",
@@ -41,14 +41,36 @@ const schoolsData: School[] = [
     },
     {
         id: "3",
-        name: "school_3_name",
+        name: "Groupe CSI Pôle Polytechnique",
         acronym: "CSI",
-        logoUrl: "/images/CSI.png",
+        logoUrl: "/images/University.png",
         location: "Abidjan",
         website: "https://www.csi-polytechnique.com",
         description: "school_3_description",
         programs: ["school_3_program_1", "school_3_program_2", "school_3_program_3", "school_3_program_4"],
         slug: "csi",
+    },
+    {
+        id: "4",
+        name: "École Supérieure Africaine des TIC",
+        acronym: "ESATIC",
+        logoUrl: "/images/University.png",
+        location: "Abidjan",
+        website: "https://www.esatic.edu.ci",
+        description: "school_4_description",
+        programs: ["school_4_program_1", "school_4_program_2", "school_4_program_3", "school_4_program_4"],
+        slug: "esatic",
+    },
+    {
+        id: "5",
+        name: "École Nationale Supérieure de Statistique et d'Économie Appliquée",
+        acronym: "ENSEA",
+        logoUrl: "/images/University.png",
+        location: "Abidjan",
+        website: "https://www.ensea.edu.ci",
+        description: "school_5_description",
+        programs: ["school_5_program_1", "school_5_program_2", "school_5_program_3", "school_5_program_4"],
+        slug: "ensea",
     }
 ];
 

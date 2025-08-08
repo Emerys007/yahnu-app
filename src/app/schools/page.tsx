@@ -25,30 +25,48 @@ interface School {
 const schoolsData: School[] = [
     {
         id: "1",
-        name: "school_1_name",
+        name: "Institut National Polytechnique Félix Houphouët-Boigny",
         acronym: "INP-HB",
-        logoUrl: "https://www.inphb.ci/templates/inphb/images/logo.png",
+        logoUrl: "/images/University.png",
         location: "Yamoussoukro",
         description: "school_desc_1",
         slug: "inp-hb",
     },
     {
         id: "2",
-        name: "school_2_name",
+        name: "Université Félix Houphouët-Boigny",
         acronym: "UFHB",
-        logoUrl: "https://ufhb.edu.ci/wp-content/uploads/2022/07/LOGO-UFHB-1.png",
+        logoUrl: "/images/UFHB.png",
         location: "Abidjan",
         description: "school_desc_2",
         slug: "ufhb",
     },
     {
         id: "3",
-        name: "school_3_name",
+        name: "Groupe CSI Pôle Polytechnique",
         acronym: "CSI",
-        logoUrl: "https://csipolytechnique.ci/wp-content/uploads/2023/03/logo-csi.png",
+        logoUrl: "/images/University.png",
         location: "Abidjan",
         description: "school_desc_3",
         slug: "csi",
+    },
+    {
+        id: "4",
+        name: "École Supérieure Africaine des TIC",
+        acronym: "ESATIC",
+        logoUrl: "/images/University.png",
+        location: "Abidjan",
+        description: "school_desc_4",
+        slug: "esatic",
+    },
+    {
+        id: "5",
+        name: "École Nationale Supérieure de Statistique et d'Économie Appliquée",
+        acronym: "ENSEA",
+        logoUrl: "/images/University.png",
+        location: "Abidjan",
+        description: "school_desc_5",
+        slug: "ensea",
     }
 ];
 
@@ -98,7 +116,7 @@ export default function SchoolsPage() {
                                         <div className="relative w-full h-48 bg-muted flex items-center justify-center">
                                             <Image
                                                 src={school.logoUrl}
-                                                alt={`${t(school.name)} logo`}
+                                                alt={`${school.name} logo`}
                                                 width={160}
                                                 height={160}
                                                 className="object-contain p-8 h-full w-auto"
@@ -107,7 +125,7 @@ export default function SchoolsPage() {
                                     </CardHeader>
                                     <CardContent className="p-6 flex flex-col flex-grow">
                                         <h2 className="text-xl font-bold">{school.acronym}</h2>
-                                        <p className="text-sm text-muted-foreground mb-4">{t(school.name)}</p>
+                                        <p className="text-sm text-muted-foreground mb-4">{school.name}</p>
                                         <p className="text-muted-foreground flex-grow">{t(school.description)}</p>
                                         <div className="flex items-center justify-center md:justify-start gap-2 mt-4 text-sm text-muted-foreground">
                                             <MapPin className="h-4 w-4"/> {school.location}
