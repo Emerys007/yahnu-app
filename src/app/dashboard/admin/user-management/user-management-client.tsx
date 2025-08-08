@@ -94,7 +94,12 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{t('dashboard.user_management.manage_user').replace('{{name}}', user.name)}</DialogTitle>
+                    <DialogTitle>
+                        {language === 'en' ? 
+                            `Manage User: ${user.name}` : 
+                            t('dashboard.user_management.manage_user').replace('{{name}}', user.name)
+                        }
+                    </DialogTitle>
                     <DialogDescription>{t('dashboard.user_management.manage_user_description')}</DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
@@ -194,9 +199,9 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">{t('dashboard.user_management.all_roles')}</SelectItem>
-                        <SelectItem value="graduate">{t('common.graduate')}</SelectItem>
-                        <SelectItem value="company">{t('common.company')}</SelectItem>
-                        <SelectItem value="school">{t('common.school')}</SelectItem>
+                        <SelectItem value="graduate">{language === 'en' ? 'Graduate' : t('common.graduate')}</SelectItem>
+                        <SelectItem value="company">{language === 'en' ? 'Company' : t('common.company')}</SelectItem>
+                        <SelectItem value="school">{language === 'en' ? 'School' : t('common.school')}</SelectItem>
                     </SelectContent>
                 </Select>
                 <Select value={filters.status} onValueChange={(v) => handleFilterChange('status', v)}>
@@ -238,7 +243,7 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                                         {user.accountType === 'company' && <Building className="h-3 w-3" />}
                                         {user.accountType === 'school' && <School className="h-3 w-3" />}
                                         {user.accountType === 'graduate' && <Users className="h-3 w-3" />}
-                                        {t(`common.${user.accountType}`)}
+                                        {language === 'en' ? user.accountType.charAt(0).toUpperCase() + user.accountType.slice(1) : t(`common.${user.accountType}`)}
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
@@ -250,11 +255,14 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
-                                    {new Date(user.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', {
-                                        day: '2-digit',
-                                        month: '2-digit', 
-                                        year: 'numeric'
-                                    })}
+                                    {language === 'en' ? 
+                                        new Date(user.date).toLocaleDateString('en-CA') : // YYYY-MM-DD format
+                                        new Date(user.date).toLocaleDateString('fr-FR', {
+                                            day: '2-digit',
+                                            month: '2-digit', 
+                                            year: 'numeric'
+                                        })
+                                    }
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <ManageUserDialog user={user} onUserUpdate={handleUserUpdate} onUserDelete={handleUserDelete}/>
