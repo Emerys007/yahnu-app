@@ -255,6 +255,9 @@
       "user_count": "Nombre d'utilisateurs",
       "total": "Total",
       "export_as_csv": "Exporter en CSV",
+      "monthly_growth": "Croissance mensuelle",
+      "new_registrations": "Nouvelles inscriptions",
+      "active_this_month": "Actif ce mois-ci",
       "january": "Jan",
       "february": "Fév",
       "march": "Mar",
@@ -267,6 +270,14 @@
       "october": "Oct",
       "november": "Nov",
       "december": "Déc"
+    },
+    "months": {
+      "january": "Jan",
+      "february": "Fév", 
+      "march": "Mar",
+      "april": "Avr",
+      "may": "Mai",
+      "june": "Jun"
     },
     "content": {
       "title": "Gestion de contenu",
