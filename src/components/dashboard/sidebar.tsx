@@ -129,15 +129,15 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   ];
   
   const bottomNav = [
-      { href: "/dashboard/settings", icon: Settings, label: t('Settings') },
-      { href: "/dashboard/support", icon: LifeBuoy, label: t('Support') },
+      { href: "/dashboard/settings", icon: Settings, label: t('common.settings') },
+      { href: "/dashboard/support", icon: LifeBuoy, label: t('common.support') },
       { type: "divider" },
-      { action: "logout", icon: LogOut, label: t('Log out') },
+      { action: "logout", icon: LogOut, label: t('auth.logout') },
   ]
   
   const adminFooterNav = [
-       { href: "/dashboard/settings", icon: Settings, label: t('Settings') },
-       { action: "logout", icon: LogOut, label: t('Log out') },
+       { href: "/dashboard/settings", icon: Settings, label: t('common.settings') },
+       { action: "logout", icon: LogOut, label: t('auth.logout') },
   ]
 
   switch (role) {
