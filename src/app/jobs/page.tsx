@@ -192,25 +192,25 @@ export default function PublicJobSearchPage() {
       <MainNav />
       <main className="flex-1 container mx-auto py-12">
         <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold tracking-tight">{t('Find Your Next Opportunity')}</h1>
+            <h1 className="text-5xl font-bold tracking-tight">{t('pages.jobs.find_your_next_opportunity')}</h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t('Browse through hundreds of job openings from top companies in {country}.')}
+                {t('pages.jobs.browse_jobs_description')}
             </p>
         </div>
         <div className="grid md:grid-cols-[320px_1fr] gap-8 items-start">
           <Card>
             <CardHeader>
-              <CardTitle>{t('Filter Jobs')}</CardTitle>
-              <CardDescription>{t('Refine your search to find the perfect fit.')}</CardDescription>
+              <CardTitle>{t('pages.jobs.filter_jobs')}</CardTitle>
+              <CardDescription>{t('pages.jobs.refine_search')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="keywords">{t('Keywords')}</Label>
+                <Label htmlFor="keywords">{t('pages.jobs.keywords')}</Label>
                 <div className="relative">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input 
                     id="keywords" 
-                    placeholder={t("Job title, skills...")}
+                    placeholder={t("pages.jobs.job_title_skills")}
                     className="pl-8" 
                     value={filters.keywords}
                     onChange={(e) => handleFilterChange('keywords', e.target.value)}
@@ -218,12 +218,12 @@ export default function PublicJobSearchPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="location">{t('Location')}</Label>
+                <Label htmlFor="location">{t('pages.jobs.location')}</Label>
                 <div className="relative">
                   <MapPin className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input 
                     id="location" 
-                    placeholder={t("City, state, remote")}
+                    placeholder={t("pages.jobs.city_state_remote")}
                     className="pl-8"
                     value={filters.location}
                     onChange={(e) => handleFilterChange('location', e.target.value)}
@@ -231,36 +231,36 @@ export default function PublicJobSearchPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="job-type">{t('Job Type')}</Label>
+                <Label htmlFor="job-type">{t('pages.jobs.job_type')}</Label>
                 <Select 
                   value={filters.type}
                   onValueChange={(value) => handleFilterChange('type', value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('All types')} />
+                    <SelectValue placeholder={t('pages.jobs.all_types')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t('All Types')}</SelectItem>
-                    <SelectItem value="Full-time">{t('Full-time')}</SelectItem>
-                    <SelectItem value="Part-time">{t('Part-time')}</SelectItem>
-                    <SelectItem value="Contract">{t('Contract')}</SelectItem>
-                    <SelectItem value="Internship">{t('Internship')}</SelectItem>
+                    <SelectItem value="all">{t('pages.jobs.all_types')}</SelectItem>
+                    <SelectItem value="Full-time">{t('pages.jobs.full_time')}</SelectItem>
+                    <SelectItem value="Part-time">{t('pages.jobs.part_time')}</SelectItem>
+                    <SelectItem value="Contract">{t('pages.jobs.contract')}</SelectItem>
+                    <SelectItem value="Internship">{t('pages.jobs.internship')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2 pt-2">
-                <Label>{t('Workplace')}</Label>
+                <Label>{t('pages.jobs.workplace')}</Label>
                   <div className="flex items-center space-x-2">
                     <Checkbox id="remote" checked={filters.workplace.remote} onCheckedChange={() => handleWorkplaceChange('remote')} />
-                    <Label htmlFor="remote" className="font-normal">{t('Remote')}</Label>
+                    <Label htmlFor="remote" className="font-normal">{t('pages.jobs.remote')}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Checkbox id="on-site" checked={filters.workplace.onSite} onCheckedChange={() => handleWorkplaceChange('onSite')} />
-                    <Label htmlFor="on-site" className="font-normal">{t('On-site')}</Label>
+                    <Label htmlFor="on-site" className="font-normal">{t('pages.jobs.on_site')}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Checkbox id="hybrid" checked={filters.workplace.hybrid} onCheckedChange={() => handleWorkplaceChange('hybrid')} />
-                    <Label htmlFor="hybrid" className="font-normal">{t('Hybrid')}</Label>
+                    <Label htmlFor="hybrid" className="font-normal">{t('pages.jobs.hybrid')}</Label>
                   </div>
                 </div>
             </CardContent>
@@ -281,7 +281,7 @@ export default function PublicJobSearchPage() {
                         </CardDescription>
                       </div>
                       <Button asChild className="shrink-0">
-                        <Link href="/signup">{t('View Job')}</Link>
+                        <Link href="/signup">{t('pages.jobs.view_job')}</Link>
                       </Button>
                     </div>
                   </CardHeader>
@@ -296,18 +296,18 @@ export default function PublicJobSearchPage() {
               )) : (
                 <Card>
                   <CardContent className="py-12 text-center">
-                      <p className="font-semibold">{t('No jobs found')}</p>
-                      <p className="text-muted-foreground mt-2">{t("Try adjusting your filters to find what you're looking for.")}</p>
+                      <p className="font-semibold">{t('pages.jobs.no_jobs_found')}</p>
+                      <p className="text-muted-foreground mt-2">{t("pages.jobs.adjust_filters")}</p>
                   </CardContent>
                 </Card>
               )}
               <Card>
                 <CardContent className="py-8 text-center">
-                    <h3 className="text-2xl font-bold">{t('Unlock More Opportunities')}</h3>
-                    <p className="text-muted-foreground mt-2 mb-4">{t('Create a free account to view full job details and apply directly.')}</p>
+                    <h3 className="text-2xl font-bold">{t('pages.jobs.unlock_more_opportunities')}</h3>
+                    <p className="text-muted-foreground mt-2 mb-4">{t('pages.jobs.create_account_description')}</p>
                     <Button asChild size="lg">
                         <Link href="/signup">
-                            {t('Sign Up Now')} <ArrowRight className="ml-2 h-4 w-4"/>
+                            {t('pages.jobs.sign_up_now')} <ArrowRight className="ml-2 h-4 w-4"/>
                         </Link>
                     </Button>
                 </CardContent>

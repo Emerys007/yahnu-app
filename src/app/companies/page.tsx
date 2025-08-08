@@ -76,11 +76,11 @@ export default function CompaniesPage() {
       <MainNav />
       <main className="flex-1 container mx-auto py-12">
         <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold tracking-tight">{t('Featured Companies')}</h1>
+            <h1 className="text-5xl font-bold tracking-tight">{t('pages.companies.featured_companies')}</h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
                 {isLaunchCountry
-                    ? t("Discover leading companies in Côte d'Ivoire that are hiring top talent. Your next career opportunity awaits.")
-                    : t('Coming Soon to {country}', { country: countryName })
+                    ? t("pages.companies.discover_companies_description")
+                    : t('pages.companies.coming_soon_to_country', { country: countryName })
                 }
             </p>
         </div>
@@ -100,7 +100,7 @@ export default function CompaniesPage() {
                                 </div>
                             </div>
                             <div className="w-full md:w-1/3 text-center md:text-left">
-                                <h3 className="font-semibold mb-2 text-primary">{t('Featured Positions')}:</h3>
+                                <h3 className="font-semibold mb-2 text-primary">{t('pages.companies.featured_positions')}:</h3>
                                 <ul className="space-y-1 text-sm">
                                     {company.featuredJobs.map((job) => (
                                         <li key={job} className="flex items-center gap-2 justify-center md:justify-start">
@@ -113,7 +113,7 @@ export default function CompaniesPage() {
                             <div className="self-center mt-4 md:mt-0">
                                 <Button asChild>
                                     <div className="flex items-center">
-                                        {t('View Profile')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"/>
+                                        {t('common.view_profile')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"/>
                                     </div>
                                 </Button>
                             </div>
@@ -123,10 +123,10 @@ export default function CompaniesPage() {
                  <Card className="bg-primary/5 border-2 border-dashed border-primary/20">
                     <CardContent className="p-8 text-center flex flex-col items-center justify-center">
                         <PlusCircle className="h-12 w-12 text-primary mb-4" />
-                        <h2 className="text-2xl font-bold mb-2">{t('Is Your Company Next?')}</h2>
-                        <p className="text-muted-foreground max-w-md mx-auto mb-6">{t('Join Yahnu to access a pool of pre-vetted, top-tier talent from the best institutions in {country}.')}</p>
+                        <h2 className="text-2xl font-bold mb-2">{t('pages.companies.is_your_company_next')}</h2>
+                        <p className="text-muted-foreground max-w-md mx-auto mb-6">{t('pages.companies.join_yahnu_description')}</p>
                         <Button asChild size="lg">
-                            <Link href="/signup?type=company">{t('Become a Partner Company')}</Link>
+                            <Link href="/signup?type=company">{t('pages.companies.become_a_partner_company')}</Link>
                         </Button>
                     </CardContent>
                 </Card>
@@ -135,8 +135,8 @@ export default function CompaniesPage() {
             <Card className="py-24">
                 <CardContent className="text-center">
                     <p className="text-4xl mb-4">🚀</p>
-                    <h2 className="text-3xl font-bold mb-2">{t('Coming Soon!')}</h2>
-                    <p className="text-muted-foreground max-w-md mx-auto">{t('We are working hard to bring Yahnu companies to {country}. Stay tuned!', { country: countryName })}</p>
+                    <h2 className="text-3xl font-bold mb-2">{t('common.coming_soon')}</h2>
+                    <p className="text-muted-foreground max-w-md mx-auto">{t('pages.companies.working_hard_companies', { country: countryName })}</p>
                 </CardContent>
             </Card>
         )}
