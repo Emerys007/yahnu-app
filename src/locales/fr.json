@@ -1,4 +1,3 @@
-
 {
   "common": {
     "jobs": "Emplois",
@@ -389,13 +388,13 @@
       "want_to_partner": "Vous voulez vous associer avec nous ?",
       "join_network_description": "Rejoignez notre réseau pour connecter vos diplômés avec les entreprises leaders et suivre leur succès.",
       "partner_with_us": "Partenaire avec nous",
-      "working_hard_schools": "Nous travaillons dur pour apporter les écoles Yahnu en {country}. Restez à l'écoute !",
+      "working_hard_schools": "Nous travaillons dur pour amener les écoles Yahnu à {country}. Restez à l'écoute !",
       "school_1_name": "Institut National Polytechnique Félix Houphouët-Boigny",
       "school_2_name": "Université Félix Houphouët-Boigny",
-      "school_3_name": "Côte d'Ivoire Supérieure d'Informatique",
-      "school_desc_1": "Premier institut d'ingénierie et de technologie en Côte d'Ivoire, spécialisé dans l'enseignement technique avancé.",
-      "school_desc_2": "Université publique de premier plan offrant des programmes complets dans plusieurs disciplines.",
-      "school_desc_3": "Institut spécialisé axé sur l'informatique et l'enseignement des technologies de l'information."
+      "school_3_name": "Groupe CSI Pôle Polytechnique",
+      "school_desc_1": "Institut polytechnique de premier plan spécialisé dans l'éducation en ingénierie et technologie en Afrique de l'Ouest.",
+      "school_desc_2": "Université publique prestigieuse offrant des programmes complets en sciences, sciences humaines et études professionnelles.",
+      "school_desc_3": "Institution privée de premier plan offrant une éducation de qualité en ingénierie, commerce et technologie."
     }
   }
 }

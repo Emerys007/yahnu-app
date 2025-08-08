@@ -169,6 +169,7 @@
   "blog": {
     "author_name": "Yahnu Staff"
   },
+  "blog_author": "Yahnu Staff",
   "nav": {
     "jobs": "Jobs",
     "companies": "Companies",
@@ -383,6 +384,11 @@
       "partner_with_us": "Partner With Us",
       "working_hard_schools": "We are working hard to bring Yahnu schools to {country}. Stay tuned!",
       "school_1_name": "Institut National Polytechnique Félix Houphouët-Boigny",
+      "school_2_name": "Université Félix Houphouët-Boigny", 
+      "school_3_name": "Groupe CSI Pôle Polytechnique",
+      "school_desc_1": "Leading polytechnic institute specializing in engineering and technology education in West Africa.",
+      "school_desc_2": "Prestigious public university offering comprehensive programs in sciences, humanities and professional studies.",
+      "school_desc_3": "Premier private institution providing quality education in engineering, business and technology."gny",
       "school_2_name": "Université Félix Houphouët-Boigny",
       "school_3_name": "Côte d'Ivoire Supérieure d'Informatique",
       "school_desc_1": "Premier engineering and technology institute in Côte d'Ivoire, specializing in advanced technical education.",
