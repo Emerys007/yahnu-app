@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -116,7 +115,7 @@ export function MainNav() {
               </div>
           </Link>
         </div>
-        
+
         <div className="flex items-center gap-2 ml-auto">
             <nav className="hidden md:flex items-center gap-6 text-sm">
                 {navLinks.map((link) => (
@@ -138,7 +137,7 @@ export function MainNav() {
                   <Link href="/signup">{t('common.sign_up')}</Link>
                 </Button>
             </div>
-            
+
             <div className="hidden md:flex items-center gap-2">
               <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -149,10 +148,16 @@ export function MainNav() {
                   </DropdownMenuTrigger>
                   <DropdownMenuPortal>
                     <DropdownMenuContent align="end" className="w-40 max-h-80 overflow-y-auto">
-                      {allCountries.map((c) => (
-                        <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
-                            <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
-                            <span>{language === 'fr' ? c.name.fr : c.name.en}</span>
+                      {allCountries.map((countryOption) => (
+                        <DropdownMenuItem
+                          key={countryOption.code}
+                          onClick={() => setCountry(countryOption.code)}
+                          className={cn("flex items-center gap-2", {
+                            "bg-accent": country.code === countryOption.code,
+                          })}
+                        >
+                          <Flag countryCode={countryOption.code} className="h-4 w-4" />
+                          {language === 'fr' ? countryOption.name.fr : countryOption.name.en}
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
@@ -171,7 +176,7 @@ export function MainNav() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            
+
             <div className="md:hidden flex items-center gap-1">
               <DropdownMenu>
                   <DropdownMenuTrigger asChild>

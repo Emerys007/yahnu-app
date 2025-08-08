@@ -46,7 +46,7 @@ const getNavLinks = (t: (key: string) => string) => [
 ];
 
 export function MainNav() {
-  const { t, setLanguage, countryName } = useLocalization();
+  const { t, setLanguage, countryName, language } = useLocalization();
   const { country, setCountry } = useCountry();
   const { setTheme } = useTheme();
   const navLinks = getNavLinks(t);
@@ -148,10 +148,16 @@ export function MainNav() {
                   </DropdownMenuTrigger>
                   <DropdownMenuPortal>
                     <DropdownMenuContent align="end" className="w-40 max-h-80 overflow-y-auto">
-                      {allCountries.map((c) => (
-                        <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
-                            <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
-                            <span>{t(c.name.en)}</span>
+                      {allCountries.map((countryOption) => (
+                        <DropdownMenuItem
+                          key={countryOption.code}
+                          onClick={() => setCountry(countryOption.code)}
+                          className={cn("flex items-center gap-2", {
+                            "bg-accent": country.code === countryOption.code,
+                          })}
+                        >
+                          <Flag countryCode={countryOption.code} className="h-4 w-4 mr-2" />
+                          {language === 'fr' ? countryOption.name.fr : countryOption.name.en}
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
