@@ -42,7 +42,7 @@ export default async function ManageUsersPage() {
     // Simple translation function for server component
     const t = (key: string): string => {
         const keys = key.split('.');
-        let value = fr; // Default to French
+        let value = en; // Default to English for server-side rendering
         
         for (const k of keys) {
             if (value && typeof value === 'object' && k in value) {
