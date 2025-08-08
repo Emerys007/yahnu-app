@@ -8,7 +8,7 @@ import { AdminDashboard } from './admin-dashboard'
 import { GraduateDashboard } from './graduate-dashboard'
 import { CompanyDashboard } from './company-dashboard'
 import { SchoolDashboard } from './school-dashboard'
-import { useTranslations } from '@/context/localization-context';
+import { useLocalization } from '@/context/localization-context';
 
 export function DashboardContent({
   children,
@@ -17,7 +17,7 @@ export function DashboardContent({
 }) {
   const pathname = usePathname();
   const { user } = useAuth()
-  const t = useTranslations()
+  const { t } = useLocalization()
 
   if (!user) {
     return <div>{t('common.loading')}</div>

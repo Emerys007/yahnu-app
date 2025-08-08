@@ -129,7 +129,6 @@
     "back_to_companies": "Retour aux entreprises"
   },
   "dashboard": {
-    "welcome": "Bienvenue",
     "overview": "Aperçu",
     "recent_activity": "Activité récente",
     "quick_actions": "Actions rapides",
@@ -408,6 +407,34 @@
         "actions": "Actions",
         "noPendingRequests": "Aucune demande en attente."
       }
+    },
+    "content": {
+      "title": "Gestion de contenu",
+      "description": "Gérez le contenu de votre blog et de vos pages de plateforme.",
+      "create_content": "Créer du contenu",
+      "blog_posts": "Articles de blog",
+      "static_pages": "Pages statiques",
+      "announcements": "Annonces",
+      "search_blog_posts": "Rechercher des articles de blog...",
+      "search_announcements": "Rechercher des annonces...",
+      "new_blog_post": "Nouvel article de blog",
+      "new_announcement": "Nouvelle annonce"
+    },
+    "user_management": {
+      "title": "Gestion des utilisateurs",
+      "description": "Gérer tous les comptes utilisateur sur la plateforme.",
+      "search_users": "Rechercher des utilisateurs...",
+      "name": "Nom",
+      "role": "Rôle",
+      "status": "Statut",
+      "date": "Date d'inscription",
+      "actions": "Actions",
+      "manage": "Gérer",
+      "manage_user": "Gérer l'utilisateur: {name}",
+      "manage_user_description": "Mettre à jour le statut de l'utilisateur ou le supprimer de la plateforme.",
+      "change_status": "Changer le statut",
+      "suspend": "Suspendre",
+      "delete_user": "Supprimer l'utilisateur"
     }
   },
   "auth": {

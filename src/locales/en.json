@@ -184,21 +184,34 @@
       "ticket_management": "Ticket Management",
       "user_lookup": "User Lookup",
       "overview": {
-        "title": "Admin Overview",
-        "description": "Monitor and manage the Yahnu platform.",
-        "totalUsers": "Total Users",
-        "totalUsersDescription": "Registered users on the platform",
-        "activeCompanies": "Active Companies",
-        "activeCompaniesDescription": "Companies with active job postings",
-        "partnerSchools": "Partner Schools",
-        "partnerSchoolsDescription": "Educational institution partners",
-        "pendingRequests": "Pending Registration Requests",
-        "pendingRequestsDescription": "Approve or reject new company and school registrations.",
-        "recentActivity": "Recent Activity",
-        "organizationName": "Organization Name",
-        "actions": "Actions",
-        "noPendingRequests": "No pending requests."
+        "title": "Administration Overview",
+        "description": "Monitor platform activity and manage system-wide settings."
       }
+    },
+    "content": {
+      "blog_posts": "Blog Posts",
+      "static_pages": "Static Pages",
+      "announcements": "Announcements",
+      "search_blog_posts": "Search blog posts...",
+      "search_announcements": "Search announcements...",
+      "new_blog_post": "New Blog Post",
+      "new_announcement": "New Announcement"
+    },
+    "user_management": {
+      "title": "User Management",
+      "description": "Manage all user accounts on the platform.",
+      "search_users": "Search users...",
+      "name": "Name",
+      "role": "Role",
+      "status": "Status",
+      "date": "Date Joined",
+      "actions": "Actions",
+      "manage": "Manage",
+      "manage_user": "Manage User: {name}",
+      "manage_user_description": "Update user status or remove them from the platform.",
+      "change_status": "Change Status",
+      "suspend": "Suspend",
+      "delete_user": "Delete User"
     }
   },
   "auth": {
