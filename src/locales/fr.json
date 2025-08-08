@@ -155,9 +155,30 @@
     "search": "Rechercher...",
     "search_placeholder": "Tapez une commande ou recherchez...",
     "no_results_found": "Aucun résultat trouvé.",
-    "until": "jusqu'à"
+    "until": "jusqu'à",
+    "Support Center": "Centre de support",
+    "Manage user inquiries and resolve support tickets.": "Gérer les demandes des utilisateurs et résoudre les tickets de support.",
+    "New Tickets": "Nouveaux tickets",
+    "Open Tickets": "Tickets ouverts",
+    "Resolved Today": "Résolus aujourd'hui",
+    "Ticket Queue": "File d'attente des tickets",
+    "Address incoming support requests from users.": "Traiter les demandes de support entrantes des utilisateurs.",
+    "New": "Nouveau",
+    "Open": "Ouvert",
+    "Resolved": "Résolu",
+    "User": "Utilisateur",
+    "Subject": "Sujet",
+    "Status": "Statut",
+    "Submitted": "Soumis",
+    "View Ticket": "Voir le ticket",
+    "new": "nouveau",
+    "open": "ouvert",
+    "resolved": "résolu"
   },
-  "dashboard": {
+  "support_center": {
+      "no_tickets": "Aucun ticket trouvé."
+    },
+    "dashboard": {
     "title": "Tableau de bord",
     "nav": {
       "dashboard": "Tableau de bord",

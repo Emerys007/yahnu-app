@@ -154,7 +154,28 @@
     "back_to_companies": "Back to Companies",
     "search": "Search...",
     "search_placeholder": "Type a command or search...",
-    "no_results_found": "No results found."
+    "no_results_found": "No results found.",
+    "Support Center": "Support Center",
+    "Manage user inquiries and resolve support tickets.": "Manage user inquiries and resolve support tickets.",
+    "New Tickets": "New Tickets",
+    "Open Tickets": "Open Tickets", 
+    "Resolved Today": "Resolved Today",
+    "Ticket Queue": "Ticket Queue",
+    "Address incoming support requests from users.": "Address incoming support requests from users.",
+    "New": "New",
+    "Open": "Open",
+    "Resolved": "Resolved",
+    "User": "User",
+    "Subject": "Subject",
+    "Status": "Status",
+    "Submitted": "Submitted",
+    "View Ticket": "View Ticket",
+    "new": "new",
+    "open": "open",
+    "resolved": "resolved"
+  },
+  "support_center": {
+    "no_tickets": "No tickets found."
   },
   "dashboard": {
     "title": "Dashboard",
