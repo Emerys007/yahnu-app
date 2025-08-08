@@ -52,7 +52,7 @@ const schoolsData: School[] = [
     },
     {
         id: "4",
-        name: "École Supérieure Africaine des TIC",
+        name: "pages.schools.school_4_name",
         acronym: "ESATIC",
         logoUrl: "https://esatic.ci/wp-content/uploads/2024/07/esatic_logo.jpg",
         location: "Abidjan",
@@ -61,7 +61,7 @@ const schoolsData: School[] = [
     },
     {
         id: "5",
-        name: "École Nationale Supérieure de Statistique et d'Économie Appliquée",
+        name: "pages.schools.school_5_name",
         acronym: "ENSEA",
         logoUrl: "https://ensea.ed.ci/wp-content/uploads/2021/07/logo_ensea.png",
         location: "Abidjan",
@@ -125,7 +125,7 @@ export default function SchoolsPage() {
                                     </CardHeader>
                                     <CardContent className="p-6 flex flex-col flex-grow">
                                         <h2 className="text-xl font-bold">{school.acronym}</h2>
-                                        <p className="text-sm text-muted-foreground mb-4">{school.name}</p>
+                                        <p className="text-sm text-muted-foreground mb-4">{t(school.name)}</p>
                                         <p className="text-muted-foreground flex-grow">{t(school.description)}</p>
                                         <div className="flex items-center justify-center md:justify-start gap-2 mt-4 text-sm text-muted-foreground">
                                             <MapPin className="h-4 w-4"/> {school.location}
