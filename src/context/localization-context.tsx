@@ -41,7 +41,7 @@ export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
     // Handle nested keys by splitting on '.' and traversing the object
     const keys = key.split('.');
     let translation: any = translations[language];
-    
+
     for (const k of keys) {
       if (translation && typeof translation === 'object' && k in translation) {
         translation = translation[k];
@@ -50,12 +50,12 @@ export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
         break;
       }
     }
-    
+
     // Ensure translation is a string
     if (typeof translation !== 'string') {
       translation = key;
     }
-    
+
     if (values) {
         Object.keys(values).forEach(valueKey => {
             const regex = new RegExp(`{${valueKey}}`, 'g');
@@ -76,39 +76,10 @@ export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
 
 export const useLocalization = (): LocalizationContextType => {
   const context = useContext(LocalizationContext);
+
   if (context === undefined) {
-    return {
-      language: 'en',
-      setLanguage: () => {},
-      t: (key: string, values?: { [key: string]: string | number }) => {
-          // Handle nested keys by splitting on '.' and using fallback English translations
-          const keys = key.split('.');
-          let translation: any = translations['en'];
-          
-          for (const k of keys) {
-            if (translation && typeof translation === 'object' && k in translation) {
-              translation = translation[k];
-            } else {
-              translation = key; // Fallback to the key itself if not found
-              break;
-            }
-          }
-          
-          // Ensure translation is a string
-          if (typeof translation !== 'string') {
-            translation = key;
-          }
-          
-          if (values) {
-              Object.keys(values).forEach(valueKey => {
-                  const regex = new RegExp(`{${valueKey}}`, 'g');
-                  translation = translation.replace(regex, String(values[valueKey]));
-              });
-          }
-          return translation.replace(/{country}/g, "this country");
-      },
-      countryName: "this country",
-    };
+    throw new Error('useLocalization must be used within a LocalizationProvider');
   }
+
   return context;
-};
+}
