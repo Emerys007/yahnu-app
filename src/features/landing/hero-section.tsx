@@ -29,7 +29,7 @@ const getSlides = (t: (key: string, args?: any) => string, country: string) => [
         buttonIcon: <Search />,
         imageUrl: "/images/hero/dream-job.jpg",
         imageHint: "confident graduate looking towards the future",
-        href: "/dashboard/jobs"
+        href: "/signup?role=graduate"
       },
       {
         role: "Companies",

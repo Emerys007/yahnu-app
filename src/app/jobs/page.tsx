@@ -281,7 +281,7 @@ export default function PublicJobSearchPage() {
                         </CardDescription>
                       </div>
                       <Button asChild className="shrink-0">
-                        <Link href="/signup">{t('pages.jobs.view_job')}</Link>
+                        <Link href="/signup?role=graduate">{t('pages.jobs.view_job')}</Link>
                       </Button>
                     </div>
                   </CardHeader>
@@ -306,7 +306,7 @@ export default function PublicJobSearchPage() {
                     <h3 className="text-2xl font-bold">{t('pages.jobs.unlock_more_opportunities')}</h3>
                     <p className="text-muted-foreground mt-2 mb-4">{t('pages.jobs.create_account_description')}</p>
                     <Button asChild size="lg">
-                        <Link href="/signup">
+                        <Link href="/signup?role=graduate">
                             {t('pages.jobs.sign_up_now')} <ArrowRight className="ml-2 h-4 w-4"/>
                         </Link>
                     </Button>
