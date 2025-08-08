@@ -31,7 +31,7 @@ const companiesData: Company[] = [
         location: "Abidjan, Côte d'Ivoire",
         industry: "Telecommunications",
         featuredJobs: ["company_1_job_1", "company_1_job_2", "company_1_job_3"],
-        logoUrl: "https://placehold.co/200x200/ff6600/ffffff?text=Orange"
+        logoUrl: "https://via.placeholder.com/200x200/ff6600/ffffff.png?text=Orange"
     },
     {
         id: "2",
@@ -41,7 +41,7 @@ const companiesData: Company[] = [
         location: "Abidjan, Côte d'Ivoire",
         industry: "Agriculture",
         featuredJobs: ["company_2_job_1", "company_2_job_2", "company_2_job_3"],
-        logoUrl: "https://placehold.co/200x200/228b22/ffffff?text=SIFCA"
+        logoUrl: "https://via.placeholder.com/200x200/228b22/ffffff.png?text=SIFCA"
     },
     {
         id: "3",
@@ -51,7 +51,7 @@ const companiesData: Company[] = [
         location: "Abidjan, Côte d'Ivoire",
         industry: "Finance & Banking",
         featuredJobs: ["company_3_job_1", "company_3_job_2", "company_3_job_3"],
-        logoUrl: "https://placehold.co/200x200/1e40af/ffffff?text=Bridge+Bank"
+        logoUrl: "https://via.placeholder.com/200x200/1e40af/ffffff.png?text=Bridge+Bank"
     },
     {
         id: "4",
@@ -61,7 +61,7 @@ const companiesData: Company[] = [
         location: "Abidjan, Côte d'Ivoire",
         industry: "Transportation & Logistics",
         featuredJobs: ["company_4_job_1", "company_4_job_2", "company_4_job_3"],
-        logoUrl: "https://placehold.co/200x200/dc2626/ffffff?text=Bollore"
+        logoUrl: "https://via.placeholder.com/200x200/dc2626/ffffff.png?text=Bollore"
     },
 ];
 

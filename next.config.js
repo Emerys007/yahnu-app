@@ -1,6 +1,5 @@
-
 /** @type {import('next').NextConfig} */
-module.exports = {
+const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -8,6 +7,9 @@ module.exports = {
     ignoreDuringBuilds: true,
   },
   images: {
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    domains: ['placehold.co', 'via.placeholder.com', 'picsum.photos'],
     remotePatterns: [
       { protocol: 'https', hostname: 'www.inphb.ci' },
       { protocol: 'https', hostname: 'ufhb.edu.ci' },
