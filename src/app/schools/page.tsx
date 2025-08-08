@@ -1,4 +1,3 @@
-
 "use client"
 
 import { MainNav } from "@/components/landing/main-nav";
@@ -58,7 +57,7 @@ export default function SchoolsPage() {
   const { country } = useCountry();
 
   const isLaunchCountry = country.code === 'CI';
-  
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <MainNav />

@@ -1,4 +1,3 @@
-
 "use client"
 
 import { MainNav } from "@/components/landing/main-nav";
@@ -69,9 +68,9 @@ const companiesData: Company[] = [
 export default function CompaniesPage() {
   const { t, countryName } = useLocalization();
   const { country } = useCountry();
-  
+
   const isLaunchCountry = country.code === 'CI';
-  
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <MainNav />
@@ -79,8 +78,8 @@ export default function CompaniesPage() {
         <div className="text-center mb-12">
             <h1 className="text-5xl font-bold tracking-tight">{t('Featured Companies')}</h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                {isLaunchCountry 
-                    ? t("Discover leading companies in Côte d'Ivoire that are hiring top talent. Your next career opportunity awaits.") 
+                {isLaunchCountry
+                    ? t("Discover leading companies in Côte d'Ivoire that are hiring top talent. Your next career opportunity awaits.")
                     : t('Coming Soon to {country}', { country: countryName })
                 }
             </p>
@@ -105,7 +104,7 @@ export default function CompaniesPage() {
                                 <ul className="space-y-1 text-sm">
                                     {company.featuredJobs.map((job) => (
                                         <li key={job} className="flex items-center gap-2 justify-center md:justify-start">
-                                            <Briefcase className="h-4 w-4 text-muted-foreground"/> 
+                                            <Briefcase className="h-4 w-4 text-muted-foreground"/>
                                             <span>{t(job)}</span>
                                         </li>
                                     ))}

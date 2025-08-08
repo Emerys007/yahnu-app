@@ -19,19 +19,19 @@ const WhyChooseYahnu = () => {
   const benefits = [
     {
       icon: <ShieldCheck className="h-10 w-10 text-primary mb-4" />,
-      title: t('Direct access to a pre-vetted talent pool'),
+      title: t('why_choose_yahnu.direct_access'),
     },
     {
       icon: <Wand2 className="h-10 w-10 text-primary mb-4" />,
-      title: t('AI-driven tools for efficient recruitment and profile building'),
+      title: t('why_choose_yahnu.ai_tools'),
     },
     {
       icon: <Handshake className="h-10 w-10 text-primary mb-4" />,
-      title: t('Strengthened ties between academia and industry'),
+      title: t('why_choose_yahnu.strengthened_ties'),
     },
     {
       icon: <TrendingUp className="h-10 w-10 text-primary mb-4" />,
-      title: t('Enhanced career opportunities for graduates'),
+      title: t('why_choose_yahnu.enhanced_opportunities'),
     },
   ];
   
@@ -66,9 +66,9 @@ const WhyChooseYahnu = () => {
             viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 0.5 }}
         >
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('Why Choose Yahnu?')}</h2>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('why_choose_yahnu.title')}</h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-            {t('We provide a comprehensive solution to bridge the gap between education and employment in {country}.')}
+            {t('why_choose_yahnu.description')}
           </p>
         </motion.div>
         <motion.div 
@@ -125,7 +125,7 @@ export default function HomePage() {
                 className="text-3xl font-bold tracking-tight sm:text-4xl"
                 variants={textVariants}
               >
-                {t('Ready to Join the Elite?')}
+                {t('ready_to_join.title')}
               </motion.h2>
               <motion.p 
                 className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto"
@@ -134,7 +134,7 @@ export default function HomePage() {
                     visible: { ...textVariants.visible, transition: { ...textVariants.visible.transition, delay: 0.2 } }
                 }}
               >
-                  {t("Create your account today and unlock a world of opportunities. Whether you're a graduate, a company, or a school, Yahnu is your gateway to success.")}
+                  {t('ready_to_join.description')}
               </motion.p>
               <motion.div 
                 className="mt-8 flex justify-center"
@@ -144,7 +144,7 @@ export default function HomePage() {
                 }}
               >
                   <Button size="lg" asChild>
-                      <Link href="/signup">{t('Get Started Now')}</Link>
+                      <Link href="/signup">{t('common.get_started_now')}</Link>
                   </Button>
               </motion.div>
           </motion.div>

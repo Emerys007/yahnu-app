@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useMemo } from 'react'
@@ -146,7 +145,7 @@ const jobListingsData = {
 export default function PublicJobSearchPage() {
   const { language, t } = useLocalization();
   const jobListings = jobListingsData[language as keyof typeof jobListingsData] || jobListingsData.en;
-  
+
   const [filters, setFilters] = useState({
     keywords: "",
     location: "",
@@ -172,7 +171,7 @@ export default function PublicJobSearchPage() {
   const filteredJobs = useMemo(() => {
     return jobListings.filter(job => {
       const { keywords, location, type, workplace } = filters;
-      
+
       const keywordsMatch = (job.title.toLowerCase().includes(keywords.toLowerCase()) || 
                              job.tags.some(tag => tag.toLowerCase().includes(keywords.toLowerCase())) ||
                              job.company.toLowerCase().includes(keywords.toLowerCase()));
