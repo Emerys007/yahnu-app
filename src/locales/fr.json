@@ -206,14 +206,7 @@
       "user_deleted": "Utilisateur supprimé",
       "removed_from_platform": "a été supprimé de la plateforme.",
       "failed_delete_user": "Échec de la suppression de l'utilisateur.",
-      "no_users_found": "Aucun utilisateur trouvé.",
-      "active": "Actif",
-      "pending": "En attente",
-      "rejected": "Rejeté",
-      "suspended": "Suspendu",
-      "declined": "Refusé",
-      "all_roles": "Tous les rôles",
-      "all_statuses": "Tous les statuts"
+      "no_users_found": "Aucun utilisateur trouvé."
     },
     "analytics": {
       "title": "Analyses de la plateforme",

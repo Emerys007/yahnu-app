@@ -133,7 +133,7 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
 }
 
 export function UserManagementClient({ initialUsers }: { initialUsers: User[] }) {
-    const { t } = useLocalization()
+    const { t, language } = useLocalization()
     const [users, setUsers] = useState<User[]>(initialUsers);
     const [searchTerm, setSearchTerm] = useState("");
     const [filters, setFilters] = useState({ accountType: "all", status: "all" });
@@ -250,7 +250,7 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
-                                    {new Date(user.date).toLocaleDateString('fr-FR', {
+                                    {new Date(user.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', {
                                         day: '2-digit',
                                         month: '2-digit', 
                                         year: 'numeric'
