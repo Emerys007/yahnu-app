@@ -73,7 +73,7 @@ export function SchoolProfileClient({ school }: { school: School }) {
                                     <h3 className="font-semibold text-lg">{t(program)}</h3>
                                 </div>
                                  <Button asChild variant="secondary">
-                                    <Link href="/signup?role=school">{t('common.learn_more')}</Link>
+                                    <Link href="/signup?role=school_administrator">{t('common.learn_more')}</Link>
                                  </Button>
                             </Card>
                         ))}
