@@ -1,3 +1,5 @@
+"use client"
+
 import { Shield, Users, Building, School, UserPlus, Briefcase } from "lucide-react";
 import { AdminClient } from "../admin-client";
 import { type UserStatus } from "@/context/auth-context";
@@ -7,6 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { CountUp } from "@/components/ui/count-up";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useLocalization } from "@/context/localization-context";
+import { useEffect, useState } from "react";
 
 type User = {
   id: string
@@ -96,8 +100,21 @@ async function getAdminDashboardData() {
     return { stats, pendingRequests, recentActivity };
 }
 
-export default async function AdminOverviewPage() {
-    const { stats, pendingRequests, recentActivity } = await getAdminDashboardData();
+export default function AdminOverviewPage() {
+    const { t } = useLocalization();
+    const [stats, setStats] = useState({ totalUsers: 0, activeCompanies: 0, activeSchools: 0 });
+    const [pendingRequests, setPendingRequests] = useState<User[]>([]);
+    const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
+
+    useEffect(() => {
+        async function fetchData() {
+            const { stats, pendingRequests, recentActivity } = await getAdminDashboardData();
+            setStats(stats);
+            setPendingRequests(pendingRequests);
+            setRecentActivity(recentActivity);
+        }
+        fetchData();
+    }, []);
 
     return (
         <div className="space-y-8">
@@ -106,41 +123,41 @@ export default async function AdminOverviewPage() {
                     <Shield className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Admin Overview</h1>
-                    <p className="text-muted-foreground mt-1">Oversee and manage the entire Yahnu platform.</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.admin.overview.title')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('dashboard.admin.overview.description')}</p>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                  <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('dashboard.admin.overview.totalUsers')}</CardTitle>
                         <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold"><CountUp end={stats.totalUsers} /></div>
-                        <p className="text-xs text-muted-foreground">+2 from yesterday</p>
+                        <p className="text-xs text-muted-foreground">{t('dashboard.admin.overview.totalUsersDescription')}</p>
                     </CardContent>
                 </Card>
                  <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Active Companies</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('dashboard.admin.overview.activeCompanies')}</CardTitle>
                         <Building className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold"><CountUp end={stats.activeCompanies} /></div>
-                        <p className="text-xs text-muted-foreground">Across all regions</p>
+                        <p className="text-xs text-muted-foreground">{t('dashboard.admin.overview.activeCompaniesDescription')}</p>
                     </CardContent>
                 </Card>
                  <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Partner Schools</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('dashboard.admin.overview.partnerSchools')}</CardTitle>
                         <School className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold"><CountUp end={stats.activeSchools} /></div>
-                         <p className="text-xs text-muted-foreground">Verified institutions</p>
-                    </CardContent>
+                         <p className="text-xs text-muted-foreground">{t('dashboard.admin.overview.partnerSchoolsDescription')}</p>
+                    </Content>
                 </Card>
             </div>
 
@@ -151,7 +168,7 @@ export default async function AdminOverviewPage() {
                 <div className="lg:col-span-1">
                      <Card>
                         <CardHeader>
-                            <CardTitle>Recent Platform Activity</CardTitle>
+                            <CardTitle>{t('dashboard.admin.overview.recentActivity')}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                              {recentActivity.map((activity) => (
