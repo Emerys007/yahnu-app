@@ -30,43 +30,43 @@ type Conversation = {
     messages: Message[]
 }
 
-const initialConversations: Conversation[] = [
+const getInitialConversations = (t: any): Conversation[] => [
     {
         id: "amina-diallo",
-        name: "Amina Diallo",
+        name: t("dashboard.messages.conversations.amina_diallo.name"),
         avatar: "https://placehold.co/100x100.png",
-        lastMessage: "Thank you for the opportunity! I'm looking forward to the interview.",
+        lastMessage: t("dashboard.messages.conversations.amina_diallo.last_message"),
         time: "10:42 AM",
         unread: 0,
         messages: [
-            { id: 1, sender: "them", text: "Hi! We were very impressed with your profile and would like to schedule an interview for the Frontend Developer role.", time: "10:40 AM" },
-            { id: 2, sender: "me", text: "That's great news! I'm available anytime next week.", time: "10:41 AM" },
-            { id: 3, sender: "them", text: "Perfect. Does Wednesday at 2 PM work for you?", time: "10:41 AM" },
-            { id: 4, sender: "me", text: "Thank you for the opportunity! I'm looking forward to the interview.", time: "10:42 AM" },
+            { id: 1, sender: "them", text: t("dashboard.messages.conversations.amina_diallo.messages.interview_offer"), time: "10:40 AM" },
+            { id: 2, sender: "me", text: t("dashboard.messages.conversations.amina_diallo.messages.availability_response"), time: "10:41 AM" },
+            { id: 3, sender: "them", text: t("dashboard.messages.conversations.amina_diallo.messages.schedule_confirmation"), time: "10:41 AM" },
+            { id: 4, sender: "me", text: t("dashboard.messages.conversations.amina_diallo.messages.thank_you_response"), time: "10:42 AM" },
         ]
     },
     {
         id: "tech-solutions",
-        name: "Tech Solutions Abidjan",
+        name: t("dashboard.messages.conversations.tech_solutions.name"),
         avatar: "https://placehold.co/100x100.png",
-        lastMessage: "Can you tell me more about the team culture?",
+        lastMessage: t("dashboard.messages.conversations.tech_solutions.last_message"),
         time: "Yesterday",
         unread: 2,
         messages: [
-            { id: 1, sender: "me", text: "Hello, I'm interested in the Senior Frontend Developer position.", time: "Yesterday" },
-            { id: 2, sender: "me", text: "Can you tell me more about the team culture?", time: "Yesterday" },
+            { id: 1, sender: "me", text: t("dashboard.messages.conversations.tech_solutions.messages.initial_interest"), time: "Yesterday" },
+            { id: 2, sender: "me", text: t("dashboard.messages.conversations.tech_solutions.messages.culture_question"), time: "Yesterday" },
         ]
     },
      {
         id: "inp-hb-admin",
-        name: "INP-HB Admin",
+        name: t("dashboard.messages.conversations.inp_hb_admin.name"),
         avatar: "/images/University.png",
-        lastMessage: "Okay, I see. Let me check on that for you.",
+        lastMessage: t("dashboard.messages.conversations.inp_hb_admin.last_message"),
         time: "2 days ago",
         unread: 0,
         messages: [
-            { id: 1, sender: "me", text: "Hello, I noticed one of my degrees is still unverified.", time: "2 days ago" },
-            { id: 2, sender: "them", text: "Okay, I see. Let me check on that for you.", time: "2 days ago" },
+            { id: 1, sender: "me", text: t("dashboard.messages.conversations.inp_hb_admin.messages.degree_verification"), time: "2 days ago" },
+            { id: 2, sender: "them", text: t("dashboard.messages.conversations.inp_hb_admin.messages.admin_response"), time: "2 days ago" },
         ]
     },
 ];
@@ -83,9 +83,15 @@ export default function MessagesPage() {
     const searchParams = useSearchParams();
     const isMobile = useIsMobile();
     
-    const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
+    const [conversations, setConversations] = useState<Conversation[]>([]);
     const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
     const [message, setMessage] = useState("");
+
+    // Initialize conversations with localized content
+    useEffect(() => {
+        const localizedConversations = getInitialConversations(t);
+        setConversations(localizedConversations);
+    }, [t]);
 
     useEffect(() => {
         const newConvoId = searchParams.get('new');

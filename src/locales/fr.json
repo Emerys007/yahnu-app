@@ -194,7 +194,35 @@
       "description": "Communiquer directement avec les candidats et les entreprises.",
       "search_conversations": "Rechercher des conversations...",
       "type_message": "Tapez votre message...",
-      "select_conversation": "Sélectionnez une conversation pour commencer à discuter."
+      "select_conversation": "Sélectionnez une conversation pour commencer à discuter.",
+      "conversations": {
+        "amina_diallo": {
+          "name": "Amina Diallo",
+          "last_message": "Merci pour cette opportunité ! J'ai hâte de passer l'entretien.",
+          "messages": {
+            "interview_offer": "Salut ! Nous avons été très impressionnés par votre profil et aimerions programmer un entretien pour le poste de Développeur Frontend.",
+            "availability_response": "C'est une excellente nouvelle ! Je suis disponible la semaine prochaine.",
+            "schedule_confirmation": "Parfait. Est-ce que mercredi à 14h vous convient ?",
+            "thank_you_response": "Merci pour cette opportunité ! J'ai hâte de passer l'entretien."
+          }
+        },
+        "tech_solutions": {
+          "name": "Tech Solutions Abidjan",
+          "last_message": "Pouvez-vous me parler davantage de la culture d'équipe ?",
+          "messages": {
+            "initial_interest": "Bonjour, je suis intéressé(e) par le poste de Développeur Frontend Senior.",
+            "culture_question": "Pouvez-vous me parler davantage de la culture d'équipe ?"
+          }
+        },
+        "inp_hb_admin": {
+          "name": "INP-HB Admin",
+          "last_message": "D'accord, je vois. Laissez-moi vérifier cela pour vous.",
+          "messages": {
+            "degree_verification": "Bonjour, j'ai remarqué qu'un de mes diplômes n'est toujours pas vérifié.",
+            "admin_response": "D'accord, je vois. Laissez-moi vérifier cela pour vous."
+          }
+        }
+      }
     },
     "nav": {
       "dashboard": "Tableau de bord",

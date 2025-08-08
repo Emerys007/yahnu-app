@@ -172,7 +172,35 @@
       "description": "Communicate with candidates and companies directly.",
       "search_conversations": "Search conversations...",
       "type_message": "Type your message...", 
-      "select_conversation": "Select a conversation to start chatting."
+      "select_conversation": "Select a conversation to start chatting.",
+      "conversations": {
+        "amina_diallo": {
+          "name": "Amina Diallo",
+          "last_message": "Thank you for the opportunity! I'm looking forward to the interview.",
+          "messages": {
+            "interview_offer": "Hi! We were very impressed with your profile and would like to schedule an interview for the Frontend Developer role.",
+            "availability_response": "That's great news! I'm available anytime next week.",
+            "schedule_confirmation": "Perfect. Does Wednesday at 2 PM work for you?",
+            "thank_you_response": "Thank you for the opportunity! I'm looking forward to the interview."
+          }
+        },
+        "tech_solutions": {
+          "name": "Tech Solutions Abidjan",
+          "last_message": "Can you tell me more about the team culture?",
+          "messages": {
+            "initial_interest": "Hello, I'm interested in the Senior Frontend Developer position.",
+            "culture_question": "Can you tell me more about the team culture?"
+          }
+        },
+        "inp_hb_admin": {
+          "name": "INP-HB Admin",
+          "last_message": "Okay, I see. Let me check on that for you.",
+          "messages": {
+            "degree_verification": "Hello, I noticed one of my degrees is still unverified.",
+            "admin_response": "Okay, I see. Let me check on that for you."
+          }
+        }
+      }
     },
     "nav": {
       "dashboard": "Dashboard",
