@@ -63,7 +63,7 @@ const getFeaturesData = (t: (key: string) => string) => ({
       },
       {
         title: t('landing.features.for_schools.boost_graduate_employability'),
-        description: t('landing.features.for_schools.graduate_employability_desc'),
+        description: t('landing.features.for_schools.boost_graduate_employability_desc'),
       },
       {
         title: t('landing.features.for_schools.showcase_institution'),
