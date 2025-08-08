@@ -192,7 +192,7 @@
       "suspend": "Suspendre",
       "view": "Voir",
       "manage": "Gérer",
-      "manage_user": "Gérer l'utilisateur",
+      "manage_user": "Gérer l'utilisateur : {{name}}",
       "manage_user_description": "Mettez à jour le statut de l'utilisateur ou supprimez-le de la plateforme.",
       "change_status": "Changer le statut",
       "activate": "Activer",
@@ -210,7 +210,8 @@
       "active": "Actif",
       "pending": "En attente",
       "rejected": "Rejeté",
-      "suspended": "Suspendu"
+      "suspended": "Suspendu",
+      "declined": "Refusé"
     },
     "analytics": {
       "title": "Analyses de la plateforme",

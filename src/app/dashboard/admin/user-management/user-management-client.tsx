@@ -94,7 +94,7 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{t('dashboard.user_management.manage_user')}: {user.name}</DialogTitle>
+                    <DialogTitle>{t('dashboard.user_management.manage_user').replace('{{name}}', user.name)}</DialogTitle>
                     <DialogDescription>{t('dashboard.user_management.manage_user_description')}</DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
@@ -249,7 +249,13 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                                         {t(`dashboard.user_management.${user.status}`)}
                                     </Badge>
                                 </TableCell>
-                                <TableCell>{user.date}</TableCell>
+                                <TableCell>
+                                    {new Date(user.date).toLocaleDateString('fr-FR', {
+                                        day: '2-digit',
+                                        month: '2-digit', 
+                                        year: 'numeric'
+                                    })}
+                                </TableCell>
                                 <TableCell className="text-right">
                                     <ManageUserDialog user={user} onUserUpdate={handleUserUpdate} onUserDelete={handleUserDelete}/>
                                 </TableCell>
