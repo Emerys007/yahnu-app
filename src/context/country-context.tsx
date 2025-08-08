@@ -79,10 +79,6 @@ export const CountryProvider = ({ children }: { children: ReactNode }) => {
     document.documentElement.setAttribute('data-theme', country.theme);
   }, [country]);
 
-  // This line was updated to safely access country names and provide a fallback
-  const countryName = country?.name ? (language === 'fr' ? country.name.fr : country.name.en) : 'Côte d\'Ivoire';
-
-
   const value = { country, setCountry };
 
   return (
