@@ -41,7 +41,7 @@ const companiesData: Company[] = [
         location: "Abidjan, Côte d'Ivoire",
         industry: "Agriculture",
         featuredJobs: ["company_2_job_1", "company_2_job_2", "company_2_job_3"],
-        logoUrl: "https://www.sifca.ci/wp-content/uploads/2019/05/logo-sifca.png"
+        logoUrl: "https://groupesifca.com/wp-content/uploads/2021/04/Logotype_Sifca-1.png"
     },
     {
         id: "3",
@@ -51,7 +51,7 @@ const companiesData: Company[] = [
         location: "Abidjan, Côte d'Ivoire",
         industry: "Finance & Banking",
         featuredJobs: ["company_3_job_1", "company_3_job_2", "company_3_job_3"],
-        logoUrl: "https://bridgebankgroup.com/wp-content/uploads/2020/12/bridge-bank-logo.png"
+        logoUrl: "https://www.bridgebankgroup.com/images/interface/logo-white.svg"
     },
     {
         id: "4",
