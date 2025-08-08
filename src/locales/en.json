@@ -192,7 +192,8 @@
     "school_administrator": "School Administrator",
     "contact_person_name": "Contact Person Name",
     "creating_account": "Creating Account...",
-    "create_account": "Create Account"
+    "create_account": "Create Account",
+    "or_continue_with": "Or continue with"
   },
   "blog": {
     "author_name": "Yahnu Staff"

@@ -192,7 +192,8 @@
     "school_administrator": "Administrateur d'école",
     "contact_person_name": "Nom de la personne de contact",
     "creating_account": "Création du compte...",
-    "create_account": "Créer un compte"
+    "create_account": "Créer un compte",
+    "or_continue_with": "Ou continuer avec"
   },
   "blog": {
     "author_name": "L'équipe Yahnu"

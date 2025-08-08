@@ -31,9 +31,9 @@ export default function LoginPage() {
           data-ai-hint="african professionals community"
         />
         <div className="mt-8 text-center max-w-lg">
-          <h2 className="text-3xl font-bold tracking-tight">{t('Connect. Grow. Succeed.')}</h2>
+          <h2 className="text-3xl font-bold tracking-tight">{t('common.slogan')}</h2>
           <p className="mt-4 text-muted-foreground text-lg">
-            {t('Your journey to the perfect career or the ideal candidate starts here.')}
+            {t('auth.your_journey_perfect_career')}
           </p>
         </div>
       </div>
