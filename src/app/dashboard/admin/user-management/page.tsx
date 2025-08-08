@@ -37,7 +37,7 @@ async function getUsers(): Promise<User[]> {
 
 export default async function ManageUsersPage() {
     const users = await getUsers();
-    const t = await getTranslations();
+    const t = await getTranslations('fr'); // Default to French as per your localization context
 
     return (
         <div className="space-y-8">
