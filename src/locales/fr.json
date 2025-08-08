@@ -1,3 +1,4 @@
+
 {
   "countries": {
     "CI": "Côte d'Ivoire",
@@ -187,6 +188,30 @@
       "analytics": "Analyses",
       "report_generator": "Générateur de rapports"
     },
+    "content": {
+      "title": "Gestion de contenu",
+      "description": "Gérez le contenu de votre blog et de vos pages de plateforme.",
+      "create_content": "Créer du contenu",
+      "blog_posts": "Articles de blog",
+      "static_pages": "Pages statiques",
+      "announcements": "Annonces",
+      "search_blog_posts": "Rechercher des articles de blog...",
+      "search_pages": "Rechercher des pages...",
+      "search_announcements": "Rechercher des annonces...",
+      "new_blog_post": "Nouvel article de blog",
+      "new_page": "Nouvelle page",
+      "new_announcement": "Nouvelle annonce",
+      "published": "Publié",
+      "static": "Statique",
+      "active": "Actif",
+      "views": "vues",
+      "last_updated": "Dernière mise à jour",
+      "days_ago": "il y a",
+      "public_page": "Page publique",
+      "all_users": "Tous les utilisateurs",
+      "expires_in": "Expire dans",
+      "days": "jours"
+    },
     "user_management": {
       "title": "Gestion des utilisateurs",
       "description": "Gérer tous les comptes utilisateur sur la plateforme.",
@@ -255,9 +280,6 @@
       "user_count": "Nombre d'utilisateurs",
       "total": "Total",
       "export_as_csv": "Exporter en CSV",
-      "monthly_growth": "Croissance mensuelle",
-      "new_registrations": "Nouvelles inscriptions",
-      "active_this_month": "Actif ce mois-ci",
       "january": "Jan",
       "february": "Fév",
       "march": "Mar",
@@ -278,30 +300,6 @@
       "april": "Avr",
       "may": "Mai",
       "june": "Jun"
-    },
-    "content": {
-      "title": "Gestion de contenu",
-      "description": "Gérez le contenu de votre blog et de vos pages de plateforme.",
-      "create_content": "Créer du contenu",
-      "blog_posts": "Articles de blog",
-      "static_pages": "Pages statiques",
-      "announcements": "Annonces",
-      "search_blog_posts": "Rechercher des articles de blog...",
-      "search_pages": "Rechercher des pages...",
-      "search_announcements": "Rechercher des annonces...",
-      "new_blog_post": "Nouvel article de blog",
-      "new_page": "Nouvelle page",
-      "new_announcement": "Nouvelle annonce",
-      "published": "Publié",
-      "static": "Statique",
-      "active": "Actif",
-      "views": "vues",
-      "last_updated": "Dernière mise à jour",
-      "days_ago": "il y a",
-      "public_page": "Page publique",
-      "all_users": "Tous les utilisateurs",
-      "expires_in": "Expire dans",
-      "days": "jours"
     },
     "support": {
       "center": {
@@ -484,18 +482,6 @@
         "signedUpAs": "s'est inscrit en tant que",
         "postedNewJob": "a publié une nouvelle offre d'emploi"
       }
-    },
-    "content": {
-      "title": "Gestion de contenu",
-      "description": "Gérez le contenu de votre blog et de vos pages de plateforme.",
-      "create_content": "Créer du contenu",
-      "blog_posts": "Articles de blog",
-      "static_pages": "Pages statiques",
-      "announcements": "Annonces",
-      "search_blog_posts": "Rechercher des articles de blog...",
-      "search_announcements": "Rechercher des annonces...",
-      "new_blog_post": "Nouvel article de blog",
-      "new_announcement": "Nouvelle annonce"
     }
   },
   "auth": {

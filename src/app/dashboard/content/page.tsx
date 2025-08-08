@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState } from 'react'
@@ -57,9 +58,9 @@ export default function ContentManagementPage() {
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="space-y-2">
-                      <CardTitle className="text-xl">Sample Blog Post {post}</CardTitle>
+                      <CardTitle className="text-xl">{t('dashboard.content.blog_posts')} {post}</CardTitle>
                       <CardDescription>
-                        Published on {new Date().toLocaleDateString()} by Admin User
+                        {t('dashboard.content.published')} {new Date().toLocaleDateString()} {t('common.by')} {t('blog.author_name')}
                       </CardDescription>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -78,16 +79,16 @@ export default function ContentManagementPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    This is a sample blog post excerpt that would appear in the content management system...
+                    {t('dashboard.content.description')}
                   </p>
                   <div className="flex items-center mt-4 space-x-4 text-sm text-muted-foreground">
                     <div className="flex items-center">
                       <Users className="mr-1 h-3 w-3" />
-                      {Math.floor(Math.random() * 1000)} views
+                      {Math.floor(Math.random() * 1000)} {t('dashboard.content.views')}
                     </div>
                     <div className="flex items-center">
                       <Calendar className="mr-1 h-3 w-3" />
-                      Last updated 2 days ago
+                      {t('dashboard.content.last_updated')} {t('common.time.days_ago', {days: '2'})}
                     </div>
                   </div>
                 </CardContent>
@@ -109,14 +110,14 @@ export default function ContentManagementPage() {
           </div>
 
           <div className="grid gap-6">
-            {['About Us', 'Privacy Policy', 'Terms of Service', 'Contact'].map((page) => (
+            {[t('about.title'), t('legal.privacy_title'), t('legal.terms_title'), t('common.contact_us')].map((page) => (
               <Card key={page}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="space-y-2">
                       <CardTitle className="text-xl">{page}</CardTitle>
                       <CardDescription>
-                        Static page • Last updated {Math.floor(Math.random() * 30)} days ago
+                        {t('dashboard.content.static')} • {t('dashboard.content.last_updated')} {Math.floor(Math.random() * 30)} {t('dashboard.content.days_ago')}
                       </CardDescription>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -132,12 +133,12 @@ export default function ContentManagementPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Static page content for {page.toLowerCase()}...
+                    {t('dashboard.content.description')}
                   </p>
                   <div className="flex items-center mt-4 space-x-4 text-sm text-muted-foreground">
                     <div className="flex items-center">
                       <Globe className="mr-1 h-3 w-3" />
-                      Public page
+                      {t('dashboard.content.public_page')}
                     </div>
                   </div>
                 </CardContent>
@@ -164,9 +165,9 @@ export default function ContentManagementPage() {
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="space-y-2">
-                      <CardTitle className="text-xl">System Announcement {announcement}</CardTitle>
+                      <CardTitle className="text-xl">{t('dashboard.content.announcements')} {announcement}</CardTitle>
                       <CardDescription>
-                        Active until {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                        {t('dashboard.content.active')} {t('common.until')} {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}
                       </CardDescription>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -182,16 +183,16 @@ export default function ContentManagementPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Important system announcement that will be displayed to all users...
+                    {t('dashboard.content.description')}
                   </p>
                   <div className="flex items-center mt-4 space-x-4 text-sm text-muted-foreground">
                     <div className="flex items-center">
                       <Users className="mr-1 h-3 w-3" />
-                      All users
+                      {t('dashboard.content.all_users')}
                     </div>
                     <div className="flex items-center">
                       <Calendar className="mr-1 h-3 w-3" />
-                      Expires in 7 days
+                      {t('dashboard.content.expires_in')} 7 {t('dashboard.content.days')}
                     </div>
                   </div>
                 </CardContent>
