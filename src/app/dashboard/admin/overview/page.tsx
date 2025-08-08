@@ -157,7 +157,7 @@ export default function AdminOverviewPage() {
                     <CardContent>
                         <div className="text-2xl font-bold"><CountUp end={stats.activeSchools} /></div>
                          <p className="text-xs text-muted-foreground">{t('dashboard.admin.overview.partnerSchoolsDescription')}</p>
-                    </Content>
+                    </CardContent>
                 </Card>
             </div>
 
