@@ -240,18 +240,24 @@ export default function ContentManagementPage() {
         </div>
       </div>
 
-       <Tabs defaultValue="blog-posts">
+      <Tabs defaultValue="blog-posts">
         <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="blog-posts" className="gap-2"><Newspaper className="h-4 w-4"/>{t('Blog Posts')}</TabsTrigger>
-            <TabsTrigger value="page-content" className="gap-2"><FileText className="h-4 w-4"/>{t('Page Content')}</TabsTrigger>
+          <TabsTrigger value="blog-posts" className="gap-2">
+            <Newspaper className="h-4 w-4"/>
+            {t('Blog Posts')}
+          </TabsTrigger>
+          <TabsTrigger value="page-content" className="gap-2">
+            <FileText className="h-4 w-4"/>
+            {t('Page Content')}
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="blog-posts" className="mt-4">
-            <BlogPostsManager />
+          <BlogPostsManager />
         </TabsContent>
         <TabsContent value="page-content" className="mt-4">
-            <ContentPagesEditor />
+          <ContentPagesEditor />
         </TabsContent>
-        </Tabs>
+      </Tabs>
     </div>
   )
 }
