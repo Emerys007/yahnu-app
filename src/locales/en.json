@@ -1,5 +1,13 @@
 
 {
+  "countries": {
+    "CI": "Côte d'Ivoire",
+    "GH": "Ghana",
+    "NG": "Nigeria", 
+    "SN": "Senegal",
+    "CM": "Cameroon",
+    "CD": "Democratic Republic of Congo"
+  },
   "common": {
     "jobs": "Jobs",
     "full_time": "Full-time",

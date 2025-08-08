@@ -31,7 +31,7 @@ const companiesData: Company[] = [
         location: "Abidjan, Côte d'Ivoire",
         industry: "Telecommunications",
         featuredJobs: ["company_1_job_1", "company_1_job_2", "company_1_job_3"],
-        logoUrl: "https://via.placeholder.com/200x200/ff6600/ffffff.png?text=Orange"
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Orange_logo.svg"
     },
     {
         id: "2",
@@ -41,7 +41,7 @@ const companiesData: Company[] = [
         location: "Abidjan, Côte d'Ivoire",
         industry: "Agriculture",
         featuredJobs: ["company_2_job_1", "company_2_job_2", "company_2_job_3"],
-        logoUrl: "https://via.placeholder.com/200x200/228b22/ffffff.png?text=SIFCA"
+        logoUrl: "https://www.sifca.ci/wp-content/uploads/2019/05/logo-sifca.png"
     },
     {
         id: "3",
@@ -51,7 +51,7 @@ const companiesData: Company[] = [
         location: "Abidjan, Côte d'Ivoire",
         industry: "Finance & Banking",
         featuredJobs: ["company_3_job_1", "company_3_job_2", "company_3_job_3"],
-        logoUrl: "https://via.placeholder.com/200x200/1e40af/ffffff.png?text=Bridge+Bank"
+        logoUrl: "https://bridgebankgroup.com/wp-content/uploads/2020/12/bridge-bank-logo.png"
     },
     {
         id: "4",
@@ -61,7 +61,7 @@ const companiesData: Company[] = [
         location: "Abidjan, Côte d'Ivoire",
         industry: "Transportation & Logistics",
         featuredJobs: ["company_4_job_1", "company_4_job_2", "company_4_job_3"],
-        logoUrl: "https://via.placeholder.com/200x200/dc2626/ffffff.png?text=Bollore"
+        logoUrl: "https://www.bollore-logistics.com/content/dam/bollore-logistics/logo/bollore-logistics-logo.svg"
     },
 ];
 

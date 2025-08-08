@@ -1,4 +1,3 @@
-
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import { notFound } from "next/navigation";
@@ -23,7 +22,7 @@ const companiesData: CompanyProfile[] = [
         name: "Orange Côte d'Ivoire",
         slug: "orange-ci",
         tagline: "company_1_tagline",
-        logoUrl: "https://via.placeholder.com/200x200/ff6600/ffffff.png?text=Orange",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Orange_logo.svg",
         location: "Abidjan, Côte d'Ivoire",
         industry: "Telecommunications",
         website: "https://www.orange.ci",
@@ -39,7 +38,7 @@ const companiesData: CompanyProfile[] = [
         name: "SIFCA",
         slug: "sifca",
         tagline: "company_2_tagline",
-        logoUrl: "https://via.placeholder.com/200x200/228b22/ffffff.png?text=SIFCA",
+        logoUrl: "https://www.sifca.ci/wp-content/uploads/2019/05/logo-sifca.png",
         location: "Abidjan, Côte d'Ivoire",
         industry: "Agriculture",
         website: "https://www.groupesifca.com",
@@ -55,7 +54,7 @@ const companiesData: CompanyProfile[] = [
         name: "Bridge Bank Group",
         slug: "bridge-bank-group",
         tagline: "company_3_tagline",
-        logoUrl: "https://via.placeholder.com/200x200/1e40af/ffffff.png?text=Bridge+Bank",
+        logoUrl: "https://bridgebankgroup.com/wp-content/uploads/2020/12/bridge-bank-logo.png",
         location: "Abidjan, Côte d'Ivoire",
         industry: "Finance & Banking",
         website: "https://www.bridgebankgroup.com",
@@ -71,7 +70,7 @@ const companiesData: CompanyProfile[] = [
         name: "Bolloré Logistics",
         slug: "bollore-logistics",
         tagline: "company_4_tagline",
-        logoUrl: "https://via.placeholder.com/200x200/dc2626/ffffff.png?text=Bollore",
+        logoUrl: "https://www.bollore-logistics.com/content/dam/bollore-logistics/logo/bollore-logistics-logo.svg",
         location: "Abidjan, Côte d'Ivoire",
         industry: "Transportation & Logistics",
         website: "https://www.bollore-logistics.com",
