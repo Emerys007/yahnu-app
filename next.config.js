@@ -9,7 +9,7 @@ const nextConfig = {
   images: {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    domains: ['placehold.co', 'via.placeholder.com', 'picsum.photos'],
+    domains: ['placehold.co', 'via.placeholder.com', 'picsum.photos', 'w.univ-fhb.edu.ci', 'www.adminsite.inphb.app', 'groupecsi-pp.com', 'esatic.ci', 'ensea.ed.ci'],
     remotePatterns: [
       { protocol: 'https', hostname: 'www.inphb.ci' },
       { protocol: 'https', hostname: 'ufhb.edu.ci' },
