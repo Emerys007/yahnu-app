@@ -22,32 +22,32 @@ export default function ContentManagementPage() {
             <FileText className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t('Content Management')}</h1>
-            <p className="text-muted-foreground mt-1">{t('Manage your platform\'s blog and page content.')}</p>
+            <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.content.title')}</h1>
+            <p className="text-muted-foreground mt-1">{t('dashboard.content.description')}</p>
           </div>
         </div>
         <Button>
           <PlusCircle className="mr-2 h-4 w-4" />
-          {t('Create Content')}
+          {t('dashboard.content.create_content')}
         </Button>
       </div>
 
       <Tabs defaultValue="blog" className="space-y-6">
         <TabsList>
-          <TabsTrigger value="blog">{t('Blog Posts')}</TabsTrigger>
-          <TabsTrigger value="pages">{t('Static Pages')}</TabsTrigger>
-          <TabsTrigger value="announcements">{t('Announcements')}</TabsTrigger>
+          <TabsTrigger value="blog">{t('dashboard.content.blog_posts')}</TabsTrigger>
+          <TabsTrigger value="pages">{t('dashboard.content.static_pages')}</TabsTrigger>
+          <TabsTrigger value="announcements">{t('dashboard.content.announcements')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="blog" className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Search className="h-4 w-4 text-muted-foreground" />
-              <Input placeholder={t('Search blog posts...')} className="w-[300px]" />
+              <Input placeholder={t('dashboard.content.search_blog_posts')} className="w-[300px]" />
             </div>
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" />
-              {t('New Blog Post')}
+              {t('dashboard.content.new_blog_post')}
             </Button>
           </div>
 
@@ -63,7 +63,7 @@ export default function ContentManagementPage() {
                       </CardDescription>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge variant="secondary">{t('Published')}</Badge>
+                      <Badge variant="secondary">{t('dashboard.content.published')}</Badge>
                       <Button variant="ghost" size="sm">
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -100,11 +100,11 @@ export default function ContentManagementPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Search className="h-4 w-4 text-muted-foreground" />
-              <Input placeholder={t('Search pages...')} className="w-[300px]" />
+              <Input placeholder={t('dashboard.content.search_pages')} className="w-[300px]" />
             </div>
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" />
-              {t('New Page')}
+              {t('dashboard.content.new_page')}
             </Button>
           </div>
 
@@ -120,7 +120,7 @@ export default function ContentManagementPage() {
                       </CardDescription>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge variant="outline">{t('Static')}</Badge>
+                      <Badge variant="outline">{t('dashboard.content.static')}</Badge>
                       <Button variant="ghost" size="sm">
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -150,11 +150,11 @@ export default function ContentManagementPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Search className="h-4 w-4 text-muted-foreground" />
-              <Input placeholder={t('Search announcements...')} className="w-[300px]" />
+              <Input placeholder={t('dashboard.content.search_announcements')} className="w-[300px]" />
             </div>
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" />
-              {t('New Announcement')}
+              {t('dashboard.content.new_announcement')}
             </Button>
           </div>
 
@@ -170,7 +170,7 @@ export default function ContentManagementPage() {
                       </CardDescription>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge variant="default">{t('Active')}</Badge>
+                      <Badge variant="default">{t('dashboard.content.active')}</Badge>
                       <Button variant="ghost" size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>

@@ -1,6 +1,7 @@
 
 import { Wrench } from "lucide-react";
 import { CustomizableDashboard } from "@/features/analytics/CustomizableDashboard";
+import { getTranslations } from '@/context/localization-context';
 
 export default async function CustomReportGeneratorPage() {
     // In a real application, you would fetch the user's saved dashboard layout
@@ -8,6 +9,7 @@ export default async function CustomReportGeneratorPage() {
     // For this example, we'll pass empty initial data to the client component.
     const initialLayout = [];
     const initialReports = {};
+    const t = await getTranslations();
 
     return (
         <div className="space-y-8">
@@ -16,9 +18,9 @@ export default async function CustomReportGeneratorPage() {
                     <Wrench className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Custom Report Generator</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.reports.custom_generator.title')}</h1>
                     <p className="text-muted-foreground mt-1">
-                        Build your own dashboard by creating and arranging reports.
+                        {t('dashboard.reports.custom_generator.description')}
                     </p>
                 </div>
             </div>

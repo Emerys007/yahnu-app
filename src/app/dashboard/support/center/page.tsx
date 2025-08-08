@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState } from "react";
@@ -75,7 +74,7 @@ const TicketQueue = ({ tickets, title, onTicketSelect }: { tickets: Ticket[], ti
                             </TableRow>
                         )) : (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center">{t('No tickets in this queue.')}</TableCell>
+                                <TableCell colSpan={5} className="text-center">{t('dashboard.support.center.no_tickets')}</TableCell>
                             </TableRow>
                         )}
                     </TableBody>

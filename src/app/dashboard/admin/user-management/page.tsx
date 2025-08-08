@@ -4,6 +4,7 @@ import { UserManagementClient } from "./user-management-client";
 import { db } from "@/lib/firebase";
 import { collection, query, getDocs, DocumentData, where } from "firebase/firestore";
 import { type Role, type UserStatus } from "@/context/auth-context";
+import { getTranslations } from '@/context/localization-context';
 
 type User = {
   id: string;
@@ -36,6 +37,7 @@ async function getUsers(): Promise<User[]> {
 
 export default async function ManageUsersPage() {
     const users = await getUsers();
+    const t = await getTranslations();
 
     return (
         <div className="space-y-8">
@@ -45,8 +47,8 @@ export default async function ManageUsersPage() {
                         <UserCog className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
-                        <p className="text-muted-foreground mt-1">Manage all user accounts across the platform.</p>
+                        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.user_management.title')}</h1>
+                        <p className="text-muted-foreground mt-1">{t('dashboard.user_management.description')}</p>
                     </div>
                 </div>
             </div>

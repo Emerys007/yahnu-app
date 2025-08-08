@@ -6,6 +6,7 @@ import { BarChart3 } from "lucide-react"
 import { AnalyticsClient } from "./analytics-client"
 import { CreateReportDialog } from "@/features/analytics/CreateReportDialog";
 import { Report, ReportMap } from "@/features/analytics/ReportWidget";
+import { useLocalization } from "@/context/localization-context";
 
 const analyticsData = {
     totalUsers: 1256,
@@ -29,6 +30,7 @@ const analyticsData = {
 }
 
 export default function AdminAnalyticsPage() {
+    const { t } = useLocalization();
 
     const addReport = (report: Report) => {
         // This function would typically update a shared state or context
@@ -44,8 +46,8 @@ export default function AdminAnalyticsPage() {
                 <BarChart3 className="h-6 w-6 text-primary" />
             </div>
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Platform Analytics</h1>
-                <p className="text-muted-foreground mt-1">High-level insights into platform usage and growth.</p>
+                <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.analytics.title')}</h1>
+                <p className="text-muted-foreground mt-1">{t('dashboard.analytics.description')}</p>
             </div>
         </div>
         

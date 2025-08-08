@@ -8,6 +8,47 @@ import { useCountry } from './country-context';
 
 const translations: { [key: string]: any } = { en, fr };
 
+// Server-side translation function
+export async function getTranslations(locale?: string) {
+  const defaultLocale = locale || 'fr'; // Default to French
+  
+  const t = (key: string, params?: { [key: string]: any }): string => {
+    const keys = key.split('.');
+    let value = translations[defaultLocale];
+    
+    for (const k of keys) {
+      if (value && typeof value === 'object' && k in value) {
+        value = value[k];
+      } else {
+        // Fallback to English if not found in current locale
+        value = translations['en'];
+        for (const fallbackKey of keys) {
+          if (value && typeof value === 'object' && fallbackKey in value) {
+            value = value[fallbackKey];
+          } else {
+            return key; // Return key if not found in any language
+          }
+        }
+        break;
+      }
+    }
+    
+    if (typeof value === 'string') {
+      // Replace placeholders if params are provided
+      if (params) {
+        return value.replace(/\{(\w+)\}/g, (match, paramKey) => {
+          return params[paramKey] || match;
+        });
+      }
+      return value;
+    }
+    
+    return key; // Return key if value is not a string
+  };
+  
+  return t;
+}
+
 type LocalizationContextType = {
   language: string;
   setLanguage: (language: string) => void;
