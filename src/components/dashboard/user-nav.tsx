@@ -29,13 +29,13 @@ export function UserNav() {
       await signOut()
       router.push('/')
       toast({
-        title: t("Logged Out"),
-        description: t("You have been successfully logged out."),
+        title: "Logged Out",
+        description: "You have been successfully logged out.",
       })
     } catch (error) {
       toast({
-        title: t("Uh oh! Something went wrong."),
-        description: t("There was a problem logging you out."),
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem logging you out.",
         variant: "destructive",
       })
     }
@@ -69,7 +69,7 @@ export function UserNav() {
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
             <User className="mr-2 h-4 w-4" />
-            <span>{t("Profile")}</span>
+            <span>{t("common.profile")}</span>
           </DropdownMenuItem>
           {user?.role === 'company' && (
             <DropdownMenuItem onClick={() => router.push('/dashboard/company-profile')}>
@@ -79,17 +79,17 @@ export function UserNav() {
           )}
            <DropdownMenuItem onClick={() => router.push('/dashboard/messages')}>
             <MessageSquare className="mr-2 h-4 w-4" />
-            <span>{t("Messages")}</span>
+            <span>{t("common.messages")}</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>
             <Settings className="mr-2 h-4 w-4" />
-            <span>{t("Settings")}</span>
+            <span>{t("common.settings")}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>
           <LogOut className="mr-2 h-4 w-4" />
-          <span>{t("Log out")}</span>
+          <span>{t("auth.logout")}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
