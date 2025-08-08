@@ -61,7 +61,7 @@ const companiesData: Company[] = [
         location: "Abidjan, Côte d'Ivoire",
         industry: "Transportation & Logistics",
         featuredJobs: ["company_4_job_1", "company_4_job_2", "company_4_job_3"],
-        logoUrl: "https://www.cevalogistics.com/sites/default/files/ceva_logistics_logo.svg"
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/6/62/CEVA_Logistics_New_Logo.png"
     },
 ];
 

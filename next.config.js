@@ -27,6 +27,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'via.placeholder.com' },
       { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
       { protocol: 'https', hostname: 'groupesifca.com' },
+      { protocol: 'https', hostname: 'upload.wikimedia.org' },
     ],
   },
 };
