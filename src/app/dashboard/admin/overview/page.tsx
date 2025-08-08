@@ -76,13 +76,13 @@ async function getAdminDashboardData() {
     const recentActivity: Activity[] = recentUsersSnapshot.docs.map(doc => {
         const data = doc.data() as DocumentData;
         const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
-        const timeAgo = `${Math.floor((new Date().getTime() - createdAt.getTime()) / (1000 * 60))} minutes ago`;
+        const timeAgo = Math.floor((new Date().getTime() - createdAt.getTime()) / (1000 * 60));
         return {
             id: doc.id,
             type: 'new_user',
-            text: `${data.name} signed up as a ${data.role}.`,
+            text: `${data.name}|${data.role}`, // Store data for translation
             icon: UserPlus,
-            time: timeAgo
+            time: timeAgo.toString()
         }
     });
 
@@ -90,9 +90,9 @@ async function getAdminDashboardData() {
     recentActivity.push({
         id: 'job-1',
         type: 'new_job',
-        text: 'Orange Côte d\'Ivoire posted a new job: "Software Engineer".',
+        text: 'Orange Côte d\'Ivoire|Software Engineer', // Store data for translation
         icon: Briefcase,
-        time: "55 minutes ago"
+        time: "55"
     });
 
     recentActivity.sort(() => Math.random() - 0.5); // Randomize for demo
@@ -181,19 +181,36 @@ export default function AdminOverviewPage() {
                             <CardTitle>{t('dashboard.admin.overview.recentActivity')}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                             {recentActivity.map((activity) => (
-                                <div key={activity.id} className="flex items-center gap-4">
-                                    <Avatar className="h-9 w-9">
-                                        <AvatarFallback className="bg-primary/10">
-                                            <activity.icon className="h-4 w-4 text-primary" />
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div className="grid gap-1">
-                                        <p className="text-sm font-medium leading-none">{activity.text}</p>
-                                        <p className="text-sm text-muted-foreground">{activity.time}</p>
+                             {recentActivity.map((activity) => {
+                                let displayText = "";
+                                let displayTime = "";
+                                
+                                if (activity.type === 'new_user') {
+                                    const [name, role] = activity.text.split('|');
+                                    displayText = `${name} ${t('dashboard.admin.overview.signedUpAs')} ${t(`common.${role}`)}.`;
+                                    const minutes = parseInt(activity.time);
+                                    displayTime = `${minutes} ${t('common.time.minutes_ago')}`;
+                                } else if (activity.type === 'new_job') {
+                                    const [company, job] = activity.text.split('|');
+                                    displayText = `${company} ${t('dashboard.admin.overview.postedNewJob')}: "${job}".`;
+                                    const minutes = parseInt(activity.time);
+                                    displayTime = `${minutes} ${t('common.time.minutes_ago')}`;
+                                }
+                                
+                                return (
+                                    <div key={activity.id} className="flex items-center gap-4">
+                                        <Avatar className="h-9 w-9">
+                                            <AvatarFallback className="bg-primary/10">
+                                                <activity.icon className="h-4 w-4 text-primary" />
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="grid gap-1">
+                                            <p className="text-sm font-medium leading-none">{displayText}</p>
+                                            <p className="text-sm text-muted-foreground">{displayTime}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </CardContent>
                     </Card>
                 </div>

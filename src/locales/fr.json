@@ -109,6 +109,11 @@
     "english": "Anglais",
     "french": "Français",
     "support": "Support",
+    "graduate": "diplômé",
+    "company": "entreprise",
+    "school": "école",
+    "content_moderator": "modérateur de contenu",
+    "support_staff": "personnel de support",
     "knowledge_base": {
       "title": "Base de connaissances",
       "description": "Gérer les articles d'aide et la documentation",
@@ -436,7 +441,9 @@
         "organizationName": "Nom de l'organisation",
         "type": "Type",
         "actions": "Actions",
-        "noPendingRequests": "Aucune demande en attente."
+        "noPendingRequests": "Aucune demande en attente.",
+        "signedUpAs": "s'est inscrit en tant que",
+        "postedNewJob": "a publié une nouvelle offre d'emploi"
       }
     },
     "content": {
