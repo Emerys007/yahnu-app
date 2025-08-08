@@ -33,14 +33,19 @@ export function CompanyProfileClient({ company }: { company: CompanyProfile }) {
             </CardHeader>
             <CardContent className="p-6 md:p-8 -mt-20">
                 <div className="flex items-end gap-6">
-                    <div className="relative h-32 w-32 rounded-full overflow-hidden border-8 border-background shrink-0 bg-white p-2">
-                         <Image
-                            src={company.logoUrl}
-                            alt={`${company.name} logo`}
-                            fill
-                            sizes="128px"
-                            className="object-contain"
-                        />
+                    <div className="relative h-32 w-32 rounded-full overflow-hidden border-8 border-background shrink-0 bg-gradient-to-br from-slate-50 to-slate-100 p-3 flex items-center justify-center">
+                         <div className="relative w-full h-full">
+                            <Image
+                                src={company.logoUrl}
+                                alt={`${company.name} logo`}
+                                fill
+                                sizes="128px"
+                                className="object-contain drop-shadow-sm"
+                                style={{
+                                    filter: company.name === "Bridge Bank Group" ? "invert(1) brightness(0)" : "none"
+                                }}
+                            />
+                         </div>
                     </div>
                     <div>
                         <h1 className="text-3xl md:text-4xl font-bold">{company.name}</h1>
