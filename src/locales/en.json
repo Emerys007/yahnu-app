@@ -221,8 +221,8 @@
         "title": "For Schools",
         "industry_ties": "Strengthen Industry Ties",
         "industry_ties_desc": "Forge strategic partnerships with leading companies to enhance your curriculum and create opportunities for your students.",
-        "graduate_employability": "Boost Graduate Employability",
-        "graduate_employability_desc": "Track and improve your graduates' employment outcomes with our comprehensive reporting and analytics.",
+        "boost_graduate_employability": "Boost Graduate Employability",
+        "boost_graduate_employability_desc": "Track and improve your graduates' employment outcomes with our comprehensive reporting and analytics.",
         "showcase_institution": "Showcase Your Institution",
         "showcase_institution_desc": "Promote your school's programs and achievements to a wide audience of prospective students and corporate partners."
       }
@@ -288,6 +288,22 @@
     "title": "Ready to Join the Elite?",
     "description": "Create your account today and unlock a world of opportunities. Whether you're a graduate, a company, or a school, Yahnu is your gateway to success."
   },
+  "company_1_job_1": "Software Engineer",
+  "company_1_job_2": "Product Manager", 
+  "company_1_job_3": "Data Analyst",
+  "company_2_job_1": "Agronomist",
+  "company_2_job_2": "Supply Chain Manager",
+  "company_2_job_3": "Quality Assurance Specialist",
+  "company_3_job_1": "Financial Analyst",
+  "company_3_job_2": "Risk Manager", 
+  "company_3_job_3": "Customer Success Manager",
+  "company_4_job_1": "Logistics Coordinator",
+  "company_4_job_2": "Operations Manager",
+  "company_4_job_3": "Port Specialist",
+  "company_1_tagline": "Leading telecommunications provider in West Africa",
+  "company_2_tagline": "Africa's leading agribusiness company",
+  "company_3_tagline": "Modern banking for modern Africa", 
+  "company_4_tagline": "Global leader in transportation and logistics",
   "pages": {
     "jobs": {
       "title": "Job Opportunities",
