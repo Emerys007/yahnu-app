@@ -28,8 +28,6 @@ const nextConfig = {
       { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
       { protocol: 'https', hostname: 'groupesifca.com' },
       { protocol: 'https', hostname: 'upload.wikimedia.org' },
-      { protocol: 'https', hostname: 'www.sifca.ci' },
-      { protocol: 'https', hostname: 'www.bridgebankgroup.com' },
     ],
   },
 };

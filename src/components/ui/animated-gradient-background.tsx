@@ -26,7 +26,7 @@ const variants = {
 
 export const AnimatedGradientBackground = () => {
   const { country } = useCountry();
-  const [colors, setColors] = useState(FLAG_COLORS[country.theme] || ['220 13% 91%', '220 13% 91%', '220 13% 91%']);
+  const [colors, setColors] = useState(FLAG_COLORS[country.theme]);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -34,19 +34,14 @@ export const AnimatedGradientBackground = () => {
   }, []);
 
   useEffect(() => {
-    const flagColors = FLAG_COLORS[country.theme];
-    if (flagColors && Array.isArray(flagColors)) {
-      setColors(flagColors);
-    } else {
-      setColors(['220 13% 91%', '220 13% 91%', '220 13% 91%']);
-    }
+    setColors(FLAG_COLORS[country.theme]);
   }, [country.theme]);
 
   if (!mounted) {
     return <div className="absolute inset-0 bg-muted/40 z-0"></div>;
   }
 
-  const [color1, color2, color3] = Array.isArray(colors) ? colors : ['220 13% 91%', '220 13% 91%', '220 13% 91%'];
+  const [color1, color2, color3] = colors;
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden bg-muted/40">
