@@ -309,6 +309,14 @@
   "company_2_description": "<p>SIFCA is Africa's leading agribusiness company, specializing in palm oil, natural rubber, and sugar. We are committed to sustainable agriculture and innovation across the African continent.</p><p>Join our team and help feed Africa while preserving our environment. We offer exciting career opportunities in modern, sustainable agriculture.</p>",
   "company_3_description": "<p>Bridge Bank Group is a modern bank revolutionizing financial services in Africa. We offer innovative digital banking solutions tailored to the unique needs of the African market.</p><p>Be part of our mission to democratize access to financial services and drive economic growth across Africa through innovative banking solutions.</p>",
   "company_4_description": "<p>Bolloré Logistics is a global leader in transportation and logistics with a strong presence in Africa. We connect Africa to the world through our integrated logistics solutions and local expertise.</p><p>Join our international team and help facilitate trade and economic development across Africa with our cutting-edge logistics solutions.</p>",
+  "Telecommunications": "Telecommunications",
+  "Agriculture": "Agriculture", 
+  "Finance & Banking": "Finance & Banking",
+  "Transportation & Logistics": "Transportation & Logistics",
+  "About": "About",
+  "Company Info": "Company Information",
+  "Open Positions": "Open Positions",
+  "Apply Now": "Apply Now",
   "pages": {
     "jobs": {
       "title": "Job Opportunities",
@@ -370,15 +378,7 @@
       "company_1_tagline": "Leading telecommunications provider in West Africa",
       "company_2_tagline": "Africa's leading agribusiness company", 
       "company_3_tagline": "Modern banking for modern Africa",
-      "company_4_tagline": "Global leader in transportation and logistics",
-      "Telecommunications": "Telecommunications",
-      "Agriculture": "Agriculture", 
-      "Finance & Banking": "Finance & Banking",
-      "Transportation & Logistics": "Transportation & Logistics",
-      "About": "About",
-      "Company Info": "Company Information",
-      "Open Positions": "Open Positions",
-      "Apply Now": "Apply Now"
+      "company_4_tagline": "Global leader in transportation and logistics"
     },
     "schools": {
       "title": "Educational Institutions",
