@@ -191,7 +191,8 @@
     "company_representative": "Company Representative",
     "school_administrator": "School Administrator",
     "contact_person_name": "Contact Person Name",
-    "creating_account": "Creating Account..."
+    "creating_account": "Creating Account...",
+    "create_account": "Create Account"
   },
   "blog": {
     "author_name": "Yahnu Staff"

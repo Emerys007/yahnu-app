@@ -231,9 +231,9 @@ export function RegisterForm() {
   return (
     <Form {...form}>
         <div className="text-center">
-            <h1 className="text-3xl font-bold">{t('Create an Account')}</h1>
+            <h1 className="text-3xl font-bold">{t('common.create_an_account')}</h1>
             <p className="text-muted-foreground mt-2">
-                {t('Enter your information to create an account')}
+                {t('auth.enter_info_to_create_account')}
             </p>
         </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -242,17 +242,17 @@ export function RegisterForm() {
           name="role"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("I am a...")}</FormLabel>
+              <FormLabel>{t("auth.i_am_a")}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                     <FormControl>
                     <SelectTrigger>
-                        <SelectValue placeholder={t("Select your account type")} />
+                        <SelectValue placeholder={t("auth.select_account_type")} />
                     </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                        <SelectItem value="graduate">{t("Graduate")}</SelectItem>
-                        <SelectItem value="company">{t("Company Representative")}</SelectItem>
-                        <SelectItem value="school">{t("School Administrator")}</SelectItem>
+                        <SelectItem value="graduate">{t("auth.graduate")}</SelectItem>
+                        <SelectItem value="company">{t("auth.company_representative")}</SelectItem>
+                        <SelectItem value="school">{t("auth.school_administrator")}</SelectItem>
                     </SelectContent>
                 </Select>
               <FormMessage />
@@ -266,7 +266,7 @@ export function RegisterForm() {
                     control={form.control} name="firstName"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>{t('First Name')}</FormLabel>
+                        <FormLabel>{t('common.first_name')}</FormLabel>
                         <FormControl><Input placeholder="John" {...field} disabled={isLoading} /></FormControl>
                         <FormMessage />
                         </FormItem>
@@ -276,7 +276,7 @@ export function RegisterForm() {
                     control={form.control} name="lastName"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>{t('Last Name')}</FormLabel>
+                        <FormLabel>{t('common.last_name')}</FormLabel>
                         <FormControl><Input placeholder="Doe" {...field} disabled={isLoading} /></FormControl>
                         <FormMessage />
                         </FormItem>
@@ -290,7 +290,7 @@ export function RegisterForm() {
             <FormField control={form.control} name="companyName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('Company Name')}</FormLabel>
+                  <FormLabel>{t('common.company_name')}</FormLabel>
                   <FormControl><Input {...field} disabled={isLoading} /></FormControl>
                   <FormMessage />
                 </FormItem>
@@ -313,7 +313,7 @@ export function RegisterForm() {
             <FormField control={form.control} name="schoolName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('School Name')}</FormLabel>
+                  <FormLabel>{t('common.school_name')}</FormLabel>
                   <FormControl><Input {...field} disabled={isLoading} /></FormControl>
                   <FormMessage />
                 </FormItem>
@@ -337,11 +337,11 @@ export function RegisterForm() {
             control={form.control} name="schoolId"
             render={({ field }) => (
                 <FormItem>
-                <FormLabel>{t('School/University')}</FormLabel>
+                <FormLabel>{t('common.school_university')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading || schools.length === 0}>
                     <FormControl>
                     <SelectTrigger>
-                        <SelectValue placeholder={t("Select your school")} />
+                        <SelectValue placeholder={t("common.select_your_school")} />
                     </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -360,10 +360,10 @@ export function RegisterForm() {
              <FormField control={form.control} name="industry"
                 render={({ field }) => (
                 <FormItem>
-                    <FormLabel>{t('Industry Sector')}</FormLabel>
+                    <FormLabel>{t('common.industry_sector')}</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                         <FormControl>
-                            <SelectTrigger><SelectValue placeholder={t("Select an industry")} /></SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder={t("common.select_an_industry")} /></SelectTrigger>
                         </FormControl>
                         <SelectContent>
                             {industrySectors.map(sector => (
@@ -382,7 +382,7 @@ export function RegisterForm() {
           control={form.control} name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('Email')}</FormLabel>
+              <FormLabel>{t('common.email')}</FormLabel>
               <FormControl>
                 <Input type="email" placeholder="you@example.com" {...field} disabled={isLoading} />
               </FormControl>
@@ -394,7 +394,7 @@ export function RegisterForm() {
           control={form.control} name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('Password')}</FormLabel>
+              <FormLabel>{t('common.password')}</FormLabel>
               <FormControl>
                 <PasswordInput placeholder="••••••••" {...field} disabled={isLoading} onSuggest={(p) => { form.setValue('password', p); form.setValue('confirmPassword', p, {shouldValidate: true}) }}/>
               </FormControl>
@@ -406,7 +406,7 @@ export function RegisterForm() {
           control={form.control} name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('Confirm Password')}</FormLabel>
+              <FormLabel>{t('common.confirm_password')}</FormLabel>
               <FormControl>
                 <PasswordInput placeholder="••••••••" {...field} disabled={isLoading} hideSuggestions />
               </FormControl>
@@ -415,7 +415,7 @@ export function RegisterForm() {
           )}
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? t("Creating Account...") : t("Create Account")}
+            {isLoading ? t("auth.creating_account") : t("common.create_an_account")}
         </Button>
 
         {role === 'graduate' && (
@@ -430,15 +430,15 @@ export function RegisterForm() {
             </div>
             <Button variant="outline" type="button" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
                 <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 21.2 177 60.4L373 124.9c-32.5-30.3-74.2-48.7-125-48.7-93.1 0-170 73.1-170 180s76.9 180 170 180c101.4 0 148.2-73.3 152.8-112.3H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg>
-                {t('Sign up with Google')}
+                {t('common.sign_up_with_google')}
             </Button>
           </>
         )}
 
         <div className="mt-4 text-center text-sm">
-            {t('Already have an account?')}
+            {t('common.already_have_an_account')}
             <Link href="/login" className="underline ml-1">
-                {t('Sign in')}
+                {t('common.sign_in')}
             </Link>
         </div>
       </form>

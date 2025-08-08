@@ -191,7 +191,8 @@
     "company_representative": "Représentant d'entreprise",
     "school_administrator": "Administrateur d'école",
     "contact_person_name": "Nom de la personne de contact",
-    "creating_account": "Création du compte..."
+    "creating_account": "Création du compte...",
+    "create_account": "Créer un compte"
   },
   "blog": {
     "author_name": "L'équipe Yahnu"
