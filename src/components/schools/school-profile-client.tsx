@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from "next/image";
@@ -46,7 +45,7 @@ export function SchoolProfileClient({ school }: { school: School }) {
                         <p className="text-muted-foreground text-lg">{school.name}</p>
                     </div>
                 </div>
-                
+
                 <div className="grid md:grid-cols-3 gap-8 mt-8">
                     <div className="md:col-span-2">
                         <h2 className="text-2xl font-bold mb-4">{t('About')} {school.acronym}</h2>
@@ -68,13 +67,13 @@ export function SchoolProfileClient({ school }: { school: School }) {
                 <div className="mt-12">
                      <h2 className="text-2xl font-bold mb-4">{t('Featured Programs')}</h2>
                      <div className="space-y-4">
-                        {school.programs.map(program => (
+                        {school.programs.map((program, index) => (
                             <Card key={program} className="p-4 flex justify-between items-center">
                                 <div>
                                     <h3 className="font-semibold text-lg">{t(program)}</h3>
                                 </div>
                                  <Button asChild variant="secondary">
-                                    <Link href="/signup">{t('Learn More')}</Link>
+                                    <Link href={`/schools/${school.slug}`}>{t('Learn More')}</Link>
                                  </Button>
                             </Card>
                         ))}

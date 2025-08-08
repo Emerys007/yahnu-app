@@ -132,8 +132,10 @@ export default function SchoolsPage() {
                                         </div>
                                         <div className="mt-6 flex-grow flex items-end">
                                             <Button asChild className="w-full">
-                                                <Link href={`/schools/${school.slug}/programs`} className="flex items-center justify-center">
-                                                    {t('pages.schools.explore_programs')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"/>
+                                                <Link href={`/schools/${school.slug}`} className="flex items-center justify-center">
+                                                    {t('pages.schools.explore_programs')} <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                                </Link>
+                                            </Button>tion-300 group-hover:translate-x-1"/>
                                                 </Link>
                                             </Button>
                                         </div>
