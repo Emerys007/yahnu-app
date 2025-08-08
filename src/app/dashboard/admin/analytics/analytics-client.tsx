@@ -1,4 +1,3 @@
-
 "use client"
 
 import { CountUp } from "@/components/ui/count-up"
@@ -82,7 +81,7 @@ const CustomDistributionTooltip = ({ active, payload }: TooltipProps<number, str
         const data: any = payload[0].payload;
         const total = data.total;
         const percentage = total > 0 ? ((data.value / total) * 100).toFixed(1) : 0;
-        
+
         return (
         <Card className="w-56 shadow-lg">
             <CardHeader className="pb-2">
@@ -122,14 +121,14 @@ const containerVariants = {
 
 export function AnalyticsClient({ data }: { data: AnalyticsData }) {
     const { t } = useLocalization();
-    
+
     const translatedUserGrowthData = React.useMemo(() => {
         return data.userGrowthData.map(d => ({
             ...d,
             month: t(d.month.substring(0, 3))
         }))
     }, [data.userGrowthData, t]);
-    
+
     const translatedUserDistribution = React.useMemo(() => {
         const total = data.userDistribution.reduce((acc, curr) => acc + curr.value, 0);
         return data.userDistribution.map(d => ({
@@ -219,7 +218,7 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => exportToCsv(data.userGrowthData.map(d => ({ month: d.month, total: d.users, ...d.details})), "user_growth.csv")}>
                                     <Download className="mr-2 h-4 w-4" />
-                                    {t('Export as CSV')}
+                                    {t('dashboard.analytics.export_as_csv')}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -262,7 +261,7 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => exportToCsv(data.userDistribution.map(({fill, ...rest}) => rest), "user_distribution.csv")}>
                                     <Download className="mr-2 h-4 w-4" />
-                                    {t('Export as CSV')}
+                                    {t('dashboard.analytics.export_as_csv')}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
