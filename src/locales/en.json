@@ -305,6 +305,10 @@
   "company_2_tagline": "Africa's leading agribusiness company",
   "company_3_tagline": "Modern banking for modern Africa", 
   "company_4_tagline": "Global leader in transportation and logistics",
+  "company_1_description": "<p>Orange Côte d'Ivoire is the leading telecommunications provider in West Africa, offering innovative mobile, internet, and mobile payment services. We connect communities and enable digital transformation across the region.</p><p>Join our dynamic team and help shape the future of telecommunications in Africa. We're looking for passionate talent to help us continue our mission of connecting everyone.</p>",
+  "company_2_description": "<p>SIFCA is Africa's leading agribusiness company, specializing in palm oil, natural rubber, and sugar. We are committed to sustainable agriculture and innovation across the African continent.</p><p>Join our team and help feed Africa while preserving our environment. We offer exciting career opportunities in modern, sustainable agriculture.</p>",
+  "company_3_description": "<p>Bridge Bank Group is a modern bank revolutionizing financial services in Africa. We offer innovative digital banking solutions tailored to the unique needs of the African market.</p><p>Be part of our mission to democratize access to financial services and drive economic growth across Africa through innovative banking solutions.</p>",
+  "company_4_description": "<p>Bolloré Logistics is a global leader in transportation and logistics with a strong presence in Africa. We connect Africa to the world through our integrated logistics solutions and local expertise.</p><p>Join our international team and help facilitate trade and economic development across Africa with our cutting-edge logistics solutions.</p>",
   "pages": {
     "jobs": {
       "title": "Job Opportunities",
@@ -368,9 +372,13 @@
       "company_3_tagline": "Modern banking for modern Africa",
       "company_4_tagline": "Global leader in transportation and logistics",
       "Telecommunications": "Telecommunications",
-      "Agriculture": "Agriculture",
+      "Agriculture": "Agriculture", 
       "Finance & Banking": "Finance & Banking",
-      "Transportation & Logistics": "Transportation & Logistics"
+      "Transportation & Logistics": "Transportation & Logistics",
+      "About": "About",
+      "Company Info": "Company Information",
+      "Open Positions": "Open Positions",
+      "Apply Now": "Apply Now"
     },
     "schools": {
       "title": "Educational Institutions",
@@ -388,9 +396,7 @@
       "school_3_name": "Groupe CSI Pôle Polytechnique",
       "school_desc_1": "Leading polytechnic institute specializing in engineering and technology education in West Africa.",
       "school_desc_2": "Prestigious public university offering comprehensive programs in sciences, humanities and professional studies.",
-      "school_desc_3": "Premier private institution providing quality education in engineering, business and technology.",
-      "school_desc_2": "Leading public university offering comprehensive programs across multiple disciplines.",
-      "school_desc_3": "Specialized institute focused on computer science and information technology education."
+      "school_desc_3": "Premier private institution providing quality education in engineering, business and technology."
     }
   }
 }

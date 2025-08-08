@@ -376,8 +376,12 @@
       "company_4_job_3": "Spécialiste portuaire",
       "Telecommunications": "Télécommunications",
       "Agriculture": "Agriculture",
-      "Finance & Banking": "Finance et banque",
-      "Transportation & Logistics": "Transport et logistique"
+      "Finance & Banking": "Finance et banque", 
+      "Transportation & Logistics": "Transport et logistique",
+      "About": "À propos de",
+      "Company Info": "Informations sur l'entreprise",
+      "Open Positions": "Postes ouverts",
+      "Apply Now": "Postuler maintenant"
     },
     "schools": {
       "title": "Établissements d'enseignement",
