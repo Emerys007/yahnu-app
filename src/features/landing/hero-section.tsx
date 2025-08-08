@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -57,7 +56,7 @@ export function HeroSection() {
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   )
-  const { t, countryName } = useLocalization();
+  const { t, countryName, locale } = useLocalization();
   const slides = React.useMemo(() => getSlides(t, countryName), [t, countryName]);
 
   const [api, setApi] = React.useState<CarouselApi>()
@@ -68,10 +67,10 @@ export function HeroSection() {
     if (!api) {
       return
     }
- 
+
     setCurrent(api.selectedScrollSnap())
     setActiveSlide(slides[api.selectedScrollSnap()])
- 
+
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap())
       setActiveSlide(slides[api.selectedScrollSnap()])
@@ -97,6 +96,25 @@ export function HeroSection() {
     hidden: { opacity: 0, scale: 0.8 },
     visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut", delay: 0.4 } },
   };
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, [slides.length]);
+
+  const handleSlideChange = (index: number) => {
+    setCurrentSlide(index);
+  };
+
+  useEffect(() => {
+    setCurrentSlide(0);
+  }, [locale, slides.length]);
+
 
   return (
     <section className="relative w-full h-[70vh] md:h-[90vh] overflow-hidden">
@@ -127,7 +145,7 @@ export function HeroSection() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        
+
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
@@ -140,13 +158,13 @@ export function HeroSection() {
                             animate="visible"
                             exit="hidden"
                         >
-                            <motion.h1 
+                            <motion.h1
                                 variants={titleVariants}
                                 className="text-4xl md:text-7xl font-bold tracking-tight drop-shadow-2xl leading-tight"
                             >
                                 {activeSlide.headline}
                             </motion.h1>
-                            <motion.p 
+                            <motion.p
                                 variants={subtitleVariants}
                                 className="text-lg md:text-2xl text-white/90 drop-shadow-xl max-w-3xl mx-auto mt-4"
                             >
@@ -170,7 +188,7 @@ export function HeroSection() {
 
         <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex h-12 w-12" />
         <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex h-12 w-12" />
-      
+
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex space-x-2">
             {slides.map((_, index) => (
             <button
