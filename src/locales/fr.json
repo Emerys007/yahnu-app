@@ -108,6 +108,7 @@
     "more_options": "Plus d'options",
     "english": "Anglais",
     "french": "Français",
+    "support": "Support",
     "time": {
       "years_ago": "il y a des années",
       "months_ago": "il y a des mois",
@@ -172,6 +173,14 @@
       "user_management": "Gestion des utilisateurs",
       "system_analytics": "Analyses du système",
       "content_moderation": "Modération du contenu",
+      "manage_team": "Gérer l'équipe",
+      "support_tools": "Outils de support",
+      "announcements": "Annonces",
+      "knowledge_base": "Base de connaissances",
+      "report_generator": "Générateur de rapports",
+      "tools": "Outils",
+      "ticket_management": "Gestion des tickets",
+      "user_lookup": "Recherche d'utilisateur",
       "overview": {
         "title": "Aperçu Administrateur",
         "description": "Surveillez et gérez la plateforme Yahnu.",

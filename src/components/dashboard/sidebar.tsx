@@ -88,30 +88,30 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   ];
 
   const superAdminNav = [
-    { href: "/dashboard/admin/overview", icon: Shield, label: t('Overview') },
-    { href: "/dashboard/admin/user-management", icon: UserCog, label: t('Manage Users') },
-    { href: "/dashboard/admin/manage-team", icon: Users2, label: t('Manage Team') },
-    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Platform Analytics') },
-    { href: "/dashboard/content", icon: Newspaper, label: t('Content Management') },
-    { href: "/dashboard/support/center", icon: LifeBuoy, label: t('Support Center') },
-    { type: "divider", label: "Support Tools" },
-    { href: "/dashboard/support/announcements", icon: Megaphone, label: "Announcements" },
-    { href: "/dashboard/support/system-health", icon: HeartPulse, label: "System Health" },
-    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: "Knowledge Base" },
-    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('Report Generator') },
+    { href: "/dashboard/admin/overview", icon: Shield, label: t('dashboard.admin.overview.title') },
+    { href: "/dashboard/admin/user-management", icon: UserCog, label: t('dashboard.admin.user_management') },
+    { href: "/dashboard/admin/manage-team", icon: Users2, label: t('dashboard.admin.manage_team') },
+    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('dashboard.admin.system_analytics') },
+    { href: "/dashboard/content", icon: Newspaper, label: t('dashboard.admin.content_moderation') },
+    { href: "/dashboard/support/center", icon: LifeBuoy, label: t('common.support') },
+    { type: "divider", label: t('dashboard.admin.support_tools') },
+    { href: "/dashboard/support/announcements", icon: Megaphone, label: t('dashboard.admin.announcements') },
+    { href: "/dashboard/support/system-health", icon: HeartPulse, label: t('dashboard.admin.system_health') },
+    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: t('dashboard.admin.knowledge_base') },
+    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('dashboard.admin.report_generator') },
   ];
 
   const adminNav = [
-    { href: "/dashboard/admin/overview", icon: Shield, label: t('Overview') },
-    { href: "/dashboard/admin/user-management", icon: UserCog, label: t('Manage Users') },
-    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('Platform Analytics') },
-    { href: "/dashboard/content", icon: Newspaper, label: t('Content Management') },
-    { href: "/dashboard/support/center", icon: LifeBuoy, label: t('Support Center') },
-    { type: "divider", label: "Support Tools" },
-    { href: "/dashboard/support/announcements", icon: Megaphone, label: "Announcements" },
-    { href: "/dashboard/support/system-health", icon: HeartPulse, label: "System Health" },
-    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: "Knowledge Base" },
-    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('Report Generator') },
+    { href: "/dashboard/admin/overview", icon: Shield, label: t('dashboard.admin.overview.title') },
+    { href: "/dashboard/admin/user-management", icon: UserCog, label: t('dashboard.admin.user_management') },
+    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('dashboard.admin.system_analytics') },
+    { href: "/dashboard/content", icon: Newspaper, label: t('dashboard.admin.content_moderation') },
+    { href: "/dashboard/support/center", icon: LifeBuoy, label: t('common.support') },
+    { type: "divider", label: t('dashboard.admin.support_tools') },
+    { href: "/dashboard/support/announcements", icon: Megaphone, label: t('dashboard.admin.announcements') },
+    { href: "/dashboard/support/system-health", icon: HeartPulse, label: t('dashboard.admin.system_health') },
+    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: t('dashboard.admin.knowledge_base') },
+    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('dashboard.admin.report_generator') },
   ];
   
   const contentManagerNav = [
@@ -119,13 +119,13 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
   ];
   
   const supportStaffNav = [
-    { href: "/dashboard/support/center", icon: LifeBuoy, label: t('Support Center') },
-    { type: "divider", label: "Tools" },
-    { href: "/dashboard/support/ticket-management", icon: Ticket, label: "Ticket Management" },
-    { href: "/dashboard/support/user-lookup", icon: Search, label: "User Lookup" },
-    { href: "/dashboard/support/announcements", icon: Megaphone, label: "Announcements" },
-    { href: "/dashboard/support/system-health", icon: HeartPulse, label: "System Health" },
-    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: "Knowledge Base" },
+    { href: "/dashboard/support/center", icon: LifeBuoy, label: t('common.support') },
+    { type: "divider", label: t('dashboard.admin.tools') },
+    { href: "/dashboard/support/ticket-management", icon: Ticket, label: t('dashboard.admin.ticket_management') },
+    { href: "/dashboard/support/user-lookup", icon: Search, label: t('dashboard.admin.user_lookup') },
+    { href: "/dashboard/support/announcements", icon: Megaphone, label: t('dashboard.admin.announcements') },
+    { href: "/dashboard/support/system-health", icon: HeartPulse, label: t('dashboard.admin.system_health') },
+    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: t('dashboard.admin.knowledge_base') },
   ];
   
   const bottomNav = [

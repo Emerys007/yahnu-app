@@ -108,6 +108,7 @@
     "more_options": "More options",
     "english": "English",
     "french": "French",
+    "support": "Support",
     "time": {
       "years_ago": "years ago",
       "months_ago": "months ago",
@@ -172,6 +173,14 @@
       "user_management": "User Management",
       "system_analytics": "System Analytics",
       "content_moderation": "Content Moderation",
+      "manage_team": "Manage Team",
+      "support_tools": "Support Tools",
+      "announcements": "Announcements",
+      "knowledge_base": "Knowledge Base",
+      "report_generator": "Report Generator",
+      "tools": "Tools",
+      "ticket_management": "Ticket Management",
+      "user_lookup": "User Lookup",
       "overview": {
         "title": "Admin Overview",
         "description": "Monitor and manage the Yahnu platform.",
