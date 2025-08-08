@@ -1,4 +1,3 @@
-
 "use client"
 
 import Image from 'next/image';
@@ -21,7 +20,7 @@ export default function LoginPage() {
         <Link href="/" className="flex flex-col items-center gap-2 mb-8 text-center">
            <Logo className="h-16 w-16" />
            <h1 className="text-4xl font-bold text-primary">Yahnu</h1>
-           <p className="text-muted-foreground">{t('Your future starts here')}</p>
+           <p className="text-muted-foreground">{t('auth.your_future_starts_here')}</p>
         </Link>
         <Image
           src="/images/Community.jpeg"
@@ -45,7 +44,7 @@ export default function LoginPage() {
                 <Logo className="h-16 w-16" />
               </Link>
               <h1 className="text-3xl font-bold text-primary">Yahnu</h1>
-              <p className="text-muted-foreground">{t('Your future starts here')}</p>
+              <p className="text-muted-foreground">{t('auth.your_future_starts_here')}</p>
             </div>
             {isLaunchCountry ? <LoginForm /> : <WaitlistForm />}
         </div>

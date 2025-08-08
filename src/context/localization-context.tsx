@@ -35,7 +35,7 @@ export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const countryName = language === 'fr' ? country.name.fr : country.name.en;
+  const countryName = country?.name ? (language === 'fr' ? country.name.fr : country.name.en) : (language === 'fr' ? 'Côte d\'Ivoire' : 'Ivory Coast');
 
   const t = (key: string, values?: { [key: string]: string | number }): string => {
     // Handle nested keys by splitting on '.' and traversing the object

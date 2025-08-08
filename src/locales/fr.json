@@ -175,7 +175,11 @@
   "auth": {
     "forgot_password_desc": "Aucun problème. Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
     "send_reset_link": "Envoyer le lien de réinitialisation",
-    "back_to_login": "Retour à la connexion"
+    "back_to_login": "Retour à la connexion",
+    "your_future_starts_here": "Votre avenir commence ici",
+    "join_thriving_community": "Rejoignez une communauté florissante",
+    "create_account_unlock_opportunities": "Créez votre compte pour débloquer un monde d'opportunités et de connexions.",
+    "your_journey_perfect_career": "Votre parcours vers la carrière parfaite ou le candidat idéal commence ici."
   },
   "blog": {
     "author_name": "L'équipe Yahnu"

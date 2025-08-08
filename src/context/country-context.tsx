@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
@@ -14,40 +13,40 @@ type Country = {
 };
 
 export const allCountries: Country[] = [
-    { 
-      code: 'CI', 
-      name: { en: 'Ivory Coast', fr: 'Côte d\'Ivoire' }, 
-      theme: 'ivory-coast', 
+    {
+      code: 'CI',
+      name: { en: 'Ivory Coast', fr: 'Côte d\'Ivoire' },
+      theme: 'ivory-coast',
       logoUrl: '/images/Country Maps/Ivory Coast.svg'
     },
-    { 
-      code: 'NG', 
-      name: { en: 'Nigeria', fr: 'Nigéria' }, 
-      theme: 'nigeria-green', 
+    {
+      code: 'NG',
+      name: { en: 'Nigeria', fr: 'Nigéria' },
+      theme: 'nigeria-green',
       logoUrl: '/images/Country Maps/Nigeria.svg'
     },
-    { 
-      code: 'GH', 
-      name: { en: 'Ghana', fr: 'Ghana' }, 
-      theme: 'ghana-gold', 
+    {
+      code: 'GH',
+      name: { en: 'Ghana', fr: 'Ghana' },
+      theme: 'ghana-gold',
       logoUrl: '/images/Country Maps/Ghana.svg'
     },
-    { 
-      code: 'SN', 
-      name: { en: 'Senegal', fr: 'Sénégal' }, 
-      theme: 'senegal-sun', 
+    {
+      code: 'SN',
+      name: { en: 'Senegal', fr: 'Sénégal' },
+      theme: 'senegal-sun',
       logoUrl: '/images/Country Maps/Senegal.svg'
     },
-    { 
-      code: 'CM', 
-      name: { en: 'Cameroon', fr: 'Cameroun' }, 
-      theme: 'cameroon-unity', 
+    {
+      code: 'CM',
+      name: { en: 'Cameroon', fr: 'Cameroun' },
+      theme: 'cameroon-unity',
       logoUrl: '/images/Country Maps/Cameroon.svg'
     },
-    { 
-      code: 'CD', 
-      name: { en: 'DR Congo', fr: 'RD Congo' }, 
-      theme: 'drc-cobalt', 
+    {
+      code: 'CD',
+      name: { en: 'DR Congo', fr: 'RD Congo' },
+      theme: 'drc-cobalt',
       logoUrl: '/images/Country Maps/DRC.svg'
     },
 ];
@@ -69,16 +68,20 @@ export const CountryProvider = ({ children }: { children: ReactNode }) => {
       setCountryState(savedCountry);
     }
   }, []);
-  
+
   const setCountry = (newCountry: Country) => {
     setCountryState(newCountry);
     localStorage.setItem('countryCode', newCountry.code);
     document.documentElement.setAttribute('data-theme', newCountry.theme);
   };
-  
+
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', country.theme);
   }, [country]);
+
+  // This line was updated to safely access country names and provide a fallback
+  const countryName = country?.name ? (language === 'fr' ? country.name.fr : country.name.en) : 'Côte d\'Ivoire';
+
 
   const value = { country, setCountry };
 

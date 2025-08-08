@@ -175,7 +175,11 @@
   "auth": {
     "forgot_password_desc": "No problem. Enter your email address and we'll send you a link to reset your password.",
     "send_reset_link": "Send Reset Link",
-    "back_to_login": "Back to login"
+    "back_to_login": "Back to login",
+    "your_future_starts_here": "Your future starts here",
+    "join_thriving_community": "Join a Thriving Community",
+    "create_account_unlock_opportunities": "Create your account to unlock a world of opportunities and connections.",
+    "your_journey_perfect_career": "Your journey to the perfect career or the ideal candidate starts here."
   },
   "blog": {
     "author_name": "Yahnu Staff"

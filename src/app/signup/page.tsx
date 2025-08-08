@@ -24,7 +24,7 @@ export default function SignupPage() {
                 <Logo className="h-16 w-16" />
               </Link>
               <h1 className="text-3xl font-bold text-primary">Yahnu</h1>
-              <p className="text-muted-foreground">{t('Your future starts here')}</p>
+              <p className="text-muted-foreground">{t('auth.your_future_starts_here')}</p>
             </div>
            {isLaunchCountry ? <RegisterForm /> : <WaitlistForm />}
        </div>
@@ -33,7 +33,7 @@ export default function SignupPage() {
         <Link href="/" className="flex flex-col items-center gap-2 mb-8 text-center">
            <Logo className="h-16 w-16" />
            <h1 className="text-4xl font-bold text-primary">Yahnu</h1>
-           <p className="text-muted-foreground">{t('Your future starts here')}</p>
+           <p className="text-muted-foreground">{t('auth.your_future_starts_here')}</p>
         </Link>
         <Image
           src="/images/Community.jpeg"
@@ -44,9 +44,9 @@ export default function SignupPage() {
           data-ai-hint="african professionals community"
         />
         <div className="mt-8 text-center max-w-lg">
-          <h2 className="text-3xl font-bold tracking-tight">{t('Join a Thriving Community')}</h2>
+          <h2 className="text-3xl font-bold tracking-tight">{t('auth.join_thriving_community')}</h2>
           <p className="mt-4 text-muted-foreground text-lg">
-            {t('Create your account to unlock a world of opportunities and connections.')}
+            {t('auth.create_account_unlock_opportunities')}
           </p>
         </div>
       </div>
