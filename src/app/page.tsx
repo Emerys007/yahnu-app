@@ -1,7 +1,8 @@
+
 "use client";
 
 import { FeaturesSection } from "@/components/landing/features-section";
-import { HeroSection } from "@/features/landing/hero-section";
+import { HeroSection } from "@/components/landing/hero-section";
 import { MainNav } from "@/components/landing/main-nav";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -33,7 +34,7 @@ const WhyChooseYahnu = () => {
       title: t('why_choose_yahnu.enhanced_opportunities'),
     },
   ];
-
+  
   const containerVariants = {
     hidden: {},
     visible: {
