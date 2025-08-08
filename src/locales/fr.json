@@ -211,7 +211,9 @@
       "pending": "En attente",
       "rejected": "Rejeté",
       "suspended": "Suspendu",
-      "declined": "Refusé"
+      "declined": "Refusé",
+      "all_roles": "Tous les rôles",
+      "all_statuses": "Tous les statuts"
     },
     "analytics": {
       "title": "Analyses de la plateforme",

@@ -11,11 +11,11 @@ const translations: { [key: string]: any } = { en, fr };
 // Server-side translation function
 export async function getTranslations(locale?: string) {
   const defaultLocale = locale || 'fr'; // Default to French
-  
+
   const t = (key: string, params?: { [key: string]: any }): string => {
     const keys = key.split('.');
     let value = translations[defaultLocale];
-    
+
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {
         value = value[k];
@@ -32,7 +32,7 @@ export async function getTranslations(locale?: string) {
         break;
       }
     }
-    
+
     if (typeof value === 'string') {
       // Replace placeholders if params are provided
       if (params) {
@@ -42,10 +42,10 @@ export async function getTranslations(locale?: string) {
       }
       return value;
     }
-    
+
     return key; // Return key if value is not a string
   };
-  
+
   return t;
 }
 
