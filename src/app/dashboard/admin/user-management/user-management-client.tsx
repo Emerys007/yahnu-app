@@ -62,11 +62,11 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
             const userDocRef = doc(db, "users", user.id);
             await updateDoc(userDocRef, { status: newStatus });
             onUserUpdate({ ...user, status: newStatus });
-            toast({ title: t('Status Updated'), description: `${user.name}'s status is now ${t(newStatus)}.` });
+            toast({ title: t('dashboard.user_management.status_updated'), description: `${user.name} ${t('dashboard.user_management.status_now')} ${t(`dashboard.user_management.${newStatus}`)}.` });
             setIsManageOpen(false);
         } catch (error) {
             console.error("Failed to update status:", error);
-            toast({ title: t('Error'), description: t('Failed to update user status.'), variant: "destructive" });
+            toast({ title: t('common.error'), description: t('dashboard.user_management.failed_update_status'), variant: "destructive" });
         }
     }
 
@@ -77,10 +77,10 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
                                          // Note: This does not delete the user from Firebase Authentication.
                                          // A server-side function (e.g., Firebase Function) would be needed for that.
             onUserDelete(user.id);
-            toast({ title: t('User Deleted'), description: `${user.name} ${t('has been removed from the platform.')}`, variant: "destructive" });
+            toast({ title: t('dashboard.user_management.user_deleted'), description: `${user.name} ${t('dashboard.user_management.removed_from_platform')}`, variant: "destructive" });
         } catch (error) {
             console.error("Failed to delete user:", error);
-            toast({ title: t('Error'), description: t('Failed to delete user.'), variant: "destructive" });
+            toast({ title: t('common.error'), description: t('dashboard.user_management.failed_delete_user'), variant: "destructive" });
         } finally {
             setIsDeleteDialogOpen(false);
             setIsManageOpen(false);
@@ -90,19 +90,19 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
     return (
         <Dialog open={isManageOpen} onOpenChange={setIsManageOpen}>
             <DialogTrigger asChild>
-                 <Button variant="ghost" size="sm">{t('Manage')}</Button>
+                 <Button variant="ghost" size="sm">{t('dashboard.user_management.manage')}</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{t('Manage User')}: {user.name}</DialogTitle>
-                    <DialogDescription>{t('Update user status or remove them from the platform.')}</DialogDescription>
+                    <DialogTitle>{t('dashboard.user_management.manage_user')}: {user.name}</DialogTitle>
+                    <DialogDescription>{t('dashboard.user_management.manage_user_description')}</DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                      <div className="space-y-2">
-                         <Label>{t('Change Status')}</Label>
+                         <Label>{t('dashboard.user_management.change_status')}</Label>
                          <div className="flex gap-2">
-                            {user.status !== 'active' && <Button onClick={() => handleStatusChange('active')}>{t('Activate')}</Button>}
-                            {user.status !== 'suspended' && <Button variant="secondary" onClick={() => handleStatusChange('suspended')}>{t('Suspend')}</Button>}
+                            {user.status !== 'active' && <Button onClick={() => handleStatusChange('active')}>{t('dashboard.user_management.activate')}</Button>}
+                            {user.status !== 'suspended' && <Button variant="secondary" onClick={() => handleStatusChange('suspended')}>{t('dashboard.user_management.suspend')}</Button>}
                          </div>
                     </div>
                 </div>
@@ -110,19 +110,19 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
                     <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                         <AlertDialogTrigger asChild>
                             <Button variant="destructive" disabled={user.accountType === "admin" || user.accountType === "super_admin"}>
-                                <Trash2 className="mr-2 h-4 w-4" />{t('Delete User')}
+                                <Trash2 className="mr-2 h-4 w-4" />{t('dashboard.user_management.delete_user')}
                             </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                                <AlertDialogTitle>{t('Are you absolutely sure?')}</AlertDialogTitle>
+                                <AlertDialogTitle>{t('dashboard.user_management.are_you_sure')}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    {t('This action cannot be undone. This will permanently delete the user account and remove their data from our servers.')}
+                                    {t('dashboard.user_management.delete_warning')}
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                                <AlertDialogCancel>{t('Cancel')}</AlertDialogCancel>
-                                <AlertDialogAction onClick={handleDelete}>{t('Yes, delete user')}</AlertDialogAction>
+                                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleDelete}>{t('dashboard.user_management.yes_delete')}</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
