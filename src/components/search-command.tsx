@@ -143,7 +143,7 @@ export function SearchCommand() {
         onClick={() => setOpen(true)}
       >
         <SearchIcon className="mr-2 h-4 w-4" />
-        <span className="hidden lg:inline-flex">{t('Search...')}</span>
+        <span className="hidden lg:inline-flex">{t('common.search')}</span>
         <span className="ml-auto hidden lg:inline-flex">
           <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
             <span className="text-xs">⌘</span>K
@@ -151,9 +151,9 @@ export function SearchCommand() {
         </span>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder={t('Type a command or search...')} />
+        <CommandInput placeholder={t('common.search_placeholder')} />
         <CommandList>
-          <CommandEmpty>{t('No results found.')}</CommandEmpty>
+          <CommandEmpty>{t('common.no_results_found')}</CommandEmpty>
 
           {mainItems.map((group) => (
             <CommandGroup key={group.group} heading={group.group}>
