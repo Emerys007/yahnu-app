@@ -25,29 +25,29 @@ interface School {
 const schoolsData: School[] = [
     {
         id: "1",
-        name: "Institut National Polytechnique Félix Houphouët-Boigny",
+        name: "pages.schools.school_1_name",
         acronym: "INP-HB",
         logoUrl: "/images/University.png",
         location: "Yamoussoukro",
-        description: "school_desc_1",
+        description: "pages.schools.school_1_description",
         slug: "inp-hb",
     },
     {
         id: "2",
-        name: "Université Félix Houphouët-Boigny",
+        name: "pages.schools.school_2_name",
         acronym: "UFHB",
-        logoUrl: "/images/UFHB.png",
+        logoUrl: "/images/University.png",
         location: "Abidjan",
-        description: "school_desc_2",
+        description: "pages.schools.school_2_description",
         slug: "ufhb",
     },
     {
         id: "3",
-        name: "Groupe CSI Pôle Polytechnique",
+        name: "pages.schools.school_3_name",
         acronym: "CSI",
         logoUrl: "/images/University.png",
         location: "Abidjan",
-        description: "school_desc_3",
+        description: "pages.schools.school_3_description",
         slug: "csi",
     },
     {
@@ -56,7 +56,7 @@ const schoolsData: School[] = [
         acronym: "ESATIC",
         logoUrl: "/images/University.png",
         location: "Abidjan",
-        description: "school_desc_4",
+        description: "pages.schools.school_4_description",
         slug: "esatic",
     },
     {
@@ -65,7 +65,7 @@ const schoolsData: School[] = [
         acronym: "ENSEA",
         logoUrl: "/images/University.png",
         location: "Abidjan",
-        description: "school_desc_5",
+        description: "pages.schools.school_5_description",
         slug: "ensea",
     }
 ];
@@ -132,9 +132,9 @@ export default function SchoolsPage() {
                                         </div>
                                         <div className="mt-6 flex-grow flex items-end">
                                             <Button asChild className="w-full">
-                                                <div className="flex items-center justify-center">
+                                                <Link href={`/schools/${school.slug}/programs`} className="flex items-center justify-center">
                                                     {t('pages.schools.explore_programs')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"/>
-                                                </div>
+                                                </Link>
                                             </Button>
                                         </div>
                                     </CardContent>

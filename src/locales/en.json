@@ -454,7 +454,12 @@
       "school_5_program_3": "Actuarial Science",
       "school_5_program_4": "Business Analytics",
       "Institution Details": "Institution Details",
-      "Featured Programs": "Featured Programs"
+      "Featured Programs": "Featured Programs",
+      "school_1_description": "The Institut National Polytechnique Félix Houphouët-Boigny (INP-HB) is Côte d'Ivoire's premier polytechnic institute, established in 1996. Located in Yamoussoukro, the political capital, INP-HB is renowned for its excellence in engineering, technology, and applied sciences education. The institute offers programs in civil engineering, electrical engineering, mechanical engineering, computer science, and telecommunications, preparing students for leadership roles in industry and public service.",
+      "school_2_description": "Université Félix Houphouët-Boigny (UFHB) is one of Côte d'Ivoire's most prestigious public universities, located in Abidjan. Established in 1964, it offers comprehensive programs across multiple faculties including Medicine, Law, Economics, Sciences, and Humanities. UFHB is known for its research excellence and has produced many of the country's leaders in various fields.",
+      "school_3_description": "Groupe CSI Pôle Polytechnique is a leading private higher education institution in Côte d'Ivoire, offering quality education in engineering, business, and technology. Located in Abidjan, CSI focuses on practical, industry-oriented training that prepares students for immediate employment in their chosen fields.",
+      "school_4_description": "École Supérieure Africaine des TIC (ESATIC) is a specialized higher education institution focused on Information and Communication Technologies. Located in Abidjan, ESATIC trains the next generation of IT professionals for Africa's growing digital economy.",
+      "school_5_description": "École Nationale Supérieure de Statistique et d'Économie Appliquée (ENSEA) is a prestigious institution specializing in statistics, economics, and applied mathematics. Based in Abidjan, ENSEA trains professionals who become key players in economic planning and statistical analysis across Africa."
     }
   }
 }
