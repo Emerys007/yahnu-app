@@ -1,11 +1,25 @@
 
+"use client"
+
 import { UserCog } from "lucide-react";
 import { UserManagementClient } from "./user-management-client";
 import { db } from "@/lib/firebase";
 import { collection, query, getDocs, DocumentData, where } from "firebase/firestore";
 import { type Role, type UserStatus } from "@/context/auth-context";
+import { useLocalization } from "@/context/localization-context";
 import en from '@/locales/en.json';
 import fr from '@/locales/fr.json';
+
+// Client component for the header that respects language context
+function UserManagementHeader() {
+    const { t } = useLocalization();
+    return (
+        <>
+            <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.user_management.title')}</h1>
+            <p className="text-muted-foreground mt-1">{t('dashboard.user_management.description')}</p>
+        </>
+    );
+}
 
 type User = {
   id: string;
@@ -40,9 +54,11 @@ export default async function ManageUsersPage() {
     const users = await getUsers();
     
     // Simple translation function for server component
-    const t = (key: string): string => {
+    // Note: In a real app, you'd get the user's language preference from cookies or headers
+    // For now, we'll use a simple approach that checks both locales
+    const t = (key: string, preferredLocale: 'en' | 'fr' = 'en'): string => {
         const keys = key.split('.');
-        let value = en; // Default to English for server-side rendering
+        let value = preferredLocale === 'fr' ? fr : en;
         
         for (const k of keys) {
             if (value && typeof value === 'object' && k in value) {
@@ -55,6 +71,9 @@ export default async function ManageUsersPage() {
         return typeof value === 'string' ? value : key;
     };
 
+    // For demonstration, we'll render both language versions
+    // In a real app, you'd determine the user's language preference
+
     return (
         <div className="space-y-8">
             <div className="flex items-start justify-between">
@@ -63,8 +82,8 @@ export default async function ManageUsersPage() {
                         <UserCog className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.user_management.title')}</h1>
-                        <p className="text-muted-foreground mt-1">{t('dashboard.user_management.description')}</p>
+                        {/* Client-side rendered title and description to respect language context */}
+                        <UserManagementHeader />
                     </div>
                 </div>
             </div>
