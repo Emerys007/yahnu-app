@@ -178,8 +178,24 @@
   "support_center": {
     "no_tickets": "Aucun ticket trouvé."
   },
+  "support_tickets": {
+    "profile_visibility_issue": "Problème avec la visibilité de mon profil",
+    "cannot_apply_job": "Impossible de postuler pour un emploi",
+    "billing_question": "Question sur la facturation",
+    "password_reset_failed": "Échec de la réinitialisation du mot de passe",
+    "2_hours_ago": "il y a 2 heures",
+    "8_hours_ago": "il y a 8 heures", 
+    "1_day_ago": "il y a 1 jour",
+    "3_days_ago": "il y a 3 jours"
+  },
   "dashboard": {
     "title": "Tableau de bord",
+    "messages": {
+      "description": "Communiquer directement avec les candidats et les entreprises.",
+      "search_conversations": "Rechercher des conversations...",
+      "type_message": "Tapez votre message...",
+      "select_conversation": "Sélectionnez une conversation pour commencer à discuter."
+    },
     "nav": {
       "dashboard": "Tableau de bord",
       "home": "Accueil",
@@ -373,7 +389,11 @@
       "report_generator": "Générateur de rapports",
       "tools": "Outils",
       "ticket_management": "Gestion des tickets",
-      "user_lookup": "Recherche d'utilisateur"
+      "user_lookup": "Recherche d'utilisateur",
+      "support_center": {
+        "description": "Gérer les demandes des utilisateurs et résoudre les tickets de support.",
+        "queue_description": "Traiter les demandes de support entrantes des utilisateurs."
+      }
     }
   },
   "auth": {

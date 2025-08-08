@@ -22,10 +22,10 @@ type Ticket = {
 
 // Mock data, replace with actual data fetching
 const tickets: Ticket[] = [
-    { id: 'TKT-001', subject: 'Problem with my profile visibility', userName: 'John Doe', userEmail: 'j.katako@gmail.com', submittedAt: '2 hours ago', status: 'new' },
-    { id: 'TKT-002', subject: 'Cannot apply for a job', userName: 'Jane Smith', userEmail: 'jane.smith@example.com', submittedAt: '8 hours ago', status: 'open' },
-    { id: 'TKT-003', subject: 'Question about billing', userName: 'Bob Johnson', userEmail: 'bob.j@example.com', submittedAt: '1 day ago', status: 'open' },
-    { id: 'TKT-004', subject: 'Password Reset Failed', userName: 'Alice Williams', userEmail: 'alice.w@example.com', submittedAt: '3 days ago', status: 'resolved' },
+    { id: 'TKT-001', subject: 'support_tickets.profile_visibility_issue', userName: 'John Doe', userEmail: 'j.katako@gmail.com', submittedAt: 'support_tickets.2_hours_ago', status: 'new' },
+    { id: 'TKT-002', subject: 'support_tickets.cannot_apply_job', userName: 'Jane Smith', userEmail: 'jane.smith@example.com', submittedAt: 'support_tickets.8_hours_ago', status: 'open' },
+    { id: 'TKT-003', subject: 'support_tickets.billing_question', userName: 'Bob Johnson', userEmail: 'bob.j@example.com', submittedAt: 'support_tickets.1_day_ago', status: 'open' },
+    { id: 'TKT-004', subject: 'support_tickets.password_reset_failed', userName: 'Alice Williams', userEmail: 'alice.w@example.com', submittedAt: 'support_tickets.3_days_ago', status: 'resolved' },
 ];
 
 
@@ -65,9 +65,9 @@ const TicketQueue = ({ tickets, title, onTicketSelect }: { tickets: Ticket[], ti
                                     <div className="font-medium">{ticket.userName}</div>
                                     <div className="text-sm text-muted-foreground">{ticket.userEmail}</div>
                                 </TableCell>
-                                <TableCell>{ticket.subject}</TableCell>
+                                <TableCell>{t(ticket.subject)}</TableCell>
                                 <TableCell><TicketStatusBadge status={ticket.status} /></TableCell>
-                                <TableCell>{ticket.submittedAt}</TableCell>
+                                <TableCell>{t(ticket.submittedAt)}</TableCell>
                                 <TableCell>
                                     <Button variant="outline" size="sm" onClick={() => onTicketSelect(ticket)}>{t('common.View Ticket')}</Button>
                                 </TableCell>
@@ -108,7 +108,7 @@ export default function SupportCenterPage() {
                     </div>
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">{t('common.Support Center')}</h1>
-                        <p className="text-muted-foreground mt-1">{t('common.Manage user inquiries and resolve support tickets.')}</p>
+                        <p className="text-muted-foreground mt-1">{t('dashboard.admin.support_center.description')}</p>
                     </div>
                 </div>
             </div>
@@ -145,7 +145,7 @@ export default function SupportCenterPage() {
 
             <div>
                 <h2 className="text-2xl font-bold tracking-tight mb-4">{t('common.Ticket Queue')}</h2>
-                <p className="text-muted-foreground mb-4">{t('common.Address incoming support requests from users.')}</p>
+                <p className="text-muted-foreground mb-4">{t('dashboard.admin.support_center.queue_description')}</p>
                 <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="new">
                     <TabsList>
                         <TabsTrigger value="new">{t('common.New')}</TabsTrigger>

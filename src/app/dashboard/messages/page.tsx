@@ -155,7 +155,7 @@ export default function MessagesPage() {
             <div className="p-4 border-b">
                 <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder={t("Search conversations...")} className="pl-8" />
+                    <Input placeholder={t("dashboard.messages.search_conversations")} className="pl-8" />
                 </div>
             </div>
             <ScrollArea className="h-[calc(100vh-18rem)]">
@@ -224,7 +224,7 @@ export default function MessagesPage() {
             <div className="p-4 border-t">
                 <form className="flex items-center gap-2" onSubmit={handleSendMessage}>
                     <Input 
-                        placeholder={t("Type your message...")} 
+                        placeholder={t("dashboard.messages.type_message")} 
                         className="flex-1"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
@@ -242,8 +242,8 @@ export default function MessagesPage() {
                     <MessageSquare className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t('Messages')}</h1>
-                    <p className="text-muted-foreground mt-1">{t('Communicate with candidates and companies directly.')}</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('common.messages')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('dashboard.messages.description')}</p>
                 </div>
             </div>
 
@@ -263,7 +263,7 @@ export default function MessagesPage() {
                             ) : (
                                 <div className="flex-1 flex flex-col items-center justify-center text-center">
                                     <MessageSquare className="h-16 w-16 text-muted-foreground/50" />
-                                    <p className="mt-4 text-muted-foreground">{t('Select a conversation to start chatting.')}</p>
+                                    <p className="mt-4 text-muted-foreground">{t('dashboard.messages.select_conversation')}</p>
                                 </div>
                             )}
                         </div>

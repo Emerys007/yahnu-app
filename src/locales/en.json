@@ -156,8 +156,24 @@
     "search_placeholder": "Type a command or search...",
     "no_results_found": "No results found."
   },
+  "support_tickets": {
+    "profile_visibility_issue": "Problem with my profile visibility",
+    "cannot_apply_job": "Cannot apply for a job", 
+    "billing_question": "Question about billing",
+    "password_reset_failed": "Password Reset Failed",
+    "2_hours_ago": "2 hours ago",
+    "8_hours_ago": "8 hours ago",
+    "1_day_ago": "1 day ago", 
+    "3_days_ago": "3 days ago"
+  },
   "dashboard": {
     "title": "Dashboard",
+    "messages": {
+      "description": "Communicate with candidates and companies directly.",
+      "search_conversations": "Search conversations...",
+      "type_message": "Type your message...", 
+      "select_conversation": "Select a conversation to start chatting."
+    },
     "nav": {
       "dashboard": "Dashboard",
       "home": "Home",
@@ -331,8 +347,12 @@
       "knowledge_base": "Knowledge Base",
       "report_generator": "Report Generator",
       "tools": "Tools",
-      "ticket_management": "Ticket Management",
-      "user_lookup": "User Lookup"
+      "ticket_management": "Ticket Management", 
+      "user_lookup": "User Lookup",
+      "support_center": {
+        "description": "Manage user inquiries and resolve support tickets.",
+        "queue_description": "Address incoming support requests from users."
+      }
     }
   },
   "auth": {
