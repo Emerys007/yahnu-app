@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from "react"
@@ -6,7 +5,7 @@ import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Search, School, Building, Trash2, Users } from "lucide-react"
+import { Search, School, Building, Trash2, Users, Filter } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
@@ -70,7 +69,7 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
             toast({ title: t('Error'), description: t('Failed to update user status.'), variant: "destructive" });
         }
     }
-    
+
     const handleDelete = async () => {
         try {
             const userDocRef = doc(db, "users", user.id);
@@ -134,7 +133,7 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
 }
 
 export function UserManagementClient({ initialUsers }: { initialUsers: User[] }) {
-    const { t } = useLocalization();
+    const { t } = useLocalization()
     const [users, setUsers] = useState<User[]>(initialUsers);
     const [searchTerm, setSearchTerm] = useState("");
     const [filters, setFilters] = useState({ accountType: "all", status: "all" });
@@ -142,7 +141,7 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
     const handleFilterChange = (key: string, value: string) => {
         setFilters(prev => ({ ...prev, [key]: value }));
     }
-    
+
     const filteredUsers = users.filter(user => {
         const searchMatch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase());
         const roleMatch = filters.accountType === 'all' || user.accountType === filters.accountType;
@@ -150,12 +149,13 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
         return searchMatch && roleMatch && statusMatch;
     });
 
-    const statusBadgeVariant = (status: User["status"]) => {
+    const getStatusVariant = (status: User["status"]) => {
         switch (status) {
             case 'active': return 'secondary';
             case 'pending': return 'outline';
             case 'suspended': return 'destructive';
             case 'declined': return 'destructive';
+            case 'rejected': return 'destructive';
             default: return 'default';
         }
     }
@@ -167,87 +167,102 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
     const handleUserDelete = (userId: string) => {
         setUsers(users.filter(u => u.id !== userId));
     };
-    
+
     return (
-        <>
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t('All Users')}</CardTitle>
-                    <CardDescription>{t('View, manage, and search for all users on the platform.')}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex flex-col md:flex-row gap-4 mb-4">
-                        <div className="relative flex-grow">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input placeholder={t("Search by name or email...")} className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                        </div>
-                        <Select value={filters.accountType} onValueChange={(v) => handleFilterChange('accountType', v)}>
-                            <SelectTrigger className="w-full md:w-[180px]">
-                                <SelectValue placeholder={t('Filter by Account Type')} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">{t('All Account Types')}</SelectItem>
-                                <SelectItem value="graduate">{t('Graduate')}</SelectItem>
-                                <SelectItem value="company">{t('Company')}</SelectItem>
-                                <SelectItem value="school">{t('School')}</SelectItem>
-                            </SelectContent>
-                        </Select>
-                         <Select value={filters.status} onValueChange={(v) => handleFilterChange('status', v)}>
-                            <SelectTrigger className="w-full md:w-[180px]">
-                                <SelectValue placeholder={t('Filter by status')} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">{t('All Statuses')}</SelectItem>
-                                <SelectItem value="active">{t('Active')}</SelectItem>
-                                <SelectItem value="pending">{t('Pending')}</SelectItem>
-                                <SelectItem value="suspended">{t('Suspended')}</SelectItem>
-                                <SelectItem value="declined">{t('Declined')}</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>{t('User')}</TableHead>
-                                <TableHead>{t('Account Type')}</TableHead>
-                                <TableHead>{t('Status')}</TableHead>
-                                <TableHead>{t('Registration Date')}</TableHead>
-                                <TableHead className="text-right">{t('Actions')}</TableHead>
+        <div className="space-y-6">
+            {/* Header */}
+            <div>
+                <h2 className="text-2xl font-bold">{t('dashboard.user_management.title')}</h2>
+                <p className="text-muted-foreground">{t('dashboard.user_management.description')}</p>
+            </div>
+
+            {/* Search and Filters */}
+            <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                    <Input
+                        placeholder={t('dashboard.user_management.search_users')}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                    />
+                </div>
+                <Select value={filters.accountType} onValueChange={(v) => handleFilterChange('accountType', v)}>
+                    <SelectTrigger className="w-full sm:w-[180px]">
+                        <Filter className="h-4 w-4 mr-2" />
+                        <SelectValue placeholder={t('dashboard.user_management.filter_role')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">{t('dashboard.user_management.all_roles')}</SelectItem>
+                        <SelectItem value="graduate">{t('dashboard.user_management.graduate')}</SelectItem>
+                        <SelectItem value="company">{t('dashboard.user_management.company')}</SelectItem>
+                        <SelectItem value="school">{t('dashboard.user_management.school')}</SelectItem>
+                    </SelectContent>
+                </Select>
+                <Select value={filters.status} onValueChange={(v) => handleFilterChange('status', v)}>
+                    <SelectTrigger className="w-full sm:w-[180px]">
+                        <Filter className="h-4 w-4 mr-2" />
+                        <SelectValue placeholder={t('dashboard.user_management.filter_status')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">{t('dashboard.user_management.all_statuses')}</SelectItem>
+                        <SelectItem value="active">{t('dashboard.user_management.active')}</SelectItem>
+                        <SelectItem value="pending">{t('dashboard.user_management.pending')}</SelectItem>
+                        <SelectItem value="rejected">{t('dashboard.user_management.rejected')}</SelectItem>
+                        <SelectItem value="suspended">{t('dashboard.user_management.suspended')}</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
+            {/* Users Table */}
+            <div className="border rounded-lg">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>{t('dashboard.user_management.name')}</TableHead>
+                            <TableHead>{t('dashboard.user_management.role')}</TableHead>
+                            <TableHead>{t('dashboard.user_management.status')}</TableHead>
+                            <TableHead>{t('dashboard.user_management.date')}</TableHead>
+                            <TableHead className="text-right">{t('dashboard.user_management.actions')}</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {filteredUsers.map(user => (
+                            <TableRow key={user.id}>
+                                <TableCell>
+                                    <div className="font-medium">{user.name}</div>
+                                    <div className="text-sm text-muted-foreground">{user.email}</div>
+                                </TableCell>
+                                <TableCell>
+                                     <Badge variant="outline" className="gap-1 capitalize">
+                                        {user.accountType === 'company' && <Building className="h-3 w-3" />}
+                                        {user.accountType === 'school' && <School className="h-3 w-3" />}
+                                        {user.accountType === 'graduate' && <Users className="h-3 w-3" />}
+                                        {t(`dashboard.user_management.${user.accountType}`)}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell>
+                                    <Badge 
+                                        variant={getStatusVariant(user.status)}
+                                        className="capitalize"
+                                    >
+                                        {t(`dashboard.user_management.${user.status}`)}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell>{user.date}</TableCell>
+                                <TableCell className="text-right">
+                                    <ManageUserDialog user={user} onUserUpdate={handleUserUpdate} onUserDelete={handleUserDelete}/>
+                                </TableCell>
                             </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredUsers.map(user => (
-                                <TableRow key={user.id}>
-                                    <TableCell>
-                                        <div className="font-medium">{user.name}</div>
-                                        <div className="text-sm text-muted-foreground">{user.email}</div>
-                                    </TableCell>
-                                    <TableCell>
-                                         <Badge variant="outline" className="gap-1">
-                                            {user.accountType === 'company' && <Building className="h-3 w-3" />}
-                                            {user.accountType === 'school' && <School className="h-3 w-3" />}
-                                            {user.accountType === 'graduate' && <Users className="h-3 w-3" />}
-                                            {t(user.accountType)}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge variant={statusBadgeVariant(user.status)}>{t(user.status)}</Badge>
-                                    </TableCell>
-                                    <TableCell>{user.date}</TableCell>
-                                    <TableCell className="text-right">
-                                        <ManageUserDialog user={user} onUserUpdate={handleUserUpdate} onUserDelete={handleUserDelete}/>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                             {filteredUsers.length === 0 && (
-                                <TableRow>
-                                    <TableCell colSpan={5} className="h-24 text-center">{t('No users found.')}</TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
-        </>
+                        ))}
+                         {filteredUsers.length === 0 && (
+                            <TableRow>
+                                <TableCell colSpan={5} className="h-24 text-center">{t('dashboard.user_management.no_users_found')}</TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
+        </div>
     )
 }
