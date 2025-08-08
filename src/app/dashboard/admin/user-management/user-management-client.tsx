@@ -175,12 +175,6 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div>
-                <h2 className="text-2xl font-bold">{t('dashboard.user_management.title')}</h2>
-                <p className="text-muted-foreground">{t('dashboard.user_management.description')}</p>
-            </div>
-
             {/* Search and Filters */}
             <div className="flex flex-col sm:flex-row gap-4">
                 <div className="relative flex-1">
