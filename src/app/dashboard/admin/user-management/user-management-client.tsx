@@ -52,7 +52,7 @@ type User = {
 }
 
 const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; onUserUpdate: (user: User) => void; onUserDelete: (userId: string) => void; }) => {
-    const { t } = useLocalization();
+    const { t, language } = useLocalization();
     const { toast } = useToast();
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
     const [isManageOpen, setIsManageOpen] = useState(false)
