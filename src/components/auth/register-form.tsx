@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -39,9 +38,9 @@ type SchoolOption = {
 }
 
 const industrySectors = [
-    "Agriculture", "Finance & Banking", "Information Technology", "Telecommunications", 
-    "Mining & Resources", "Construction & Real Estate", "Retail & Commerce", 
-    "Transportation & Logistics", "Tourism & Hospitality", "Health & Pharmaceuticals", 
+    "Agriculture", "Finance & Banking", "Information Technology", "Telecommunications",
+    "Mining & Resources", "Construction & Real Estate", "Retail & Commerce",
+    "Transportation & Logistics", "Tourism & Hospitality", "Health & Pharmaceuticals",
     "Education", "Energy"
 ];
 
@@ -175,9 +174,9 @@ export function RegisterForm() {
             name = values.schoolName;
             profileData = { ...values, name, email: values.email, role: values.role };
         }
-        
+
         await signUp(profileData, values.password);
-        
+
         let toastDescription = "";
         switch(role) {
             case 'graduate':
@@ -196,7 +195,7 @@ export function RegisterForm() {
             title: t("Account Created!"),
             description: toastDescription,
           });
-        
+
         router.push('/login');
     } catch (error: any) {
         toast({
@@ -260,7 +259,7 @@ export function RegisterForm() {
             </FormItem>
           )}
         />
-        
+
         {(role === 'graduate' || role === 'admin') && (
             <div className="grid grid-cols-2 gap-4">
                 <FormField
@@ -300,7 +299,7 @@ export function RegisterForm() {
              <FormField control={form.control} name="contactName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('Contact Person Name')}</FormLabel>
+                  <FormLabel>{t('auth.contact_person_name')}</FormLabel>
                   <FormControl><Input {...field} disabled={isLoading} /></FormControl>
                   <FormMessage />
                 </FormItem>
@@ -308,7 +307,7 @@ export function RegisterForm() {
             />
           </>
         )}
-        
+
         {role === 'school' && (
           <>
             <FormField control={form.control} name="schoolName"
@@ -323,7 +322,7 @@ export function RegisterForm() {
              <FormField control={form.control} name="contactName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('Contact Person Name')}</FormLabel>
+                  <FormLabel>{t('auth.contact_person_name')}</FormLabel>
                   <FormControl><Input {...field} disabled={isLoading} /></FormControl>
                   <FormMessage />
                 </FormItem>
@@ -418,7 +417,7 @@ export function RegisterForm() {
         <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? t("Creating Account...") : t("Create Account")}
         </Button>
-        
+
         {role === 'graduate' && (
           <>
             <div className="relative">

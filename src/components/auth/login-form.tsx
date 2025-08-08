@@ -109,9 +109,9 @@ export function LoginForm() {
   return (
     <>
         <div className="text-center">
-            <h1 className="text-3xl font-bold">{t('Welcome Back')}</h1>
+            <h1 className="text-3xl font-bold">{t('auth.welcome_back')}</h1>
             <p className="text-muted-foreground mt-2">
-                {t('Enter your email below to login to your account')}
+                {t('auth.enter_email_to_login')}
             </p>
         </div>
         <Form {...form}>
@@ -121,7 +121,7 @@ export function LoginForm() {
             name="email"
             render={({ field }) => (
                 <FormItem>
-                <FormLabel>{t('Email')}</FormLabel>
+                <FormLabel>{t('common.email')}</FormLabel>
                 <FormControl>
                     <Input type="email" placeholder="you@example.com" {...field} disabled={isLoading} />
                 </FormControl>
@@ -135,9 +135,9 @@ export function LoginForm() {
             render={({ field }) => (
                 <FormItem>
                     <div className="flex items-center">
-                        <FormLabel>{t('Password')}</FormLabel>
+                        <FormLabel>{t('common.password')}</FormLabel>
                         <Link href="/forgot-password" className="ml-auto inline-block text-sm underline">
-                            {t('Forgot your password?')}
+                            {t('common.forgot_your_password')}
                         </Link>
                     </div>
                     <FormControl>
@@ -148,7 +148,7 @@ export function LoginForm() {
             )}
             />
             <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? t("Logging in...") : t("Login")}
+                {isLoading ? t("auth.logging_in") : t("common.login")}
             </Button>
              <div className="relative">
                 <div className="absolute inset-0 flex items-center">
@@ -160,14 +160,14 @@ export function LoginForm() {
             </div>
             <Button variant="outline" type="button" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
                  <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 21.2 177 60.4L373 124.9c-32.5-30.3-74.2-48.7-125-48.7-93.1 0-170 73.1-170 180s76.9 180 170 180c101.4 0 148.2-73.3 152.8-112.3H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg>
-                 {t('Login with Google')}
+                 {t('common.login_with_google')}
             </Button>
         </form>
         </Form>
         <div className="mt-4 text-center text-sm">
-            {t("Don't have an account?")}
+            {t("auth.dont_have_account")}
             <Link href="/signup" className="underline ml-1">
-                {t('Sign up')}
+                {t('common.sign_up')}
             </Link>
         </div>
     </>

@@ -179,7 +179,19 @@
     "your_future_starts_here": "Your future starts here",
     "join_thriving_community": "Join a Thriving Community",
     "create_account_unlock_opportunities": "Create your account to unlock a world of opportunities and connections.",
-    "your_journey_perfect_career": "Your journey to the perfect career or the ideal candidate starts here."
+    "your_journey_perfect_career": "Your journey to the perfect career or the ideal candidate starts here.",
+    "welcome_back": "Welcome Back",
+    "enter_email_to_login": "Enter your email below to login to your account",
+    "logging_in": "Logging in...",
+    "dont_have_account": "Don't have an account?",
+    "enter_info_to_create_account": "Enter your information to create an account",
+    "i_am_a": "I am a...",
+    "select_account_type": "Select your account type",
+    "graduate": "Graduate",
+    "company_representative": "Company Representative",
+    "school_administrator": "School Administrator",
+    "contact_person_name": "Contact Person Name",
+    "creating_account": "Creating Account..."
   },
   "blog": {
     "author_name": "Yahnu Staff"

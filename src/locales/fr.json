@@ -179,7 +179,19 @@
     "your_future_starts_here": "Votre avenir commence ici",
     "join_thriving_community": "Rejoignez une communauté florissante",
     "create_account_unlock_opportunities": "Créez votre compte pour débloquer un monde d'opportunités et de connexions.",
-    "your_journey_perfect_career": "Votre parcours vers la carrière parfaite ou le candidat idéal commence ici."
+    "your_journey_perfect_career": "Votre parcours vers la carrière parfaite ou le candidat idéal commence ici.",
+    "welcome_back": "Bon retour",
+    "enter_email_to_login": "Entrez votre email ci-dessous pour vous connecter à votre compte",
+    "logging_in": "Connexion en cours...",
+    "dont_have_account": "Vous n'avez pas de compte ?",
+    "enter_info_to_create_account": "Entrez vos informations pour créer un compte",
+    "i_am_a": "Je suis un...",
+    "select_account_type": "Sélectionnez votre type de compte",
+    "graduate": "Diplômé",
+    "company_representative": "Représentant d'entreprise",
+    "school_administrator": "Administrateur d'école",
+    "contact_person_name": "Nom de la personne de contact",
+    "creating_account": "Création du compte..."
   },
   "blog": {
     "author_name": "L'équipe Yahnu"
