@@ -1,8 +1,14 @@
 
+"use client";
+
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import { notFound } from "next/navigation";
 import { SchoolProfileClient } from "@/components/schools/school-profile-client";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { useLocalization } from "@/context/localization-context";
 
 interface School {
     id: string;
@@ -79,8 +85,8 @@ function getSchoolBySlug(slug: string): School | null {
     return school || null;
 }
 
-// Server Component Page
-export default async function SchoolPage({ params }: { params: { slug: string } }) {
+export default function SchoolPage({ params }: { params: { slug: string } }) {
+  const { t } = useLocalization();
   const school = getSchoolBySlug(params.slug);
 
   if (!school) {
@@ -91,6 +97,14 @@ export default async function SchoolPage({ params }: { params: { slug: string } 
     <div className="flex flex-col min-h-screen bg-background">
       <MainNav />
       <main className="flex-1 container mx-auto py-12">
+        <div className="mb-6">
+          <Button asChild variant="outline" className="mb-4">
+            <Link href="/schools" className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              {t('common.back_to_schools')}
+            </Link>
+          </Button>
+        </div>
         <SchoolProfileClient school={school} />
       </main>
       <Footer />
