@@ -32,9 +32,9 @@ const tickets: Ticket[] = [
 const TicketStatusBadge = ({ status }: { status: Ticket['status'] }) => {
     const { t } = useLocalization();
     const statusMap = {
-        new: { label: t('new'), color: "bg-red-500", text: "text-white" },
-        open: { label: t('open'), color: "bg-blue-500", text: "text-white" },
-        resolved: { label: t('resolved'), color: "bg-green-500", text: "text-white" },
+        new: { label: t('common.new'), color: "bg-red-500", text: "text-white" },
+        open: { label: t('common.open'), color: "bg-blue-500", text: "text-white" },
+        resolved: { label: t('common.resolved'), color: "bg-green-500", text: "text-white" },
     };
     const { label, color, text } = statusMap[status];
     return <Badge className={cn("capitalize", color, text)}>{label}</Badge>;
@@ -51,10 +51,10 @@ const TicketQueue = ({ tickets, title, onTicketSelect }: { tickets: Ticket[], ti
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>{t('User')}</TableHead>
-                            <TableHead>{t('Subject')}</TableHead>
-                            <TableHead>{t('Status')}</TableHead>
-                            <TableHead>{t('Submitted')}</TableHead>
+                            <TableHead>{t('common.User')}</TableHead>
+                            <TableHead>{t('common.Subject')}</TableHead>
+                            <TableHead>{t('common.Status')}</TableHead>
+                            <TableHead>{t('common.Submitted')}</TableHead>
                             <TableHead></TableHead>
                         </TableRow>
                     </TableHeader>
@@ -69,7 +69,7 @@ const TicketQueue = ({ tickets, title, onTicketSelect }: { tickets: Ticket[], ti
                                 <TableCell><TicketStatusBadge status={ticket.status} /></TableCell>
                                 <TableCell>{ticket.submittedAt}</TableCell>
                                 <TableCell>
-                                    <Button variant="outline" size="sm" onClick={() => onTicketSelect(ticket)}>View Ticket</Button>
+                                    <Button variant="outline" size="sm" onClick={() => onTicketSelect(ticket)}>{t('common.View Ticket')}</Button>
                                 </TableCell>
                             </TableRow>
                         )) : (
@@ -107,8 +107,8 @@ export default function SupportCenterPage() {
                         <MessageSquare className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight">{t('Support Center')}</h1>
-                        <p className="text-muted-foreground mt-1">{t('Manage user inquiries and resolve support tickets.')}</p>
+                        <h1 className="text-3xl font-bold tracking-tight">{t('common.Support Center')}</h1>
+                        <p className="text-muted-foreground mt-1">{t('common.Manage user inquiries and resolve support tickets.')}</p>
                     </div>
                 </div>
             </div>
@@ -116,7 +116,7 @@ export default function SupportCenterPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('New Tickets')}</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('common.New Tickets')}</CardTitle>
                         <MessageSquare className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -125,7 +125,7 @@ export default function SupportCenterPage() {
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('Open Tickets')}</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('common.Open Tickets')}</CardTitle>
                         <Clock className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -134,7 +134,7 @@ export default function SupportCenterPage() {
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('Resolved Today')}</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('common.Resolved Today')}</CardTitle>
                         <CheckCircle className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -144,22 +144,22 @@ export default function SupportCenterPage() {
             </div>
 
             <div>
-                <h2 className="text-2xl font-bold tracking-tight mb-4">{t('Ticket Queue')}</h2>
-                <p className="text-muted-foreground mb-4">{t('Address incoming support requests from users.')}</p>
+                <h2 className="text-2xl font-bold tracking-tight mb-4">{t('common.Ticket Queue')}</h2>
+                <p className="text-muted-foreground mb-4">{t('common.Address incoming support requests from users.')}</p>
                 <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="new">
                     <TabsList>
-                        <TabsTrigger value="new">{t('New')}</TabsTrigger>
-                        <TabsTrigger value="open">{t('Open')}</TabsTrigger>
-                        <TabsTrigger value="resolved">{t('Resolved')}</TabsTrigger>
+                        <TabsTrigger value="new">{t('common.New')}</TabsTrigger>
+                        <TabsTrigger value="open">{t('common.Open')}</TabsTrigger>
+                        <TabsTrigger value="resolved">{t('common.Resolved')}</TabsTrigger>
                     </TabsList>
                     <TabsContent value="new">
-                        <TicketQueue tickets={newTickets} title={t("New Tickets")} onTicketSelect={handleTicketSelect}/>
+                        <TicketQueue tickets={newTickets} title={t("common.New Tickets")} onTicketSelect={handleTicketSelect}/>
                     </TabsContent>
                     <TabsContent value="open">
-                        <TicketQueue tickets={openTickets} title={t("Open Tickets")} onTicketSelect={handleTicketSelect}/>
+                        <TicketQueue tickets={openTickets} title={t("common.Open Tickets")} onTicketSelect={handleTicketSelect}/>
                     </TabsContent>
                     <TabsContent value="resolved">
-                        <TicketQueue tickets={resolvedTickets} title={t("Resolved Tickets")} onTicketSelect={handleTicketSelect}/>
+                        <TicketQueue tickets={resolvedTickets} title={t("common.Resolved Tickets")} onTicketSelect={handleTicketSelect}/>
                     </TabsContent>
                 </Tabs>
             </div>
