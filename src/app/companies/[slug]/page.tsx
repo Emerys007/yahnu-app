@@ -67,13 +67,13 @@ const companiesData: CompanyProfile[] = [
     },
      {
         id: "4",
-        name: "Bolloré Logistics",
-        slug: "bollore-logistics",
+        name: "Ceva Logistics",
+        slug: "ceva-logistics",
         tagline: "company_4_tagline",
-        logoUrl: "https://www.bollore-logistics.com/content/dam/bollore-logistics/logo/bollore-logistics-logo.svg",
+        logoUrl: "https://www.cevalogistics.com/sites/default/files/ceva_logistics_logo.svg",
         location: "Abidjan, Côte d'Ivoire",
         industry: "Transportation & Logistics",
-        website: "https://www.bollore-logistics.com",
+        website: "https://www.cevalogistics.com/fr",
         description: "company_4_description",
         jobs: [
             { title: "company_4_job_1", type: "full_time", location: "San-Pédro" },
