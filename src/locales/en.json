@@ -266,13 +266,29 @@
       "postedNewJob": "posted a new job"
     },
     "content": {
+      "title": "Content Management",
+      "description": "Manage your platform's blog and page content.",
+      "create_content": "Create Content",
       "blog_posts": "Blog Posts",
       "static_pages": "Static Pages",
       "announcements": "Announcements",
       "search_blog_posts": "Search blog posts...",
+      "search_pages": "Search pages...",
       "search_announcements": "Search announcements...",
       "new_blog_post": "New Blog Post",
-      "new_announcement": "New Announcement"
+      "new_page": "New Page",
+      "new_announcement": "New Announcement",
+      "published": "Published",
+      "static": "Static",
+      "active": "Active",
+      "views": "views",
+      "last_updated": "Last updated",
+      "days_ago": "days ago",
+      "public_page": "Public page",
+      "all_users": "All users",
+      "expires_in": "Expires in",
+      "days": "days",
+      "until": "until"
     },
     "graduate": {
       "welcome_message": "Welcome to your Yahnu dashboard! Start exploring job opportunities.",
