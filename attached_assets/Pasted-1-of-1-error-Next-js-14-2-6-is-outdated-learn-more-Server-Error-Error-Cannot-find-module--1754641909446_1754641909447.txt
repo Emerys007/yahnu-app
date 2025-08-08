@@ -1,0 +1,78 @@
+1 of 1 error
+Next.js (14.2.6) is outdated (learn more)
+Server Error
+Error: Cannot find module './vendor-chunks/@firebase.js'
+Require stack:
+- /home/runner/workspace/.next/server/webpack-runtime.js
+- /home/runner/workspace/.next/server/app/page.js
+- /home/runner/workspace/node_modules/next/dist/server/require.js
+- /home/runner/workspace/node_modules/next/dist/server/load-components.js
+- /home/runner/workspace/node_modules/next/dist/build/utils.js
+- /home/runner/workspace/node_modules/next/dist/server/dev/hot-middleware.js
+- /home/runner/workspace/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /home/runner/workspace/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /home/runner/workspace/node_modules/next/dist/server/lib/router-server.js
+- /home/runner/workspace/node_modules/next/dist/server/lib/start-server.js
+
+This error happened while generating the page. Any console logs will be displayed in the terminal window.
+Call Stack
+Next.js
+<unknown>
+file:///home/runner/workspace/node_modules/next/dist/server/require-hook.js (55:36)
+mod.require
+file:///home/runner/workspace/node_modules/next/dist/server/require-hook.js (65:28)
+__webpack_require__.f.require
+file:///home/runner/workspace/.next/server/webpack-runtime.js (203:28)
+<unknown>
+file:///home/runner/workspace/.next/server/webpack-runtime.js (111:40)
+Array.reduce
+<anonymous>
+Next.js
+__webpack_require__.e
+file:///home/runner/workspace/.next/server/webpack-runtime.js (110:67)
+Array.map
+<anonymous>
+Next.js
+__webpack_require__.X
+file:///home/runner/workspace/.next/server/webpack-runtime.js (162:22)
+<unknown>
+file:///home/runner/workspace/.next/server/app/page.js (863:47)
+Object.<anonymous>
+file:///home/runner/workspace/.next/server/app/page.js (866:3)
+Next.js
+mod.require
+file:///home/runner/workspace/node_modules/next/dist/server/require-hook.js (65:28)
+requirePage
+file:///home/runner/workspace/node_modules/next/dist/server/require.js (109:84)
+<unknown>
+file:///home/runner/workspace/node_modules/next/dist/server/load-components.js (98:84)
+async loadComponentsImpl
+file:///home/runner/workspace/node_modules/next/dist/server/load-components.js (98:26)
+async DevServer.findPageComponentsImpl
+file:///home/runner/workspace/node_modules/next/dist/server/next-server.js (710:36)
+async DevServer.findPageComponents
+file:///home/runner/workspace/node_modules/next/dist/server/dev/next-dev-server.js (577:20)
+async DevServer.renderPageComponent
+file:///home/runner/workspace/node_modules/next/dist/server/base-server.js (1917:24)
+async DevServer.renderToResponseImpl
+file:///home/runner/workspace/node_modules/next/dist/server/base-server.js (1969:32)
+async DevServer.pipeImpl
+file:///home/runner/workspace/node_modules/next/dist/server/base-server.js (920:25)
+async NextNodeServer.handleCatchallRenderRequest
+file:///home/runner/workspace/node_modules/next/dist/server/next-server.js (272:17)
+async DevServer.handleRequestImpl
+file:///home/runner/workspace/node_modules/next/dist/server/base-server.js (816:17)
+async
+file:///home/runner/workspace/node_modules/next/dist/server/dev/next-dev-server.js (339:20)
+async Span.traceAsyncFn
+file:///home/runner/workspace/node_modules/next/dist/trace/trace.js (154:20)
+async DevServer.handleRequest
+file:///home/runner/workspace/node_modules/next/dist/server/dev/next-dev-server.js (336:24)
+async invokeRender
+file:///home/runner/workspace/node_modules/next/dist/server/lib/router-server.js (174:21)
+async handleRequest
+file:///home/runner/workspace/node_modules/next/dist/server/lib/router-server.js (353:24)
+async requestHandlerImpl
+file:///home/runner/workspace/node_modules/next/dist/server/lib/router-server.js (377:13)
+async Server.requestListener
+file:///home/runner/workspace/node_modules/next/dist/server/lib/start-server.js (141:13)
