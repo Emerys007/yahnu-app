@@ -29,7 +29,7 @@ const getSlides = (t: (key: string) => string) => [
         buttonIcon: <Search />,
         imageUrl: "/images/dream-job.jpg",
         imageHint: "confident graduate looking towards the future",
-        href: "/signup"
+        href: "/signup?role=graduate"
       },
       {
         role: "Companies",
@@ -39,7 +39,7 @@ const getSlides = (t: (key: string) => string) => [
         buttonIcon: <PlusCircle />,
         imageUrl: "/images/Build-A-Team.jpeg",
         imageHint: "diverse business team",
-        href: "/signup"
+        href: "/signup?role=company"
       },
       {
         role: "Universities",
@@ -49,7 +49,7 @@ const getSlides = (t: (key: string) => string) => [
         buttonIcon: <Handshake />,
         imageUrl: "/images/Industry.webp",
         imageHint: "university building and a handshake representing partnership",
-        href: "/signup"
+        href: "/signup?role=school_administrator"
       },
 ]
 

@@ -58,7 +58,7 @@ export function HeroSection() {
     Autoplay({ delay: 5000, stopOnInteraction: true })
   )
   const { t, countryName } = useLocalization();
-  const slides = getSlides(t, countryName);
+  const slides = React.useMemo(() => getSlides(t, countryName), [t, countryName]);
 
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)
@@ -76,7 +76,7 @@ export function HeroSection() {
       setCurrent(api.selectedScrollSnap())
       setActiveSlide(slides[api.selectedScrollSnap()])
     })
-  }, [api, slides])
+  }, [api])
 
   const scrollTo = React.useCallback(
     (index: number) => api && api.scrollTo(index),
