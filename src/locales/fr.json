@@ -318,6 +318,24 @@
       "tools": "Outils",
       "ticket_management": "Gestion des tickets",
       "user_lookup": "Recherche d'utilisateur",
+      "overview": {
+        "title": "Aperçu de l'administration",
+        "description": "Surveiller l'activité de la plateforme et gérer les paramètres à l'échelle du système.",
+        "totalUsers": "Total des utilisateurs",
+        "totalUsersDescription": "Utilisateurs inscrits sur la plateforme",
+        "activeCompanies": "Entreprises actives",
+        "activeCompaniesDescription": "Entreprises avec des offres d'emploi actives",
+        "partnerSchools": "Écoles partenaires",
+        "partnerSchoolsDescription": "Partenaires d'institutions éducatives",
+        "pendingRequests": "Demandes d'inscription en attente",
+        "pendingRequestsDescription": "Approuver ou rejeter les nouvelles inscriptions d'entreprises et d'écoles.",
+        "recentActivity": "Activité récente",
+        "organizationName": "Nom de l'organisation",
+        "actions": "Actions",
+        "noPendingRequests": "Aucune demande en attente.",
+        "signedUpAs": "s'est inscrit en tant que",
+        "postedNewJob": "a publié un nouvel emploi"
+      },
       "support_center": {
         "description": "Gérer les demandes des utilisateurs et résoudre les tickets de support.",
         "queue_description": "Traiter les demandes de support entrantes des utilisateurs."
