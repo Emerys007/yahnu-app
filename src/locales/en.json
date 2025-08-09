@@ -405,24 +405,6 @@
       "tools": "Tools",
       "ticket_management": "Ticket Management",
       "user_lookup": "User Lookup",
-      "overview": {
-        "title": "Administration Overview",
-        "description": "Monitor platform activity and manage system-wide settings.",
-        "totalUsers": "Total Users",
-        "totalUsersDescription": "Registered users on the platform",
-        "activeCompanies": "Active Companies",
-        "activeCompaniesDescription": "Companies with active job postings",
-        "partnerSchools": "Partner Schools",
-        "partnerSchoolsDescription": "Educational institution partners",
-        "pendingRequests": "Pending Registration Requests",
-        "pendingRequestsDescription": "Approve or reject new company and school registrations.",
-        "recentActivity": "Recent Activity",
-        "organizationName": "Organization Name",
-        "actions": "Actions",
-        "noPendingRequests": "No pending requests.",
-        "signedUpAs": "signed up as a",
-        "postedNewJob": "posted a new job"
-      },
       "support_center": {
         "description": "Manage user inquiries and resolve support tickets.",
         "queue_description": "Address incoming support requests from users."

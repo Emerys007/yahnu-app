@@ -184,20 +184,20 @@ export default function AdminOverviewPage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                               <Clock className="h-5 w-5" />
-                              {t('dashboard.admin.overview.pendingRequests')}
+                              {t('dashboard.overview.pendingRequests')}
                             </CardTitle>
-                            <CardDescription>{t('dashboard.admin.overview.pendingRequestsDescription')}</CardDescription>
+                            <CardDescription>{t('dashboard.overview.pendingRequestsDescription')}</CardDescription>
                           </CardHeader>
                           <CardContent>
                             <div className="space-y-4">
                               {pendingRequests.length === 0 ? (
-                                <p className="text-center text-muted-foreground py-4">{t('dashboard.admin.overview.noPendingRequests')}</p>
+                                <p className="text-center text-muted-foreground py-4">{t('dashboard.overview.noPendingRequests')}</p>
                               ) : (
                                 pendingRequests.map((request) => (
                                   <div key={request.id} className="flex items-center justify-between p-3 border rounded-lg">
                                     <div>
                                       <p className="font-medium">{request.name}</p>
-                                      <p className="text-sm text-muted-foreground capitalize">{t(`dashboard.user_management.${request.accountType.toLowerCase()}`)} • {request.date}</p>
+                                      <p className="text-sm text-muted-foreground capitalize">{t(`dashboard.user_management.${request.type}`)} • {request.date}</p>
                                     </div>
                                     <div className="flex gap-2">
                                       <Button size="sm" variant="outline">
@@ -223,7 +223,7 @@ export default function AdminOverviewPage() {
                 <div className="lg:col-span-1">
                      <Card>
                         <CardHeader>
-                            <CardTitle>{t('dashboard.admin.overview.recentActivity')}</CardTitle>
+                            <CardTitle>{t('dashboard.overview.recentActivity')}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                              {recentActivity.map((activity) => {
