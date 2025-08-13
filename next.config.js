@@ -7,9 +7,10 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
+    loader: 'custom',
+    loaderFile: './loader.js',
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    domains: ['placehold.co', 'via.placeholder.com', 'picsum.photos', 'w.univ-fhb.edu.ci', 'www.adminsite.inphb.app', 'groupecsi-pp.com', 'esatic.ci', 'ensea.ed.ci'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -52,7 +53,8 @@ const nextConfig = {
         hostname: 'www.bridgebankgroup.com',
       },
       {
-        protocol: 'https',
+        protocol: 'https'
+        ,
         hostname: 'www.cevalogistics.com',
       },
       {
@@ -86,6 +88,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'upload.wikimedia.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'media.licdn.com',
       },
     ],
   },

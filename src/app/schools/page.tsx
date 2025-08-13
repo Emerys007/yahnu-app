@@ -63,7 +63,7 @@ const schoolsData: School[] = [
         id: "5",
         name: "pages.schools.school_5_name",
         acronym: "ENSEA",
-        logoUrl: "https://ensea.ed.ci/wp-content/uploads/2021/07/logo_ensea.png",
+        logoUrl: "https://media.licdn.com/dms/image/C4D0BAQG3X2b1q7X0ZA/company-logo_200_200/0/163065company-logo_638_359/ensea_abidjan_logo?e=2147483647&v=beta&t=O_2X9Z8c_3b9b3e3j3e3j3e3j3e3j3e3j3e3j3e",
         location: "Abidjan",
         description: "pages.schools.school_5_description",
         slug: "ensea",
