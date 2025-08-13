@@ -1,53 +1,14 @@
-"use client"
+"use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import en from '@/locales/en.json';
 import fr from '@/locales/fr.json';
 import { useCountry } from './country-context';
 
+/**
+ * Mapping of loaded translation files.
+ */
 const translations: { [key: string]: any } = { en, fr };
-
-// Server-side translation function
-export async function getTranslations(locale?: string) {
-  const defaultLocale = locale || 'fr'; // Default to French
-
-  const t = (key: string, params?: { [key: string]: any }): string => {
-    const keys = key.split('.');
-    let value = translations[defaultLocale];
-
-    for (const k of keys) {
-      if (value && typeof value === 'object' && k in value) {
-        value = value[k];
-      } else {
-        // Fallback to English if not found in current locale
-        value = translations['en'];
-        for (const fallbackKey of keys) {
-          if (value && typeof value === 'object' && fallbackKey in value) {
-            value = value[fallbackKey];
-          } else {
-            return key; // Return key if not found in any language
-          }
-        }
-        break;
-      }
-    }
-
-    if (typeof value === 'string') {
-      // Replace placeholders if params are provided
-      if (params) {
-        return value.replace(/\{(\w+)\}/g, (match, paramKey) => {
-          return params[paramKey] || match;
-        });
-      }
-      return value;
-    }
-
-    return key; // Return key if value is not a string
-  };
-
-  return t;
-}
 
 type LocalizationContextType = {
   language: string;
@@ -60,51 +21,85 @@ const LocalizationContext = createContext<LocalizationContextType | undefined>(u
 
 export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
   const { country } = useCountry();
-  const [language, setLanguage] = useState('en');
 
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('language');
-    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'fr')) {
-      setLanguage(savedLanguage);
+  /**
+   * Initialise language.  We default to French, but if the code is running
+   * in the browser and a saved language is in localStorage we use that instead.
+   */
+  const [language, setLanguage] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('language');
+      if (saved === 'en' || saved === 'fr') {
+        return saved;
+      }
     }
-  }, []);
+    return 'fr';
+  });
 
+  /**
+   * Change the language and persist it to localStorage (in the browser).
+   */
   const handleSetLanguage = (lang: string) => {
     if (lang === 'en' || lang === 'fr') {
       setLanguage(lang);
-      localStorage.setItem('language', lang);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('language', lang);
+      }
     }
   };
 
-  const countryName = country?.name ? (language === 'fr' ? country.name.fr : country.name.en) : (language === 'fr' ? 'Côte d\'Ivoire' : 'Ivory Coast');
+  /**
+   * Compute the country name for the {country} placeholder.
+   */
+  const countryName =
+    country?.name
+      ? language === 'fr'
+        ? country.name.fr
+        : country.name.en
+      : language === 'fr'
+        ? "Côte d'Ivoire"
+        : 'Ivory Coast';
 
-  const t = (key: string, values?: { [key: string]: string | number }): string => {
-    // Handle nested keys by splitting on '.' and traversing the object
-    const keys = key.split('.');
-    let translation: any = translations[language];
-
-    for (const k of keys) {
-      if (translation && typeof translation === 'object' && k in translation) {
-        translation = translation[k];
+  /**
+   * Deep getter used by t() to find a nested translation string.
+   */
+  const deepGet = (obj: any, path: string[]): string | undefined => {
+    let current = obj;
+    for (const segment of path) {
+      if (current && typeof current === 'object' && Object.prototype.hasOwnProperty.call(current, segment)) {
+        current = current[segment];
       } else {
-        translation = key; // Fallback to the key itself if not found
-        break;
+        return undefined;
       }
     }
+    return typeof current === 'string' ? current : undefined;
+  };
 
-    // Ensure translation is a string
-    if (typeof translation !== 'string') {
-      translation = key;
-    }
+  /**
+   * Translation function.  Tries the current language, then English, then French,
+   * and falls back to the key itself if nothing is found.  It also trims the key
+   * to avoid problems with stray spaces or newline characters.
+   */
+  const t = (rawKey: string, values?: { [key: string]: string | number }): string => {
+    const key = rawKey.trim();
+    const parts = key.split('.').filter(Boolean);
 
+    let result =
+      deepGet(translations[language], parts) ??
+      deepGet(translations['en'], parts) ??
+      deepGet(translations['fr'], parts);
+
+    let translation = result ?? key;
+
+    // Replace named placeholders with provided values
     if (values) {
-        Object.keys(values).forEach(valueKey => {
-            const regex = new RegExp(`{${valueKey}}`, 'g');
-            translation = translation.replace(regex, String(values[valueKey]));
-        });
+      translation = translation.replace(/\{(\w+)\}/g, (_match: string, p1: string) => {
+        return Object.prototype.hasOwnProperty.call(values, p1) ? String(values[p1]) : `{${p1}}`;
+      });
     }
-    // Always replace country placeholder
-    translation = translation.replace(/{country}/g, countryName);
+    // Replace {country}
+    translation = translation.replace(/\{country\}/g, countryName);
+
     return translation;
   };
 
@@ -115,12 +110,13 @@ export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+/**
+ * Hook to consume the localisation context.
+ */
 export const useLocalization = (): LocalizationContextType => {
   const context = useContext(LocalizationContext);
-
   if (context === undefined) {
     throw new Error('useLocalization must be used within a LocalizationProvider');
   }
-
   return context;
-}
+};

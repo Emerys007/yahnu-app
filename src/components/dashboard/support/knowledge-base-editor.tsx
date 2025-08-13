@@ -133,7 +133,7 @@ export default function KnowledgeBaseEditor() {
             <DialogHeader>
               <DialogTitle>{t('dashboard.support.knowledge_base.create_article')}</DialogTitle>
               <DialogDescription>
-                Create a new knowledge base article to help users.
+                {t('dashboard.support.knowledge_base.create_article_description')}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -187,7 +187,7 @@ export default function KnowledgeBaseEditor() {
                 <Label htmlFor="tags">{t('dashboard.support.knowledge_base.tags')}</Label>
                 <Input
                   id="tags"
-                  placeholder="Enter tags separated by commas"
+                  placeholder={t('dashboard.support.knowledge_base.tags_placeholder')}
                   value={newArticle.tags}
                   onChange={(e) => setNewArticle({ ...newArticle, tags: e.target.value })}
                 />
@@ -251,11 +251,11 @@ export default function KnowledgeBaseEditor() {
                     {article.content.length > 150 ? `${article.content.substring(0, 150)}...` : article.content}
                   </p>
                   <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                    <span>{article.views} views</span>
+                    <span>{article.views} {t('views')}</span>
                     <div className="flex flex-wrap gap-1">
                       {article.tags.map((tag, index) => (
                         <Badge key={index} variant="outline" className="text-xs">
-                          {tag}
+                          {t(`tag_${tag}`)}
                         </Badge>
                       ))}
                     </div>

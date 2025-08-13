@@ -54,7 +54,7 @@ export function SchoolProfileClient({ school }: { school: School }) {
                     <div>
                         <Card>
                             <CardHeader>
-                                <CardTitle>{t('pages.schools.Institution Details')}</CardTitle>
+                                <CardTitle>{t('pages.schools.institution_details')}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-center gap-3"><MapPin className="h-5 w-5 text-muted-foreground"/> <span>{school.location}</span></div>
@@ -65,7 +65,7 @@ export function SchoolProfileClient({ school }: { school: School }) {
                 </div>
 
                 <div className="mt-12">
-                     <h2 className="text-2xl font-bold mb-4">{t('pages.schools.Featured Programs')}</h2>
+                    <h2 className="text-2xl font-bold mb-4">{t('pages.schools.featured_programs')}</h2>
                      <div className="space-y-4">
                         {school.programs.map((program, index) => (
                             <Card key={program} className="p-4 flex justify-between items-center">
