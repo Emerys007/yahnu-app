@@ -144,7 +144,14 @@ export default function GraduateEventsPage() {
                                 <p className="text-xs font-semibold text-muted-foreground">{t('Hosted by')} {event.host}</p>
                             </div>
                             <CardTitle className="pt-2">{t(event.title)}</CardTitle>
-                            <CardDescription className="flex items-center gap-2 text-sm"><Calendar className="h-4 w-4" /> {new Date(event.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</CardDescription>
+ <CardDescription className="flex items-center gap-2 text-sm">
+ <Calendar className="h-4 w-4" />{" "}
+ {language === 'fr' ?
+ new Date(event.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) :
+ new Date(event.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+ }
+ </CardDescription>
+
                         </CardHeader>
                         <CardContent className="flex-grow">
                             <p className="text-muted-foreground text-sm mb-4">{t(event.description)}</p>

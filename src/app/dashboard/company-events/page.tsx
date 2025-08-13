@@ -255,7 +255,13 @@ export default function CompanyEventsPage() {
                         {events.map(event => (
                         <TableRow key={event.id}>
                             <TableCell className="font-medium">{t(event.title)}</TableCell>
-                            <TableCell>{new Date(event.date).toLocaleDateString()}</TableCell>
+                            <TableCell>
+                                {language === 'fr' ?
+                                    new Date(event.date).toLocaleDateString('fr-FR', {
+                                        day: '2-digit', month: '2-digit', year: 'numeric'
+                                    }) :
+                                    new Date(event.date).toLocaleDateString()}
+                            </TableCell>
                             <TableCell>{t(event.type)}</TableCell>
                             <TableCell><div className="flex items-center gap-1"><Target className="h-4 w-4 text-muted-foreground" /> {t(event.target)}</div></TableCell>
                             <TableCell className="flex items-center gap-2"><Users className="h-4 w-4 text-muted-foreground" /> {event.rsvps}</TableCell>

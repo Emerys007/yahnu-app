@@ -79,7 +79,7 @@ const CustomVolumeTooltip = ({ active, payload, label }: TooltipProps<number, st
       return (
         <Card className="w-64 shadow-lg">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">{new Date(label).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</CardTitle>
+            <CardTitle className="text-base">{language === 'fr' ? new Date(label).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date(label).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</CardTitle>
             <CardDescription>{t('{count} total applications', { count: data.count })}</CardDescription>
           </CardHeader>
           <CardContent>
@@ -198,7 +198,7 @@ export default function CompanyAnalyticsPage() {
                  <ChartContainer config={lineChartConfig} className="min-h-[300px] w-full">
                     <LineChart accessibilityLayer data={analyticsData.applicationVolume}>
                         <CartesianGrid vertical={false} />
-                        <XAxis dataKey="date" tickFormatter={(val) => new Date(val).toLocaleDateString('en-US', { month: 'short' })} />
+                        <XAxis dataKey="date" tickFormatter={(val) => language === 'fr' ? new Date(val).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) : new Date(val).toLocaleDateString('en-US', { month: 'short' })} />
                         <YAxis />
                         <ChartTooltip cursor={false} content={<CustomVolumeTooltip />} />
                         <Line type="monotone" dataKey="count" stroke="hsl(var(--primary))" strokeWidth={2} dot={{r: 4, fill: "hsl(var(--primary))" }} />

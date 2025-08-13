@@ -181,7 +181,8 @@
     "Resolved Tickets": "Resolved Tickets",
     "graduates": "Graduates",
     "Manage user inquiries and resolve support tickets.": "Manage user inquiries and resolve support tickets.",
-    "Address incoming support requests from users.": "Address incoming support requests from users."
+    "Address incoming support requests from users.": "Address incoming support requests from users.",
+    "back_to_blogs": "Back to Blogs"
   },
   "support_center": {
     "no_tickets": "No tickets found."
@@ -198,6 +199,117 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "overview": {
+      "title": "Administration Overview",
+      "description": "Monitor platform activity and manage system-wide settings.",
+      "totalUsers": "Total Users",
+      "totalUsersDescription": "Registered users on the platform",
+      "activeCompanies": "Active Companies",
+      "activeCompaniesDescription": "Companies with active job postings",
+      "partnerSchools": "Partner Schools",
+      "partnerSchoolsDescription": "Educational institution partners",
+      "pendingRequests": "Pending Registration Requests",
+      "pendingRequestsDescription": "Approve or reject new company and school registrations.",
+      "recentActivity": "Recent Activity",
+      "organizationName": "Organization Name",
+      "actions": "Actions",
+      "noPendingRequests": "No pending requests.",
+      "signedUpAs": "signed up as a",
+      "postedNewJob": "posted a new job"
+    },
+    "user_management": {
+      "title": "User Management",
+      "description": "Manage all user accounts on the platform.",
+      "search_users": "Search users...",
+      "name": "Name",
+      "role": "Role",
+      "status": "Status",
+      "date": "Date Joined",
+      "actions": "Actions",
+      "manage": "Manage",
+      "manage_user": "Manage User",
+      "manage_user_description": "Update user status or remove them from the platform.",
+      "change_status": "Change Status",
+      "suspend": "Suspend",
+      "activate": "Activate",
+      "active": "Active",
+      "pending": "Pending",
+      "suspended": "Suspended",
+      "rejected": "Rejected",
+      "declined": "Declined",
+      "delete_user": "Delete User",
+      "are_you_sure": "Are you absolutely sure?",
+      "delete_warning": "This action cannot be undone. This will permanently delete the user account and remove their data from our servers.",
+      "yes_delete": "Yes, delete user",
+      "status_updated": "Status updated",
+      "status_now": "now has status",
+      "failed_update_status": "Failed to update user status.",
+      "user_deleted": "User deleted",
+      "removed_from_platform": "has been removed from the platform.",
+      "failed_delete_user": "Failed to delete user.",
+      "no_users_found": "No users found.",
+      "filter_role": "Filter by role",
+      "filter_status": "Filter by status",
+      "all_roles": "All roles",
+      "all_statuses": "All statuses",
+      "graduate": "Graduate",
+      "company": "Company",
+      "school": "School"
+    },
+    "analytics": {
+      "title": "Platform Analytics",
+      "description": "High-level insights into platform usage and growth.",
+      "user_growth": "User Growth",
+      "user_distribution": "User Distribution",
+      "graduates": "Graduates",
+      "companies": "Companies",
+      "schools": "Schools",
+      "total_users": "Total Users",
+      "active_graduates": "Active Graduates",
+      "active_companies": "Active Companies",
+      "active_schools": "Active Schools",
+      "on_the_platform": "On the platform",
+      "+180_this_month": "+180 this month",
+      "+5_this_month": "+5 this month",
+      "+1_this_month": "+1 this month",
+      "total_users_platform": "Total users on the platform over the last 6 months.",
+      "breakdown_user_types": "Breakdown of user types on the platform.",
+      "new_users_this_month": "New users this month",
+      "user_count": "User Count",
+      "total": "Total",
+      "export_as_csv": "Export as CSV",
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June"
+    },
+    "content": {
+      "title": "Content Management",
+      "description": "Manage your platform's blog and page content.",
+      "create_content": "Create Content",
+      "blog_posts": "Blog Posts",
+      "static_pages": "Static Pages",
+      "announcements": "Announcements",
+      "search_blog_posts": "Search blog posts...",
+      "search_pages": "Search pages...",
+      "search_announcements": "Search announcements...",
+      "new_blog_post": "New Blog Post",
+      "new_page": "New Page",
+      "new_announcement": "New Announcement",
+      "published": "Published",
+      "static": "Static",
+      "active": "Active",
+      "views": "views",
+      "last_updated": "Last updated",
+      "days_ago": "days ago",
+      "public_page": "Public page",
+      "all_users": "All users",
+      "expires_in": "Expires in",
+      "days": "days",
+      "until": "until"
+    },
     "messages": {
       "description": "Communicate with candidates and companies directly.",
       "search_conversations": "Search conversations...",
@@ -260,116 +372,65 @@
       "report_generator": "Report Generator",
       "graduates": "Graduates"
     },
-    "analytics": {
-      "title": "Platform Analytics",
-      "description": "High-level insights into platform usage and growth.",
-      "user_growth": "User Growth",
-      "user_distribution": "User Distribution",
-      "graduates": "Graduates",
-      "companies": "Companies",
-      "schools": "Schools",
+    "admin": {
+      "welcome_message": "Welcome to the admin dashboard! Monitor and manage the platform.",
       "total_users": "Total Users",
-      "active_graduates": "Active Graduates",
-      "active_companies": "Active Companies",
-      "active_schools": "Active Schools",
-      "on_the_platform": "On the platform",
-      "+180_this_month": "+180 this month",
-      "+5_this_month": "+5 this month",
-      "+1_this_month": "+1 this month",
-      "total_users_platform": "Total users on the platform over the last 6 months.",
-      "breakdown_user_types": "Breakdown of user types on the platform.",
-      "new_users_this_month": "New users this month",
-      "user_count": "User Count",
-      "total": "Total",
-      "export_as_csv": "Export as CSV",
-      "january": "January",
-      "february": "February",
-      "march": "March",
-      "april": "April",
-      "may": "May",
-      "june": "June"
-    },
-    "user_management": {
-      "title": "User Management",
-      "description": "Manage all user accounts on the platform.",
-      "search_users": "Search users...",
-      "name": "Name",
-      "role": "Role",
-      "status": "Status",
-      "date": "Date Joined",
-      "actions": "Actions",
-      "manage": "Manage",
-      "manage_user": "Manage User",
-      "manage_user_description": "Update user status or remove them from the platform.",
-      "change_status": "Change Status",
-      "suspend": "Suspend",
-      "activate": "Activate",
-      "active": "Active",
-      "pending": "Pending",
-      "suspended": "Suspended",
-      "rejected": "Rejected",
-      "declined": "Declined",
-      "delete_user": "Delete User",
-      "are_you_sure": "Are you absolutely sure?",
-      "delete_warning": "This action cannot be undone. This will permanently delete the user account and remove their data from our servers.",
-      "yes_delete": "Yes, delete user",
-      "status_updated": "Status updated",
-      "status_now": "now has status",
-      "failed_update_status": "Failed to update user status.",
-      "user_deleted": "User deleted",
-      "removed_from_platform": "has been removed from the platform.",
-      "failed_delete_user": "Failed to delete user.",
-      "no_users_found": "No users found.",
-      "filter_role": "Filter by role",
-      "filter_status": "Filter by status",
-      "all_roles": "All roles",
-      "all_statuses": "All statuses",
-      "graduate": "Graduate",
-      "company": "Company",
-      "school": "School"
-    },
-    "overview": {
-      "title": "Administration Overview",
-      "description": "Monitor platform activity and manage system-wide settings.",
-      "totalUsers": "Total Users",
-      "totalUsersDescription": "Registered users on the platform",
-      "activeCompanies": "Active Companies",
-      "activeCompaniesDescription": "Companies with active job postings",
-      "partnerSchools": "Partner Schools",
-      "partnerSchoolsDescription": "Educational institution partners",
-      "pendingRequests": "Pending Registration Requests",
-      "pendingRequestsDescription": "Approve or reject new company and school registrations.",
-      "recentActivity": "Recent Activity",
-      "organizationName": "Organization Name",
-      "actions": "Actions",
-      "noPendingRequests": "No pending requests.",
-      "signedUpAs": "signed up as a",
-      "postedNewJob": "posted a new job"
-    },
-    "content": {
-      "title": "Content Management",
-      "description": "Manage your platform's blog and page content.",
-      "create_content": "Create Content",
-      "blog_posts": "Blog Posts",
-      "static_pages": "Static Pages",
+      "pending_approvals": "Pending Approvals",
+      "system_health": "System Health",
+      "user_management": "User Management",
+      "system_analytics": "System Analytics",
+      "content_moderation": "Content Moderation",
+      "manage_team": "Manage Team",
+      "support_tools": "Support Tools",
       "announcements": "Announcements",
-      "search_blog_posts": "Search blog posts...",
-      "search_pages": "Search pages...",
-      "search_announcements": "Search announcements...",
-      "new_blog_post": "New Blog Post",
-      "new_page": "New Page",
-      "new_announcement": "New Announcement",
-      "published": "Published",
-      "static": "Static",
-      "active": "Active",
-      "views": "views",
-      "last_updated": "Last updated",
-      "days_ago": "days ago",
-      "public_page": "Public page",
-      "all_users": "All users",
-      "expires_in": "Expires in",
-      "days": "days",
-      "until": "until"
+      "knowledge_base": "Knowledge Base",
+      "report_generator": "Report Generator",
+      "tools": "Tools",
+      "ticket_management": "Ticket Management",
+      "user_lookup": "User Lookup",
+      "support_center": {
+        "description": "Manage user inquiries and resolve support tickets.",
+        "queue_description": "Address incoming support requests from users."
+      },
+      "support": {
+        "announcements": {
+          "title": "Announcements",
+          "description": "Manage platform announcements and notifications."
+        },
+        "system_health": {
+          "title": "System Health",
+          "description": "Monitor system performance and health metrics."
+        },
+        "knowledge_base_editor": {
+          "title": "Knowledge Base Editor",
+          "description": "Create and edit help articles and documentation."
+        },
+        "ticket_management": {
+          "title": "Ticket Management",
+          "description": "Manage and resolve user support tickets."
+        }
+      },
+      "reports": {
+        "custom_generator": {
+          "title": "Custom Report Generator",
+          "description": "Create and generate custom analytics reports."
+        }
+      },
+      "overview": {
+        "organizationName": "Organization Name",
+        "actions": "Actions",
+        "noPendingRequests": "No Pending Requests",
+        "title": "Title",
+        "description": "Description",
+        "totalUsers": "Total Users",
+        "totalUsersDescription": "Total Users Description",
+        "activeCompanies": "Active Companies",
+        "activeCompaniesDescription": "Active Companies Description",
+        "partnerSchools": "Partner Schools",
+        "partnerSchoolsDescription": "Partner Schools Description",
+        "signedUpAs": "Signed Up As",
+        "postedNewJob": "Posted New Job"
+      }
     },
     "graduate": {
       "welcome_message": "Welcome to your Yahnu dashboard! Start exploring job opportunities.",
@@ -398,64 +459,10 @@
       "view_analytics": "View Analytics",
       "partner_companies_action": "Partner Companies"
     },
-    "admin": {
-      "welcome_message": "Welcome to the admin dashboard! Monitor and manage the platform.",
-      "total_users": "Total Users",
-      "pending_approvals": "Pending Approvals",
-      "system_health": "System Health",
-      "user_management": "User Management",
-      "system_analytics": "System Analytics",
-      "content_moderation": "Content Moderation",
-      "manage_team": "Manage Team",
-      "support_tools": "Support Tools",
-      "announcements": "Announcements",
-      "knowledge_base": "Knowledge Base",
-      "report_generator": "Report Generator",
-      "tools": "Tools",
-      "ticket_management": "Ticket Management",
-      "user_lookup": "User Lookup",
-      "support_center": {
-        "description": "Manage user inquiries and resolve support tickets.",
-        "queue_description": "Address incoming support requests from users."
-      },
-      "overview": {
-        "organizationName": "Organization Name",
-        "actions": "Actions",
-        "noPendingRequests": "No Pending Requests",
+    "reports": {
+      "custom_generator": {
         "title": "Title",
-        "description": "Description",
-        "totalUsers": "Total Users",
-        "totalUsersDescription": "Total Users Description",
-        "activeCompanies": "Active Companies",
-        "activeCompaniesDescription": "Active Companies Description",
-        "partnerSchools": "Partner Schools",
-        "partnerSchoolsDescription": "Partner Schools Description",
-        "signedUpAs": "Signed Up As",
-        "postedNewJob": "Posted New Job"
-      },
-      "support": {
-        "announcements": {
-          "title": "Announcements",
-          "description": "Manage platform announcements and notifications."
-        },
-        "system_health": {
-          "title": "System Health",
-          "description": "Monitor system performance and health metrics."
-        },
-        "knowledge_base_editor": {
-          "title": "Knowledge Base Editor",
-          "description": "Create and edit help articles and documentation."
-        },
-        "ticket_management": {
-          "title": "Ticket Management",
-          "description": "Manage and resolve user support tickets."
-        }
-      },
-      "reports": {
-        "custom_generator": {
-          "title": "Custom Report Generator",
-          "description": "Create and generate custom analytics reports."
-        }
+        "description": "Description"
       }
     },
     "support": {
@@ -484,6 +491,13 @@
         "expires": "Expires",
         "no_announcements": "No Announcements"
       },
+      "center": {
+        "no_tickets": "No Tickets"
+      },
+      "knowledge_base_editor": {
+        "title": "Title",
+        "description": "Description"
+      },
       "system_health": {
         "title": "Title",
         "description": "Description",
@@ -493,7 +507,7 @@
         "active_users": "Active Users",
         "database_connections": "Database Connections",
         "memory_usage": "Memory Usage",
-        "cpu_usage": "Cpu Usage",
+        "cpu_usage": "CPU Usage",
         "disk_usage": "Disk Usage",
         "refresh": "Refresh",
         "overall_status": "Overall Status",
@@ -501,17 +515,6 @@
         "recent_incidents": "Recent Incidents",
         "view_details": "View Details",
         "no_incidents": "No Incidents"
-      },
-      "knowledge_base_editor": {
-        "title": "Title",
-        "description": "Description"
-      },
-      "ticket_management": {
-        "title": "Ticket Management",
-        "description": "Manage and resolve user support tickets."
-      },
-      "center": {
-        "no_tickets": "No Tickets"
       },
       "knowledge_base": {
         "getting_started": "Getting Started",
@@ -535,12 +538,10 @@
         "existing_articles": "Existing Articles",
         "last_updated": "Last Updated",
         "no_articles": "No Articles"
-      }
-    },
-    "reports": {
-      "custom_generator": {
-        "title": "Title",
-        "description": "Description"
+      },
+      "ticket_management": {
+        "title": "Ticket Management",
+        "description": "Manage and resolve user support tickets."
       }
     }
   },
@@ -566,9 +567,9 @@
     "creating_account": "Creating Account...",
     "create_account": "Create Account",
     "or_continue_with": "Or continue with",
+    "get_started_now": "Get Started Now",
     "logout": "Log out",
-    "search_placeholder": "Type a command or search...",
-    "get_started_now": "Get Started Now"
+    "search_placeholder": "Type a command or search..."
   },
   "blog": {
     "author_name": "Yahnu Staff"
@@ -675,10 +676,10 @@
   "legal": {
     "privacy_title": "Privacy Policy",
     "privacy_last_updated": "Last updated: January 15, 2025",
-    "privacy_content": "<p>This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p><h2>Interpretation and Definitions</h2><h3>Interpretation</h3><p>The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p><h3>Definitions</h3><p>For the purposes of this Privacy Policy:</p><ul><li><strong>Account</strong> means a unique account created for You to access our Service or parts of our Service.</li><li><strong>Company</strong> (referred to as either \"the Company\", \"We\", \"Us\" or \"Our\" in this Agreement) refers to Yahnu.</li><li><strong>Cookies</strong> are small files that are placed on Your computer, mobile device or any other device by a website, containing the details of Your Browse history on that website among its many uses.</li><li><strong>Country</strong> refers to: Ivory Coast</li><li><strong>Device</strong> means any device that can access the Service such as a computer, a cellphone or a digital tablet.</li><li><strong>Personal Data</strong> is any information that relates to an identified or identifiable individual.</li><li><strong>Service</strong> refers to the Website.</li><li><strong>Usage Data</strong> refers to data collected automatically, either generated by the use of the Service or from the Service infrastructure itself (for example, the duration of a page visit).</li><li><strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li></ul><h2>Collecting and Using Your Personal Data</h2><h3>Types of Data Collected</h3><h4>Personal Data</h4><p>While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:</p><ul><li>Email address</li><li>First name and last name</li><li>Phone number</li><li>Usage Data</li></ul><h2>Use of Your Personal Data</h2><p>The Company may use Personal Data for the following purposes:</p><ul><li>To provide and maintain our Service, including to monitor the usage of our Service.</li><li>To manage Your Account: to manage Your registration as a user of the Service. The Personal Data You provide can give You access to different functionalities of the Service that are available to You as a registered user.</li></ul><h2>Changes to this Privacy Policy</h2><p>We may update Our Privacy Policy from time to time. We will notify You of any changes by posting the new Privacy Policy on this page.</p><p>We will let You know via email and/or a prominent notice on Our Service, prior to the change becoming effective and update the \"Last updated\" date at the top of this Privacy Policy.</p><p>You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p><p>You can contact us:</p><ul><li>By email: <strong>contact@yahnu.org</strong></li></ul>",
+    "privacy_content": "<p>This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p><h2>Interpretation and Definitions</h2><h3>Interpretation</h3><p>The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p><h3>Definitions</h3><p>For the purposes of this Privacy Policy:</p><ul><li><strong>Account</strong> means a unique account created for You to access our Service or parts of our Service.</li><li><strong>Company</strong> (referred to as either \"the Company\", \"We\", \"Us\" or \"Our\" in this Agreement) refers to Yahnu.</li><li><strong>Cookies</strong> are small files that are placed on Your computer, mobile device or any other device by a website, containing the details of Your browsing history on that website among its many uses.</li><li><strong>Country</strong> refers to: Côte d'Ivoire</li><li><strong>Device</strong> means any device that can access the Service such as a computer, a cellphone or a digital tablet.</li><li><strong>Personal Data</strong> is any information that relates to an identified or identifiable individual.</li><li><strong>Service</strong> refers to the Website.</li><li><strong>Usage Data</strong> refers to data collected automatically, either generated by the use of the Service or from the Service infrastructure itself (for example, the duration of a page visit).</li><li><strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li></ul><h2>Collecting and Using Your Personal Data</h2><h3>Types of Data Collected</h3><h4>Personal Data</h4><p>While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:</p><ul><li>Email address</li><li>First name and last name</li><li>Phone number</li><li>Usage Data</li></ul><h2>Use of Your Personal Data</h2><p>The Company may use Personal Data for the following purposes:</p><ul><li>To provide and maintain our Service, including to monitor the usage of our Service.</li><li>To manage Your Account: to manage Your registration as a user of the Service. The Personal Data You provide can give You access to different functionalities of the Service that are available to You as a registered user.</li></ul><h2>Changes to this Privacy Policy</h2><p>We may update Our Privacy Policy from time to time. We will notify You of any changes by posting the new Privacy Policy on this page.</p><p>We will let You know via email and/or a prominent notice on Our Service, prior to the change becoming effective and update the \"Last updated\" date at the top of this Privacy Policy.</p><p>You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p><p>You can contact us:</p><ul><li>By email: <strong>contact@yahnu.org</strong></li></ul>",
     "terms_title": "Terms of Service",
     "terms_last_updated": "Last updated: January 15, 2025",
-    "terms_content": "<p>Please read these terms and conditions carefully before using Our Service.</p><h2>Interpretation and Definitions</h2><h3>Interpretation</h3><p>The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p><h3>Definitions</h3><p>For the purposes of these Terms and Conditions:</p><ul><li><strong>Country</strong> refers to: Ivory Coast</li><li><strong>Company</strong> (referred to as either \"the Company\", \"We\", \"Us\" or \"Our\" in this Agreement) refers to Yahnu.</li><li><strong>Device</strong> means any device that can access the Service such as a computer, a cellphone or a digital tablet.</li><li><strong>Service</strong> refers to the Website.</li><li><strong>Terms and Conditions</strong> (also referred to as \"Terms\") mean these Terms and Conditions that form the entire agreement between You and the Company regarding the use of the Service.</li><li><strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li></ul><h2>Acknowledgment</h2><p>These are the Terms and Conditions governing the use of this Service and the agreement that operates between You and the Company. These Terms and Conditions set out the rights and obligations of all users regarding the use of the Service.</p><p>Your access to and use of the Service is conditioned on Your acceptance of and compliance with these Terms and Conditions. These Terms and Conditions apply to all visitors, users and others who access or use the Service.</p><h2>User Accounts</h2><p>When You create an account with Us, You must provide Us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of Your account on Our Service.</p><h2>Termination</h2><p>We may terminate or suspend Your Account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if You breach these Terms and Conditions.</p><h2>Changes to These Terms and Conditions</h2><p>We reserve the right, at Our sole discretion, to modify or replace these Terms at any time. If a revision is material We will make reasonable efforts to provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at Our sole discretion.</p><p>You can contact us:</p><ul><li>By email: <strong>contact@yahnu.org</strong></li></ul>",
+    "terms_content": "<p>Please read these terms and conditions carefully before using Our Service.</p><h2>Interpretation and Definitions</h2><h3>Interpretation</h3><p>The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p><h3>Definitions</h3><p>For the purposes of these Terms and Conditions:</p><ul><li><strong>Country</strong> refers to: Côte d'Ivoire</li><li><strong>Company</strong> (referred to as either \"the Company\", \"We\", \"Us\" or \"Our\" in this Agreement) refers to Yahnu.</li><li><strong>Device</strong> means any device that can access the Service such as a computer, a cellphone or a digital tablet.</li><li><strong>Service</strong> refers to the Website.</li><li><strong>Terms and Conditions</strong> (also referred to as \"Terms\") mean these Terms and Conditions that form the entire agreement between You and the Company regarding the use of the Service.</li><li><strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li></ul><h2>Acknowledgment</h2><p>These are the Terms and Conditions governing the use of this Service and the agreement that operates between You and the Company. These Terms and Conditions set out the rights and obligations of all users regarding the use of the Service.</p><p>Your access to and use of the Service is conditioned on Your acceptance of and compliance with these Terms and Conditions. These Terms and Conditions apply to all visitors, users and others who access or use the Service.</p><h2>User Accounts</h2><p>When You create an account with Us, You must provide Us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of Your account on Our Service.</p><h2>Termination</h2><p>We may terminate or suspend Your Account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if You breach these Terms and Conditions.</p><h2>Changes to These Terms and Conditions</h2><p>We reserve the right, at Our sole discretion, to modify or replace these Terms at any time. If a revision is material We will make reasonable efforts to provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at Our sole discretion.</p><p>You can contact us:</p><ul><li>By email: <strong>contact@yahnu.org</strong></li></ul>",
     "back_to_home": "Back to home"
   },
   "why_choose_yahnu": {
@@ -709,7 +710,7 @@
   "company_2_tagline": "Africa's leading agribusiness company",
   "company_3_tagline": "Modern banking for modern Africa",
   "company_4_tagline": "Global leader in supply chain and logistics solutions",
-  "company_1_description": "<p>Orange Ivory Coast is the leading telecommunications provider in West Africa, offering innovative mobile, internet, and mobile payment services. We connect communities and enable digital transformation across the region.</p><p>Join our dynamic team and help shape the future of telecommunications in Africa. We're looking for passionate talent to help us continue our mission of connecting everyone.</p>",
+  "company_1_description": "<p>Orange Côte d'Ivoire is the leading telecommunications provider in West Africa, offering innovative mobile, internet, and mobile payment services. We connect communities and enable digital transformation across the region.</p><p>Join our dynamic team and help shape the future of telecommunications in Africa. We're looking for passionate talent to help us continue our mission of connecting everyone.</p>",
   "company_2_description": "<p>SIFCA is Africa's leading agribusiness company, specializing in palm oil, natural rubber, and sugar. We are committed to sustainable agriculture and innovation across the African continent.</p><p>Join our team and help feed Africa while preserving our environment. We offer exciting career opportunities in modern, sustainable agriculture.</p>",
   "company_3_description": "<p>Bridge Bank Group is a modern bank revolutionizing financial services in Africa. We offer innovative digital banking solutions tailored to the unique needs of the African market.</p><p>Be part of our mission to democratize access to financial services and drive economic growth across Africa through innovative banking solutions.</p>",
   "company_4_description": "<p>Ceva Logistics is a global leader in supply chain and logistics solutions with a strong presence in Africa. We connect Africa to the world through our integrated logistics solutions and local expertise.</p><p>Join our international team and help facilitate trade and economic development across Africa with our cutting-edge logistics solutions.</p>",
@@ -756,7 +757,7 @@
       "subtitle": "Connect with leading employers",
       "coming_soon": "Company profiles coming soon! We're partnering with top employers to bring you exclusive opportunities.",
       "featured_companies": "Featured Companies",
-      "discover_companies_description": "Discover leading companies in Ivory Coast that are hiring top talent. Your next career opportunity awaits.",
+      "discover_companies_description": "Discover leading companies in Côte d'Ivoire that are hiring top talent. Your next career opportunity awaits.",
       "coming_soon_to_country": "Coming Soon to {country}",
       "featured_positions": "Featured Positions",
       "is_your_company_next": "Is Your Company Next?",
@@ -791,17 +792,17 @@
       "join_network_description": "Join our network to connect your graduates with leading companies and track their success.",
       "partner_with_us": "Partner with Us",
       "working_hard_schools": "We are working hard to bring Yahnu schools to {country}. Stay tuned!",
-      "school_1_name": "Institut National Polytechnique Félix Houphouët-Boigny",
+      "school_1_name": "National Polytechnic Institute Félix Houphouët-Boigny",
       "school_2_name": "Université Félix Houphouët-Boigny",
-      "school_3_name": "Groupe CSI Pôle Polytechnique",
-      "school_4_name": "École Supérieure Africaine des TIC",
-      "school_5_name": "École Nationale Supérieure de Statistique et d'Économie Appliquée",
+      "school_3_name": "CSI Pole Polytechnique Group",
+      "school_4_name": "African Higher School of Information and Communication Technologies",
+      "school_5_name": "National Higher School of Statistics and Applied Economics",
       "school_desc_1": "Leading polytechnic institute specializing in engineering and technology education in West Africa.",
-      "school_2_description": "Université Félix Houphouët-Boigny (UFHB) is one of Ivory Coast's most prestigious public universities, located in Abidjan. Established in 1964, it offers comprehensive programs across multiple faculties including Medicine, Law, Economics, Sciences, and Humanities. UFHB is known for its research excellence and has produced many of the country's leaders in various fields.",
-      "school_3_description": "Groupe CSI Pôle Polytechnique is a leading private higher education institution in Ivory Coast, offering quality education in engineering, business, and technology. Located in Abidjan, CSI focuses on practical, industry-oriented training that prepares students for immediate employment in their chosen fields.",
+      "school_2_description": "Université Félix Houphouët-Boigny (UFHB) is one of Côte d'Ivoire's most prestigious public universities, located in Abidjan. Established in 1964, it offers comprehensive programs across multiple faculties including Medicine, Law, Economics, Sciences, and Humanities. UFHB is known for its research excellence and has produced many of the country's leaders in various fields.",
+      "school_3_description": "Groupe CSI Pôle Polytechnique is a leading private higher education institution in Côte d'Ivoire, offering quality education in engineering, business, and technology. Located in Abidjan, CSI focuses on practical, industry-oriented training that prepares students for immediate employment in their chosen fields.",
       "school_4_description": "École Supérieure Africaine des TIC (ESATIC) is a specialized higher education institution focused on Information and Communication Technologies. Located in Abidjan, ESATIC trains the next generation of IT professionals for Africa's growing digital economy.",
       "school_5_description": "École Nationale Supérieure de Statistique et d'Économie Appliquée (ENSEA) is a prestigious institution specializing in statistics, economics, and applied mathematics. Based in Abidjan, ENSEA trains professionals who become key players in economic planning and statistical analysis across Africa.",
-      "school_1_description": "The Institut National Polytechnique Félix Houphouët-Boigny (INP-HB) is Ivory Coast's premier polytechnic institute, established in 1996. Located in Yamoussoukro, the political capital, INP-HB is renowned for its excellence in engineering, technology, and applied sciences education. The institute offers programs in civil engineering, electrical engineering, mechanical engineering, computer science, and telecommunications, preparing students for leadership roles in industry and public service.",
+      "school_1_description": "The Institut National Polytechnique Félix Houphouët-Boigny (INP-HB) is Côte d'Ivoire's premier polytechnic institute, established in 1996. Located in Yamoussoukro, the political capital, INP-HB is renowned for its excellence in engineering, technology, and applied sciences education. The institute offers programs in civil engineering, electrical engineering, mechanical engineering, computer science, and telecommunications, preparing students for leadership roles in industry and public service.",
       "school_1_program_1": "Civil Engineering",
       "school_1_program_2": "Electrical Engineering",
       "school_1_program_3": "Computer Science",
@@ -2000,5 +2001,9 @@
       "buttonText": "Button Text"
     }
   },
-  "a": "A"
+  "a": "A",
+  "Finance & Forte": "Finance & Forte",
+  "Google": "Google",
+  "INP-HB": "INP-HB",
+  "Tech Solutions Abidjan": "Tech Solutions Abidjan"
 }

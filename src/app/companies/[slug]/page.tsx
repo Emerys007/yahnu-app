@@ -1,7 +1,11 @@
+"use client";
+
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import { notFound } from "next/navigation";
 import { CompanyProfileClient } from "./company-profile-client";
+import Link from "next/link";
+import { useLocalization } from "@/context/localization-context";
 
 interface CompanyProfile {
     id: string;
@@ -88,8 +92,10 @@ function getCompanyBySlug(slug: string): CompanyProfile | null {
     return company || null;
 }
 
-export default async function CompanyPage({ params }: { params: { slug: string } }) {
+export default function CompanyPage({ params }: { params: { slug: string } }) {
+  const { t } = useLocalization();
   const company = getCompanyBySlug(params.slug);
+
 
   if (!company) {
     notFound();

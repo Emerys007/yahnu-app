@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Briefcase, MapPin, Building, Globe, ArrowLeft } from "lucide-react";
+import { Briefcase, MapPin, Building, Globe } from "lucide-react";
 import { useLocalization } from "@/context/localization-context";
 
 interface CompanyProfile {
@@ -25,14 +25,7 @@ export function CompanyProfileClient({ company }: { company: CompanyProfile }) {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center gap-4">
-                <Button variant="outline" asChild>
-                    <Link href="/companies" className="flex items-center gap-2">
-                        <ArrowLeft className="h-4 w-4" />
-                        {t('common.back_to_companies')}
-                    </Link>
-                </Button>
-            </div>
+            <Link href="/companies" className="text-primary hover:underline">← {t('common.back_to_companies')}</Link>
             
             <Card className="overflow-hidden">
                 <CardHeader className="p-0">

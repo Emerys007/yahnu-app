@@ -82,7 +82,7 @@ export default function AnnouncementsPage() {
                                             </div>
                                             <div className="flex items-center gap-1">
                                                 <Clock className="h-4 w-4" />
-                                                <span>{t('dashboard.content.expires_in')}: {announcement.expiryDate}</span>
+                                                <span>{t('dashboard.content.expires_in')}: {t('language') === 'fr' ? new Date(announcement.expiryDate).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : announcement.expiryDate}</span>
                                             </div>
                                         </div>
                                     </div>

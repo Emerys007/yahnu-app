@@ -46,7 +46,7 @@ export default function BlogPage() {
                                 <p className="text-muted-foreground mb-4 text-sm line-clamp-3">{post.brief[language as 'en' | 'fr']}</p>
                                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                                     <span>{t('common.by')} {t(post.author)}</span>
-                                    <span>{new Date(post.date).toLocaleDateString()}</span>
+                                    <span>{language === 'fr' ? new Date(post.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date(post.date).toLocaleDateString()}</span>
                                 </div>
                                  <div className="flex items-center mt-4 font-semibold text-primary">
                                     {t('common.read_more')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />

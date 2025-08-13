@@ -96,14 +96,9 @@ export default function SchoolPage({ params }: { params: { slug: string } }) {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <MainNav />
-      <main className="flex-1 container mx-auto py-12">
-        <div className="mb-6">
-          <Button asChild variant="outline" className="mb-4">
-            <Link href="/schools" className="flex items-center gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              {t('common.back_to_schools')}
-            </Link>
-          </Button>
+      <main className="flex-1 container mx-auto py-12 max-w-4xl">
+ <div className="max-w-4xl mx-auto mb-8">
+          <Link href="/schools" className="text-primary hover:underline">← {t('common.back_to_schools')}</Link>
         </div>
         <SchoolProfileClient school={school} />
       </main>
