@@ -106,15 +106,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
       if (firebaseUser) {
         const userProfile = await fetchUserDocument(firebaseUser);
-         if (userProfile && userProfile.status === 'active') {
+         if (userProfile) { // Simplified to allow fetching profile regardless of status initially
           // Sync email from Firebase Auth to Firestore if they differ.
-          // This handles the case where a user verifies a new email.
           if (userProfile.email !== firebaseUser.email) {
             const userDocRef = doc(db, "users", firebaseUser.uid);
             await updateDoc(userDocRef, { email: firebaseUser.email });
             userProfile.email = firebaseUser.email; // Update in-memory profile
           }
-          updateUserState(userProfile);
+          if (userProfile.status === 'active') {
+            updateUserState(userProfile);
+          } else {
+            // User is not active, don't set them in context, effectively logging them out client-side
+            updateUserState(null); 
+          }
         } else {
            updateUserState(null);
         }
@@ -186,13 +190,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     if (userProfile.status !== 'active') {
+        const status = userProfile.status;
         await firebaseSignOut(auth);
-        if (userProfile.role === 'graduate') {
-            throw new Error("pending_graduate");
-        } else if (userProfile.status === 'pending') {
-            throw new Error("pending_org");
-        } else if (userProfile.status === 'suspended') {
-            throw new Error("suspended");
+        if (status === 'pending') {
+            throw new Error(userProfile.role === 'graduate' ? "pending_graduate" : "pending_org");
+        }
+        if (status === 'suspended') {
+             throw new Error("suspended");
         }
     }
     

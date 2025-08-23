@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -24,8 +25,8 @@ import { PasswordInput } from "@/components/ui/password-input"
 import { Separator } from "../ui/separator"
 
 const loginSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  password: z.string().min(1, { message: "Password is required." }),
+  email: z.string().email({ message: "Veuillez saisir une adresse e-mail valide." }),
+  password: z.string().min(1, { message: "Le mot de passe est requis." }),
 })
 
 export function LoginForm() {
@@ -49,26 +50,26 @@ export function LoginForm() {
     try {
         await signIn(values.email, values.password);
         toast({
-            title: t("Logged In Successfully!"),
-            description: t("Welcome back to Yahnu."),
+            title: t("Connexion réussie !"),
+            description: t("Bon retour sur Yahnu."),
         });
         router.push('/dashboard');
     } catch (error: any) {
-        let errorMessage = t("Invalid credentials. Please try again.");
+        let errorMessage = t("Identifiants invalides. Veuillez réessayer.");
         if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-            errorMessage = t("Invalid email or password. Please check your credentials.");
+            errorMessage = t("E-mail ou mot de passe invalide. Veuillez vérifier vos informations.");
         } else if (error.code === 'auth/too-many-requests') {
-            errorMessage = t("Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.")
+            errorMessage = t("L'accès à ce compte a été temporairement désactivé en raison de nombreuses tentatives de connexion infructueuses. Vous pouvez le restaurer immédiatement en réinitialisant votre mot de passe ou réessayer plus tard.")
         } else if (error.message === 'pending_graduate') {
-            errorMessage = t("Your account is pending approval. Please contact your school's administrator.");
+            errorMessage = t("Votre compte est en attente d'approbation de la part de l'administrateur de votre école.");
         } else if (error.message === 'pending_org') {
-             errorMessage = t("Your account is pending approval. Please contact a Yahnu administrator.");
+             errorMessage = t("Votre inscription est en attente d'approbation par un administrateur de Yahnu.");
         } else if (error.message === "suspended") {
-            errorMessage = t("Your account has been suspended. Please contact support.");
+            errorMessage = t("Votre compte a été suspendu. Veuillez contacter le support.");
         }
 
         toast({
-            title: t("Uh oh! Login Failed."),
+            title: t("Oh non ! La connexion a échoué."),
             description: errorMessage,
             variant: "destructive",
         });
@@ -82,21 +83,21 @@ export function LoginForm() {
     try {
       await signInWithGoogle();
       toast({
-        title: t("Signed In Successfully!"),
-        description: t("Welcome to Yahnu."),
+        title: t("Connecté avec succès !"),
+        description: t("Bienvenue sur Yahnu."),
       });
       router.push('/dashboard');
     } catch (error: any) {
-      let errorMessage = error.message || t("Could not sign in with Google.");
+      let errorMessage = error.message || t("Impossible de se connecter avec Google.");
        if (error.message === "pending_graduate") {
-            errorMessage = t("Your account is pending approval. Please contact your school's administrator.");
+            errorMessage = t("Votre compte est en attente d'approbation de la part de l'administrateur de votre école.");
         } else if (error.message === 'pending_org') {
-             errorMessage = t("Your account is pending approval. Please contact a Yahnu administrator.");
+             errorMessage = t("Votre inscription est en attente d'approbation par un administrateur de Yahnu.");
         } else if (error.message === "suspended") {
-            errorMessage = t("Your account has been suspended. Please contact support.");
+            errorMessage = t("Votre compte a été suspendu. Veuillez contacter le support.");
         }
       toast({
-        title: t("Uh oh! Something went wrong."),
+        title: t("Oh non ! Quelque chose s'est mal passé."),
         description: errorMessage,
         variant: "destructive",
       });
