@@ -3,7 +3,6 @@
 
 import { useAuth, type Role } from "@/context/auth-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLocalization } from "@/context/localization-context";
 import { LifeBuoy, Mail, Send, University } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -26,8 +25,8 @@ interface FaqItem {
 }
 
 const contactFormSchema = z.object({
-  subject: z.string().min(5, { message: "Subject must be at least 5 characters." }),
-  message: z.string().min(20, { message: "Message must be at least 20 characters." }),
+  subject: z.string().min(5, { message: "Le sujet doit comporter au moins 5 caractères." }),
+  message: z.string().min(20, { message: "Le message doit comporter au moins 20 caractères." }),
 });
 
 const FAQSection = ({ title, faqs }: { title: string; faqs: FaqItem[] }) => (
@@ -45,7 +44,6 @@ const FAQSection = ({ title, faqs }: { title: string; faqs: FaqItem[] }) => (
 );
 
 const ContactSupportForm = () => {
-    const { t } = useLocalization();
     const { toast } = useToast();
     const { user } = useAuth();
     const form = useForm<z.infer<typeof contactFormSchema>>({
@@ -55,7 +53,7 @@ const ContactSupportForm = () => {
 
     const onSubmit = async (values: z.infer<typeof contactFormSchema>) => {
         if (!user) {
-            toast({ title: t("Error"), description: t("You must be logged in to submit a ticket."), variant: "destructive" });
+            toast({ title: "Erreur", description: "Vous devez être connecté pour soumettre un ticket.", variant: "destructive" });
             return;
         }
 
@@ -70,21 +68,21 @@ const ContactSupportForm = () => {
                 submittedAt: serverTimestamp(),
             });
             toast({
-                title: t('form_submitted_title'),
-                description: t('form_submitted_desc'),
+                title: "Ticket soumis",
+                description: "Notre équipe d'assistance vous répondra bientôt.",
             });
             form.reset();
         } catch (error) {
             console.error("Error submitting ticket:", error);
-            toast({ title: t("Error"), description: t("Failed to submit your support ticket."), variant: "destructive" });
+            toast({ title: "Erreur", description: "Échec de la soumission de votre ticket de support.", variant: "destructive" });
         }
     }
     
     return (
         <Card>
             <CardHeader>
-                <CardTitle>{t('contact_form_title')}</CardTitle>
-                <CardDescription>{t('contact_form_desc')}</CardDescription>
+                <CardTitle>Contacter le support</CardTitle>
+                <CardDescription>Vous ne trouvez pas de réponse ? Envoyez-nous un message.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -94,9 +92,9 @@ const ContactSupportForm = () => {
                             name="subject"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{t('form_subject_label')}</FormLabel>
+                                    <FormLabel>Sujet</FormLabel>
                                     <FormControl>
-                                        <Input placeholder={t('form_subject_placeholder')} {...field} />
+                                        <Input placeholder="Ex: Problème de visibilité du profil" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -107,16 +105,16 @@ const ContactSupportForm = () => {
                             name="message"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{t('form_message_label')}</FormLabel>
+                                    <FormLabel>Message</FormLabel>
                                     <FormControl>
-                                        <Textarea placeholder={t('form_message_placeholder')} rows={6} {...field} />
+                                        <Textarea placeholder="Veuillez décrire votre problème en détail..." rows={6} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
                         <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                            {form.formState.isSubmitting ? t("Submitting...") : <><Send className="mr-2 h-4 w-4" />{t('form_submit_button')}</>}
+                            {form.formState.isSubmitting ? "Envoi en cours..." : <><Send className="mr-2 h-4 w-4" />Envoyer le ticket</>}
                         </Button>
                     </form>
                 </Form>
@@ -126,7 +124,6 @@ const ContactSupportForm = () => {
 }
 
 export default function SupportPage() {
-  const { t } = useLocalization();
   const { user, role } = useAuth();
   const router = useRouter();
 
@@ -137,31 +134,31 @@ export default function SupportPage() {
   }
 
   const generalFaqs: FaqItem[] = [
-    { question: t('faq_q_password'), answer: t('faq_a_password') },
-    { question: t('faq_q_info'), answer: t('faq_a_info') },
-    { question: t('faq_q_contact'), answer: t('faq_a_contact') },
-    { question: t('faq_q_language_theme'), answer: t('faq_a_language_theme') },
+    { question: "Comment puis-je réinitialiser mon mot de passe ?", answer: "Vous pouvez réinitialiser votre mot de passe depuis la page de connexion en cliquant sur 'Mot de passe oublié ?'." },
+    { question: "Comment puis-je mettre à jour mes informations de profil ?", answer: "Accédez à la page 'Profil' depuis votre tableau de bord pour mettre à jour vos informations personnelles, votre expérience et vos compétences." },
+    { question: "Comment puis-je contacter le support ?", answer: "Veuillez utiliser le formulaire sur cette page pour toute question. Notre équipe vous répondra dans les plus brefs délais." },
+    { question: "Comment puis-je changer la langue ou le thème ?", answer: "Vous pouvez changer la langue et le thème dans le menu des paramètres, accessible en cliquant sur l'icône de votre profil en haut à droite." },
   ];
 
   const graduateFaqs: FaqItem[] = [
-    { question: t('faq_q_pending'), answer: t('faq_a_pending') },
-    { question: t('faq_q_profile'), answer: t('faq_a_profile') },
-    { question: t('faq_q_matching'), answer: t('faq_a_matching') },
-    { question: t('faq_q_resume_parser'), answer: t('faq_a_resume_parser') },
+    { question: "Pourquoi mon compte est-il 'en attente' ?", answer: "Les comptes des diplômés doivent être approuvés par l'administration de leur école pour garantir l'authenticité. Veuillez patienter ou contacter votre école si le délai est trop long." },
+    { question: "Comment puis-je rendre mon profil plus attractif ?", answer: "Assurez-vous que votre profil est complet à 100%. Passez nos évaluations de compétences pour obtenir des badges vérifiés, mettez en avant vos projets et vos expériences de stage." },
+    { question: "Comment fonctionne la mise en relation avec les emplois ?", answer: "Notre IA analyse les compétences de votre profil et les exigences des offres d'emploi pour vous suggérer les opportunités les plus pertinentes." },
+    { question: "Le parser de CV n'a pas extrait toutes mes informations correctement.", answer: "Notre parser IA est un outil pour accélérer le remplissage. Veuillez toujours vérifier et corriger manuellement les informations extraites pour garantir leur exactitude." },
   ];
   
   const companyFaqs: FaqItem[] = [
-    { question: t('faq_q_post_job'), answer: t('faq_a_post_job') },
-    { question: t('faq_q_find_candidates'), answer: t('faq_a_find_candidates') },
-    { question: t('faq_q_partnerships'), answer: t('faq_a_partnerships') },
-    { question: t('faq_q_assessment_generator'), answer: t('faq_a_assessment_generator') },
+    { question: "Comment puis-je publier une nouvelle offre d'emploi ?", answer: "Allez dans la section 'Offres d'emploi' de votre tableau de bord et cliquez sur 'Nouvelle offre d'emploi'. Remplissez les détails et publiez." },
+    { question: "Comment puis-je trouver les meilleurs candidats ?", answer: "Utilisez les filtres du 'Vivier de talents' pour rechercher des diplômés par compétences, école ou expérience. Les badges de compétences vérifiées indiquent des candidats évalués." },
+    { question: "Comment puis-je établir un partenariat avec une école ?", answer: "Dans la section 'Partenariats', vous pouvez rechercher des écoles et envoyer des demandes de partenariat pour collaborer plus étroitement." },
+    { question: "Puis-je créer des évaluations personnalisées pour mes candidats ?", answer: "Oui, les entreprises peuvent créer leurs propres évaluations de compétences pour tester les candidats sur des exigences spécifiques au poste." },
   ];
 
   const schoolFaqs: FaqItem[] = [
-    { question: t('faq_q_approve_graduates'), answer: t('faq_a_approve_graduates') },
-    { question: t('faq_q_school_partnerships'), answer: t('faq_a_school_partnerships') },
-    { question: t('faq_q_placement_analytics'), answer: t('faq_a_placement_analytics') },
-    { question: t('faq_q_event_management'), answer: t('faq_a_event_management') },
+    { question: "Comment puis-je approuver les comptes de mes diplômés ?", answer: "Dans la section 'Gestion des diplômés', vous verrez une liste des comptes en attente. Vous pouvez les vérifier et les activer individuellement ou en masse." },
+    { question: "Comment fonctionnent les partenariats avec les entreprises ?", answer: "Les entreprises peuvent vous envoyer des demandes de partenariat. Une fois acceptées, elles peuvent plus facilement cibler vos étudiants pour des événements et des offres d'emploi." },
+    { question: "Comment puis-je suivre le succès de placement de mes diplômés ?", answer: "Le tableau de bord analytique de l'école fournit des statistiques sur le taux de placement, les entreprises qui recrutent le plus et les secteurs d'activité populaires." },
+    { question: "Puis-je créer des événements pour mes étudiants ?", answer: "Oui, la section 'Gestion des événements' vous permet de créer des salons de l'emploi, des ateliers et d'autres événements et d'inviter vos étudiants." },
   ];
   
   const roleFaqs: Record<string, FaqItem[]> = {
@@ -175,9 +172,9 @@ export default function SupportPage() {
   };
   
   const roleFaqTitles: Record<string, string> = {
-      graduate: t('faq_graduate_title'),
-      company: t('faq_company_title'),
-      school: t('faq_school_title'),
+      graduate: "FAQ pour les Diplômés",
+      company: "FAQ pour les Entreprises",
+      school: "FAQ pour les Écoles",
       admin: '',
       super_admin: '',
       content_manager: '',
@@ -199,8 +196,8 @@ export default function SupportPage() {
                 <LifeBuoy className="h-6 w-6 text-primary" />
             </div>
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">{t('Support & FAQ')}</h1>
-                <p className="text-muted-foreground mt-1">{t('Find answers to common questions or get in touch with our team.')}</p>
+                <h1 className="text-3xl font-bold tracking-tight">Support & FAQ</h1>
+                <p className="text-muted-foreground mt-1">Trouvez des réponses aux questions courantes ou contactez notre équipe.</p>
             </div>
         </div>
         
@@ -211,24 +208,24 @@ export default function SupportPage() {
             <div className="lg:col-span-1 sticky top-24 space-y-4">
                  <Card>
                     <CardHeader>
-                        <CardTitle>{t('Frequently Asked Questions')}</CardTitle>
-                        <CardDescription>{t('Find answers to common questions here.')}</CardDescription>
+                        <CardTitle>Questions Fréquemment Posées</CardTitle>
+                        <CardDescription>Trouvez ici les réponses aux questions courantes.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {specificFaqs.length > 0 && <FAQSection title={specificFaqTitle} faqs={specificFaqs} />}
-                        <FAQSection title={t('faq_general_title')} faqs={generalFaqs} />
+                        <FAQSection title={"Questions Générales"} faqs={generalFaqs} />
                     </CardContent>
                 </Card>
                 {role === 'graduate' && (
                     <Card>
                         <CardHeader>
-                            <CardTitle>{t('School Support')}</CardTitle>
-                            <CardDescription>{t('Need to contact your school about your account?')}</CardDescription>
+                            <CardTitle>Support École</CardTitle>
+                            <CardDescription>Besoin de contacter votre école au sujet de votre compte ?</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Button className="w-full justify-start" onClick={handleContactSchool}>
                                 <University className="mr-2 h-4 w-4" />
-                                {t('Contact Your School')}
+                                Contacter votre école
                             </Button>
                         </CardContent>
                     </Card>

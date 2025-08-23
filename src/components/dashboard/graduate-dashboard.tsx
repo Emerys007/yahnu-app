@@ -11,25 +11,22 @@ import {
 import { Button } from "@/components/ui/button"
 import { Briefcase, User, Building, FileText, BrainCircuit, Award } from "lucide-react"
 import Link from "next/link"
-import { useLocalization } from "@/context/localization-context"
 import { motion } from "framer-motion"
 import { CountUp } from "@/components/ui/count-up"
 
 export function GraduateDashboard() {
-  const { t } = useLocalization();
-
   const stats = [
-    { title: t('Profile Completion'), value: 75, suffix: '%', icon: User, description: t('Complete your profile to stand out') },
-    { title: t('Job Applications'), value: 12, icon: Briefcase, description: t('+2 in the last 7 days') },
-    { title: t('Application Views'), value: 34, icon: Building, description: t('by companies this week') },
+    { title: "Complétion du Profil", value: 75, suffix: '%', icon: User, description: "Complétez votre profil pour vous démarquer" },
+    { title: "Candidatures", value: 12, icon: Briefcase, description: "+2 ces 7 derniers jours" },
+    { title: "Vues du Profil", value: 34, icon: Building, description: "par des entreprises cette semaine" },
   ];
 
   const quickActions = [
-    { title: t('Update My Profile'), href: '/dashboard/profile', icon: User },
-    { title: t('Search for Jobs'), href: '/dashboard/jobs', icon: Briefcase },
-    { title: t('Track My Applications'), href: '/dashboard/applications', icon: FileText },
-    { title: t('Take an Assessment'), href: '/dashboard/assessments', icon: Award },
-    { title: t('Practice for Interview'), href: '/dashboard/interview-prep', icon: BrainCircuit },
+    { title: "Mettre à jour mon profil", href: '/dashboard/profile', icon: User },
+    { title: "Chercher un emploi", href: '/dashboard/jobs', icon: Briefcase },
+    { title: "Suivre mes candidatures", href: '/dashboard/applications', icon: FileText },
+    { title: "Passer une évaluation", href: '/dashboard/assessments', icon: Award },
+    { title: "Préparer un entretien", href: '/dashboard/interview-prep', icon: BrainCircuit },
 ]
 
   const containerVariants = {
@@ -62,8 +59,8 @@ export function GraduateDashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-bold tracking-tight">{t('Welcome to your Dashboard')}</h1>
-        <p className="text-muted-foreground mt-1">{t("Here's a quick overview of your Yahnu world.")}</p>
+        <h1 className="text-3xl font-bold tracking-tight">Bienvenue sur votre tableau de bord</h1>
+        <p className="text-muted-foreground mt-1">Voici un aperçu rapide de votre univers Yahnu.</p>
       </motion.div>
       <motion.div 
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
@@ -100,8 +97,8 @@ export function GraduateDashboard() {
       >
         <Card>
             <CardHeader>
-            <CardTitle>{t('Quick Actions')}</CardTitle>
-            <CardDescription>{t('Get started with common tasks quickly.')}</CardDescription>
+            <CardTitle>Actions rapides</CardTitle>
+            <CardDescription>Accédez rapidement aux tâches courantes.</CardDescription>
             </CardHeader>
             <CardContent className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {quickActions.map((action, index) => (
@@ -115,7 +112,7 @@ export function GraduateDashboard() {
                          <Button asChild variant="outline" className="w-full h-24 flex-col justify-center gap-2 text-base">
                             <Link href={action.href}>
                                 <action.icon className="h-6 w-6" />
-                                <span>{t(action.title)}</span>
+                                <span>{action.title}</span>
                             </Link>
                         </Button>
                     </motion.div>

@@ -11,26 +11,23 @@ import {
 import { Button } from "@/components/ui/button"
 import { Users, Briefcase, BarChart3, ArrowUpRight, PlusCircle, Handshake, FileText, Building, MessageSquare, Calendar } from "lucide-react"
 import Link from "next/link"
-import { useLocalization } from "@/context/localization-context"
 import { motion } from "framer-motion"
 import { CountUp } from "@/components/ui/count-up"
 
 export function CompanyDashboard() {
-  const { t } = useLocalization();
-
   const stats = [
-    { title: t('Active Job Postings'), value: 5, icon: Briefcase, description: t('+1 this week') },
-    { title: t('New Applicants'), value: 83, icon: Users, description: t('+15% from last month') },
-    { title: t('Assessments Sent'), value: 25, icon: BarChart3, description: t('75% completion rate') },
+    { title: 'Offres d\'emploi actives', value: 5, icon: Briefcase, description: '+1 cette semaine' },
+    { title: 'Nouveaux candidats', value: 83, icon: Users, description: '+15% par rapport au mois dernier' },
+    { title: 'Évaluations envoyées', value: 25, icon: BarChart3, description: 'Taux de complétion de 75%' },
   ];
 
   const quickActions = [
-      { title: t('Company Profile'), href: '/dashboard/organization-profile', icon: Building },
-      { title: t('Post a New Job'), href: '/dashboard/job-postings', icon: PlusCircle },
-      { title: t('View Talent Pool'), href: '/dashboard/talent-pool', icon: Users },
-      { title: t('Track Applications'), href: '/dashboard/applications', icon: FileText },
-      { title: t('Manage Events'), href: '/dashboard/company-events', icon: Calendar },
-      { title: t('Manage Partnerships'), href: '/dashboard/partnerships', icon: Handshake },
+      { title: 'Profil de l\'entreprise', href: '/dashboard/organization-profile', icon: Building },
+      { title: 'Publier une offre', href: '/dashboard/job-postings', icon: PlusCircle },
+      { title: 'Voir le vivier de talents', href: '/dashboard/talent-pool', icon: Users },
+      { title: 'Suivre les candidatures', href: '/dashboard/applications', icon: FileText },
+      { title: 'Gérer les événements', href: '/dashboard/company-events', icon: Calendar },
+      { title: 'Gérer les partenariats', href: '/dashboard/partnerships', icon: Handshake },
   ]
 
   const containerVariants = {
@@ -63,8 +60,8 @@ export function CompanyDashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-bold tracking-tight">{t('Company Dashboard')}</h1>
-        <p className="text-muted-foreground mt-1">{t("Manage your recruitment pipeline and find top talent.")}</p>
+        <h1 className="text-3xl font-bold tracking-tight">Tableau de bord Entreprise</h1>
+        <p className="text-muted-foreground mt-1">Gérez votre pipeline de recrutement et trouvez les meilleurs talents.</p>
       </motion.div>
       <motion.div 
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
@@ -101,8 +98,8 @@ export function CompanyDashboard() {
       >
         <Card>
             <CardHeader>
-            <CardTitle>{t('Quick Actions')}</CardTitle>
-            <CardDescription>{t('Get started with common tasks quickly.')}</CardDescription>
+            <CardTitle>Actions rapides</CardTitle>
+            <CardDescription>Démarrez rapidement avec les tâches courantes.</CardDescription>
             </CardHeader>
             <CardContent className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {quickActions.map((action, index) => (
@@ -116,7 +113,7 @@ export function CompanyDashboard() {
                          <Button asChild variant="outline" className="w-full h-24 flex-col justify-center gap-2 text-base">
                             <Link href={action.href}>
                                 <action.icon className="h-6 w-6" />
-                                <span>{t(action.title)}</span>
+                                <span>{action.title}</span>
                             </Link>
                         </Button>
                     </motion.div>
