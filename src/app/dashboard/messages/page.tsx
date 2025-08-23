@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -33,21 +33,21 @@ const getInitialConversations = (): Conversation[] => [
     {
         id: "amina-diallo",
         name: "Amina Diallo",
-        avatar: "https://placehold.co/100x100.png",
+        avatar: "https://placehold.co/100x100.png?text=AD",
         lastMessage: "Merci !",
-        time: "10:42 AM",
+        time: "10:42",
         unread: 0,
         messages: [
-            { id: 1, sender: "them", text: "Bonjour Amina, nous avons été impressionnés par votre profil et aimerions vous inviter à un entretien.", time: "10:40 AM" },
-            { id: 2, sender: "me", text: "Bonjour, merci beaucoup ! Je suis disponible mardi ou jeudi après-midi.", time: "10:41 AM" },
-            { id: 3, sender: "them", text: "Parfait. Rendez-vous est pris pour mardi à 15h. Vous recevrez un lien de visioconférence bientôt.", time: "10:41 AM" },
-            { id: 4, sender: "me", text: "Merci !", time: "10:42 AM" },
+            { id: 1, sender: "them", text: "Bonjour Amina, nous avons été impressionnés par votre profil et aimerions vous inviter à un entretien.", time: "10:40" },
+            { id: 2, sender: "me", text: "Bonjour, merci beaucoup ! Je suis disponible mardi ou jeudi après-midi.", time: "10:41" },
+            { id: 3, sender: "them", text: "Parfait. Rendez-vous est pris pour mardi à 15h. Vous recevrez un lien de visioconférence bientôt.", time: "10:41" },
+            { id: 4, sender: "me", text: "Merci !", time: "10:42" },
         ]
     },
     {
         id: "tech-solutions",
         name: "Tech Solutions",
-        avatar: "https://placehold.co/100x100.png",
+        avatar: "https://placehold.co/100x100.png?text=TS",
         lastMessage: "Pouvez-vous m'en dire plus sur la culture de l'entreprise ?",
         time: "Hier",
         unread: 2,
@@ -57,7 +57,7 @@ const getInitialConversations = (): Conversation[] => [
         ]
     },
      {
-        id: "inp-hb-admin",
+        id: "admin-inphb",
         name: "Admin INP-HB",
         avatar: "/images/University.png",
         lastMessage: "Votre diplôme a été vérifié avec succès.",
@@ -72,7 +72,7 @@ const getInitialConversations = (): Conversation[] => [
 
 const getNewConvoName = (id: string, name?: string | null) => {
     if (name) return name;
-    if (id === 'inp-hb-admin') return 'Admin INP-HB';
+    if (id === 'admin-inphb') return 'Admin INP-HB';
     return id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
 
@@ -88,6 +88,14 @@ const MessageView = ({
     onBack: () => void;
 }) => {
     const [message, setMessage] = useState("");
+    const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (scrollAreaRef.current) {
+            scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
+        }
+    }, [conversation.messages]);
+
 
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -110,8 +118,8 @@ const MessageView = ({
                 </Avatar>
                 <h3 className="font-semibold">{conversation.name}</h3>
             </div>
-            <ScrollArea className="flex-1 p-6">
-                <div className="space-y-4">
+            <ScrollArea className="flex-1" ref={scrollAreaRef}>
+                 <div className="p-6 space-y-4">
                     {conversation.messages.map(msg => (
                         <div key={msg.id} className={cn("flex items-end gap-2", msg.sender === "me" ? "justify-end" : "justify-start")}>
                             {msg.sender === 'them' && <Avatar className="h-8 w-8"><AvatarImage src={conversation.avatar} /></Avatar>}
@@ -127,7 +135,7 @@ const MessageView = ({
                     ))}
                 </div>
             </ScrollArea>
-            <div className="p-4 border-t shrink-0">
+            <div className="p-4 border-t shrink-0 bg-background">
                 <form className="flex items-center gap-2" onSubmit={handleFormSubmit}>
                     <Input 
                         placeholder={"Écrivez un message..."} 
@@ -176,10 +184,12 @@ export default function MessagesPage() {
                 setConversations(prev => [newConvo, ...prev]);
                 setSelectedConversation(newConvo);
             }
-            router.replace('/dashboard/messages');
+            // Use replace to avoid adding a new entry to the history stack
+            router.replace('/dashboard/messages', { scroll: false });
         } else if (conversations.length > 0 && !selectedConversation && !isMobile) {
             setSelectedConversation(conversations[0]);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams, router, isMobile, conversations]);
     
     const handleSendMessage = (text: string) => {
@@ -204,7 +214,7 @@ export default function MessagesPage() {
     }
 
     const ConversationList = () => (
-        <div className="border-r flex flex-col">
+        <div className="border-r flex flex-col h-full">
             <div className="p-4 border-b shrink-0">
                 <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -255,8 +265,8 @@ export default function MessagesPage() {
                 </div>
             </div>
 
-            <Card className="flex-1 overflow-hidden flex flex-col">
-                 <div className="grid md:grid-cols-[300px_1fr] flex-1 overflow-hidden">
+            <Card className="flex-1 overflow-hidden">
+                 <div className="grid md:grid-cols-[300px_1fr] h-full overflow-hidden">
                     {isMobile ? (
                         selectedConversation ? (
                             <MessageView 
@@ -271,7 +281,7 @@ export default function MessagesPage() {
                     ) : (
                         <>
                             <ConversationList />
-                            <div className="flex flex-col">
+                            
                                 {selectedConversation ? (
                                     <MessageView 
                                         conversation={selectedConversation} 
@@ -280,12 +290,12 @@ export default function MessagesPage() {
                                         onBack={() => setSelectedConversation(null)} 
                                     />
                                 ) : (
-                                    <div className="flex-1 flex flex-col items-center justify-center text-center">
+                                    <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
                                         <MessageSquare className="h-16 w-16 text-muted-foreground/50" />
                                         <p className="mt-4 text-muted-foreground">Sélectionnez une conversation pour commencer à discuter.</p>
                                     </div>
                                 )}
-                            </div>
+                           
                         </>
                     )}
                  </div>

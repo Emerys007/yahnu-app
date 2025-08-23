@@ -21,9 +21,9 @@ type Ticket = {
 };
 
 const tickets: Ticket[] = [
-    { id: 'TKT-001', subject: 'Problème de visibilité du profil', userName: 'John Doe', userEmail: 'j.katako@gmail.com', submittedAt: 'Il y a 2 heures', status: 'new' },
-    { id: 'TKT-002', subject: 'Impossible de postuler à un emploi', userName: 'Jane Smith', userEmail: 'jane.smith@example.com', submittedAt: 'Il y a 8 heures', status: 'open' },
-    { id: 'TKT-003', subject: 'Question sur la facturation', userName: 'Bob Johnson', userEmail: 'bob.j@example.com', submittedAt: 'Il y a 1 jour', status: 'open' },
+    { id: 'TKT-001', subject: 'Problème de visibilité du profil', userName: 'Amina Diallo', userEmail: 'amina.diallo@example.com', submittedAt: 'Il y a 2 heures', status: 'new' },
+    { id: 'TKT-002', subject: 'Impossible de postuler à un emploi', userName: 'Tech Solutions', userEmail: 'contact@techsolutions.com', submittedAt: 'Il y a 8 heures', status: 'open' },
+    { id: 'TKT-003', subject: 'Question sur la vérification de diplôme', userName: 'Admin INP-HB', userEmail: 'admin@inphb.ci', submittedAt: 'Il y a 1 jour', status: 'open' },
     { id: 'TKT-004', subject: 'Échec de la réinitialisation du mot de passe', userName: 'Alice Williams', userEmail: 'alice.w@example.com', submittedAt: 'Il y a 3 jours', status: 'resolved' },
 ];
 
@@ -87,7 +87,7 @@ export default function SupportCenterPage() {
     const [activeTab, setActiveTab] = useState("new");
 
     const handleTicketSelect = (ticket: Ticket) => {
-        const newConvoId = ticket.userEmail.split('@')[0].replace('.', '-');
+        const newConvoId = ticket.userEmail.split('@')[0].replace(/[.+]/g, '-');
         router.push(`/dashboard/messages?new=${newConvoId}&name=${encodeURIComponent(ticket.userName)}`);
     };
 
