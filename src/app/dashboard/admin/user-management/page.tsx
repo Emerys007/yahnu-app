@@ -1,3 +1,4 @@
+
 "use client"
 
 import { UserCog } from "lucide-react";
@@ -6,7 +7,6 @@ import { UserManagementHeader } from "./user-management-header";
 import { db } from "@/lib/firebase";
 import { collection, query, getDocs, DocumentData, where } from "firebase/firestore";
 import { type Role, type UserStatus } from "@/context/auth-context";
-import { useLocalization } from "@/context/localization-context";
 import React, { useState, useEffect } from 'react';
 
 type User = {
@@ -19,7 +19,6 @@ type User = {
 };
 
 export default function ManageUsersPage() {
-    const { t } = useLocalization();
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -72,7 +71,7 @@ export default function ManageUsersPage() {
                         </div>
                     </div>
                 </div>
-                <div className="text-center">Loading...</div>
+                <div className="text-center">Chargement...</div>
             </div>
         );
     }

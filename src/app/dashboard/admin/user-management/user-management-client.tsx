@@ -1,7 +1,7 @@
+
 "use client"
 
 import React, { useState } from "react"
-import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -48,11 +48,28 @@ type User = {
   email: string
   accountType: Role
   status: UserStatus
-  date: string
+  joinDate: string
+}
+
+const statusTranslations: Record<UserStatus, string> = {
+    active: "Actif",
+    pending: "En attente",
+    suspended: "Suspendu",
+    declined: "Refusé",
+    rejected: "Rejeté",
+}
+
+const roleTranslations: Record<Role, string> = {
+    graduate: "Diplômé",
+    company: "Entreprise",
+    school: "École",
+    admin: "Admin",
+    super_admin: "Super Admin",
+    content_manager: "Gestionnaire de contenu",
+    support_staff: "Support",
 }
 
 const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; onUserUpdate: (user: User) => void; onUserDelete: (userId: string) => void; }) => {
-    const { t, language } = useLocalization();
     const { toast } = useToast();
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
     const [isManageOpen, setIsManageOpen] = useState(false)
@@ -62,25 +79,23 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
             const userDocRef = doc(db, "users", user.id);
             await updateDoc(userDocRef, { status: newStatus });
             onUserUpdate({ ...user, status: newStatus });
-            toast({ title: t('dashboard.user_management.status_updated'), description: `${user.name} ${t('dashboard.user_management.status_now')} ${t(`dashboard.user_management.${newStatus}`)}.` });
+            toast({ title: "Statut mis à jour", description: `Le statut de ${user.name} est maintenant ${statusTranslations[newStatus]}.` });
             setIsManageOpen(false);
         } catch (error) {
             console.error("Failed to update status:", error);
-            toast({ title: t('common.error'), description: t('dashboard.user_management.failed_update_status'), variant: "destructive" });
+            toast({ title: "Erreur", description: "Échec de la mise à jour du statut.", variant: "destructive" });
         }
     }
 
     const handleDelete = async () => {
         try {
             const userDocRef = doc(db, "users", user.id);
-            await deleteDoc(userDocRef); // This will delete the user document from Firestore.
-                                         // Note: This does not delete the user from Firebase Authentication.
-                                         // A server-side function (e.g., Firebase Function) would be needed for that.
+            await deleteDoc(userDocRef);
             onUserDelete(user.id);
-            toast({ title: t('dashboard.user_management.user_deleted'), description: `${user.name} ${t('dashboard.user_management.removed_from_platform')}`, variant: "destructive" });
+            toast({ title: "Utilisateur supprimé", description: `${user.name} a été supprimé de la plateforme.`, variant: "destructive" });
         } catch (error) {
             console.error("Failed to delete user:", error);
-            toast({ title: t('common.error'), description: t('dashboard.user_management.failed_delete_user'), variant: "destructive" });
+            toast({ title: "Erreur", description: "Échec de la suppression de l'utilisateur.", variant: "destructive" });
         } finally {
             setIsDeleteDialogOpen(false);
             setIsManageOpen(false);
@@ -90,24 +105,19 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
     return (
         <Dialog open={isManageOpen} onOpenChange={setIsManageOpen}>
             <DialogTrigger asChild>
-                 <Button variant="ghost" size="sm">{t('dashboard.user_management.manage')}</Button>
+                 <Button variant="ghost" size="sm">Gérer</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>
-                        {language === 'en' ? 
-                            `Manage User: ${user.name}` : 
-                            t('dashboard.user_management.manage_user').replace('{{name}}', user.name)
-                        }
-                    </DialogTitle>
-                    <DialogDescription>{t('dashboard.user_management.manage_user_description')}</DialogDescription>
+                    <DialogTitle>Gérer l'utilisateur : {user.name}</DialogTitle>
+                    <DialogDescription>Modifier le statut de l'utilisateur ou supprimer le compte.</DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                      <div className="space-y-2">
-                         <Label>{t('dashboard.user_management.change_status')}</Label>
+                         <Label>Changer le statut</Label>
                          <div className="flex gap-2">
-                            {user.status !== 'active' && <Button onClick={() => handleStatusChange('active')}>{t('dashboard.user_management.activate')}</Button>}
-                            {user.status !== 'suspended' && <Button variant="secondary" onClick={() => handleStatusChange('suspended')}>{t('dashboard.user_management.suspend')}</Button>}
+                            {user.status !== 'active' && <Button onClick={() => handleStatusChange('active')}>Activer</Button>}
+                            {user.status !== 'suspended' && <Button variant="secondary" onClick={() => handleStatusChange('suspended')}>Suspendre</Button>}
                          </div>
                     </div>
                 </div>
@@ -115,19 +125,19 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
                     <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                         <AlertDialogTrigger asChild>
                             <Button variant="destructive" disabled={user.accountType === "admin" || user.accountType === "super_admin"}>
-                                <Trash2 className="mr-2 h-4 w-4" />{t('dashboard.user_management.delete_user')}
+                                <Trash2 className="mr-2 h-4 w-4" />Supprimer l'utilisateur
                             </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                                <AlertDialogTitle>{t('dashboard.user_management.are_you_sure')}</AlertDialogTitle>
+                                <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    {t('dashboard.user_management.delete_warning')}
+                                    Cette action ne peut pas être annulée. Cela supprimera définitivement le compte de l'utilisateur et ses données de nos serveurs.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-                                <AlertDialogAction onClick={handleDelete}>{t('dashboard.user_management.yes_delete')}</AlertDialogAction>
+                                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleDelete}>Oui, supprimer</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
@@ -138,7 +148,6 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
 }
 
 export function UserManagementClient({ initialUsers }: { initialUsers: User[] }) {
-    const { t, language } = useLocalization()
     const [users, setUsers] = useState<User[]>(initialUsers);
     const [searchTerm, setSearchTerm] = useState("");
     const [filters, setFilters] = useState({ accountType: "all", status: "all" });
@@ -180,7 +189,7 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                     <Input
-                        placeholder={t('dashboard.user_management.search_users')}
+                        placeholder="Rechercher des utilisateurs..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10"
@@ -189,26 +198,26 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                 <Select value={filters.accountType} onValueChange={(v) => handleFilterChange('accountType', v)}>
                     <SelectTrigger className="w-full sm:w-[180px]">
                         <Filter className="h-4 w-4 mr-2" />
-                        <SelectValue placeholder={t('dashboard.user_management.filter_role')} />
+                        <SelectValue placeholder="Filtrer par rôle" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">{t('dashboard.user_management.all_roles')}</SelectItem>
-                        <SelectItem value="graduate">{language === 'en' ? 'Graduate' : t('common.graduate')}</SelectItem>
-                        <SelectItem value="company">{language === 'en' ? 'Company' : t('common.company')}</SelectItem>
-                        <SelectItem value="school">{language === 'en' ? 'School' : t('common.school')}</SelectItem>
+                        <SelectItem value="all">Tous les rôles</SelectItem>
+                        <SelectItem value="graduate">Diplômé</SelectItem>
+                        <SelectItem value="company">Entreprise</SelectItem>
+                        <SelectItem value="school">École</SelectItem>
                     </SelectContent>
                 </Select>
                 <Select value={filters.status} onValueChange={(v) => handleFilterChange('status', v)}>
                     <SelectTrigger className="w-full sm:w-[180px]">
                         <Filter className="h-4 w-4 mr-2" />
-                        <SelectValue placeholder={t('dashboard.user_management.filter_status')} />
+                        <SelectValue placeholder="Filtrer par statut" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">{t('dashboard.user_management.all_statuses')}</SelectItem>
-                        <SelectItem value="active">{t('dashboard.user_management.active')}</SelectItem>
-                        <SelectItem value="pending">{t('dashboard.user_management.pending')}</SelectItem>
-                        <SelectItem value="rejected">{t('dashboard.user_management.rejected')}</SelectItem>
-                        <SelectItem value="suspended">{t('dashboard.user_management.suspended')}</SelectItem>
+                        <SelectItem value="all">Tous les statuts</SelectItem>
+                        <SelectItem value="active">Actif</SelectItem>
+                        <SelectItem value="pending">En attente</SelectItem>
+                        <SelectItem value="rejected">Rejeté</SelectItem>
+                        <SelectItem value="suspended">Suspendu</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
@@ -218,11 +227,11 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>{t('dashboard.user_management.name')}</TableHead>
-                            <TableHead>{t('dashboard.user_management.role')}</TableHead>
-                            <TableHead>{t('dashboard.user_management.status')}</TableHead>
-                            <TableHead>{t('dashboard.user_management.date')}</TableHead>
-                            <TableHead className="text-right">{t('dashboard.user_management.actions')}</TableHead>
+                            <TableHead>Nom</TableHead>
+                            <TableHead>Rôle</TableHead>
+                            <TableHead>Statut</TableHead>
+                            <TableHead>Date d'inscription</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -237,7 +246,7 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                                         {user.accountType === 'company' && <Building className="h-3 w-3" />}
                                         {user.accountType === 'school' && <School className="h-3 w-3" />}
                                         {user.accountType === 'graduate' && <Users className="h-3 w-3" />}
-                                        {language === 'en' ? user.accountType.charAt(0).toUpperCase() + user.accountType.slice(1) : t(`common.${user.accountType}`)}
+                                        {roleTranslations[user.accountType]}
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
@@ -245,18 +254,15 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                                         variant={getStatusVariant(user.status)}
                                         className="capitalize"
                                     >
-                                        {t(`dashboard.user_management.${user.status}`)}
+                                        {statusTranslations[user.status]}
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
-                                    {language === 'en' ? 
-                                        new Date(user.date).toLocaleDateString('en-CA') : // YYYY-MM-DD format
-                                        new Date(user.date).toLocaleDateString('fr-FR', {
-                                            day: '2-digit',
-                                            month: '2-digit', 
-                                            year: 'numeric'
-                                        })
-                                    }
+                                    {new Date(user.joinDate).toLocaleDateString('fr-FR', {
+                                        day: '2-digit',
+                                        month: '2-digit', 
+                                        year: 'numeric'
+                                    })}
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <ManageUserDialog user={user} onUserUpdate={handleUserUpdate} onUserDelete={handleUserDelete}/>
@@ -265,7 +271,7 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                         ))}
                          {filteredUsers.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={5} className="h-24 text-center">{t('dashboard.user_management.no_users_found')}</TableCell>
+                                <TableCell colSpan={5} className="h-24 text-center">Aucun utilisateur trouvé.</TableCell>
                             </TableRow>
                         )}
                     </TableBody>
