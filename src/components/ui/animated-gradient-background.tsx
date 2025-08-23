@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCountry } from "@/context/country-context";
 import { FLAG_COLORS } from "@/lib/flag-colors";
 
 const variants = {
@@ -25,18 +24,13 @@ const variants = {
 };
 
 export const AnimatedGradientBackground = () => {
-  const { country } = useCountry();
-  const [colors, setColors] = useState(FLAG_COLORS[country.theme]);
+  const [colors, setColors] = useState(FLAG_COLORS['ivory-coast']);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    setColors(FLAG_COLORS[country.theme]);
-  }, [country.theme]);
-
+  
   if (!mounted) {
     return <div className="absolute inset-0 bg-muted/40 z-0"></div>;
   }
@@ -47,7 +41,7 @@ export const AnimatedGradientBackground = () => {
     <div className="absolute inset-0 z-0 overflow-hidden bg-muted/40">
       <AnimatePresence>
         <motion.div
-          key={country.code}
+          key="animated-gradient"
           className="absolute inset-0"
           variants={variants}
           initial="initial"
