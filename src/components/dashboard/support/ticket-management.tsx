@@ -3,7 +3,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useLocalization } from '@/context/localization-context';
 import { Ticket, MessageSquare } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -20,14 +19,13 @@ type SupportTicket = {
 };
 
 const tickets: SupportTicket[] = [
-    { id: 'TKT-001', userName: 'Amina Diallo', userEmail: 'amina.diallo@example.com', subject: 'Problem with my profile visibility', status: 'new', lastUpdate: '2 hours ago' },
-    { id: 'TKT-002', userName: 'Kwame Nkrumah', userEmail: 'kwame.nkrumah@example.com', subject: 'Cannot apply for a job', status: 'new', lastUpdate: '5 hours ago' },
-    { id: 'TKT-003', userName: 'Fatou Bensouda', userEmail: 'fatou.bensouda@example.com', subject: 'Question about billing', status: 'open', lastUpdate: '1 day ago' },
-    { id: 'TKT-004', userName: 'Cheikh Anta Diop', userEmail: 'cheikh.anta.diop@example.com', subject: 'Password Reset Failed', status: 'resolved', lastUpdate: '3 days ago' },
+    { id: 'TKT-001', userName: 'Amina Diallo', userEmail: 'amina.diallo@example.com', subject: 'Problème de visibilité du profil', status: 'new', lastUpdate: 'Il y a 2 heures' },
+    { id: 'TKT-002', userName: 'Kwame Nkrumah', userEmail: 'kwame.nkrumah@example.com', subject: 'Impossible de postuler à un emploi', status: 'new', lastUpdate: 'Il y a 5 heures' },
+    { id: 'TKT-003', userName: 'Fatou Bensouda', userEmail: 'fatou.bensouda@example.com', subject: 'Question sur la facturation', status: 'open', lastUpdate: 'Il y a 1 jour' },
+    { id: 'TKT-004', userName: 'Cheikh Anta Diop', userEmail: 'cheikh.anta.diop@example.com', subject: 'Échec de la réinitialisation du mot de passe', status: 'resolved', lastUpdate: 'Il y a 3 jours' },
 ];
 
 export default function TicketManagement() {
-    const { t } = useLocalization();
     const router = useRouter();
     const [activeTab, setActiveTab] = useState("new");
 
@@ -43,16 +41,24 @@ export default function TicketManagement() {
             case 'resolved': return 'default';
         }
     };
+    
+    const getStatusLabel = (status: SupportTicket['status']) => {
+        switch (status) {
+            case 'new': return 'Nouveau';
+            case 'open': return 'Ouvert';
+            case 'resolved': return 'Résolu';
+        }
+    }
 
     const renderTickets = (ticketList: SupportTicket[]) => (
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>Ticket ID</TableHead>
-                    <TableHead>User</TableHead>
-                    <TableHead>Subject</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Last Update</TableHead>
+                    <TableHead>ID du Ticket</TableHead>
+                    <TableHead>Utilisateur</TableHead>
+                    <TableHead>Sujet</TableHead>
+                    <TableHead>Statut</TableHead>
+                    <TableHead>Dernière mise à jour</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -62,13 +68,13 @@ export default function TicketManagement() {
                         <TableCell>{ticket.userName}</TableCell>
                         <TableCell>{ticket.subject}</TableCell>
                         <TableCell>
-                            <Badge variant={getStatusVariant(ticket.status)}>{t(ticket.status)}</Badge>
+                            <Badge variant={getStatusVariant(ticket.status)}>{getStatusLabel(ticket.status)}</Badge>
                         </TableCell>
                         <TableCell>{ticket.lastUpdate}</TableCell>
                     </TableRow>
                 )) : (
                     <TableRow>
-                        <TableCell colSpan={5} className="text-center">{t('No tickets in this queue.')}</TableCell>
+                        <TableCell colSpan={5} className="text-center">Aucun ticket dans cette file d'attente.</TableCell>
                     </TableRow>
                 )}
             </TableBody>
@@ -87,22 +93,22 @@ export default function TicketManagement() {
                         <Ticket className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight">Ticket Management</h1>
-                        <p className="text-muted-foreground mt-1">Here you can manage all support tickets.</p>
+                        <h1 className="text-3xl font-bold tracking-tight">Gestion des Tickets</h1>
+                        <p className="text-muted-foreground mt-1">Ici, vous pouvez gérer tous les tickets de support.</p>
                     </div>
                 </div>
             </div>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Ticket Queue</CardTitle>
+                    <CardTitle>File d'attente des tickets</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <Tabs value={activeTab} onValueChange={setActiveTab}>
                         <TabsList>
-                            <TabsTrigger value="new">{t('new')} ({newTickets.length})</TabsTrigger>
-                            <TabsTrigger value="open">{t('open')} ({openTickets.length})</TabsTrigger>
-                            <TabsTrigger value="resolved">{t('resolved')} ({resolvedTickets.length})</TabsTrigger>
+                            <TabsTrigger value="new">{`Nouveau (${newTickets.length})`}</TabsTrigger>
+                            <TabsTrigger value="open">{`Ouvert (${openTickets.length})`}</TabsTrigger>
+                            <TabsTrigger value="resolved">{`Résolu (${resolvedTickets.length})`}</TabsTrigger>
                         </TabsList>
                         <TabsContent value="new">
                             {renderTickets(newTickets)}
