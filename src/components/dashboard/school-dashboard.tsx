@@ -59,8 +59,8 @@ export function SchoolDashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-bold tracking-tight">{"Tableau de bord de l'école"}</h1>
-        <p className="text-muted-foreground mt-1">{"Suivez le succès des diplômés et les partenariats avec l'industrie."}</p>
+        <h1 className="text-3xl font-bold tracking-tight">Tableau de bord de l'école</h1>
+        <p className="text-muted-foreground mt-1">Suivez le succès des diplômés et les partenariats avec l'industrie.</p>
       </motion.div>
       <motion.div 
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
@@ -97,8 +97,8 @@ export function SchoolDashboard() {
       >
         <Card>
             <CardHeader>
-            <CardTitle>{"Actions rapides"}</CardTitle>
-            <CardDescription>{"Démarrez rapidement avec les tâches courantes."}</CardDescription>
+            <CardTitle>Actions rapides</CardTitle>
+            <CardDescription>Démarrez rapidement avec les tâches courantes.</CardDescription>
             </CardHeader>
             <CardContent className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {quickActions.map((action, index) => (
