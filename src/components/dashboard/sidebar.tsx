@@ -119,6 +119,7 @@ const getNavItems = (role: Role) => {
   
   const supportStaffNav = [
     { href: "/dashboard/support/center", icon: LifeBuoy, label: 'Centre de support' },
+    { href: "/dashboard/messages", icon: MessageSquare, label: 'Conversation' },
     { type: "divider", label: 'Outils' },
     { href: "/dashboard/support/ticket-management", icon: Ticket, label: 'Gestion des tickets' },
     { href: "/dashboard/support/user-lookup", icon: Search, label: 'Recherche d\'utilisateur' },
