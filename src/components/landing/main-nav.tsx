@@ -2,9 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Menu,
-} from "lucide-react";
+import { Menu } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,20 +14,16 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { useLocalization } from "@/context/localization-context";
 
-const getNavLinks = (t: (key: string) => string) => [
-  { href: "/jobs", label: t("common.jobs") },
-  { href: "/companies", label: t("common.companies") },
-  { href: "/schools", label: t("common.schools") },
-  { href: "/blog", label: t("common.blog") },
-  { href: "/about", label: t("common.about") },
+const navLinks = [
+  { href: "/jobs", label: "Emplois" },
+  { href: "/companies", label: "Entreprises" },
+  { href: "/schools", label: "Écoles" },
+  { href: "/blog", label: "Blog" },
+  { href: "/about", label: "À propos" },
 ];
 
 export function MainNav() {
-  const { t } = useLocalization();
-  const navLinks = getNavLinks(t);
-
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center">
@@ -38,7 +32,7 @@ export function MainNav() {
               <Logo className="h-12 w-12" />
               <div>
                 <p className="font-bold text-xl">Yahnu</p>
-                <p className="text-xs text-muted-foreground">{t('landing.hero.title')}</p>
+                <p className="text-xs text-muted-foreground">Votre avenir commence ici</p>
               </div>
           </Link>
         </div>
@@ -58,10 +52,10 @@ export function MainNav() {
             </nav>
             <div className="hidden items-center gap-2 md:flex md:ml-6">
                 <Button variant="outline" asChild>
-                  <Link href="/login">{t('common.login')}</Link>
+                  <Link href="/login">Connexion</Link>
                 </Button>
                 <Button asChild>
-                  <Link href="/signup">{t('common.sign_up')}</Link>
+                  <Link href="/signup">S'inscrire</Link>
                 </Button>
             </div>
             
@@ -70,7 +64,7 @@ export function MainNav() {
                 <SheetTrigger asChild>
                   <Button variant="outline" size="icon">
                     <Menu className="h-5 w-5" />
-                    <span className="sr-only">{t('common.open_menu')}</span>
+                    <span className="sr-only">Ouvrir le menu</span>
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[80%]">
@@ -82,7 +76,7 @@ export function MainNav() {
                             <Logo className="h-10 w-10" />
                             <div>
                                 <p className="font-bold text-lg">Yahnu</p>
-                                <p className="text-xs text-muted-foreground">{t('landing.hero.title')}</p>
+                                <p className="text-xs text-muted-foreground">Votre avenir commence ici</p>
                             </div>
                           </div>
                         </Link>
@@ -105,12 +99,12 @@ export function MainNav() {
                     <div className="flex flex-col items-center gap-4">
                       <SheetClose asChild>
                         <Button variant="outline" className="w-full text-lg" asChild>
-                            <Link href="/login">{t('common.login')}</Link>
+                            <Link href="/login">Connexion</Link>
                         </Button>
                       </SheetClose>
                       <SheetClose asChild>
                         <Button className="w-full text-lg" asChild>
-                          <Link href="/signup">{t('common.sign_up')}</Link>
+                          <Link href="/signup">S'inscrire</Link>
                         </Button>
                       </SheetClose>
                     </div>

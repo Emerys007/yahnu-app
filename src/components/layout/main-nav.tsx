@@ -1,14 +1,9 @@
+
 "use client";
 
 import Link from "next/link";
 import {
   Menu,
-  Languages,
-  MoreVertical,
-  Sun,
-  Moon,
-  Monitor,
-  Search,
 } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
@@ -20,88 +15,18 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuPortal,
-} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { useLocalization } from "@/context/localization-context";
-import { useCountry, allCountries } from "@/context/country-context";
-import { Flag } from "@/components/ui/flag";
-import { useTheme } from "next-themes";
-import { cn } from "@/lib/utils";
 
-const getNavLinks = (t: (key: string) => string) => [
-  { href: "/jobs", label: t("nav.jobs") },
-  { href: "/companies", label: t("nav.companies") },
-  { href: "/schools", label: t("nav.schools") },
-  { href: "/blog", label: t("nav.blog") },
-  { href: "/about", label: t("common.about") },
+
+const navLinks = [
+  { href: "/jobs", label: "Emplois" },
+  { href: "/companies", label: "Entreprises" },
+  { href: "/schools", label: "Écoles" },
+  { href: "/blog", label: "Blog" },
+  { href: "/about", label: "À propos" },
 ];
 
 export function MainNav() {
-  const { t, setLanguage, language } = useLocalization();
-  const { country, setCountry } = useCountry();
-  const { setTheme } = useTheme();
-  const navLinks = getNavLinks(t);
-
-  const countrySelectorMenu = (
-    <DropdownMenuSub>
-      <DropdownMenuSubTrigger>
-         <Flag countryCode={country.code} className="mr-2"/>
-         <span>{language === 'fr' ? country.name.fr : country.name.en}</span>
-      </DropdownMenuSubTrigger>
-      <DropdownMenuPortal>
-        <DropdownMenuSubContent className="w-40 max-h-80 overflow-y-auto">
-          {allCountries.map((c) => (
-            <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
-                <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
-                <span>{language === 'fr' ? c.name.fr : c.name.en}</span>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuSubContent>
-      </DropdownMenuPortal>
-    </DropdownMenuSub>
-  )
-
-  const languageSelectorMenu = (
-     <DropdownMenuSub>
-        <DropdownMenuSubTrigger>
-           <Languages className="mr-2 h-4 w-4" />
-           <span>{t('common.language')}</span>
-        </DropdownMenuSubTrigger>
-        <DropdownMenuPortal>
-           <DropdownMenuSubContent>
-              <DropdownMenuItem onClick={() => setLanguage('en')}>{t('common.english')}</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage('fr')}>{t('common.french')}</DropdownMenuItem>
-            </DropdownMenuSubContent>
-        </DropdownMenuPortal>
-      </DropdownMenuSub>
-  )
-
-  const themeSelectorMenu = (
-     <DropdownMenuSub>
-        <DropdownMenuSubTrigger>
-           <Sun className="mr-2 h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-           <Moon className="absolute mr-2 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-           <span>{t('common.theme')}</span>
-        </DropdownMenuSubTrigger>
-        <DropdownMenuPortal>
-           <DropdownMenuSubContent>
-              <DropdownMenuItem onClick={() => setTheme("light")}>{t('common.light')}</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>{t('common.dark')}</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")}>{t('common.system')}</DropdownMenuItem>
-            </DropdownMenuSubContent>
-        </DropdownMenuPortal>
-     </DropdownMenuSub>
-  )
-
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -111,7 +36,7 @@ export function MainNav() {
               <Logo className="h-12 w-12" />
               <div>
                 <p className="font-bold text-xl">Yahnu</p>
-                <p className="text-xs text-muted-foreground">{t('landing.hero.title')}</p>
+                <p className="text-xs text-muted-foreground">Votre avenir commence ici</p>
               </div>
           </Link>
         </div>
@@ -131,65 +56,19 @@ export function MainNav() {
             </nav>
             <div className="hidden items-center gap-2 md:flex md:ml-6">
                 <Button variant="outline" asChild>
-                  <Link href="/login">{t('common.login')}</Link>
+                  <Link href="/login">Connexion</Link>
                 </Button>
                 <Button asChild>
-                  <Link href="/signup">{t('common.sign_up')}</Link>
+                  <Link href="/signup">S'inscrire</Link>
                 </Button>
             </div>
-
-            <div className="hidden md:flex items-center gap-2">
-              <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                       <Flag countryCode={country.code} />
-                       {t(`countries.${country.code}`)}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuPortal>
-                    <DropdownMenuContent align="end" className="w-40 max-h-80 overflow-y-auto">
-                      {allCountries.map((c) => (
-                        <DropdownMenuItem key={c.code} onClick={() => setCountry(c)}>
-                            <Flag countryCode={c.code} className="h-4 w-4 mr-2" />
-                            <span>{t(`countries.${c.code}`)}</span>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenuPortal>
-              </DropdownMenu>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <MoreVertical className="h-5 w-5" />
-                    <span className="sr-only">{t('common.more_options')}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {languageSelectorMenu}
-                  {themeSelectorMenu}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
+            
             <div className="md:hidden flex items-center gap-1">
-              <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                     <Button variant="outline" size="icon">
-                        <MoreVertical className="h-5 w-5" />
-                        <span className="sr-only">{t('common.more_options')}</span>
-                     </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                     {countrySelectorMenu}
-                     {languageSelectorMenu}
-                     {themeSelectorMenu}
-                  </DropdownMenuContent>
-              </DropdownMenu>
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="icon">
                     <Menu className="h-5 w-5" />
-                    <span className="sr-only">{t('common.open_menu')}</span>
+                    <span className="sr-only">Ouvrir le menu</span>
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[80%]">
@@ -201,7 +80,7 @@ export function MainNav() {
                             <Logo className="h-10 w-10" />
                             <div>
                                 <p className="font-bold text-lg">Yahnu</p>
-                                <p className="text-xs text-muted-foreground">{t('landing.hero.title')}</p>
+                                <p className="text-xs text-muted-foreground">Votre avenir commence ici</p>
                             </div>
                           </div>
                         </Link>
@@ -224,12 +103,12 @@ export function MainNav() {
                     <div className="flex flex-col items-center gap-4">
                       <SheetClose asChild>
                         <Button variant="outline" className="w-full text-lg" asChild>
-                            <Link href="/login">{t('common.login')}</Link>
+                            <Link href="/login">Connexion</Link>
                         </Button>
                       </SheetClose>
                       <SheetClose asChild>
                         <Button className="w-full text-lg" asChild>
-                          <Link href="/signup">{t('common.sign_up')}</Link>
+                          <Link href="/signup">S'inscrire</Link>
                         </Button>
                       </SheetClose>
                     </div>

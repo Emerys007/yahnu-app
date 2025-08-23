@@ -4,10 +4,8 @@
 import * as React from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { useCountry } from '@/context/country-context';
 
 export const Logo = (props: { className?: string }) => {
-  const { country } = useCountry();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -22,9 +20,8 @@ export const Logo = (props: { className?: string }) => {
   return (
     <div className={cn(props.className, "transition-opacity duration-300")}>
         <Image 
-            key={country.logoUrl} // Add key to force re-render on src change
-            src={country.logoUrl} 
-            alt={`${country.name.en} map logo`} 
+            src="/images/Country Maps/Ivory Coast.svg"
+            alt="Logo Yahnu - Carte de la Côte d'Ivoire" 
             width={100}
             height={100}
             sizes="100vw"

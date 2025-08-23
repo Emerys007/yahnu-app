@@ -4,7 +4,6 @@
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import Image from "next/image";
-import { useLocalization } from "@/context/localization-context";
 import { Card } from "@/components/ui/card";
 import { Users, Lightbulb } from "lucide-react";
 import { motion } from "framer-motion";
@@ -149,22 +148,20 @@ const cardItemVariants = {
 };
 
 export default function AboutPage() {
-    const { t } = useLocalization();
-
     const teamMembers: TeamMember[] = [
         {
             name: "Colombe Koffi",
-            role: "about.team.roles.founder_ceo",
+            role: "Fondatrice & CEO",
             imageUrl: "/images/Colombe Koffi.jpeg"
         },
         {
             name: "Joël K",
-            role: "about.team.roles.head_of_product",
+            role: "Chef de Produit",
             imageUrl: "/images/Joel K.jpeg"
         },
         {
             name: "Bethel Touman",
-            role: "about.team.roles.data_engineer",
+            role: "Ingénieur de Données",
             imageUrl: "/images/Bethel_Touman.jpeg"
         }
     ];
@@ -190,21 +187,21 @@ export default function AboutPage() {
       <main className="flex-1">
         <section className="relative py-20 md:py-32 bg-primary/5">
            <div className="container mx-auto text-center">
-            <AnimatedHeading text={t('about.title')} />
+            <AnimatedHeading text={"À propos de Yahnu"} />
             <motion.p 
                 className="mt-4 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8, duration: 0.5 }}
             >
-                {t('about.mission_statement')}
+                {"Nous sommes en mission pour combler le fossé entre l'éducation et l'emploi, créant un écosystème prospère pour que les talents se connectent aux opportunités."}
             </motion.p>
            </div>
         </section>
 
         <section className="py-20 bg-background">
             <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center">
-                <AnimatedStoryGraphic text={t('about.story_title')} />
+                <AnimatedStoryGraphic text={"Notre Histoire"} />
                 <div className="text-center md:text-left">
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -212,8 +209,8 @@ export default function AboutPage() {
                         viewport={{ once: true, amount: 0.5 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <p className="prose max-w-none text-muted-foreground">{t('about.story_content_1')}</p>
-                        <p className="prose max-w-none text-muted-foreground mt-4">{t('about.story_content_2')}</p>
+                        <p className="prose max-w-none text-muted-foreground">{"Fondée par une équipe d'éducateurs et d'entrepreneurs, Yahnu est née d'une vision commune : libérer l'immense potentiel des diplômés en les connectant directement aux industries qui ont besoin de leurs compétences."}</p>
+                        <p className="prose max-w-none text-muted-foreground mt-4">{"Aujourd'hui, Yahnu est une plateforme dynamique qui permet aux étudiants de lancer leur carrière, aide les entreprises à trouver efficacement les bons talents et permet aux écoles de forger des partenariats industriels significatifs. Nous croyons en la construction d'avenirs, une connexion à la fois."}</p>
                     </motion.div>
                 </div>
             </div>
@@ -231,15 +228,15 @@ export default function AboutPage() {
                     <motion.div variants={cardItemVariants} whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.08)" }} transition={{ type: 'spring', stiffness: 300 }}>
                         <Card className="p-6 h-full">
                             <BullseyeAnimation />
-                            <h3 className="text-2xl font-bold mb-2">{t('about.our_mission_title')}</h3>
-                            <p className="text-muted-foreground">{t('about.our_mission_content')}</p>
+                            <h3 className="text-2xl font-bold mb-2">{"Notre Mission"}</h3>
+                            <p className="text-muted-foreground">{"Autonomiser les diplômés, les entreprises et les écoles en créant un écosystème transparent et efficace pour le développement des talents et la croissance de carrière."}</p>
                         </Card>
                     </motion.div>
                      <motion.div variants={cardItemVariants} whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.08)" }} transition={{ type: 'spring', stiffness: 300 }}>
                         <Card className="p-6 h-full">
                             <SparklingLightbulb />
-                            <h3 className="text-2xl font-bold mb-2">{t('about.our_vision_title')}</h3>
-                            <p className="text-muted-foreground">{t('about.our_vision_content')}</p>
+                            <h3 className="text-2xl font-bold mb-2">{"Notre Vision"}</h3>
+                            <p className="text-muted-foreground">{"Être la plateforme leader pour la connexion professionnelle et les opportunités en Afrique, stimulant la croissance économique et la réussite individuelle."}</p>
                         </Card>
                      </motion.div>
                      <motion.div variants={cardItemVariants} whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.08)" }} transition={{ type: 'spring', stiffness: 300 }}>
@@ -247,8 +244,8 @@ export default function AboutPage() {
                             <motion.div variants={iconVariants} initial="hidden" animate="visible" whileHover="hover">
                                 <Users className="h-12 w-12 text-primary mx-auto mb-4" />
                             </motion.div>
-                            <h3 className="text-2xl font-bold mb-2">{t('about.our_values_title')}</h3>
-                            <p className="text-muted-foreground">{t('about.our_values_content')}</p>
+                            <h3 className="text-2xl font-bold mb-2">{"Nos Valeurs"}</h3>
+                            <p className="text-muted-foreground">{"Intégrité, Innovation, Collaboration et un engagement inébranlable envers le succès de nos utilisateurs."}</p>
                         </Card>
                     </motion.div>
                  </div>
@@ -258,8 +255,8 @@ export default function AboutPage() {
         <section className="py-20">
              <div className="container mx-auto">
                  <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold tracking-tight">{t('about.team.title')}</h2>
-                    <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">{t('about.team.subtitle')}</p>
+                    <h2 className="text-3xl font-bold tracking-tight">{"Rencontrez l'équipe"}</h2>
+                    <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">{"Les esprits passionnés qui construisent le pont entre l'éducation et l'emploi."}</p>
                  </div>
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {teamMembers.map((member) => (
@@ -272,7 +269,7 @@ export default function AboutPage() {
                                  <Image src={member.imageUrl || 'https://placehold.co/160x160.png'} alt={member.name} fill sizes="160px" className="object-cover" />
                             </motion.div>
                             <h4 className="font-semibold text-lg">{member.name}</h4>
-                            <p className="text-primary">{t(member.role)}</p>
+                            <p className="text-primary">{member.role}</p>
                         </div>
                     ))}
                  </div>

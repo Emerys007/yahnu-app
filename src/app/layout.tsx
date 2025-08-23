@@ -6,9 +6,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { cn } from '@/lib/utils';
-import { LocalizationProvider } from '@/context/localization-context';
 import { AuthProvider } from '@/context/auth-context';
-import { CountryProvider } from '@/context/country-context';
 import { ConfettiProvider } from '@/context/confetti-context';
 
 const inter = Inter({
@@ -18,7 +16,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'Yahnu',
-  description: 'A platform for graduates, companies, and schools to connect and find job opportunities.',
+  description: 'Une plateforme pour les diplômés, les entreprises et les écoles pour se connecter et trouver des opportunités d\'emploi.',
 };
 
 export default function RootLayout({
@@ -27,29 +25,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn(inter.variable)}>
+    <html lang="fr" suppressHydrationWarning className={cn(inter.variable)}>
       <head />
-      <body className="font-body antialiased" suppressHydrationWarning>
+      <body>
         <AuthProvider>
-          <CountryProvider>
-            <LocalizationProvider>
-                <ConfettiProvider>
-                  <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                    disableTransitionOnChange
-                  >
-                    <div vaul-drawer-wrapper="">
-                      <div className="relative flex min-h-screen flex-col bg-background">
-                        {children}
-                      </div>
-                    </div>
-                    <Toaster />
-                  </ThemeProvider>
-                </ConfettiProvider>
-            </LocalizationProvider>
-          </CountryProvider>
+          <ConfettiProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <div vaul-drawer-wrapper="">
+                <div className="relative flex min-h-screen flex-col bg-background">
+                  {children}
+                </div>
+              </div>
+              <Toaster />
+            </ThemeProvider>
+          </ConfettiProvider>
         </AuthProvider>
         <Script
           id="hs-script-loader"

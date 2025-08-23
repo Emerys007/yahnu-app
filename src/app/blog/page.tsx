@@ -1,3 +1,4 @@
+
 "use client"
 
 import { MainNav } from "@/components/landing/main-nav";
@@ -7,20 +8,17 @@ import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import React from "react";
-import { useLocalization } from "@/context/localization-context";
 import { allPosts } from "@/lib/demo-data";
 
 export default function BlogPage() {
-  const { t, language } = useLocalization();
-
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <MainNav />
       <main className="flex-1 container mx-auto py-12">
         <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold tracking-tight">{t('common.blog')}</h1>
+            <h1 className="text-5xl font-bold tracking-tight">Blog</h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t('landing.hero.promo_text')}
+                {"Découvrez des articles, des aperçus et des conseils sur l'avancement de carrière et les tendances de l'industrie."}
             </p>
         </div>
 
@@ -33,7 +31,7 @@ export default function BlogPage() {
                                <div className="relative w-full h-48">
                                  <Image
                                     src={post.image}
-                                    alt={post.title[language as 'en' | 'fr']}
+                                    alt={post.title.fr}
                                     fill
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                     className="object-cover"
@@ -42,14 +40,14 @@ export default function BlogPage() {
                                </div>
                             </CardHeader>
                             <CardContent className="p-6">
-                                <h2 className="text-xl font-semibold mb-2">{post.title[language as 'en' | 'fr']}</h2>
-                                <p className="text-muted-foreground mb-4 text-sm line-clamp-3">{post.brief[language as 'en' | 'fr']}</p>
+                                <h2 className="text-xl font-semibold mb-2">{post.title.fr}</h2>
+                                <p className="text-muted-foreground mb-4 text-sm line-clamp-3">{post.brief.fr}</p>
                                 <div className="flex items-center justify-between text-sm text-muted-foreground">
-                                    <span>{t('common.by')} {t(post.author)}</span>
-                                    <span>{language === 'fr' ? new Date(post.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date(post.date).toLocaleDateString()}</span>
+                                    <span>Par Auteur du blog</span>
+                                    <span>{new Date(post.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
                                 </div>
                                  <div className="flex items-center mt-4 font-semibold text-primary">
-                                    {t('common.read_more')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                                    Lire la suite <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                                 </div>
                             </CardContent>
                         </Card>

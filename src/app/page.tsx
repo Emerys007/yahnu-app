@@ -7,31 +7,28 @@ import { MainNav } from "@/components/landing/main-nav";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Footer } from "@/components/landing/footer";
-import { useLocalization } from "@/context/localization-context";
 import { ShieldCheck, Wand2, Handshake, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { AnimatedGradientBackground } from "@/components/ui/animated-gradient-background";
 
 const WhyChooseYahnu = () => {
-  const { t } = useLocalization();
-
   const benefits = [
     {
       icon: <ShieldCheck className="h-10 w-10 text-primary mb-4" />,
-      title: t('why_choose_yahnu.direct_access'),
+      title: "Accès direct à un vivier de talents pré-qualifiés",
     },
     {
       icon: <Wand2 className="h-10 w-10 text-primary mb-4" />,
-      title: t('why_choose_yahnu.ai_tools'),
+      title: "Outils basés sur l'IA pour un recrutement et une création de profil efficaces",
     },
     {
       icon: <Handshake className="h-10 w-10 text-primary mb-4" />,
-      title: t('why_choose_yahnu.strengthened_ties'),
+      title: "Liens renforcés entre le monde universitaire et l'industrie",
     },
     {
       icon: <TrendingUp className="h-10 w-10 text-primary mb-4" />,
-      title: t('why_choose_yahnu.enhanced_opportunities'),
+      title: "Opportunités de carrière améliorées pour les diplômés",
     },
   ];
   
@@ -66,9 +63,9 @@ const WhyChooseYahnu = () => {
             viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 0.5 }}
         >
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('why_choose_yahnu.title')}</h2>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Pourquoi choisir Yahnu ?</h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-            {t('why_choose_yahnu.description')}
+            Nous offrons une solution complète pour combler le fossé entre l'éducation et l'emploi en Côte d'Ivoire.
           </p>
         </motion.div>
         <motion.div 
@@ -97,8 +94,6 @@ const WhyChooseYahnu = () => {
 }
 
 export default function HomePage() {
-  const { t } = useLocalization();
-
   const textVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeInOut" } },
@@ -125,7 +120,7 @@ export default function HomePage() {
                 className="text-3xl font-bold tracking-tight sm:text-4xl"
                 variants={textVariants}
               >
-                {t('ready_to_join.title')}
+                Prêt à rejoindre l'élite ?
               </motion.h2>
               <motion.p 
                 className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto"
@@ -134,7 +129,7 @@ export default function HomePage() {
                     visible: { ...textVariants.visible, transition: { ...textVariants.visible.transition, delay: 0.2 } }
                 }}
               >
-                  {t('ready_to_join.description')}
+                  Créez votre compte aujourd'hui et débloquez un monde d'opportunités. Que vous soyez diplômé, entreprise ou école, Yahnu est votre porte d'entrée vers le succès.
               </motion.p>
               <motion.div 
                 className="mt-8 flex justify-center"
@@ -144,7 +139,7 @@ export default function HomePage() {
                 }}
               >
                   <Button size="lg" asChild>
-                      <Link href="/signup">{t('common.get_started_now')}</Link>
+                      <Link href="/signup">Commencez maintenant</Link>
                   </Button>
               </motion.div>
           </motion.div>

@@ -11,27 +11,23 @@ import {
 import { Button } from "@/components/ui/button"
 import { BarChart3, GraduationCap, Handshake, School, UserCheck, Calendar } from "lucide-react"
 import Link from "next/link"
-import { useLocalization } from "@/context/localization-context"
 import { motion } from "framer-motion"
 import { CountUp } from "@/components/ui/count-up"
 
 export function SchoolDashboard() {
-  const { t } = useLocalization();
-
   const stats = [
-    { title: t('Enrolled Graduates'), value: 452, icon: GraduationCap, description: t('+25 this semester') },
-    { title: t('Partner Companies'), value: 28, icon: Handshake, description: t('3 new partnerships') },
-    { title: t('Placement Rate'), value: 89, suffix: '%', icon: BarChart3, description: t('Up 5% from last year') },
+    { title: 'Diplômés Inscrits', value: 452, icon: GraduationCap, description: '+25 ce semestre' },
+    { title: 'Entreprises Partenaires', value: 28, icon: Handshake, description: '3 nouveaux partenariats' },
+    { title: 'Taux de Placement', value: 89, suffix: '%', icon: BarChart3, description: '+5% par rapport à l\'année dernière' },
   ];
   
   const quickActions = [
-      { title: t('School Profile'), href: '/dashboard/organization-profile', icon: School },
-      { title: t('Manage Graduates'), href: '/dashboard/graduates', icon: UserCheck },
-      { title: t('Manage Events'), href: '/dashboard/school-events', icon: Calendar },
-      { title: t('Manage Partnerships'), href: '/dashboard/partnerships', icon: Handshake },
-      { title: t('View Analytics'), href: '/dashboard/reports', icon: BarChart3 },
+      { title: 'Profil de l\'école', href: '/dashboard/organization-profile', icon: School },
+      { title: 'Gérer les diplômés', href: '/dashboard/graduates', icon: UserCheck },
+      { title: 'Gérer les événements', href: '/dashboard/school-events', icon: Calendar },
+      { title: 'Gérer les partenariats', href: '/dashboard/partnerships', icon: Handshake },
+      { title: 'Voir les statistiques', href: '/dashboard/reports', icon: BarChart3 },
   ]
-
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -63,8 +59,8 @@ export function SchoolDashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-bold tracking-tight">{t('School Dashboard')}</h1>
-        <p className="text-muted-foreground mt-1">{t("Track graduate success and industry partnerships.")}</p>
+        <h1 className="text-3xl font-bold tracking-tight">{"Tableau de bord de l'école"}</h1>
+        <p className="text-muted-foreground mt-1">{"Suivez le succès des diplômés et les partenariats avec l'industrie."}</p>
       </motion.div>
       <motion.div 
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
@@ -101,8 +97,8 @@ export function SchoolDashboard() {
       >
         <Card>
             <CardHeader>
-            <CardTitle>{t('Quick Actions')}</CardTitle>
-            <CardDescription>{t('Get started with common tasks quickly.')}</CardDescription>
+            <CardTitle>{"Actions rapides"}</CardTitle>
+            <CardDescription>{"Démarrez rapidement avec les tâches courantes."}</CardDescription>
             </CardHeader>
             <CardContent className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {quickActions.map((action, index) => (
@@ -116,7 +112,7 @@ export function SchoolDashboard() {
                          <Button asChild variant="outline" className="w-full h-24 flex-col justify-center gap-2 text-base">
                             <Link href={action.href}>
                                 <action.icon className="h-6 w-6" />
-                                <span>{t(action.title)}</span>
+                                <span>{action.title}</span>
                             </Link>
                         </Button>
                     </motion.div>

@@ -1,5 +1,4 @@
 
-
 "use client"
 
 import { LogOut, User, Settings, Building, MessageSquare } from "lucide-react"
@@ -17,27 +16,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/context/auth-context"
-import { useLocalization } from "@/context/localization-context"
 import { useToast } from "@/hooks/use-toast"
 
 export function UserNav() {
   const { user, signOut } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
-  const { t } = useLocalization()
 
   const handleSignOut = async () => {
     try {
       await signOut()
       router.push('/')
       toast({
-        title: t("Déconnexion réussie"),
-        description: t("Vous avez été déconnecté avec succès."),
+        title: "Déconnexion réussie",
+        description: "Vous avez été déconnecté avec succès.",
       })
     } catch (error) {
       toast({
-        title: t("common.error"),
-        description: t("Un problème est survenu lors de votre déconnexion."),
+        title: "Erreur",
+        description: "Un problème est survenu lors de votre déconnexion.",
         variant: "destructive",
       })
     }
@@ -61,7 +58,7 @@ export function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user?.name || "User"}</p>
+            <p className="text-sm font-medium leading-none">{user?.name || "Utilisateur"}</p>
             <p className="text-xs leading-none text-muted-foreground">
               {user?.email}
             </p>
@@ -71,27 +68,27 @@ export function UserNav() {
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
             <User className="mr-2 h-4 w-4" />
-            <span>{t("common.profile")}</span>
+            <span>Profil</span>
           </DropdownMenuItem>
           {user?.role === 'company' && (
             <DropdownMenuItem onClick={() => router.push('/dashboard/company-profile')}>
               <Building className="mr-2 h-4 w-4" />
-              <span>{t("profile.company_profile_title")}</span>
+              <span>Profil de l'entreprise</span>
             </DropdownMenuItem>
           )}
            <DropdownMenuItem onClick={() => router.push('/dashboard/messages')}>
             <MessageSquare className="mr-2 h-4 w-4" />
-            <span>{t("common.messages")}</span>
+            <span>Messages</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>
             <Settings className="mr-2 h-4 w-4" />
-            <span>{t("common.settings")}</span>
+            <span>Paramètres</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>
           <LogOut className="mr-2 h-4 w-4" />
-          <span>{t("auth.logout")}</span>
+          <span>Déconnexion</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

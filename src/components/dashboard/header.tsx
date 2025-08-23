@@ -1,5 +1,4 @@
 
-
 "use client"
 import Link from "next/link"
 import React from "react"
@@ -24,13 +23,11 @@ import {
   DropdownMenuFooter,
 } from "@/components/ui/dropdown-menu"
 import { useSidebar } from "./sidebar"
-import { useLocalization } from "@/context/localization-context"
 import { useAuth, type Role } from "@/context/auth-context"
 import { cn } from "@/lib/utils"
 import { collection, query, where, onSnapshot, limit, DocumentData } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { SearchCommand } from "../search-command"
-
 
 type NotificationItem = {
     id: string;
@@ -40,19 +37,19 @@ type NotificationItem = {
     read: boolean;
 };
 
-const formatDistanceToNow = (date: Date, t: (key: string, values?: { [key: string]: string | number }) => string): string => {
+const formatDistanceToNow = (date: Date): string => {
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
     let interval = seconds / 31536000;
-    if (interval > 1) return t('common.time.years_ago', { count: Math.floor(interval) });
+    if (interval > 1) return `Il y a ${Math.floor(interval)} ans`;
     interval = seconds / 2592000;
-    if (interval > 1) return t('common.time.months_ago', { count: Math.floor(interval) });
+    if (interval > 1) return `Il y a ${Math.floor(interval)} mois`;
     interval = seconds / 86400;
-    if (interval > 1) return t('common.time.days_ago', { count: Math.floor(interval) });
+    if (interval > 1) return `Il y a ${Math.floor(interval)} jours`;
     interval = seconds / 3600;
-    if (interval > 1) return t('common.time.hours_ago', { count: Math.floor(interval) });
+    if (interval > 1) return `Il y a ${Math.floor(interval)} heures`;
     interval = seconds / 60;
-    if (interval > 1) return t('common.time.minutes_ago', { count: Math.floor(interval) });
-    return t('common.time.seconds_ago', { count: Math.floor(seconds) });
+    if (interval > 1) return `Il y a ${Math.floor(interval)} minutes`;
+    return `Il y a ${Math.floor(seconds)} secondes`;
 };
 
 const getReadNotificationIds = (): string[] => {
@@ -69,7 +66,6 @@ const setReadNotificationIds = (ids: string[]) => {
 
 export function DashboardHeader() {
   const { toggleSidebar } = useSidebar();
-  const { t } = useLocalization();
   const { user, role } = useAuth();
 
   const [notifications, setNotifications] = React.useState<NotificationItem[]>([]);
@@ -107,20 +103,20 @@ export function DashboardHeader() {
             let notificationText = '';
             let icon = Building;
             if (data.role === 'company') {
-                notificationText = t("common.notifications.new_company_approval", { name: data.name });
+                notificationText = `Nouvelle entreprise "${data.name}" en attente d'approbation.`;
                 icon = Building;
             } else if (data.role === 'school') {
-                notificationText = t("common.notifications.new_school_approval", { name: data.name });
+                notificationText = `Nouvelle école "${data.name}" en attente d'approbation.`;
                 icon = School;
             } else if (data.role === 'graduate') {
-                notificationText = t("common.notifications.new_graduate_activation", { name: data.name });
+                notificationText = `Nouveau diplômé "${data.name}" en attente d'activation.`;
                 icon = Building; // TODO: Change to a more appropriate icon for a graduate
             }
 
             fetchedNotifications.push({
                 id: doc.id,
                 text: notificationText,
-                time: formatDistanceToNow(createdAt, t),
+                time: formatDistanceToNow(createdAt),
                 icon: icon,
                 read: readIds.includes(doc.id),
             });
@@ -131,7 +127,7 @@ export function DashboardHeader() {
     });
 
     return () => unsubscribe();
-  }, [user, role, t]);
+  }, [user, role]);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -162,7 +158,7 @@ export function DashboardHeader() {
             onClick={toggleSidebar}
           >
             <PanelLeft className="h-5 w-5" />
-            <span className="sr-only">{t('common.toggle_nav')}</span>
+            <span className="sr-only">{"Basculer la navigation"}</span>
         </Button>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
         <div className="ml-auto flex-1 md:grow-0">
@@ -173,7 +169,7 @@ export function DashboardHeader() {
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon" className="relative shrink-0">
                     <Bell className="h-[1.2rem] w-[1.2rem]" />
-                    <span className="sr-only">{t('common.notifications.title')}</span>
+                    <span className="sr-only">{"Notifications"}</span>
                     {unreadCount > 0 && (
                         <div className="absolute top-0 right-0 -mt-1 -mr-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                             {unreadCount}
@@ -182,7 +178,7 @@ export function DashboardHeader() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80">
-                <DropdownMenuLabel>{t('common.notifications.title')}</DropdownMenuLabel>
+                <DropdownMenuLabel>{"Notifications"}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {notifications.length > 0 ? (
                     notifications.map((item) => (
@@ -196,12 +192,12 @@ export function DashboardHeader() {
                         </DropdownMenuItem>
                     ))
                 ) : (
-                     <DropdownMenuItem disabled>{t('common.notifications.no_new')}</DropdownMenuItem>
+                     <DropdownMenuItem disabled>{"Aucune nouvelle notification"}</DropdownMenuItem>
                 )}
                  <DropdownMenuSeparator />
                  <DropdownMenuFooter>
                     <Button variant="ghost" className="w-full" onClick={handleReadAll} disabled={unreadCount === 0}>
-                        <Check className="mr-2 h-4 w-4" /> {t('common.notifications.mark_all_read')}
+                        <Check className="mr-2 h-4 w-4" /> {"Marquer tout comme lu"}
                     </Button>
                  </DropdownMenuFooter>
             </DropdownMenuContent>

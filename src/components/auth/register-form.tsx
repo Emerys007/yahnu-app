@@ -1,5 +1,4 @@
 
-
 "use client"
 
 import * as React from "react"
@@ -27,7 +26,6 @@ import {
   } from "@/components/ui/select"
 import { useAuth, type UserProfile } from "@/context/auth-context"
 import { useToast } from "@/hooks/use-toast"
-import { useLocalization } from "@/context/localization-context"
 import { PasswordInput } from "@/components/ui/password-input"
 import { Separator } from "../ui/separator"
 import Link from "next/link"
@@ -40,10 +38,10 @@ type SchoolOption = {
 }
 
 const industrySectors = [
-    "Agriculture", "Finance & Banking", "Information Technology", "Telecommunications",
-    "Mining & Resources", "Construction & Real Estate", "Retail & Commerce",
-    "Transportation & Logistics", "Tourism & Hospitality", "Health & Pharmaceuticals",
-    "Education", "Energy"
+    "Agriculture", "Finance et Banque", "Technologie de l'information", "Télécommunications",
+    "Mines et Ressources", "Construction et Immobilier", "Commerce de détail",
+    "Transport et Logistique", "Tourisme et Hôtellerie", "Santé et Pharmaceutique",
+    "Éducation", "Énergie"
 ];
 
 const baseSchema = z.object({
@@ -104,7 +102,6 @@ const registerSchema = z.discriminatedUnion("role", [
 });
 
 export function RegisterForm() {
-    const { t } = useLocalization();
     const { signUp, signInWithGoogle } = useAuth();
     const { toast } = useToast();
     const router = useRouter();
@@ -127,15 +124,15 @@ export function RegisterForm() {
             } catch (error) {
                 console.error("Failed to fetch schools:", error);
                 toast({
-                    title: t("auth.school_load_failed_title"),
-                    description: t("auth.school_load_failed_desc"),
+                    title: "Erreur de chargement des écoles",
+                    description: "Impossible de charger la liste des écoles. Veuillez réessayer plus tard.",
                     variant: "destructive"
                 });
             }
         };
 
         fetchSchools();
-    }, [toast, t]);
+    }, [toast]);
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -155,12 +152,6 @@ export function RegisterForm() {
   });
 
   const role = form.watch("role");
-
-  const nameLabels = {
-    graduate: t('common.full_name'),
-    company: t('common.company_name'),
-    school: t('common.school_name'),
-  };
 
   async function onSubmit(values: z.infer<typeof registerSchema>) {
     setIsLoading(true);
@@ -184,27 +175,27 @@ export function RegisterForm() {
         let toastDescription = "";
         switch(role) {
             case 'graduate':
-                toastDescription = t("auth.pending_graduate");
+                toastDescription = "Votre compte est en attente d'approbation par l'administrateur de votre école.";
                 break;
             case 'company':
             case 'school':
-                 toastDescription = t("auth.pending_org");
+                 toastDescription = "Votre inscription est en attente d'approbation par un administrateur de Yahnu.";
                  break;
             case 'admin':
-                toastDescription = t("auth.admin_account_created");
+                toastDescription = "Votre compte administrateur a été créé. Vous pouvez maintenant vous connecter.";
                 break;
         }
 
         toast({
-            title: t("auth.account_created_title"),
+            title: "Compte créé !",
             description: toastDescription,
           });
 
         router.push('/login');
     } catch (error: any) {
         toast({
-            title: t("common.error"),
-            description: error.message || t("auth.request_problem"),
+            title: "Erreur",
+            description: error.message || "Un problème est survenu avec votre demande.",
             variant: "destructive",
           });
     } finally {
@@ -217,21 +208,21 @@ export function RegisterForm() {
     try {
       await signInWithGoogle();
       toast({
-        title: t("auth.login_success_title"),
-        description: t("auth.welcome_back_yahnu"),
+        title: "Connexion réussie !",
+        description: "Bienvenue sur Yahnu.",
       });
       router.push('/dashboard');
     } catch (error: any) {
-      let errorMessage = error.message || t("auth.google_login_failed");
+      let errorMessage = error.message || "Impossible de se connecter avec Google.";
        if (error.message === "pending_graduate") {
-            errorMessage = t("auth.pending_graduate");
+            errorMessage = "Votre compte est en attente d'approbation de la part de votre école.";
         } else if (error.message === 'pending_org') {
-             errorMessage = t("auth.pending_org");
+             errorMessage = "Votre inscription est en attente d'approbation par un administrateur de Yahnu.";
         } else if (error.message === "suspended") {
-            errorMessage = t("auth.suspended");
+            errorMessage = "Votre compte a été suspendu. Veuillez contacter le support.";
         }
       toast({
-        title: t("common.error"),
+        title: "Erreur",
         description: errorMessage,
         variant: "destructive",
       });
@@ -243,9 +234,9 @@ export function RegisterForm() {
   return (
     <>
         <div className="text-center">
-            <h1 className="text-3xl font-bold">{t("auth.create_account")}</h1>
+            <h1 className="text-3xl font-bold">Créer un compte</h1>
             <p className="text-muted-foreground mt-2">
-                {t('auth.enter_info_to_create_account')}
+                Entrez vos informations pour créer un compte
             </p>
         </div>
       <Form {...form}>
@@ -255,17 +246,17 @@ export function RegisterForm() {
           name="role"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('auth.i_am_a')}</FormLabel>
+              <FormLabel>Je suis un(e)...</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                     <FormControl>
                     <SelectTrigger>
-                        <SelectValue placeholder={t("auth.select_account_type")} />
+                        <SelectValue placeholder="Sélectionnez votre type de compte" />
                     </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                        <SelectItem value="graduate">{t('auth.graduate')}</SelectItem>
-                        <SelectItem value="company">{t('auth.company_representative')}</SelectItem>
-                        <SelectItem value="school">{t('auth.school_administrator')}</SelectItem>
+                        <SelectItem value="graduate">Diplômé(e)</SelectItem>
+                        <SelectItem value="company">Représentant(e) d'entreprise</SelectItem>
+                        <SelectItem value="school">Administrateur(-trice) d'école</SelectItem>
                     </SelectContent>
                 </Select>
               <FormMessage />
@@ -279,8 +270,8 @@ export function RegisterForm() {
                     control={form.control} name="firstName"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>{t('common.first_name')}</FormLabel>
-                        <FormControl><Input placeholder="John" {...field} disabled={isLoading} /></FormControl>
+                        <FormLabel>Prénom</FormLabel>
+                        <FormControl><Input placeholder="Jean" {...field} disabled={isLoading} /></FormControl>
                         <FormMessage />
                         </FormItem>
                     )}
@@ -289,8 +280,8 @@ export function RegisterForm() {
                     control={form.control} name="lastName"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>{t('common.last_name')}</FormLabel>
-                        <FormControl><Input placeholder="Doe" {...field} disabled={isLoading} /></FormControl>
+                        <FormLabel>Nom</FormLabel>
+                        <FormControl><Input placeholder="Dupont" {...field} disabled={isLoading} /></FormControl>
                         <FormMessage />
                         </FormItem>
                     )}
@@ -303,7 +294,7 @@ export function RegisterForm() {
             <FormField control={form.control} name="companyName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('common.company_name')}</FormLabel>
+                  <FormLabel>Nom de l'entreprise</FormLabel>
                   <FormControl><Input {...field} disabled={isLoading} /></FormControl>
                   <FormMessage />
                 </FormItem>
@@ -312,7 +303,7 @@ export function RegisterForm() {
              <FormField control={form.control} name="contactName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('auth.contact_person_name')}</FormLabel>
+                  <FormLabel>Nom du contact</FormLabel>
                   <FormControl><Input {...field} disabled={isLoading} /></FormControl>
                   <FormMessage />
                 </FormItem>
@@ -326,7 +317,7 @@ export function RegisterForm() {
             <FormField control={form.control} name="schoolName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('common.school_name')}</FormLabel>
+                  <FormLabel>Nom de l'école</FormLabel>
                   <FormControl><Input {...field} disabled={isLoading} /></FormControl>
                   <FormMessage />
                 </FormItem>
@@ -335,7 +326,7 @@ export function RegisterForm() {
              <FormField control={form.control} name="contactName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('auth.contact_person_name')}</FormLabel>
+                  <FormLabel>Nom du contact</FormLabel>
                   <FormControl><Input {...field} disabled={isLoading} /></FormControl>
                   <FormMessage />
                 </FormItem>
@@ -350,11 +341,11 @@ export function RegisterForm() {
             control={form.control} name="schoolId"
             render={({ field }) => (
                 <FormItem>
-                <FormLabel>{t('common.school_university')}</FormLabel>
+                <FormLabel>École/Université</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading || schools.length === 0}>
                     <FormControl>
                     <SelectTrigger>
-                        <SelectValue placeholder={t("common.select_your_school")} />
+                        <SelectValue placeholder="Sélectionnez votre école" />
                     </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -373,14 +364,14 @@ export function RegisterForm() {
              <FormField control={form.control} name="industry"
                 render={({ field }) => (
                 <FormItem>
-                    <FormLabel>{t('common.industry_sector')}</FormLabel>
+                    <FormLabel>Secteur d'activité</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                         <FormControl>
-                            <SelectTrigger><SelectValue placeholder={t("common.select_an_industry")} /></SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder="Sélectionnez un secteur" /></SelectTrigger>
                         </FormControl>
                         <SelectContent>
                             {industrySectors.map(sector => (
-                                <SelectItem key={sector} value={sector}>{t(sector)}</SelectItem>
+                                <SelectItem key={sector} value={sector}>{sector}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
@@ -395,9 +386,9 @@ export function RegisterForm() {
           control={form.control} name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('common.email')}</FormLabel>
+              <FormLabel>E-mail</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="you@example.com" {...field} disabled={isLoading} />
+                <Input type="email" placeholder="vous@exemple.com" {...field} disabled={isLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -407,7 +398,7 @@ export function RegisterForm() {
           control={form.control} name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('common.password')}</FormLabel>
+              <FormLabel>Mot de passe</FormLabel>
               <FormControl>
                 <PasswordInput placeholder="••••••••" {...field} disabled={isLoading} onSuggest={(p) => { form.setValue('password', p); form.setValue('confirmPassword', p, {shouldValidate: true}) }}/>
               </FormControl>
@@ -419,7 +410,7 @@ export function RegisterForm() {
           control={form.control} name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('common.confirm_password')}</FormLabel>
+              <FormLabel>Confirmer le mot de passe</FormLabel>
               <FormControl>
                 <PasswordInput placeholder="••••••••" {...field} disabled={isLoading} hideSuggestions />
               </FormControl>
@@ -428,7 +419,7 @@ export function RegisterForm() {
           )}
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? t('auth.creating_account') : t("auth.create_account")}
+            {isLoading ? "Création du compte..." : "Créer un compte"}
         </Button>
 
         {role === 'graduate' && (
@@ -438,20 +429,20 @@ export function RegisterForm() {
                     <Separator />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">{t('auth.or_continue_with')}</span>
+                    <span className="bg-background px-2 text-muted-foreground">Ou continuer avec</span>
                 </div>
             </div>
             <Button variant="outline" type="button" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
                 <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 21.2 177 60.4L373 124.9c-32.5-30.3-74.2-48.7-125-48.7-93.1 0-170 73.1-170 180s76.9 180 170 180c101.4 0 148.2-73.3 152.8-112.3H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg>
-                {t('common.sign_up_with_google')}
+                S'inscrire avec Google
             </Button>
           </>
         )}
 
         <div className="mt-4 text-center text-sm">
-            {t("common.already_have_an_account")}
+            Vous avez déjà un compte ?
             <Link href="/login" className="underline ml-1">
-                {t('common.sign_in')}
+                Se connecter
             </Link>
         </div>
       </form>
