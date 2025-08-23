@@ -49,9 +49,9 @@ const legalPageSchema = z.object({
 
 export const defaultAboutValues: z.infer<typeof aboutPageSchema> = {
     aboutTitle: "À propos de Yahnu",
-    aboutSubtitle: "Notre mission est de combler le fossé entre l'éducation et l'emploi, en créant un écosystème prospère où les talents peuvent se connecter aux opportunités.",
+    aboutSubtitle: "Nous sommes en mission pour combler le fossé entre l'éducation et l'emploi, créant un écosystème prospère pour que les talents se connectent aux opportunités.",
     storyTitle: "Notre Histoire",
-    storyContent1: "<p>Fondée par une équipe d'éducateurs et d'entrepreneurs, Yahnu est née d'une vision commune : libérer l'immense potentiel des diplômés en les connectant directement aux industries qui ont besoin de leurs compétences. Nous avons vu une déconnexion entre la salle de classe et le lieu de travail et nous avons décidé de construire le pont.</p>",
+    storyContent1: "<p>Fondée par une équipe d'éducateurs et d'entrepreneurs, Yahnu est née d'une vision commune : libérer l'immense potentiel des diplômés en les connectant directement aux industries qui ont besoin de leurs compétences.</p>",
     storyContent2: "<p>Aujourd'hui, Yahnu est une plateforme dynamique qui permet aux étudiants de lancer leur carrière, aide les entreprises à trouver efficacement les bons talents et permet aux écoles de forger des partenariats industriels significatifs. Nous croyons en la construction d'avenirs, une connexion à la fois.</p>",
     missionTitle: "Notre Mission",
     missionContent: "<p>Autonomiser les diplômés, les entreprises et les écoles en créant un écosystème transparent et efficace pour le développement des talents et la croissance de carrière.</p>",
@@ -270,3 +270,4 @@ export function ContentPagesEditor() {
         </Card>
     );
 }
+
