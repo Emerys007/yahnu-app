@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type UserAccount = {
     id: string;
@@ -16,14 +17,16 @@ type UserAccount = {
     email: string;
     type: 'graduate' | 'company' | 'school' | 'admin';
     status: 'active' | 'pending' | 'suspended';
+    slug?: string;
 };
 
+// Data consistent with talent-pool and company profiles
 const allUsers: UserAccount[] = [
-    { id: 'usr_001', name: 'Amina Diallo', email: 'amina.diallo@example.com', type: 'graduate', status: 'active' },
-    { id: 'usr_002', name: 'Kwame Nkrumah', email: 'kwame.nkrumah@example.com', type: 'graduate', status: 'pending' },
-    { id: 'usr_003', name: 'Orange', email: 'contact@orange.ci', type: 'company', status: 'active' },
-    { id: 'usr_004', name: 'INP-HB', email: 'admin@inphb.ci', type: 'school', status: 'active' },
-    { id: 'usr_005', name: 'Cheikh Anta Diop', email: 'cheikh.anta.diop@example.com', type: 'graduate', status: 'suspended' },
+    { id: 'usr_001', name: 'Amina Diallo', email: 'amina.diallo@example.com', type: 'graduate', status: 'active', slug: 'amina-diallo' },
+    { id: 'usr_002', name: 'Orange Côte d\'Ivoire', email: 'contact@orange.ci', type: 'company', status: 'active', slug: 'orange-ci' },
+    { id: 'usr_003', name: 'INP-HB', email: 'admin@inphb.ci', type: 'school', status: 'active', slug: 'inp-hb' },
+    { id: 'usr_004', name: 'Ben Traoré', email: 'ben.traore@example.com', type: 'graduate', status: 'pending', slug: 'ben-traore'},
+    { id: 'usr_005', name: 'SIFCA', email: 'contact@sifca.ci', type: 'company', status: 'suspended', slug: 'sifca'},
 ];
 
 export default function UserLookup() {
@@ -59,6 +62,16 @@ export default function UserLookup() {
             case 'admin': return <Briefcase className="h-5 w-5" />;
         }
     }
+    
+    const getProfileLink = (user: UserAccount) => {
+        if (!user.slug) return null;
+        switch(user.type) {
+            case 'graduate': return `/dashboard/talent-pool/${user.slug}`;
+            case 'company': return `/dashboard/talent-pool`; // No public company profile in dash
+            case 'school': return `/dashboard/talent-pool`; // No public school profile in dash
+            default: return null;
+        }
+    }
 
     return (
         <div className="space-y-8">
@@ -68,26 +81,26 @@ export default function UserLookup() {
                         <Search className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight">User Lookup</h1>
-                        <p className="text-muted-foreground mt-1">Search for users by name or email.</p>
+                        <h1 className="text-3xl font-bold tracking-tight">Recherche d'utilisateur</h1>
+                        <p className="text-muted-foreground mt-1">Recherchez des utilisateurs par nom ou par e-mail.</p>
                     </div>
                 </div>
             </div>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Search</CardTitle>
+                    <CardTitle>Rechercher</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="flex w-full max-w-sm items-center space-x-2">
                         <Input 
                             type="text" 
-                            placeholder="e.g., Amina Diallo or contact@orange.ci" 
+                            placeholder="Ex: Amina Diallo ou contact@orange.ci" 
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                         />
-                        <Button onClick={handleSearch}>Search</Button>
+                        <Button onClick={handleSearch}>Rechercher</Button>
                     </div>
                 </CardContent>
             </Card>
@@ -95,7 +108,7 @@ export default function UserLookup() {
             {foundUser && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>User Details</CardTitle>
+                        <CardTitle>Détails de l'utilisateur</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="flex items-center gap-4">
@@ -109,18 +122,24 @@ export default function UserLookup() {
                         </div>
                         <div className="flex gap-4">
                             <div>
-                                <h4 className="font-semibold">Account Type</h4>
+                                <h4 className="font-semibold">Type de compte</h4>
                                 <p className="capitalize">{t(foundUser.type)}</p>
                             </div>
                              <div>
-                                <h4 className="font-semibold">Status</h4>
+                                <h4 className="font-semibold">Statut</h4>
                                 <Badge variant={getStatusVariant(foundUser.status)}>{t(foundUser.status)}</Badge>
                             </div>
                         </div>
                     </CardContent>
                     <CardFooter className="flex gap-2">
-                        <Button>View Profile (Not Implemented)</Button>
-                        <Button variant="outline" onClick={() => handleSendMessage(foundUser)}>Send Message</Button>
+                         {getProfileLink(foundUser) ? (
+                            <Button asChild>
+                                <Link href={getProfileLink(foundUser)!}>Voir le Profil</Link>
+                            </Button>
+                        ) : (
+                            <Button disabled>Voir le Profil</Button>
+                        )}
+                        <Button variant="outline" onClick={() => handleSendMessage(foundUser)}>Envoyer un message</Button>
                     </CardFooter>
                 </Card>
             )}
