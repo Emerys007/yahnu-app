@@ -2,7 +2,6 @@
 "use client"
 
 import { useState } from "react";
-import { useLocalization } from "@/context/localization-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, MapPin, Check, Star, X, ChevronDown } from "lucide-react";
@@ -30,34 +29,34 @@ type Event = {
 const initialEvents: Event[] = [
   {
     id: 1,
-    title: "Annual Tech Career Fair",
+    title: "Salon Annuel de l'Emploi Technologique",
     host: "INP-HB",
-    description: "Meet with top tech companies hiring for various roles. Bring your resume and be prepared for on-the-spot interviews.",
+    description: "Rencontrez les meilleures entreprises technologiques qui recrutent pour divers postes. Apportez votre CV et soyez prêt pour des entretiens sur place.",
     date: "2025-10-20",
-    time: "10:00 AM - 4:00 PM",
+    time: "10:00 - 16:00",
     location: "Grand Auditorium, INP-HB",
     type: "Career Fair",
     rsvp: null,
   },
   {
     id: 2,
-    title: "AI & Machine Learning Workshop",
+    title: "Atelier IA & Machine Learning",
     host: "Google",
-    description: "A hands-on workshop covering the fundamentals of AI and Machine Learning. Led by industry experts from Google.",
+    description: "Un atelier pratique sur les fondamentaux de l'IA et du Machine Learning, animé par des experts de l'industrie de Google.",
     date: "2025-11-05",
-    time: "1:00 PM - 5:00 PM",
-    location: "Online (Zoom Link will be shared)",
+    time: "13:00 - 17:00",
+    location: "En ligne (Lien Zoom sera partagé)",
     type: "Workshop",
     rsvp: "interested",
   },
   {
     id: 3,
-    title: "Alumni Networking Night",
+    title: "Soirée de Réseautage des Anciens",
     host: "INP-HB",
-    description: "Connect with fellow alumni and expand your professional network. An evening of great conversations and opportunities.",
+    description: "Connectez-vous avec d'autres anciens élèves et développez votre réseau professionnel. Une soirée de belles conversations et d'opportunités.",
     date: "2025-11-15",
-    time: "7:00 PM onwards",
-    location: "University Social Hall",
+    time: "19:00 et plus",
+    location: "Salle Sociale de l'Université",
     type: "Networking",
     rsvp: null,
   },
@@ -70,35 +69,42 @@ const eventTypeColors: Record<EventType, string> = {
     "Webinar": "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300",
 };
 
+const eventTypeTranslations: Record<EventType, string> = {
+    "Career Fair": "Salon de l'emploi",
+    "Workshop": "Atelier",
+    "Networking": "Réseautage",
+    "Webinar": "Webinaire",
+};
+
+
 const rsvpOptions: { status: RsvpStatus, label: string, icon: React.ElementType }[] = [
-    { status: "going", label: "Going", icon: Check },
-    { status: "interested", label: "Interested", icon: Star },
-    { status: "not_going", label: "Not Going", icon: X },
+    { status: "going", label: "Participe", icon: Check },
+    { status: "interested", label: "Intéressé(e)", icon: Star },
+    { status: "not_going", label: "Ne participe pas", icon: X },
 ];
 
 export default function GraduateEventsPage() {
-  const { t } = useLocalization();
   const { toast } = useToast();
   const [events, setEvents] = useState<Event[]>(initialEvents);
 
   const handleRsvp = (eventId: number, status: RsvpStatus) => {
     setEvents(events.map(e => e.id === eventId ? { ...e, rsvp: status } : e));
     toast({
-        title: t("RSVP Submitted"),
-        description: t("Your response has been recorded."),
+        title: "RSVP envoyé",
+        description: "Votre réponse a été enregistrée.",
     });
   }
 
   const getRsvpButtonContent = (status: RsvpStatus) => {
     if (!status) {
-        return <>{t('RSVP')}</>;
+        return <>RSVP</>;
     }
     const option = rsvpOptions.find(o => o.status === status);
     if (!option) {
-        return <>{t('RSVP')}</>;
+        return <>RSVP</>;
     }
     const Icon = option.icon;
-    return <><Icon className="mr-2 h-4 w-4" /> {t(option.label)}</>;
+    return <><Icon className="mr-2 h-4 w-4" /> {option.label}</>;
   }
 
 
@@ -114,8 +120,8 @@ export default function GraduateEventsPage() {
                 <Calendar className="h-6 w-6 text-primary" />
             </div>
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">{t('Upcoming Events')}</h1>
-                <p className="text-muted-foreground mt-1">{t('Discover exclusive events hosted by your school and top companies.')}</p>
+                <h1 className="text-3xl font-bold tracking-tight">Événements à venir</h1>
+                <p className="text-muted-foreground mt-1">Découvrez des événements exclusifs organisés par votre école et les meilleures entreprises.</p>
             </div>
         </div>
         
@@ -140,24 +146,21 @@ export default function GraduateEventsPage() {
                     <Card className="flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full">
                         <CardHeader>
                             <div className="flex justify-between items-center">
-                                <Badge variant="secondary" className={`self-start ${eventTypeColors[event.type]}`}>{t(event.type)}</Badge>
-                                <p className="text-xs font-semibold text-muted-foreground">{t('Hosted by')} {event.host}</p>
+                                <Badge variant="secondary" className={`self-start ${eventTypeColors[event.type]}`}>{eventTypeTranslations[event.type]}</Badge>
+                                <p className="text-xs font-semibold text-muted-foreground">Organisé par {event.host}</p>
                             </div>
-                            <CardTitle className="pt-2">{t(event.title)}</CardTitle>
- <CardDescription className="flex items-center gap-2 text-sm">
- <Calendar className="h-4 w-4" />{" "}
- {language === 'fr' ?
- new Date(event.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) :
- new Date(event.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
- }
- </CardDescription>
+                            <CardTitle className="pt-2">{event.title}</CardTitle>
+                         <CardDescription className="flex items-center gap-2 text-sm">
+                         <Calendar className="h-4 w-4" />{" "}
+                         {new Date(event.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                         </CardDescription>
 
                         </CardHeader>
                         <CardContent className="flex-grow">
-                            <p className="text-muted-foreground text-sm mb-4">{t(event.description)}</p>
+                            <p className="text-muted-foreground text-sm mb-4">{event.description}</p>
                             <div className="space-y-2 text-sm">
-                                <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-muted-foreground" /> {t(event.time)}</div>
-                                <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-muted-foreground" /> {t(event.location)}</div>
+                                <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-muted-foreground" /> {event.time}</div>
+                                <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-muted-foreground" /> {event.location}</div>
                             </div>
                         </CardContent>
                         <CardFooter>
@@ -172,7 +175,7 @@ export default function GraduateEventsPage() {
                                     {rsvpOptions.map(option => (
                                         <DropdownMenuItem key={option.status} onClick={() => handleRsvp(event.id, option.status)}>
                                             <option.icon className="mr-2 h-4 w-4" />
-                                            <span>{t(option.label)}</span>
+                                            <span>{option.label}</span>
                                         </DropdownMenuItem>
                                     ))}
                                 </DropdownMenuContent>
@@ -186,8 +189,8 @@ export default function GraduateEventsPage() {
             <Card className="py-24">
                 <CardContent className="text-center">
                     <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h2 className="text-2xl font-bold">{t('No Upcoming Events')}</h2>
-                    <p className="text-muted-foreground mt-2">{t('Check back later for events from your school and companies.')}</p>
+                    <h2 className="text-2xl font-bold">Aucun événement à venir</h2>
+                    <p className="text-muted-foreground mt-2">Revenez plus tard pour les événements de votre école et des entreprises.</p>
                 </CardContent>
             </Card>
         )}
