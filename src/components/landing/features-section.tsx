@@ -6,68 +6,67 @@ import Image from "next/image"
 import { motion, useInView, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { GraduationCap, Building, School } from "lucide-react"
-import { useLocalization } from "@/context/localization-context"
 import { cn } from "@/lib/utils"
 import { AnimatedGradientBackground } from "../ui/animated-gradient-background"
 
-const getFeaturesData = (t: (key: string) => string) => ({
+const getFeaturesData = () => ({
   graduates: {
-    title: t('landing.features.for_graduates.title'),
+    title: "Pour les Diplômés",
     icon: <GraduationCap className="h-8 w-8 mb-4 text-primary" />,
     image: "/images/uni-partnership.jpg",
     imageHint: "african graduate students",
     items: [
       {
-        title: t('landing.features.for_graduates.ai_profile_builder'),
-        description: t('landing.features.for_graduates.ai_profile_builder_desc'),
+        title: "Créateur de Profil IA",
+        description: "Générez un profil professionnel et un CV qui se démarquent en quelques minutes.",
       },
       {
-        title: t('landing.features.for_graduates.job_matching'),
-        description: t('landing.features.for_graduates.job_matching_desc'),
+        title: "Correspondance d'Emploi Intelligente",
+        description: "Recevez des recommandations d'emploi personnalisées en fonction de vos compétences et de vos aspirations.",
       },
       {
-        title: t('landing.features.for_graduates.skill_development'),
-        description: t('landing.features.for_graduates.skill_development_desc'),
+        title: "Développement des Compétences",
+        description: "Accédez à des évaluations pour valider vos compétences et gagner des badges pour votre profil.",
       },
     ],
   },
   companies: {
-    title: t('landing.features.for_companies.title'),
+    title: "Pour les Entreprises",
     icon: <Building className="h-8 w-8 mb-4 text-primary" />,
     image: "/images/IndustryPartnership.jpeg",
     imageHint: "recruitment dashboard",
     items: [
       {
-        title: t('landing.features.for_companies.talent_sourcing'),
-        description: t('landing.features.for_companies.talent_sourcing_desc'),
+        title: "Sourcing de Talents Efficace",
+        description: "Accédez à un vivier de diplômés qualifiés issus des meilleures universités.",
       },
       {
-        title: t('landing.features.for_companies.streamlined_recruitment'),
-        description: t('landing.features.for_companies.streamlined_recruitment_desc'),
+        title: "Recrutement Simplifié",
+        description: "Utilisez des outils IA pour filtrer les candidats et gérer votre pipeline de recrutement.",
       },
       {
-        title: t('landing.features.for_companies.data_insights'),
-        description: t('landing.features.for_companies.data_insights_desc'),
+        title: "Aperçus Basés sur les Données",
+        description: "Suivez vos métriques de recrutement et comprenez les tendances du marché des talents.",
       },
     ],
   },
   schools: {
-    title: t('landing.features.for_schools.title'),
+    title: "Pour les Écoles",
     icon: <School className="h-8 w-8 mb-4 text-primary" />,
     image: "/images/University.png",
     imageHint: "academic analytics",
     items: [
       {
-        title: t('landing.features.for_schools.industry_ties'),
-        description: t('landing.features.for_schools.industry_ties_desc'),
+        title: "Liens avec l'Industrie",
+        description: "Établissez des partenariats avec des entreprises de premier plan pour des stages et des opportunités d'emploi.",
       },
       {
-        title: t('landing.features.for_schools.boost_graduate_employability'),
-        description: t('landing.features.for_schools.boost_graduate_employability_desc'),
+        title: "Améliorez l'Employabilité des Diplômés",
+        description: "Suivez le succès de vos anciens élèves et obtenez des informations pour améliorer vos programmes.",
       },
       {
-        title: t('landing.features.for_schools.showcase_institution'),
-        description: t('landing.features.for_schools.showcase_institution_desc'),
+        title: "Mettez en Valeur Votre Institution",
+        description: "Présentez vos programmes et vos réussites à un public plus large.",
       },
     ],
   },
@@ -103,14 +102,13 @@ function FeatureCard({ feature }: { feature: { title: string; description: strin
   }
 
 const AnimatedTabs = () => {
-  const { t } = useLocalization();
   const [activeTab, setActiveTab] = React.useState("graduates");
-  const featuresData = getFeaturesData(t);
+  const featuresData = getFeaturesData();
 
   const tabs = [
-    { id: 'graduates', label: t('landing.features.for_graduates.title'), icon: GraduationCap },
-    { id: 'companies', label: t('landing.features.for_companies.title'), icon: Building },
-    { id: 'schools', label: t('landing.features.for_schools.title'), icon: School },
+    { id: 'graduates', label: "Pour les Diplômés", icon: GraduationCap },
+    { id: 'companies', label: "Pour les Entreprises", icon: Building },
+    { id: 'schools', label: "Pour les Écoles", icon: School },
   ];
 
   const imageVariants = {
@@ -217,7 +215,6 @@ const AnimatedTabs = () => {
 
 
 export function FeaturesSection() {
-    const { t } = useLocalization();
     const ref = React.useRef(null);
     const isInView = useInView(ref, { once: true, amount: 0.2 });
 
@@ -232,9 +229,9 @@ export function FeaturesSection() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
         >
-          <h2 className="text-4xl font-bold tracking-tight">{t('landing.features.title')}</h2>
+          <h2 className="text-4xl font-bold tracking-tight">Une Plateforme, Trois Solutions</h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-            {t('landing.features.description')}
+            Que vous soyez un jeune diplômé, une entreprise en croissance ou une institution académique de premier plan, Yahnu est conçu pour vous.
           </p>
         </motion.div>
         
