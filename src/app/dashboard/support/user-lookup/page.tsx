@@ -43,7 +43,7 @@ export default function UserLookupPage() {
                         email: data.email,
                         type: data.role,
                         status: data.status,
-                        slug: data.slug || doc.id, // Fallback to id if slug doesn't exist
+                        slug: data.slug || doc.id,
                     } as UserAccount;
                 });
                 setAllUsers(usersList);
@@ -57,7 +57,7 @@ export default function UserLookupPage() {
     }, []);
 
     const filteredUsers = useMemo(() => {
-        if (!searchTerm) {
+        if (!searchTerm.trim()) {
             return allUsers;
         }
         const term = searchTerm.toLowerCase();
@@ -128,7 +128,7 @@ export default function UserLookupPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Rechercher un utilisateur</CardTitle>
+                    <CardTitle>Filtrer les utilisateurs</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="flex w-full max-w-sm items-center space-x-2">
@@ -180,7 +180,7 @@ export default function UserLookupPage() {
                                     <TableCell className="text-right space-x-2">
                                         {getProfileLink(user) && (
                                             <Button asChild variant="outline" size="sm">
-                                                <Link href={getProfileLink(user)!}>Voir le Profil</Link>
+                                                <Link href={getProfileLink(user)!} target="_blank">Voir le Profil</Link>
                                             </Button>
                                         )}
                                         <Button variant="outline" size="sm" onClick={() => handleSendMessage(user)}>
