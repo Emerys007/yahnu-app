@@ -34,38 +34,48 @@ const getInitialConversations = (): Conversation[] => [
         id: "amina-diallo",
         name: "Amina Diallo",
         avatar: "https://placehold.co/100x100.png?text=AD",
-        lastMessage: "Merci !",
-        time: "10:42",
-        unread: 0,
+        lastMessage: "Bonjour, mon profil ne semble pas être visible par les entreprises.",
+        time: "Il y a 2 heures",
+        unread: 1,
         messages: [
-            { id: 1, sender: "them", text: "Bonjour Amina, nous avons été impressionnés par votre profil et aimerions vous inviter à un entretien.", time: "10:40" },
-            { id: 2, sender: "me", text: "Bonjour, merci beaucoup ! Je suis disponible mardi ou jeudi après-midi.", time: "10:41" },
-            { id: 3, sender: "them", text: "Parfait. Rendez-vous est pris pour mardi à 15h. Vous recevrez un lien de visioconférence bientôt.", time: "10:41" },
-            { id: 4, sender: "me", text: "Merci !", time: "10:42" },
+            { id: 1, sender: "them", text: "Bonjour, mon profil ne semble pas être visible par les entreprises. Pouvez-vous m'aider s'il vous plaît ?", time: "Il y a 2 heures" },
         ]
     },
     {
-        id: "tech-solutions",
+        id: "contact-techsolutions",
         name: "Tech Solutions",
         avatar: "https://placehold.co/100x100.png?text=TS",
-        lastMessage: "Pouvez-vous m'en dire plus sur la culture de l'entreprise ?",
-        time: "Hier",
-        unread: 2,
+        lastMessage: "Nous avons essayé de postuler mais nous recevons une erreur.",
+        time: "Il y a 8 heures",
+        unread: 1,
         messages: [
-            { id: 1, sender: "me", text: "Bonjour, je suis très intéressé par le poste d'ingénieur Frontend.", time: "Hier" },
-            { id: 2, sender: "me", text: "Pouvez-vous m'en dire plus sur la culture de l'entreprise ?", time: "Hier" },
+             { id: 1, sender: "them", text: "Bonjour, nous ne parvenons pas à postuler à l'offre 'Data Scientist'. Nous avons essayé de postuler mais nous recevons une erreur.", time: "Il y a 8 heures" },
+             { id: 2, sender: "me", text: "Bonjour, merci de nous avoir contactés. Pourriez-vous me donner plus de détails sur l'erreur que vous rencontrez ?", time: "Il y a 7 heures" },
         ]
     },
      {
         id: "admin-inphb",
         name: "Admin INP-HB",
         avatar: "/images/University.png",
-        lastMessage: "Votre diplôme a été vérifié avec succès.",
-        time: "Il y a 2 jours",
+        lastMessage: "L'un de nos diplômés a des difficultés à faire vérifier son diplôme.",
+        time: "Il y a 1 jour",
         unread: 0,
         messages: [
-            { id: 1, sender: "me", text: "Bonjour, pourriez-vous s'il vous plaît vérifier mon diplôme ?", time: "Il y a 2 jours" },
-            { id: 2, sender: "them", text: "Bonjour, bien sûr. Votre diplôme a été vérifié avec succès.", time: "Il y a 2 jours" },
+            { id: 1, sender: "them", text: "Bonjour, l'un de nos diplômés, Jean Dupont, a des difficultés à faire vérifier son diplôme sur la plateforme. Pouvez-vous vérifier son statut ?", time: "Il y a 1 jour" },
+            { id: 2, sender: "me", text: "Bien sûr, je regarde ça tout de suite. Je vous tiens au courant.", time: "Il y a 23 heures" },
+        ]
+    },
+    {
+        id: "alice-w",
+        name: "Alice Williams",
+        avatar: "https://placehold.co/100x100.png?text=AW",
+        lastMessage: "Merci, ça a fonctionné !",
+        time: "Il y a 3 jours",
+        unread: 0,
+        messages: [
+            { id: 1, sender: "them", text: "Je n'arrive pas à réinitialiser mon mot de passe.", time: "Il y a 3 jours" },
+            { id: 2, sender: "me", text: "Bonjour Alice, j'ai renvoyé le lien de réinitialisation à votre adresse e-mail. Veuillez vérifier votre dossier de spam également.", time: "Il y a 3 jours" },
+            { id: 3, sender: "them", text: "Merci, ça a fonctionné !", time: "Il y a 3 jours" },
         ]
     },
 ];
