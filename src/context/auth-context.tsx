@@ -282,8 +282,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (email && email !== auth.currentUser.email) {
       try {
         await verifyBeforeUpdateEmail(auth.currentUser, email);
-        // Do NOT update the email in firestore here.
-        // It will be updated by onAuthStateChanged after verification.
+        // Do NOT update the email in firestore here. The onAuthStateChanged listener
+        // will handle syncing the new, verified email to Firestore.
       } catch (error: any) {
         console.error("Error sending verification email for email update:", error);
         if (error.code === 'auth/requires-recent-login') {

@@ -36,14 +36,16 @@ const UserAccountSettings = () => {
 
             if (Object.keys(updates).length > 0) {
                 await updateProfile(updates);
-                toast({
-                    title: "Profil mis à jour",
-                    description: "Vos modifications ont été enregistrées avec succès.",
-                });
+
                  if(updates.email) {
                     toast({
-                        title: "E-mail de vérification envoyé",
-                        description: "Veuillez vérifier votre nouvelle adresse e-mail pour valider le changement.",
+                        title: "Vérifiez votre nouvelle adresse e-mail",
+                        description: "Un e-mail de vérification a été envoyé à votre nouvelle adresse. Veuillez cliquer sur le lien pour confirmer le changement.",
+                    });
+                } else {
+                    toast({
+                        title: "Profil mis à jour",
+                        description: "Vos modifications ont été enregistrées avec succès.",
                     });
                 }
             } else {
@@ -292,7 +294,7 @@ const pageConfig: Record<string, { icon: React.ElementType; title: string; descr
     school: { icon: SchoolIcon, title: 'Paramètres de l\'école', description: 'Gérez votre compte personnel et les contacts de votre établissement.' },
     admin: { icon: Shield, title: 'Paramètres Administrateur', description: 'Gérez les détails de votre compte administrateur.' },
     super_admin: { icon: Shield, title: 'Paramètres Administrateur', description: 'Gérez les détails de votre compte administrateur.' },
-    content_moderator: { icon: Shield, title: 'Paramètres Administrateur', description: 'Gérez les détails de votre compte administrateur.' },
+    content_manager: { icon: Shield, title: 'Paramètres Administrateur', description: 'Gérez les détails de votre compte administrateur.' },
     support_staff: { icon: Shield, title: 'Paramètres Administrateur', description: 'Gérez les détails de votre compte administrateur.' },
 }
 
