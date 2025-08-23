@@ -155,14 +155,14 @@ export default function MessagesPage() {
     }
 
     const ConversationList = () => (
-        <div className="border-r">
-            <div className="p-4 border-b">
+        <div className="border-r flex flex-col">
+            <div className="p-4 border-b shrink-0">
                 <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input placeholder={"Rechercher des conversations"} className="pl-8" />
                 </div>
             </div>
-            <ScrollArea className="h-[calc(100vh-18rem)]">
+            <ScrollArea className="flex-1">
                 {conversations.map((convo) => (
                     <button
                         key={convo.id}
@@ -196,7 +196,7 @@ export default function MessagesPage() {
     
     const MessageView = ({ conversation }: { conversation: Conversation }) => (
         <div className="flex flex-col h-full">
-            <div className="p-4 border-b flex items-center gap-3">
+            <div className="p-4 border-b flex items-center gap-3 shrink-0">
                  {isMobile && (
                     <Button variant="ghost" size="icon" onClick={() => setSelectedConversation(null)}>
                         <ArrowLeft className="h-4 w-4" />
@@ -225,7 +225,7 @@ export default function MessagesPage() {
                     ))}
                 </div>
             </ScrollArea>
-            <div className="p-4 border-t">
+            <div className="p-4 border-t shrink-0">
                 <form className="flex items-center gap-2" onSubmit={handleSendMessage}>
                     <Input 
                         placeholder={"Écrivez un message..."} 
@@ -241,7 +241,7 @@ export default function MessagesPage() {
 
     return (
         <div className="h-[calc(100vh-10rem)] flex flex-col">
-            <div className="flex items-start gap-4 mb-8">
+            <div className="flex items-start gap-4 mb-8 shrink-0">
                 <div className="bg-primary/10 p-3 rounded-lg">
                     <MessageSquare className="h-6 w-6 text-primary" />
                 </div>
@@ -251,28 +251,30 @@ export default function MessagesPage() {
                 </div>
             </div>
 
-            <Card className="flex-1 overflow-hidden md:grid md:grid-cols-[300px_1fr]">
-                {isMobile ? (
-                    selectedConversation ? (
-                         <MessageView conversation={selectedConversation} />
+            <Card className="flex-1 overflow-hidden flex flex-col">
+                 <div className="grid md:grid-cols-[300px_1fr] flex-1 overflow-hidden">
+                    {isMobile ? (
+                        selectedConversation ? (
+                            <MessageView conversation={selectedConversation} />
+                        ) : (
+                            <ConversationList />
+                        )
                     ) : (
-                         <ConversationList />
-                    )
-                ) : (
-                    <>
-                        <ConversationList />
-                        <div className="flex flex-col">
-                             {selectedConversation ? (
-                                <MessageView conversation={selectedConversation} />
-                            ) : (
-                                <div className="flex-1 flex flex-col items-center justify-center text-center">
-                                    <MessageSquare className="h-16 w-16 text-muted-foreground/50" />
-                                    <p className="mt-4 text-muted-foreground">Sélectionnez une conversation pour commencer à discuter.</p>
-                                </div>
-                            )}
-                        </div>
-                    </>
-                )}
+                        <>
+                            <ConversationList />
+                            <div className="flex flex-col">
+                                {selectedConversation ? (
+                                    <MessageView conversation={selectedConversation} />
+                                ) : (
+                                    <div className="flex-1 flex flex-col items-center justify-center text-center">
+                                        <MessageSquare className="h-16 w-16 text-muted-foreground/50" />
+                                        <p className="mt-4 text-muted-foreground">Sélectionnez une conversation pour commencer à discuter.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    )}
+                 </div>
             </Card>
         </div>
     )
