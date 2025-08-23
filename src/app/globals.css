@@ -2,79 +2,180 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer base {
   :root {
-    --background: 267 100% 96%;
-    --foreground: 274 50% 15%;
-    --card: 267 100% 100%;
-    --card-foreground: 274 50% 15%;
-    --popover: 267 100% 100%;
-    --popover-foreground: 274 50% 15%;
-    --primary: 274 87% 53%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 267 100% 92%;
-    --secondary-foreground: 274 50% 15%;
-    --muted: 267 100% 92%;
-    --muted-foreground: 274 20% 45%;
-    --accent: 330 100% 71%;
-    --accent-foreground: 0 0% 9%;
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 34 90% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 34 90% 95%;
+    --secondary-foreground: 224 71.4% 4.1%;
+    --muted: 215 27.9% 93.5%;
+    --muted-foreground: 223 6.7% 41.8%;
+    --accent: 34 90% 90%;
+    --accent-foreground: 224 71.4% 4.1%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 267 30% 88%;
-    --input: 267 30% 92%;
-    --ring: 274 87% 53%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 215 20.2% 80.2%;
+    --input: 215 20.2% 85.2%;
+    --ring: 34 90% 50%;
+    --radius: 0.8rem;
+    --chart-1: 34 90% 50%;
+    --chart-2: 142 71% 45%;
+    --chart-3: 220 81% 51%;
+    --chart-4: 280 70% 60%;
+    --chart-5: 340 75% 50%;
   }
+
   .dark {
-    --background: 274 25% 10%;
-    --foreground: 0 0% 98%;
-    --card: 274 25% 12%;
-    --card-foreground: 0 0% 98%;
-    --popover: 274 25% 10%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 274 87% 65%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 274 25% 20%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 274 25% 20%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 330 100% 71%;
-    --accent-foreground: 0 0% 9%;
+    --background: 222 47.4% 11.2%;
+    --foreground: 210 20% 98%;
+    --card: 222 47.4% 11.2%;
+    --card-foreground: 210 20% 98%;
+    --popover: 222 47.4% 11.2%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 34 90% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 34 90% 15%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 217 32.6% 17.5%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 34 90% 20%;
+    --accent-foreground: 210 20% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 274 25% 25%;
-    --input: 274 25% 25%;
-    --ring: 274 87% 65%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 217 32.6% 17.5%;
+    --input: 217 32.6% 17.5%;
+    --ring: 34 90% 55%;
+    --chart-1: 34 90% 55%;
+    --chart-2: 142 71% 45%;
+    --chart-3: 220 81% 51%;
+    --chart-4: 280 70% 60%;
+    --chart-5: 340 75% 50%;
+  }
+
+  [data-theme='ivory-coast'] {
+    --primary: 34 90% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 34 90% 95%;
+    --accent: 142 71% 90%;
+    --ring: 34 90% 50%;
+    --chart-1: 34 90% 50%;
+    --chart-2: 142 71% 45%;
+  }
+
+  [data-theme='ivory-coast'].dark {
+    --primary: 34 90% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 34 90% 15%;
+    --accent: 142 71% 20%;
+    --ring: 34 90% 55%;
+    --chart-1: 34 90% 55%;
+    --chart-2: 142 71% 45%;
+  }
+
+  [data-theme='ghana-gold'] {
+    --primary: 45 100% 51%;
+    --primary-foreground: 224 71.4% 4.1%;
+    --secondary: 45 100% 95%;
+    --accent: 45 100% 90%;
+    --ring: 45 100% 51%;
+    --chart-1: 45 100% 51%;
+    --chart-2: 122 39% 49%;
+  }
+
+  [data-theme='ghana-gold'].dark {
+    --primary: 45 100% 51%;
+    --primary-foreground: 224 71.4% 4.1%;
+    --secondary: 45 100% 10%;
+    --accent: 45 100% 15%;
+    --ring: 45 100% 51%;
+    --chart-1: 45 100% 51%;
+    --chart-2: 122 39% 49%;
+  }
+
+  [data-theme='nigeria-green'] {
+    --primary: 122 60% 35%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 122 60% 95%;
+    --accent: 122 60% 90%;
+    --ring: 122 60% 35%;
+    --chart-1: 122 60% 35%;
+    --chart-2: 0 0% 50%;
+  }
+
+  [data-theme='nigeria-green'].dark {
+    --primary: 122 60% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 122 60% 10%;
+    --accent: 122 60% 15%;
+    --ring: 122 60% 45%;
+    --chart-1: 122 60% 45%;
+    --chart-2: 0 0% 80%;
+  }
+
+  [data-theme='senegal-sun'] {
+    --primary: 48 100% 50%;
+    --primary-foreground: 224 71.4% 4.1%;
+    --secondary: 48 100% 95%;
+    --accent: 48 100% 90%;
+    --ring: 48 100% 50%;
+    --chart-1: 48 100% 50%;
+    --chart-2: 122 39% 49%;
+  }
+
+  [data-theme='senegal-sun'].dark {
+    --primary: 48 100% 50%;
+    --primary-foreground: 224 71.4% 4.1%;
+    --secondary: 48 100% 10%;
+    --accent: 48 100% 15%;
+    --ring: 48 100% 50%;
+    --chart-1: 48 100% 50%;
+    --chart-2: 122 39% 49%;
+  }
+
+  [data-theme='cameroon-unity'] {
+    --primary: 122 39% 49%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 122 39% 95%;
+    --accent: 122 39% 90%;
+    --ring: 122 39% 49%;
+    --chart-1: 122 39% 49%;
+    --chart-2: 0 84% 60%;
+  }
+
+  [data-theme='cameroon-unity'].dark {
+    --primary: 122 39% 59%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 122 39% 10%;
+    --accent: 122 39% 15%;
+    --ring: 122 39% 59%;
+    --chart-1: 122 39% 59%;
+    --chart-2: 0 84% 70%;
+  }
+
+  [data-theme='drc-cobalt'] {
+    --primary: 220 81% 51%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 81% 95%;
+    --accent: 220 81% 90%;
+    --ring: 220 81% 51%;
+    --chart-1: 220 81% 51%;
+    --chart-2: 45 100% 51%;
+  }
+
+  [data-theme='drc-cobalt'].dark {
+    --primary: 217 91% 59%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 91% 15%;
+    --accent: 217 91% 20%;
+    --ring: 217 91% 59%;
+    --chart-1: 217 91% 59%;
+    --chart-2: 45 100% 51%;
   }
 }
 

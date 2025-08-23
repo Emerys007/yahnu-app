@@ -1,0 +1,33 @@
+# Folders to exclude from the root (/home/user/studio/)
+.androidsdkroot/
+.cache/
+.codeoss-cloudworkstation/
+.config/
+.emu/
+.global_modules/
+.idx/
+.monospace-ai-index/
+.npm/
+.pki/
+
+# Folders directly under /home/user/studio/ that are build outputs or non-source
+.next/
+.vscode/
+node_modules/
+dist/         # If you have a 'dist' folder for build output
+build/        # If you have a 'build' folder for build output
+coverage/     # If you have a 'coverage' folder for test reports
+docs/         # If the entire 'docs' folder is heavy and not needed for code analysis
+public/images/ # If your public/images folder is very large
+
+# Common files to exclude from the root or subdirectories
+*.log
+*.bak
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

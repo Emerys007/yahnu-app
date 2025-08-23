@@ -1,0 +1,213 @@
+
+"use client"
+import Link from "next/link"
+import React from "react"
+import {
+  Menu,
+  PanelLeft,
+  Bell,
+  Check,
+  School,
+  Building,
+} from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import { UserNav } from "@/components/dashboard/user-nav"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuFooter,
+} from "@/components/ui/dropdown-menu"
+import { useSidebar } from "./sidebar"
+import { useLocalization } from "@/context/localization-context"
+import { useAuth, type Role } from "@/context/auth-context"
+import { cn } from "@/lib/utils"
+import { collection, query, where, onSnapshot, limit, DocumentData } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { SearchCommand } from "../search-command"
+
+
+type NotificationItem = {
+    id: string;
+    icon: React.ElementType;
+    text: string;
+    time: string;
+    read: boolean;
+};
+
+const formatDistanceToNow = (date: Date, t: (key: string) => string): string => {
+    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    let interval = seconds / 31536000;
+    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.years_ago')}`;
+    interval = seconds / 2592000;
+    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.months_ago')}`;
+    interval = seconds / 86400;
+    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.days_ago')}`;
+    interval = seconds / 3600;
+    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.hours_ago')}`;
+    interval = seconds / 60;
+    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.minutes_ago')}`;
+    return `${Math.floor(seconds)} ${t('common.time.seconds_ago')}`;
+};
+
+const getReadNotificationIds = (): string[] => {
+    if (typeof window === "undefined") return [];
+    const stored = localStorage.getItem("readNotificationIds");
+    return stored ? JSON.parse(stored) : [];
+};
+
+const setReadNotificationIds = (ids: string[]) => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("readNotificationIds", JSON.stringify(ids));
+};
+
+
+export function DashboardHeader() {
+  const { toggleSidebar } = useSidebar();
+  const { t } = useLocalization();
+  const { user, role } = useAuth();
+
+  const [notifications, setNotifications] = React.useState<NotificationItem[]>([]);
+
+  React.useEffect(() => {
+    if (!user) return;
+
+    let q;
+    if (role === 'admin') {
+      q = query(
+        collection(db, "users"), 
+        where('status', '==', 'pending'),
+        where('role', 'in', ['company', 'school']),
+        limit(5)
+      );
+    } else if (role === 'school') {
+        q = query(
+            collection(db, "users"),
+            where('status', '==', 'pending'),
+            where('role', '==', 'graduate'),
+            where('schoolId', '==', user.uid), // Use user's UID as the schoolId
+            limit(5)
+        );
+    }
+
+    if (!q) return;
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const readIds = getReadNotificationIds();
+        const fetchedNotifications: NotificationItem[] = [];
+        querySnapshot.forEach((doc) => {
+            const data = doc.data() as DocumentData;
+            const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+
+            let notificationText = '';
+            let icon = Building;
+            if (data.role === 'company') {
+                notificationText = t("common.notifications.new_company_approval", { name: data.name });
+                icon = Building;
+            } else if (data.role === 'school') {
+                notificationText = t("common.notifications.new_school_approval", { name: data.name });
+                icon = School;
+            } else if (data.role === 'graduate') {
+                notificationText = t("common.notifications.new_graduate_activation", { name: data.name });
+                icon = Building; // TODO: Change to a more appropriate icon for a graduate
+            }
+
+            fetchedNotifications.push({
+                id: doc.id,
+                text: notificationText,
+                time: formatDistanceToNow(createdAt, t),
+                icon: icon,
+                read: readIds.includes(doc.id),
+            });
+        });
+        setNotifications(fetchedNotifications);
+    }, (error) => {
+        console.error("Firestore snapshot error:", error);
+    });
+
+    return () => unsubscribe();
+  }, [user, role, t]);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const handleRead = (id: string) => {
+    const updatedNotifications = notifications.map(n => n.id === id ? { ...n, read: true } : n);
+    setNotifications(updatedNotifications);
+
+    const readIds = getReadNotificationIds();
+    if (!readIds.includes(id)) {
+        setReadNotificationIds([...readIds, id]);
+    }
+  };
+
+  const handleReadAll = () => {
+    const updatedNotifications = notifications.map(n => ({ ...n, read: true }));
+    setNotifications(updatedNotifications);
+
+    const allIds = notifications.map(n => n.id);
+    setReadNotificationIds(allIds);
+  };
+
+  return (
+    <header className="flex h-16 items-center gap-4 border-b bg-card px-4 md:px-6 sticky top-0 z-30 shrink-0">
+        <Button
+            variant="ghost"
+            size="icon"
+            className="shrink-0"
+            onClick={toggleSidebar}
+          >
+            <PanelLeft className="h-5 w-5" />
+            <span className="sr-only">{t('common.toggle_nav')}</span>
+        </Button>
+      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+        <div className="ml-auto flex-1 md:grow-0">
+          <SearchCommand />
+        </div>
+
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" className="relative shrink-0">
+                    <Bell className="h-[1.2rem] w-[1.2rem]" />
+                    <span className="sr-only">{t('common.notifications.title')}</span>
+                    {unreadCount > 0 && (
+                        <div className="absolute top-0 right-0 -mt-1 -mr-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                            {unreadCount}
+                        </div>
+                    )}
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80">
+                <DropdownMenuLabel>{t('common.notifications.title')}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {notifications.length > 0 ? (
+                    notifications.map((item) => (
+                         <DropdownMenuItem key={item.id} className="flex items-start gap-3" onSelect={(e) => {e.preventDefault(); handleRead(item.id)}}>
+                            {!item.read && <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />}
+                            <item.icon className={cn("h-4 w-4 mt-1 text-muted-foreground", item.read && "ml-[14px]")} />
+                            <div className="flex-1">
+                                <p className="text-sm font-medium whitespace-normal">{item.text}</p>
+                                <p className="text-xs text-muted-foreground">{item.time}</p>
+                            </div>
+                        </DropdownMenuItem>
+                    ))
+                ) : (
+                     <DropdownMenuItem disabled>{t('common.notifications.no_new')}</DropdownMenuItem>
+                )}
+                 <DropdownMenuSeparator />
+                 <DropdownMenuFooter>
+                    <Button variant="ghost" className="w-full" onClick={handleReadAll} disabled={unreadCount === 0}>
+                        <Check className="mr-2 h-4 w-4" /> {t('common.notifications.mark_all_read')}
+                    </Button>
+                 </DropdownMenuFooter>
+            </DropdownMenuContent>
+        </DropdownMenu>
+
+        <UserNav />
+      </div>
+    </header>
+  )
+}

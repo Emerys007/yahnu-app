@@ -1,0 +1,113 @@
+"use client";
+
+import { MainNav } from "@/components/landing/main-nav";
+import { Footer } from "@/components/landing/footer";
+import { notFound } from "next/navigation";
+import { CompanyProfileClient } from "./company-profile-client";
+import Link from "next/link";
+import { useLocalization } from "@/context/localization-context";
+
+interface CompanyProfile {
+    id: string;
+    name: string;
+    slug: string;
+    tagline: string;
+    logoUrl: string;
+    location: string;
+    industry: string;
+    website: string;
+    description: string;
+    jobs: { title: string; type: string; location: string }[];
+}
+
+const companiesData: CompanyProfile[] = [
+    {
+        id: "1",
+        name: "Orange Côte d'Ivoire",
+        slug: "orange-ci",
+        tagline: "company_1_tagline",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Orange_logo.svg",
+        location: "Abidjan, Côte d'Ivoire",
+        industry: "Telecommunications",
+        website: "https://www.orange.ci",
+        description: "company_1_description",
+        jobs: [
+            { title: "company_1_job_1", type: "full_time", location: "Abidjan" },
+            { title: "company_1_job_2", type: "full_time", location: "Abidjan" },
+            { title: "company_1_job_3", type: "full_time", location: "Abidjan" }
+        ],
+    },
+    {
+        id: "2",
+        name: "SIFCA",
+        slug: "sifca",
+        tagline: "company_2_tagline",
+        logoUrl: "https://groupesifca.com/wp-content/uploads/2021/04/Logotype_Sifca-1.png",
+        location: "Abidjan, Côte d'Ivoire",
+        industry: "Agriculture",
+        website: "https://www.groupesifca.com",
+        description: "company_2_description",
+        jobs: [
+            { title: "company_2_job_1", type: "full_time", location: "Yamoussoukro" },
+            { title: "company_2_job_2", type: "full_time", location: "Abidjan" },
+            { title: "company_2_job_3", type: "full_time", location: "Abidjan" }
+        ],
+    },
+     {
+        id: "3",
+        name: "Bridge Bank Group",
+        slug: "bridge-bank-group",
+        tagline: "company_3_tagline",
+        logoUrl: "https://www.bridgebankgroup.com/images/interface/logo-white.svg",
+        location: "Abidjan, Côte d'Ivoire",
+        industry: "Finance & Banking",
+        website: "https://www.bridgebankgroup.com",
+        description: "company_3_description",
+        jobs: [
+            { title: "company_3_job_1", type: "full_time", location: "Abidjan" },
+            { title: "company_3_job_2", type: "full_time", location: "Abidjan" },
+            { title: "company_3_job_3", type: "full_time", location: "Abidjan" }
+        ],
+    },
+     {
+        id: "4",
+        name: "Ceva Logistics",
+        slug: "ceva-logistics",
+        tagline: "company_4_tagline",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/6/62/CEVA_Logistics_New_Logo.png",
+        location: "Abidjan, Côte d'Ivoire",
+        industry: "Transportation & Logistics",
+        website: "https://www.cevalogistics.com/fr",
+        description: "company_4_description",
+        jobs: [
+            { title: "company_4_job_1", type: "full_time", location: "San-Pédro" },
+            { title: "company_4_job_2", type: "full_time", location: "Abidjan" },
+            { title: "company_4_job_3", type: "full_time", location: "Abidjan" }
+        ],
+    },
+];
+
+function getCompanyBySlug(slug: string): CompanyProfile | null {
+    const company = companiesData.find((c) => c.slug === slug);
+    return company || null;
+}
+
+export default function CompanyPage({ params }: { params: { slug: string } }) {
+  const { t } = useLocalization();
+  const company = getCompanyBySlug(params.slug);
+
+
+  if (!company) {
+    notFound();
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background" data-hs-event-name="company_viewed">
+      <MainNav />
+      <main className="flex-1 container mx-auto py-12">
+        <CompanyProfileClient company={company} />
+      </main>
+      <Footer />
+    </div>
+  );
+}
