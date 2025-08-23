@@ -2,7 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification, updateEmail } from "firebase/auth";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification, updateEmail, verifyBeforeUpdateEmail } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, writeBatch } from "firebase/firestore";
 import { app } from '@/lib/firebase'; // Ensure your firebase config is correctly exported from here
 import Cookies from 'js-cookie';
@@ -279,21 +279,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { email, ...otherUpdates } = updates;
 
     const updatePromises: Promise<any>[] = [];
-
+    
     if (email && email !== auth.currentUser.email) {
-       // This will throw an error if reauthentication is needed, which should be caught by the caller.
-       // For this demo, we'll assume reauthentication is not needed.
-       await updateEmail(auth.currentUser, email);
-       updatePromises.push(updateDoc(userDocRef, { email }));
+       // This uses Firebase's secure email update flow.
+       // It sends a verification link to the NEW email address.
+       // The email in Auth and Firestore is only updated after the user clicks that link.
+       await verifyBeforeUpdateEmail(auth.currentUser, email);
     }
     
     if (Object.keys(otherUpdates).length > 0) {
       updatePromises.push(updateDoc(userDocRef, otherUpdates));
     }
 
-    await Promise.all(updatePromises);
+    if (updatePromises.length > 0) {
+        await Promise.all(updatePromises);
+    }
 
-    // Refresh the user state with the latest data.
+    // Refresh the user state with the latest data immediately for non-email changes.
+    // Email change will be reflected automatically on the next page load after verification.
     const userProfile = await fetchUserDocument(auth.currentUser);
     updateUserState(userProfile);
   };
