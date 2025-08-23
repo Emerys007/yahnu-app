@@ -5,7 +5,6 @@ import React, { useState, useEffect } from "react"
 import { useForm, useFieldArray, UseFormReturn } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { useLocalization } from "@/context/localization-context"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -48,35 +47,35 @@ const legalPageSchema = z.object({
     content: z.string().min(50, "Content must be at least 50 characters."),
 })
 
-const defaultAboutValues: z.infer<typeof aboutPageSchema> = {
-    aboutTitle: "About Yahnu",
-    aboutSubtitle: "We are on a mission to bridge the gap between education and employment, creating a thriving ecosystem for talent to connect with opportunity in {country} and beyond.",
-    storyTitle: "Our Story",
-    storyContent1: "<p>Founded by a team of educators and entrepreneurs, Yahnu was born from a shared vision: to unlock the immense potential of graduates by directly connecting them with the industries that need their skills. We saw a disconnect between the classroom and the workplace and set out to build the bridge.</p>",
-    storyContent2: "<p>Today, Yahnu is a dynamic platform that empowers students to launch their careers, helps companies find the right talent efficiently, and enables schools to forge meaningful industry partnerships. We believe in building futures, one connection at a time.</p>",
-    missionTitle: "Our Mission",
-    missionContent: "<p>To empower graduates, companies, and schools by creating a seamless and efficient ecosystem for talent development and career growth.</p>",
-    visionTitle: "Our Vision",
-    visionContent: "<p>To be the leading platform for professional connection and opportunity in Africa, driving economic growth and individual success.</p>",
-    valuesTitle: "Our Values",
-    valuesContent: "<p>Integrity, Innovation, Collaboration, and an unwavering commitment to the success of our users.</p>",
+export const defaultAboutValues: z.infer<typeof aboutPageSchema> = {
+    aboutTitle: "À propos de Yahnu",
+    aboutSubtitle: "Notre mission est de combler le fossé entre l'éducation et l'emploi, en créant un écosystème prospère où les talents peuvent se connecter aux opportunités.",
+    storyTitle: "Notre Histoire",
+    storyContent1: "<p>Fondée par une équipe d'éducateurs et d'entrepreneurs, Yahnu est née d'une vision commune : libérer l'immense potentiel des diplômés en les connectant directement aux industries qui ont besoin de leurs compétences. Nous avons vu une déconnexion entre la salle de classe et le lieu de travail et nous avons décidé de construire le pont.</p>",
+    storyContent2: "<p>Aujourd'hui, Yahnu est une plateforme dynamique qui permet aux étudiants de lancer leur carrière, aide les entreprises à trouver efficacement les bons talents et permet aux écoles de forger des partenariats industriels significatifs. Nous croyons en la construction d'avenirs, une connexion à la fois.</p>",
+    missionTitle: "Notre Mission",
+    missionContent: "<p>Autonomiser les diplômés, les entreprises et les écoles en créant un écosystème transparent et efficace pour le développement des talents et la croissance de carrière.</p>",
+    visionTitle: "Notre Vision",
+    visionContent: "<p>Être la plateforme leader pour la connexion professionnelle et les opportunités en Afrique, stimulant la croissance économique et la réussite individuelle.</p>",
+    valuesTitle: "Nos Valeurs",
+    valuesContent: "<p>Intégrité, Innovation, Collaboration et un engagement inébranlable envers le succès de nos utilisateurs.</p>",
     teamMembers: [
-        { name: "Colombe Koffi", role: "Founder & CEO", imageUrl: "/images/Colombe Koffi.jpeg" },
-        { name: "Joël K", role: "Head of Product & Lead Engineer", imageUrl: "/images/Joel K.jpeg" },
-        { name: "Bethel Touman", role: "Data Engineer", imageUrl: "/images/Bethel_Touman.jpeg" },
+        { name: "Colombe Koffi", role: "Fondatrice & CEO", imageUrl: "/images/Colombe Koffi.jpeg" },
+        { name: "Joël K", role: "Chef de Produit", imageUrl: "/images/Joel K.jpeg" },
+        { name: "Bethel Touman", role: "Ingénieur de Données", imageUrl: "/images/Bethel_Touman.jpeg" },
     ]
 }
 
-const defaultPrivacyPolicy: z.infer<typeof legalPageSchema> = {
-    title: "Privacy Policy",
-    lastUpdated: "January 15, 2025",
-    content: `<p>This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p><h2>Interpretation and Definitions</h2><h3>Interpretation</h3><p>The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p><h3>Definitions</h3><p>For the purposes of this Privacy Policy:</p><ul><li><strong>Account</strong> means a unique account created for You to access our Service or parts of our Service.</li><li><strong>Company</strong> (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to Yahnu.</li><li><strong>Cookies</strong> are small files that are placed on Your computer, mobile device or any other device by a website, containing the details of Your browsing history on that website among its many uses.</li><li><strong>Country</strong> refers to: Côte d'Ivoire</li><li><strong>Device</strong> means any device that can access the Service such as a computer, a cellphone or a digital tablet.</li><li><strong>Personal Data</strong> is any information that relates to an identified or identifiable individual.</li><li><strong>Service</strong> refers to the Website.</li><li><strong>Usage Data</strong> refers to data collected automatically, either generated by the use of the Service or from the Service infrastructure itself (for example, the duration of a page visit).</li><li><strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li></ul><h2>Collecting and Using Your Personal Data</h2><h3>Types of Data Collected</h3><h4>Personal Data</h4><p>While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:</p><ul><li>Email address</li><li>First name and last name</li><li>Phone number</li><li>Usage Data</li></ul><h2>Use of Your Personal Data</h2><p>The Company may use Personal Data for the following purposes:</p><ul><li>To provide and maintain our Service, including to monitor the usage of our Service.</li><li>To manage Your Account: to manage Your registration as a user of the Service. The Personal Data You provide can give You access to different functionalities of the Service that are available to You as a registered user.</li></ul><h2>Changes to this Privacy Policy</h2><p>We may update Our Privacy Policy from time to time. We will notify You of any changes by posting the new Privacy Policy on this page.</p><p>We will let You know via email and/or a prominent notice on Our Service, prior to the change becoming effective and update the "Last updated" date at the top of this Privacy Policy.</p><p>You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p><h2>Contact Us</h2><p>If you have any questions about this Privacy Policy, You can contact us:</p><ul><li>By email: <strong>contact@yahnu.org</strong></li></ul>`
+export const defaultPrivacyPolicy: z.infer<typeof legalPageSchema> = {
+    title: "Politique de confidentialité",
+    lastUpdated: "15 janvier 2025",
+    content: `<p>Cette Politique de Confidentialité décrit Nos politiques et procédures sur la collecte, l'utilisation et la divulgation de Vos informations lorsque Vous utilisez le Service et Vous informe sur Vos droits à la vie privée et comment la loi Vous protège.</p><h2>Interprétation et Définitions</h2><h3>Interprétation</h3><p>Les mots dont la lettre initiale est en majuscule ont des significations définies dans les conditions suivantes. Les définitions suivantes auront la même signification qu'elles apparaissent au singulier ou au pluriel.</p><h3>Définitions</h3><p>Aux fins de la présente Politique de Confidentialité :</p><ul><li><strong>Compte</strong> signifie un compte unique créé pour Vous permettre d'accéder à notre Service ou à des parties de notre Service.</li><li><strong>Société</strong> (désignée comme "la Société", "Nous", "Notre" ou "Nos" dans le présent Contrat) se réfère à Yahnu.</li><li><strong>Cookies</strong> sont de petits fichiers qui sont placés sur Votre ordinateur, appareil mobile ou tout autre appareil par un site web, contenant les détails de Votre historique de navigation sur ce site web parmi ses nombreuses utilisations.</li><li><strong>Pays</strong> se réfère à : Côte d'Ivoire</li><li><strong>Appareil</strong> signifie tout appareil pouvant accéder au Service tel qu'un ordinateur, un téléphone portable ou une tablette numérique.</li><li><strong>Données Personnelles</strong> sont toutes les informations qui se rapportent à un individu identifié ou identifiable.</li><li><strong>Service</strong> se réfère au Site Web.</li><li><strong>Données d'Utilisation</strong> se réfèrent aux données collectées automatiquement, soit générées par l'utilisation du Service, soit à partir de l'infrastructure du Service elle-même (par exemple, la durée d'une visite de page).</li><li><strong>Vous</strong> signifie la personne accédant ou utilisant le Service, ou la société, ou toute autre entité juridique au nom de laquelle cette personne accède ou utilise le Service, selon le cas.</li></ul><h2>Collecte et Utilisation de Vos Données Personnelles</h2><h3>Types de Données Collectées</h3><h4>Données Personnelles</h4><p>Lors de l'utilisation de Notre Service, Nous pouvons Vous demander de Nous fournir certaines informations personnelles identifiables qui peuvent être utilisées pour Vous contacter ou Vous identifier. Les informations personnelles identifiables peuvent inclure, mais ne sont pas limitées à :</p><ul><li>Adresse e-mail</li><li>Prénom et nom</li><li>Numéro de téléphone</li><li>Données d'Utilisation</li></ul><h2>Utilisation de Vos Données Personnelles</h2><p>La Société peut utiliser les Données Personnelles aux fins suivantes :</p><ul><li>Pour fournir et maintenir notre Service, y compris pour surveiller l'utilisation de notre Service.</li><li>Pour gérer Votre Compte : pour gérer Votre inscription en tant qu'utilisateur du Service. Les Données Personnelles que Vous fournissez peuvent Vous donner accès à différentes fonctionnalités du Service qui sont disponibles pour Vous en tant qu'utilisateur enregistré.</li></ul><h2>Modifications de cette Politique de Confidentialité</h2><p>Nous pouvons mettre à jour Notre Politique de Confidentialité de temps à autre. Nous Vous informerons de tout changement en publiant la nouvelle Politique de Confidentialité sur cette page.</p><p>Nous Vous informerons par e-mail et/ou par un avis visible sur Notre Service, avant que le changement ne devienne effectif et mettrons à jour la date de "Dernière mise à jour" en haut de cette Politique de Confidentialité.</p><p>Il Vous est conseillé de consulter périodiquement cette Politique de Confidentialité pour tout changement. Les changements à cette Politique de Confidentialité sont effectifs lorsqu'ils sont publiés sur cette page.</p><h2>Contactez-nous</h2><p>Si vous avez des questions sur cette Politique de Confidentialité, Vous pouvez nous contacter :</p><ul><li>Par email: <strong>contact@yahnu.org</strong></li></ul>`
 };
 
-const defaultTerms: z.infer<typeof legalPageSchema> = {
-    title: "Terms of Service",
-    lastUpdated: "January 15, 2025",
-    content: `<p>Please read these terms and conditions carefully before using Our Service.</p><h2>Interpretation and Definitions</h2><h3>Interpretation</h3><p>The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p><h3>Definitions</h3><p>For the purposes of these Terms and Conditions:</p><ul><li><strong>Country</strong> refers to: Côte d'Ivoire</li><li><strong>Company</strong> (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to Yahnu.</li><li><strong>Device</strong> means any device that can access the Service such as a computer, a cellphone or a digital tablet.</li><li><strong>Service</strong> refers to the Website.</li><li><strong>Terms and Conditions</strong> (also referred to as "Terms") mean these Terms and Conditions that form the entire agreement between You and the Company regarding the use of the Service.</li><li><strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li></ul><h2>Acknowledgment</h2><p>These are the Terms and Conditions governing the use of this Service and the agreement that operates between You and the Company. These Terms and Conditions set out the rights and obligations of all users regarding the use of the Service.</p><p>Your access to and use of the Service is conditioned on Your acceptance of and compliance with these Terms and Conditions. These Terms and Conditions apply to all visitors, users and others who access or use the Service.</p><h2>User Accounts</h2><p>When You create an account with Us, You must provide Us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of Your account on Our Service.</p><h2>Termination</h2><p>We may terminate or suspend Your Account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if You breach these Terms and Conditions.</p><h2>Changes to These Terms and Conditions</h2><p>We reserve the right, at Our sole discretion, to modify or replace these Terms at any time. If a revision is material We will make reasonable efforts to provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at Our sole discretion.</p><h2>Contact Us</h2><p>If you have any questions about these Terms and Conditions, You can contact us:</p><ul><li>By email: <strong>contact@yahnu.org</strong></li></ul>`
+export const defaultTerms: z.infer<typeof legalPageSchema> = {
+    title: "Conditions d'utilisation",
+    lastUpdated: "15 janvier 2025",
+    content: `<p>Veuillez lire attentivement ces termes et conditions avant d'utiliser Notre Service.</p><h2>Interprétation et Définitions</h2><h3>Interprétation</h3><p>Les mots dont la lettre initiale est en majuscule ont des significations définies dans les conditions suivantes. Les définitions suivantes auront la même signification qu'elles apparaissent au singulier ou au pluriel.</p><h3>Définitions</h3><p>Aux fins de ces Termes et Conditions :</p><ul><li><strong>Pays</strong> se réfère à : Côte d'Ivoire</li><li><strong>Société</strong> (désignée comme "la Société", "Nous", "Notre" ou "Nos" dans le présent Contrat) se réfère à Yahnu.</li><li><strong>Appareil</strong> signifie tout appareil pouvant accéder au Service tel qu'un ordinateur, un téléphone portable ou une tablette numérique.</li><li><strong>Service</strong> se réfère au Site Web.</li><li><strong>Termes et Conditions</strong> (également appelés "Termes") signifient ces Termes et Conditions qui forment l'intégralité de l'accord entre Vous et la Société concernant l'utilisation du Service.</li><li><strong>Vous</strong> signifie la personne accédant ou utilisant le Service, ou la société, ou toute autre entité juridique au nom de laquelle cette personne accède ou utilise le Service, selon le cas.</li></ul><h2>Reconnaissance</h2><p>Ce sont les Termes et Conditions régissant l'utilisation de ce Service et l'accord qui opère entre Vous et la Société. Ces Termes et Conditions énoncent les droits et obligations de tous les utilisateurs concernant l'utilisation du Service.</p><p>Votre accès et votre utilisation du Service sont conditionnés à Votre acceptation et à Votre conformité avec ces Termes et Conditions. Ces Termes et Conditions s'appliquent à tous les visiteurs, utilisateurs et autres personnes qui accèdent ou utilisent le Service.</p><h2>Comptes d'Utilisateur</h2><p>Lorsque Vous créez un compte avec Nous, Vous devez Nous fournir des informations exactes, complètes et à jour en tout temps. Le non-respect de cette obligation constitue une violation des Termes, ce qui peut entraîner la résiliation immédiate de Votre compte sur Notre Service.</p><h2>Résiliation</h2><p>Nous pouvons résilier ou suspendre Votre Compte immédiatement, sans préavis ni responsabilité, pour quelque raison que ce soit, y compris, sans limitation, si Vous enfreignez ces Termes et Conditions.</p><h2>Modifications de ces Termes et Conditions</h2><p>Nous nous réservons le droit, à Notre seule discrétion, de modifier ou de remplacer ces Termes à tout moment. Si une révision est importante, Nous ferons des efforts raisonnables pour fournir un préavis d'au moins 30 jours avant que les nouvelles conditions n'entrent en vigueur. Ce qui constitue un changement important sera déterminé à Notre seule discrétion.</p><h2>Contactez-nous</h2><p>Si vous avez des questions sur ces Termes et Conditions, Vous pouvez nous contacter :</p><ul><li>Par email: <strong>contact@yahnu.org</strong></li></ul>`
 };
 
 // --- Helper Component ---
@@ -122,12 +121,12 @@ const PageFormWrapper = ({ pageId, schema, defaultValues, children }: { pageId: 
             const docRef = doc(db, "pages", pageId);
             await setDoc(docRef, values, { merge: true });
             toast({
-                title: "Content Updated",
-                description: "The page content has been saved.",
+                title: "Contenu mis à jour",
+                description: "Le contenu de la page a été enregistré.",
             });
         } catch (error) {
             console.error("Failed to save content:", error);
-            toast({ title: "Error", description: "Failed to save page content.", variant: "destructive" });
+            toast({ title: "Erreur", description: "La sauvegarde du contenu de la page a échoué.", variant: "destructive" });
         } finally {
             setIsSaving(false);
         }
@@ -147,7 +146,6 @@ const PageFormWrapper = ({ pageId, schema, defaultValues, children }: { pageId: 
 };
 
 const AboutUsForm = ({ form, isSaving }: { form: UseFormReturn<z.infer<typeof aboutPageSchema>>, isSaving: boolean }) => {
-    const { t } = useLocalization();
     const { fields, append, remove } = useFieldArray({
         control: form.control,
         name: "teamMembers"
@@ -156,54 +154,54 @@ const AboutUsForm = ({ form, isSaving }: { form: UseFormReturn<z.infer<typeof ab
     return (
         <div className="space-y-8">
             <div className="space-y-4 p-4 border rounded-lg">
-                <h3 className="text-lg font-semibold">{t('Hero Section')}</h3>
-                <FormField control={form.control} name="aboutTitle" render={({ field }) => (<FormItem><FormLabel>{t('Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={form.control} name="aboutSubtitle" render={({ field }) => (<FormItem><FormLabel>{t('Subtitle')}</FormLabel><FormControl><Textarea rows={2} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <h3 className="text-lg font-semibold">Section Héro</h3>
+                <FormField control={form.control} name="aboutTitle" render={({ field }) => (<FormItem><FormLabel>Titre</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="aboutSubtitle" render={({ field }) => (<FormItem><FormLabel>Sous-titre</FormLabel><FormControl><Textarea rows={2} {...field} /></FormControl><FormMessage /></FormItem>)} />
             </div>
             <Separator />
              <div className="space-y-4 p-4 border rounded-lg">
-                <h3 className="text-lg font-semibold">{t('Story Section')}</h3>
-                <FormField control={form.control} name="storyTitle" render={({ field }) => (<FormItem><FormLabel>{t('Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={form.control} name="storyContent1" render={({ field }) => (<FormItem><FormLabel>{t('Content Paragraph 1')}</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={form.control} name="storyContent2" render={({ field }) => (<FormItem><FormLabel>{t('Content Paragraph 2')}</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <h3 className="text-lg font-semibold">Section Histoire</h3>
+                <FormField control={form.control} name="storyTitle" render={({ field }) => (<FormItem><FormLabel>Titre</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="storyContent1" render={({ field }) => (<FormItem><FormLabel>Paragraphe de contenu 1</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="storyContent2" render={({ field }) => (<FormItem><FormLabel>Paragraphe de contenu 2</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
             </div>
             <Separator />
              <div className="space-y-4 p-4 border rounded-lg">
-                <h3 className="text-lg font-semibold">{t('Mission, Vision & Values')}</h3>
+                <h3 className="text-lg font-semibold">Mission, Vision & Valeurs</h3>
                 <div className="grid md:grid-cols-3 gap-6">
                     <div className="space-y-4">
-                        <h4 className="text-md font-semibold">{t('Mission Card')}</h4>
-                        <FormField control={form.control} name="missionTitle" render={({ field }) => (<FormItem><FormLabel>{t('Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name="missionContent" render={({ field }) => (<FormItem><FormLabel>{t('Content')}</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <h4 className="text-md font-semibold">Carte Mission</h4>
+                        <FormField control={form.control} name="missionTitle" render={({ field }) => (<FormItem><FormLabel>Titre</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name="missionContent" render={({ field }) => (<FormItem><FormLabel>Contenu</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
                     </div>
                     <div className="space-y-4">
-                        <h4 className="text-md font-semibold">{t('Vision Card')}</h4>
-                        <FormField control={form.control} name="visionTitle" render={({ field }) => (<FormItem><FormLabel>{t('Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name="visionContent" render={({ field }) => (<FormItem><FormLabel>{t('Content')}</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <h4 className="text-md font-semibold">Carte Vision</h4>
+                        <FormField control={form.control} name="visionTitle" render={({ field }) => (<FormItem><FormLabel>Titre</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name="visionContent" render={({ field }) => (<FormItem><FormLabel>Contenu</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
                     </div>
                     <div className="space-y-4">
-                        <h4 className="text-md font-semibold">{t('Values Card')}</h4>
-                        <FormField control={form.control} name="valuesTitle" render={({ field }) => (<FormItem><FormLabel>{t('Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name="valuesContent" render={({ field }) => (<FormItem><FormLabel>{t('Content')}</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <h4 className="text-md font-semibold">Carte Valeurs</h4>
+                        <FormField control={form.control} name="valuesTitle" render={({ field }) => (<FormItem><FormLabel>Titre</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name="valuesContent" render={({ field }) => (<FormItem><FormLabel>Contenu</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
                     </div>
                 </div>
              </div>
              <Separator />
              <div className="space-y-4 p-4 border rounded-lg">
                 <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold">{t('Meet the Team Section')}</h3>
+                    <h3 className="text-lg font-semibold">Section "Rencontrez l'équipe"</h3>
                     <Button type="button" size="sm" variant="outline" onClick={() => append({ name: '', role: '', imageUrl: '' })}>
-                        <PlusCircle className="mr-2 h-4 w-4" /> {t('Add Member')}
+                        <PlusCircle className="mr-2 h-4 w-4" /> Ajouter un membre
                     </Button>
                 </div>
                 <div className="space-y-4">
                     {fields.map((field, index) => (
                         <div key={field.id} className="p-4 border rounded-lg relative space-y-4 bg-muted/50">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <FormField control={form.control} name={`teamMembers.${index}.name`} render={({ field }) => (<FormItem><FormLabel>{t('Name')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                <FormField control={form.control} name={`teamMembers.${index}.role`} render={({ field }) => (<FormItem><FormLabel>{t('Role')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name={`teamMembers.${index}.name`} render={({ field }) => (<FormItem><FormLabel>Nom</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name={`teamMembers.${index}.role`} render={({ field }) => (<FormItem><FormLabel>Rôle</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                             </div>
-                            <FormField control={form.control} name={`teamMembers.${index}.imageUrl`} render={({ field }) => (<FormItem><FormLabel>{t('Image URL')}</FormLabel><FormControl><Input placeholder="https://example.com/image.png" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                            <FormField control={form.control} name={`teamMembers.${index}.imageUrl`} render={({ field }) => (<FormItem><FormLabel>URL de l'image</FormLabel><FormControl><Input placeholder="https://example.com/image.png" {...field} /></FormControl><FormMessage /></FormItem>)} />
                             <Button type="button" variant="destructive" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={() => remove(index)}>
                                 <Trash2 className="h-4 w-4" />
                             </Button>
@@ -214,7 +212,7 @@ const AboutUsForm = ({ form, isSaving }: { form: UseFormReturn<z.infer<typeof ab
 
             <div className="flex justify-end">
                 <Button type="submit" disabled={isSaving}>
-                    {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} {t('Save About Page')}
+                    {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Enregistrer la page "À propos"
                 </Button>
             </div>
         </div>
@@ -222,15 +220,14 @@ const AboutUsForm = ({ form, isSaving }: { form: UseFormReturn<z.infer<typeof ab
 }
 
 const LegalPageForm = ({ form, isSaving, pageName }: { form: UseFormReturn<z.infer<typeof legalPageSchema>>, isSaving: boolean, pageName: string }) => {
-    const { t } = useLocalization();
     return (
         <div className="space-y-4">
-            <FormField control={form.control} name="title" render={({ field }) => (<FormItem><FormLabel>{t('Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={form.control} name="lastUpdated" render={({ field }) => (<FormItem><FormLabel>{t('Last Updated Date')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={form.control} name="content" render={({ field }) => (<FormItem><FormLabel>{t('Content')}</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="title" render={({ field }) => (<FormItem><FormLabel>Titre</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="lastUpdated" render={({ field }) => (<FormItem><FormLabel>Date de dernière mise à jour</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="content" render={({ field }) => (<FormItem><FormLabel>Contenu</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
              <div className="flex justify-end">
                  <Button type="submit" disabled={isSaving}>
-                    {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} {t('Save {pageName}', { pageName })}
+                    {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Enregistrer {pageName}
                 </Button>
             </div>
         </div>
@@ -240,20 +237,18 @@ const LegalPageForm = ({ form, isSaving, pageName }: { form: UseFormReturn<z.inf
 // --- Main Component ---
 
 export function ContentPagesEditor() {
-    const { t } = useLocalization();
-    
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Static Page Content</CardTitle>
-                <CardDescription>Edit the content displayed on various public pages of the site.</CardDescription>
+                <CardTitle>Contenu des pages statiques</CardTitle>
+                <CardDescription>Modifiez le contenu affiché sur diverses pages publiques du site.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Tabs defaultValue="about-us">
                     <TabsList>
-                        <TabsTrigger value="about-us">{t("About Us")}</TabsTrigger>
-                        <TabsTrigger value="privacy-policy">{t("Privacy Policy")}</TabsTrigger>
-                        <TabsTrigger value="terms-of-service">{t("Terms of Service")}</TabsTrigger>
+                        <TabsTrigger value="about-us">À propos de nous</TabsTrigger>
+                        <TabsTrigger value="privacy-policy">Politique de confidentialité</TabsTrigger>
+                        <TabsTrigger value="terms-of-service">Conditions d'utilisation</TabsTrigger>
                     </TabsList>
                     <TabsContent value="about-us" className="pt-6">
                         <PageFormWrapper pageId="about-us" schema={aboutPageSchema} defaultValues={defaultAboutValues}>
@@ -262,12 +257,12 @@ export function ContentPagesEditor() {
                     </TabsContent>
                     <TabsContent value="privacy-policy" className="pt-6">
                         <PageFormWrapper pageId="privacy-policy" schema={legalPageSchema} defaultValues={defaultPrivacyPolicy}>
-                            {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName="Privacy Policy" />}
+                            {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName="la politique de confidentialité" />}
                         </PageFormWrapper>
                     </TabsContent>
                     <TabsContent value="terms-of-service" className="pt-6">
                         <PageFormWrapper pageId="terms-of-service" schema={legalPageSchema} defaultValues={defaultTerms}>
-                             {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName="Terms of Service" />}
+                             {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName="les conditions d'utilisation" />}
                         </PageFormWrapper>
                     </TabsContent>
                 </Tabs>
@@ -275,6 +270,3 @@ export function ContentPagesEditor() {
         </Card>
     );
 }
-
-
-    

@@ -1,5 +1,4 @@
 
-
 "use client"
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -7,7 +6,6 @@ import 'react-quill/dist/quill.snow.css';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
 import { Textarea } from './textarea';
-import { useLocalization } from '@/context/localization-context';
 
 const ReactQuill = dynamic(
     () => import('react-quill'), 
@@ -23,7 +21,6 @@ interface RichTextEditorProps {
 
 export const RichTextEditor = ({ value, onChange, className, placeholder }: RichTextEditorProps) => {
     const [showHtml, setShowHtml] = useState(false);
-    const { t } = useLocalization();
     const quillRef = useRef<any>(null);
 
     const modules = {
@@ -55,14 +52,14 @@ export const RichTextEditor = ({ value, onChange, className, placeholder }: Rich
         const toolbar = quillRef.current?.getEditor().getModule('toolbar').container;
         if (toolbar) {
             const buttonMap: Record<string, string> = {
-                'bold': t('Bold'),
-                'italic': t('Italic'),
-                'underline': t('Underline'),
-                'strike': t('Strikethrough'),
-                'list': t('List'),
-                'link': t('Insert Link'),
-                'code-block': t('Code View'),
-                'clean': t('Clear Formatting')
+                'bold': 'Gras',
+                'italic': 'Italique',
+                'underline': 'Souligné',
+                'strike': 'Barré',
+                'list': 'Liste',
+                'link': 'Insérer un lien',
+                'code-block': 'Vue Code',
+                'clean': 'Effacer le formatage'
             };
 
             Object.entries(buttonMap).forEach(([className, tooltipText]) => {
@@ -72,9 +69,9 @@ export const RichTextEditor = ({ value, onChange, className, placeholder }: Rich
                 });
             });
             const headerButton = toolbar.querySelector('.ql-header');
-            if (headerButton) headerButton.setAttribute('title', t('Header Style'));
+            if (headerButton) headerButton.setAttribute('title', "Style d'en-tête");
         }
-    }, [t, showHtml, value]); // Re-run when view or value changes to reapply tooltips
+    }, [showHtml, value]); // Re-run when view or value changes to reapply tooltips
 
   return (
     <div className={cn("bg-background", className)}>
@@ -83,7 +80,7 @@ export const RichTextEditor = ({ value, onChange, className, placeholder }: Rich
                 <div id="toolbar-html" className="ql-toolbar ql-snow rounded-t-md border-input border">
                     <span className="ql-formats">
                         <button 
-                            title={t('Rich Text View')}
+                            title={"Vue Texte Riche"}
                             type="button" 
                             className="ql-active ql-code-block"
                             onClick={() => setShowHtml(false)}
@@ -98,7 +95,7 @@ export const RichTextEditor = ({ value, onChange, className, placeholder }: Rich
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     className="min-h-64 rounded-t-none font-mono text-sm"
-                    placeholder="<!-- Write your HTML here -->"
+                    placeholder="<!-- Écrivez votre HTML ici -->"
                 />
             </div>
         ) : (
