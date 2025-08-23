@@ -1,15 +1,17 @@
 
 "use client"
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, User, Mail, Briefcase, Building, School, UserCheck } from 'lucide-react';
+import { Search, User, Mail, Briefcase, Building, School, UserCheck, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { db } from "@/lib/firebase";
+import { collection, query, where, getDocs, DocumentData } from "firebase/firestore";
 
 type UserAccount = {
     id: string;
@@ -20,31 +22,53 @@ type UserAccount = {
     slug?: string;
 };
 
-const allUsers: UserAccount[] = [
-    { id: 'usr_001', name: 'Amina Diallo', email: 'amina.diallo@example.com', type: 'graduate', status: 'active', slug: 'amina-diallo' },
-    { id: 'usr_002', name: 'Orange Côte d\'Ivoire', email: 'contact@orange.ci', type: 'company', status: 'active', slug: 'orange-ci' },
-    { id: 'usr_003', name: 'INP-HB', email: 'admin@inphb.ci', type: 'school', status: 'active', slug: 'inp-hb' },
-    { id: 'usr_004', name: 'Ben Traoré', email: 'ben.traore@example.com', type: 'graduate', status: 'pending', slug: 'ben-traore'},
-    { id: 'usr_005', name: 'SIFCA', email: 'contact@sifca.ci', type: 'company', status: 'suspended', slug: 'sifca'},
-];
-
 export default function UserLookupPage() {
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
+    const [allUsers, setAllUsers] = useState<UserAccount[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            setIsLoading(true);
+            try {
+                const usersRef = collection(db, "users");
+                const q = query(usersRef, where("role", "in", ["graduate", "company", "school"]));
+                const querySnapshot = await getDocs(q);
+                const usersList = querySnapshot.docs.map(doc => {
+                    const data = doc.data() as DocumentData;
+                    return {
+                        id: doc.id,
+                        name: data.name || data.email,
+                        email: data.email,
+                        type: data.role,
+                        status: data.status,
+                        slug: data.slug || doc.id, // Fallback to id if slug doesn't exist
+                    } as UserAccount;
+                });
+                setAllUsers(usersList);
+            } catch (error) {
+                console.error("Error fetching users: ", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchUsers();
+    }, []);
 
     const filteredUsers = useMemo(() => {
         if (!searchTerm) {
-            return allUsers.filter(u => u.type !== 'admin');
+            return allUsers;
         }
         const term = searchTerm.toLowerCase();
-        return allUsers.filter(u => 
-            u.type !== 'admin' && 
-            (u.name.toLowerCase().includes(term) || u.email.toLowerCase().includes(term))
+        return allUsers.filter(u =>
+            (u.name && u.name.toLowerCase().includes(term)) ||
+            (u.email && u.email.toLowerCase().includes(term))
         );
-    }, [searchTerm]);
+    }, [searchTerm, allUsers]);
 
     const handleSendMessage = (user: UserAccount) => {
-        const newConvoId = user.email.split('@')[0].replace('.', '-');
+        const newConvoId = user.email.split('@')[0].replace(/[^a-z0-9]/gi, '-');
         router.push(`/dashboard/messages?new=${newConvoId}&name=${encodeURIComponent(user.name)}`);
     };
 
@@ -104,7 +128,7 @@ export default function UserLookupPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Filtrer les utilisateurs</CardTitle>
+                    <CardTitle>Rechercher un utilisateur</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="flex w-full max-w-sm items-center space-x-2">
@@ -120,9 +144,14 @@ export default function UserLookupPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Résultats de la recherche</CardTitle>
+                    <CardTitle>Résultats</CardTitle>
                 </CardHeader>
                 <CardContent>
+                     {isLoading ? (
+                        <div className="flex justify-center items-center h-48">
+                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        </div>
+                    ) : (
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -168,6 +197,7 @@ export default function UserLookupPage() {
                             )}
                         </TableBody>
                     </Table>
+                    )}
                 </CardContent>
             </Card>
         </div>
