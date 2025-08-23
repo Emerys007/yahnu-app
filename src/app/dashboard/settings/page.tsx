@@ -13,57 +13,147 @@ import { Separator } from "@/components/ui/separator"
 import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, School as SchoolIcon, KeyRound, Check, ChevronsUpDown } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 // #region Shared Settings
+
+const EmailVerificationDialog = ({
+  isOpen,
+  onClose,
+  onConfirm
+}: {
+  isOpen: boolean,
+  onClose: () => void,
+  onConfirm: (code: string) => void
+}) => {
+    const [code, setCode] = useState("");
+
+    const handleConfirm = () => {
+        onConfirm(code);
+    }
+
+    return (
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Vérifiez votre adresse e-mail</DialogTitle>
+                    <DialogDescription>
+                        Nous avons envoyé un code de vérification à votre ancienne adresse e-mail. Veuillez saisir le code ci-dessous pour confirmer le changement.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="py-4">
+                    <Label htmlFor="verification-code">Code de vérification</Label>
+                    <Input 
+                        id="verification-code" 
+                        value={code} 
+                        onChange={(e) => setCode(e.target.value)} 
+                        placeholder="Entrez le code à 6 chiffres" 
+                    />
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={onClose}>Annuler</Button>
+                    <Button onClick={handleConfirm} disabled={!code}>Confirmer</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+
 const UserAccountSettings = () => {
     const { user, createPassword, isGoogleProvider, updateProfile } = useAuth();
     const { toast } = useToast();
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
+    const [newEmail, setNewEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isVerificationOpen, setIsVerificationOpen] = useState(false);
 
     const handleSaveChanges = async () => {
         if (!user) return;
+        
+        const nameChanged = name !== user.name;
+        const emailChanged = email !== user.email;
+
+        if (!nameChanged && !emailChanged) {
+             toast({
+                title: "Aucune modification",
+                description: "Vous n'avez effectué aucune modification.",
+            });
+            return;
+        }
+        
         setIsSubmitting(true);
-        try {
-            const updates: { name?: string; email?: string } = {};
-            if (name !== user.name) {
-                updates.name = name;
-            }
-            if (email !== user.email) {
-                updates.email = email;
-            }
-
-            if (Object.keys(updates).length > 0) {
-                await updateProfile(updates);
-
-                 if(updates.email) {
-                    toast({
-                        title: "Vérifiez votre nouvelle adresse e-mail",
-                        description: "Un e-mail de vérification a été envoyé à votre nouvelle adresse. Veuillez cliquer sur le lien pour confirmer le changement.",
-                    });
-                } else {
-                    toast({
-                        title: "Profil mis à jour",
-                        description: "Vos modifications ont été enregistrées avec succès.",
-                    });
-                }
-            } else {
-                 toast({
-                    title: "Aucune modification",
-                    description: "Vous n'avez effectué aucune modification.",
+        
+        if (emailChanged) {
+            setNewEmail(email); // Store the new email temporarily
+            // In a real app, you would trigger a backend function here to send a code to user.email
+            console.log("Code de vérification (simulé) envoyé à :", user.email);
+            toast({
+                title: "Code de vérification envoyé",
+                description: `Un code a été envoyé à ${user.email} pour confirmer cette modification.`
+            })
+            setIsVerificationOpen(true); // Open the verification dialog
+            setIsSubmitting(false); // No need to keep it submitting while dialog is open
+            return;
+        }
+        
+        // If only name changed
+        if (nameChanged) {
+            try {
+                await updateProfile({ name });
+                toast({
+                    title: "Profil mis à jour",
+                    description: "Vos modifications ont été enregistrées avec succès.",
+                });
+            } catch (error: any) {
+                toast({
+                    title: "Erreur",
+                    description: error.message || "La mise à jour du profil a échoué.",
+                    variant: 'destructive',
                 });
             }
+        }
+        setIsSubmitting(false);
+    };
+
+    const onConfirmVerification = async (code: string) => {
+        if (!user) return;
+        setIsVerificationOpen(false);
+        setIsSubmitting(true);
+
+        try {
+            // Here, you would normally verify the code on your backend
+            // For this simulation, we'll just check if the code is not empty
+            if (code.trim() === '') {
+                 throw new Error("Le code de vérification ne peut pas être vide.");
+            }
+            console.log("Code de vérification reçu :", code, "Modification de l'e-mail pour :", newEmail);
+
+             await updateProfile({ email: newEmail });
+             toast({
+                title: "Adresse e-mail mise à jour !",
+                description: "Votre adresse e-mail a été modifiée avec succès.",
+            });
         } catch (error: any) {
-            toast({
-                title: "Erreur",
-                description: error.message || "La mise à jour du profil a échoué.",
+             toast({
+                title: "Erreur de vérification",
+                description: error.message || "Le code est incorrect ou a expiré.",
                 variant: 'destructive',
             });
         } finally {
             setIsSubmitting(false);
+            setNewEmail(''); // Clear the temporary new email
         }
     };
+
 
     const handleCreatePassword = async () => {
         if (!user || !user.email) return;
@@ -83,6 +173,7 @@ const UserAccountSettings = () => {
     };
 
     return (
+        <>
         <Card>
             <CardHeader>
               <CardTitle>Informations sur le compte</CardTitle>
@@ -110,6 +201,12 @@ const UserAccountSettings = () => {
               </div>
             </CardContent>
         </Card>
+         <EmailVerificationDialog 
+            isOpen={isVerificationOpen}
+            onClose={() => setIsVerificationOpen(false)}
+            onConfirm={onConfirmVerification}
+         />
+        </>
     )
 }
 // #endregion

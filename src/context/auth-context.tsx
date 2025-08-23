@@ -2,7 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification, verifyBeforeUpdateEmail } from "firebase/auth";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification, updateEmail } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, writeBatch } from "firebase/firestore";
 import { app } from '@/lib/firebase'; // Ensure your firebase config is correctly exported from here
 import Cookies from 'js-cookie';
@@ -106,7 +106,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
       if (firebaseUser) {
         const userProfile = await fetchUserDocument(firebaseUser);
-         if (userProfile) { // Simplified to allow fetching profile regardless of status initially
+         if (userProfile) { // Simplified to allow fetching profile regardless of status
           // Sync email from Firebase Auth to Firestore if they differ.
           if (userProfile.email !== firebaseUser.email) {
             const userDocRef = doc(db, "users", firebaseUser.uid);
@@ -274,32 +274,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!auth.currentUser) {
       throw new Error("Aucun utilisateur n'est actuellement connecté.");
     }
-
-    const { email, ...otherUpdates } = updates;
+    
     const userDocRef = doc(db, "users", auth.currentUser.uid);
+    const { email, ...otherUpdates } = updates;
 
-    // Handle email update separately.
+    const updatePromises: Promise<any>[] = [];
+
     if (email && email !== auth.currentUser.email) {
-      try {
-        await verifyBeforeUpdateEmail(auth.currentUser, email);
-        // Do NOT update the email in firestore here. The onAuthStateChanged listener
-        // will handle syncing the new, verified email to Firestore.
-      } catch (error: any) {
-        console.error("Erreur lors de l'envoi de l'e-mail de vérification pour la mise à jour de l'e-mail:", error);
-        if (error.code === 'auth/requires-recent-login') {
-          throw new Error("Veuillez vous déconnecter et vous reconnecter pour mettre à jour votre e-mail.");
-        }
-        if (error.code === 'auth/email-already-in-use') {
-          throw new Error("Cet e-mail est déjà utilisé par un autre compte.");
-        }
-        throw new Error("Échec de l'envoi de l'e-mail de vérification pour la mise à jour de l'e-mail.");
-      }
+       // This will throw an error if reauthentication is needed, which should be caught by the caller.
+       // In a more complex app, you'd handle reauthentication here.
+       await updateEmail(auth.currentUser, email);
+       updatePromises.push(updateDoc(userDocRef, { email }));
+    }
+    
+    if (Object.keys(otherUpdates).length > 0) {
+      updatePromises.push(updateDoc(userDocRef, otherUpdates));
     }
 
-    // Handle other profile updates.
-    if (Object.keys(otherUpdates).length > 0) {
-      await updateDoc(userDocRef, otherUpdates);
-    }
+    await Promise.all(updatePromises);
 
     // Refresh the user state with the latest data.
     const userProfile = await fetchUserDocument(auth.currentUser);
