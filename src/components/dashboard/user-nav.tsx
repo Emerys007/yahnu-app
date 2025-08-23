@@ -1,7 +1,7 @@
 
 "use client"
 
-import { LogOut, User, Settings, Building, MessageSquare, BadgeCheck } from "lucide-react"
+import { LogOut, User, Settings, Building, MessageSquare, BadgeCheck, School, Shield } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -46,21 +46,22 @@ export function UserNav() {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   }
   
-  const getRoleDisplayName = (role: Role) => {
-    const roleMap: Record<Role, string> = {
-      graduate: 'Diplômé',
-      company: 'Entreprise',
-      school: 'École',
-      admin: 'Admin',
-      super_admin: 'Super Admin',
-      content_manager: 'Gestionnaire de contenu',
-      support_staff: 'Support',
+  const getRoleInfo = (role: Role) => {
+    const roleMap: Record<Role, { label: string; icon: React.ElementType }> = {
+      graduate: { label: 'Diplômé', icon: User },
+      company: { label: 'Entreprise', icon: Building },
+      school: { label: 'École', icon: School },
+      admin: { label: 'Admin', icon: Shield },
+      super_admin: { label: 'Super Admin', icon: Shield },
+      content_manager: { label: 'Gestionnaire de contenu', icon: Shield },
+      support_staff: { label: 'Support', icon: Shield },
     };
-    return roleMap[role] || role;
+    return roleMap[role] || { label: role, icon: User };
   };
 
   const hasDistinctProfilePage = role === 'graduate' || role === 'company' || role === 'school';
   const canReceiveMessages = role === 'graduate' || role === 'company' || role === 'school' || role === 'support_staff';
+  const { label: roleLabel, icon: RoleIcon } = getRoleInfo(role);
 
   return (
     <DropdownMenu>
@@ -82,8 +83,8 @@ export function UserNav() {
                 </p>
             </div>
             <Badge variant="outline" className="w-fit">
-                <BadgeCheck className="mr-1 h-3 w-3 text-primary" />
-                {getRoleDisplayName(role)}
+                <RoleIcon className="mr-1 h-3 w-3 text-primary" />
+                {roleLabel}
             </Badge>
           </div>
         </DropdownMenuLabel>
