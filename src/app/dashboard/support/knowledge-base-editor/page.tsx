@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -20,6 +19,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { RichTextEditor } from "@/components/ui/rich-text-editor"
 
 type Article = {
   id: string;
@@ -34,16 +34,52 @@ type Article = {
 
 const articleSchema = z.object({
   title: z.string().min(3, "Le titre doit comporter au moins 3 caractères."),
-  content: z.string().min(20, "Le contenu doit comporter au moins 20 caractères."),
+  content: z.string().min(50, "Le contenu doit comporter au moins 50 caractères."),
   category: z.string().min(1, "La catégorie est requise."),
   visibility: z.enum(['public', 'private']),
 });
 
 const initialArticles: Article[] = [
-    { id: '1', title: "Comment créer votre profil de diplômé", content: "Guide étape par étape pour créer un profil de diplômé efficace qui attire les employeurs.", category: "Démarrage", visibility: "public", lastUpdated: "2024-01-15", views: 1234, status: "published" },
-    { id: '2', title: "Processus d'enregistrement d'entreprise", content: "Guide complet pour les entreprises s'inscrire et commencer à publier des emplois sur la plateforme.", category: "Guide entreprise", visibility: "public", lastUpdated: "2024-01-12", views: 856, status: "published" },
-    { id: '3', title: "Résolution des problèmes de connexion", content: "Solutions courantes pour les utilisateurs rencontrant des problèmes d'accès au compte.", category: "Support technique", visibility: "public", lastUpdated: "2024-01-10", views: 432, status: "draft" },
-    { id: '4', title: "Avantages du partenariat scolaire", content: "Aperçu des avantages et fonctionnalités disponibles aux institutions éducatives partenaires.", category: "Guide école", visibility: "private", lastUpdated: "2024-01-08", views: 123, status: "published" }
+    { 
+        id: '1', 
+        title: "Comment créer votre profil de diplômé", 
+        content: "<h3>Étape 1: Inscription</h3><p>Commencez par vous inscrire en tant que 'Diplômé'. Vous devrez fournir votre prénom, nom, adresse e-mail et choisir votre école dans la liste des institutions partenaires. Assurez-vous d'utiliser une adresse e-mail valide.</p><h3>Étape 2: Remplir les informations personnelles</h3><p>Une fois inscrit, accédez à votre tableau de bord et cliquez sur 'Profil'. Remplissez les informations de base comme votre numéro de téléphone et un titre professionnel (ex: 'Développeur Frontend Junior').</p><h3>Étape 3: Ajouter votre formation et expérience</h3><p>C'est la partie la plus importante. Détaillez vos diplômes, en précisant le domaine d'études et l'année d'obtention. Décrivez vos expériences professionnelles, y compris les stages, en mettant l'accent sur vos responsabilités et vos réalisations.</p><h3>Étape 4: Mettre en avant vos compétences</h3><p>Énumérez toutes vos compétences pertinentes, qu'elles soient techniques (ex: React, Python, Excel) ou non techniques (ex: Gestion de projet, Communication). Séparez-les par des virgules. Pour valider vos compétences, passez nos évaluations dans l'onglet 'Certifications'.</p><p><strong>Astuce:</strong> Utilisez la fonction 'Remplir avec le CV' pour accélérer le processus, mais vérifiez toujours les informations extraites par notre IA !</p>", 
+        category: "Démarrage", 
+        visibility: "public", 
+        lastUpdated: "2024-01-15", 
+        views: 1234, 
+        status: "published" 
+    },
+    { 
+        id: '2', 
+        title: "Processus d'enregistrement d'entreprise", 
+        content: "<h3>Étape 1: Créer un compte</h3><p>Sur la page d'inscription, sélectionnez 'Représentant(e) d'entreprise'. Vous devrez fournir le nom de votre entreprise, votre nom en tant que contact, votre secteur d'activité, votre e-mail et un mot de passe.</p><h3>Étape 2: Approbation du compte</h3><p>Après l'inscription, votre compte sera 'en attente'. L'équipe administrative de Yahnu examinera votre demande. Ce processus garantit la légitimité des entreprises sur notre plateforme. Vous recevrez une notification par e-mail une fois votre compte approuvé.</p><h3>Étape 3: Compléter le profil de l'entreprise</h3><p>Une fois approuvé, connectez-vous et allez dans 'Profil de l'entreprise'. Ajoutez votre logo, une description détaillée de votre culture, et d'autres informations pertinentes pour attirer les meilleurs talents.</p><h3>Étape 4: Publier des offres</h3><p>Vous pouvez maintenant commencer à publier des offres d'emploi via l'onglet 'Offres d'emploi' de votre tableau de bord.</p>", 
+        category: "Guide entreprise", 
+        visibility: "public", 
+        lastUpdated: "2024-01-12", 
+        views: 856, 
+        status: "published" 
+    },
+    { 
+        id: '3', 
+        title: "Résolution des problèmes de connexion", 
+        content: "<h3>Mot de passe oublié</h3><p>Si vous avez oublié votre mot de passe, cliquez sur 'Mot de passe oublié ?' sur la page de connexion. Entrez votre adresse e-mail et nous vous enverrons un lien pour le réinitialiser.</p><h3>Compte bloqué</h3><p>Pour des raisons de sécurité, votre compte peut être temporairement bloqué après plusieurs tentatives de connexion infructueuses. Veuillez utiliser la fonction de réinitialisation du mot de passe ou attendre un peu avant de réessayer.</p><h3>Problèmes avec Google Sign-In</h3><p>Assurez-vous que les pop-ups sont autorisés pour notre site. Si votre compte Google est associé à une autre adresse e-mail que celle que vous avez utilisée pour vous inscrire, la connexion peut échouer.</p><h3>Compte en attente ou suspendu</h3><p>Si vous recevez un message indiquant que votre compte est en attente ou suspendu, cela signifie qu'il n'a pas encore été approuvé ou qu'il a été désactivé. Veuillez contacter le support si vous pensez qu'il s'agit d'une erreur.</p>", 
+        category: "Support technique", 
+        visibility: "public", 
+        lastUpdated: "2024-01-10", 
+        views: 432, 
+        status: "draft" 
+    },
+    { 
+        id: '4', 
+        title: "Avantages du partenariat scolaire", 
+        content: "<h3>Accès direct aux entreprises</h3><p>En tant qu'école partenaire, vous pouvez facilement établir des relations avec des entreprises de premier plan à la recherche de vos diplômés.</p><h3>Suivi des diplômés</h3><p>Notre tableau de bord analytique vous donne un aperçu du taux de placement de vos diplômés, des secteurs qui les recrutent et des entreprises les plus populaires, vous aidant à affiner vos programmes académiques.</p><h3>Gestion des diplômés</h3><p>Gérez facilement les comptes de vos diplômés, vérifiez leurs diplômes pour ajouter une couche de confiance pour les recruteurs et communiquez avec eux via des messages groupés.</p><h3>Organisation d'événements</h3><p>Organisez vos propres salons de l'emploi virtuels, ateliers et webinaires directement sur la plateforme pour connecter vos étudiants aux opportunités.</p>", 
+        category: "Guide école", 
+        visibility: "private", 
+        lastUpdated: "2024-01-08", 
+        views: 123, 
+        status: "published" 
+    }
 ];
 
 const ArticleForm = ({ article, onSave, onCancel }: { article: Partial<Article> | null, onSave: (data: z.infer<typeof articleSchema>) => void, onCancel: () => void }) => {
@@ -64,7 +100,7 @@ const ArticleForm = ({ article, onSave, onCancel }: { article: Partial<Article> 
                     <FormItem><FormLabel>Titre</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                  <FormField name="content" control={form.control} render={({ field }) => (
-                    <FormItem><FormLabel>Contenu</FormLabel><FormControl><Textarea rows={8} {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Contenu</FormLabel><FormControl><RichTextEditor placeholder="Rédigez votre article ici..." {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                  <div className="grid grid-cols-2 gap-4">
                     <FormField name="category" control={form.control} render={({ field }) => (
@@ -250,8 +286,8 @@ export default function KnowledgeBaseEditorPage() {
                                                 <Badge variant={article.status === 'published' ? 'default' : 'secondary'}>{article.status === 'published' ? 'Publié' : 'Brouillon'}</Badge>
                                                 <Badge variant={article.visibility === 'public' ? 'outline' : 'secondary'}>{article.visibility === 'public' ? 'Public' : 'Privé'}</Badge>
                                             </div>
-                                            <p className="text-muted-foreground mb-2">{article.content}</p>
-                                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                            <div className="prose prose-sm max-w-none text-muted-foreground line-clamp-2" dangerouslySetInnerHTML={{ __html: article.content }} />
+                                            <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
                                                 <span>Catégorie: {article.category}</span><span>•</span>
                                                 <span>Vues: {article.views}</span><span>•</span>
                                                 <span>Dernière mise à jour: {formatDate(article.lastUpdated)}</span>
@@ -285,7 +321,7 @@ export default function KnowledgeBaseEditorPage() {
             </Card>
 
             <Dialog open={isDialogOpen} onOpenChange={(open) => !open && setIsDialogOpen(false)}>
-                <DialogContent>
+                <DialogContent className="max-w-3xl">
                     <DialogHeader>
                         <DialogTitle>{editingArticle ? "Modifier l'article" : "Créer un nouvel article"}</DialogTitle>
                     </DialogHeader>
@@ -304,9 +340,7 @@ export default function KnowledgeBaseEditorPage() {
                             <span>Dernière mise à jour: {articleToView && formatDate(articleToView.lastUpdated)}</span>
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="prose prose-sm max-w-none py-4">
-                        <p>{articleToView?.content}</p>
-                    </div>
+                    <div className="prose prose-sm max-w-none py-4" dangerouslySetInnerHTML={{ __html: articleToView?.content || '' }} />
                 </DialogContent>
             </Dialog>
         </motion.div>
