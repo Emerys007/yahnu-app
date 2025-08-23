@@ -76,6 +76,72 @@ const getNewConvoName = (id: string, name?: string | null) => {
     return id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
 
+const MessageView = ({ 
+    conversation, 
+    onSendMessage,
+    isMobile,
+    onBack
+}: { 
+    conversation: Conversation;
+    onSendMessage: (text: string) => void;
+    isMobile: boolean;
+    onBack: () => void;
+}) => {
+    const [message, setMessage] = useState("");
+
+    const handleFormSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!message.trim()) return;
+        onSendMessage(message);
+        setMessage("");
+    }
+
+    return (
+        <div className="flex flex-col h-full">
+            <div className="p-4 border-b flex items-center gap-3 shrink-0">
+                 {isMobile && (
+                    <Button variant="ghost" size="icon" onClick={onBack}>
+                        <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                 )}
+                 <Avatar>
+                    <AvatarImage src={conversation.avatar} alt={conversation.name} />
+                    <AvatarFallback>{conversation.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <h3 className="font-semibold">{conversation.name}</h3>
+            </div>
+            <ScrollArea className="flex-1 p-6">
+                <div className="space-y-4">
+                    {conversation.messages.map(msg => (
+                        <div key={msg.id} className={cn("flex items-end gap-2", msg.sender === "me" ? "justify-end" : "justify-start")}>
+                            {msg.sender === 'them' && <Avatar className="h-8 w-8"><AvatarImage src={conversation.avatar} /></Avatar>}
+                            <div className={cn(
+                                "max-w-xs md:max-w-md lg:max-w-lg rounded-xl p-3 text-sm",
+                                msg.sender === "me" ? "bg-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none"
+                            )}>
+                                <p>{msg.text}</p>
+                                <p className="text-xs opacity-70 mt-1 text-right">{msg.time}</p>
+                            </div>
+                            {msg.sender === 'me' && <Avatar className="h-8 w-8"><AvatarImage src="https://placehold.co/100x100.png" /></Avatar>}
+                        </div>
+                    ))}
+                </div>
+            </ScrollArea>
+            <div className="p-4 border-t shrink-0">
+                <form className="flex items-center gap-2" onSubmit={handleFormSubmit}>
+                    <Input 
+                        placeholder={"Écrivez un message..."} 
+                        className="flex-1"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                    />
+                    <Button type="submit"><Send className="h-4 w-4" /></Button>
+                </form>
+            </div>
+        </div>
+    );
+};
+
 export default function MessagesPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -83,9 +149,7 @@ export default function MessagesPage() {
     
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
-    const [message, setMessage] = useState("");
 
-    // Initialize conversations with localized content
     useEffect(() => {
         const localizedConversations = getInitialConversations();
         setConversations(localizedConversations);
@@ -96,11 +160,11 @@ export default function MessagesPage() {
         const newConvoName = searchParams.get('name');
         
         if (newConvoId) {
-            setConversations(prev => {
-                if (prev.some(c => c.id === newConvoId)) {
-                    return prev;
-                }
-                const newConvo: Conversation = {
+            const existingConvo = conversations.find(c => c.id === newConvoId);
+            if (existingConvo) {
+                setSelectedConversation(existingConvo);
+            } else {
+                 const newConvo: Conversation = {
                     id: newConvoId,
                     name: getNewConvoName(newConvoId, newConvoName),
                     avatar: newConvoId.includes('admin') ? "/images/University.png" : "https://placehold.co/100x100.png",
@@ -109,49 +173,34 @@ export default function MessagesPage() {
                     unread: 0,
                     messages: [],
                 };
-                return [newConvo, ...prev];
-            });
-
-            const convoToSelect = conversations.find(c => c.id === newConvoId) || {
-                id: newConvoId,
-                name: getNewConvoName(newConvoId, newConvoName),
-                avatar: newConvoId.includes('admin') ? "/images/University.png" : "https://placehold.co/100x100.png",
-                lastMessage: "",
-                time: "Maintenant",
-                unread: 0,
-                messages: [],
-            };
-            
-            setSelectedConversation(convoToSelect);
-            
-            // Clean up URL
+                setConversations(prev => [newConvo, ...prev]);
+                setSelectedConversation(newConvo);
+            }
             router.replace('/dashboard/messages');
         } else if (conversations.length > 0 && !selectedConversation && !isMobile) {
             setSelectedConversation(conversations[0]);
         }
     }, [searchParams, router, isMobile, conversations]);
-
-    const handleSendMessage = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!message.trim() || !selectedConversation) return;
+    
+    const handleSendMessage = (text: string) => {
+        if (!selectedConversation) return;
 
         const newMessage: Message = {
             id: Date.now(),
             sender: "me",
-            text: message,
+            text: text,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
         
         const updatedConversation = {
             ...selectedConversation,
             messages: [...selectedConversation.messages, newMessage],
-            lastMessage: message,
+            lastMessage: text,
             time: "Maintenant"
         };
         
         setSelectedConversation(updatedConversation);
         setConversations(conversations.map(c => c.id === updatedConversation.id ? updatedConversation : c));
-        setMessage("");
     }
 
     const ConversationList = () => (
@@ -193,51 +242,6 @@ export default function MessagesPage() {
             </ScrollArea>
         </div>
     );
-    
-    const MessageView = ({ conversation }: { conversation: Conversation }) => (
-        <div className="flex flex-col h-full">
-            <div className="p-4 border-b flex items-center gap-3 shrink-0">
-                 {isMobile && (
-                    <Button variant="ghost" size="icon" onClick={() => setSelectedConversation(null)}>
-                        <ArrowLeft className="h-4 w-4" />
-                    </Button>
-                 )}
-                 <Avatar>
-                    <AvatarImage src={conversation.avatar} alt={conversation.name} />
-                    <AvatarFallback>{conversation.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <h3 className="font-semibold">{conversation.name}</h3>
-            </div>
-            <ScrollArea className="flex-1 p-6">
-                <div className="space-y-4">
-                    {conversation.messages.map(msg => (
-                        <div key={msg.id} className={cn("flex items-end gap-2", msg.sender === "me" ? "justify-end" : "justify-start")}>
-                            {msg.sender === 'them' && <Avatar className="h-8 w-8"><AvatarImage src={conversation.avatar} /></Avatar>}
-                            <div className={cn(
-                                "max-w-xs md:max-w-md lg:max-w-lg rounded-xl p-3 text-sm",
-                                msg.sender === "me" ? "bg-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none"
-                            )}>
-                                <p>{msg.text}</p>
-                                <p className="text-xs opacity-70 mt-1 text-right">{msg.time}</p>
-                            </div>
-                            {msg.sender === 'me' && <Avatar className="h-8 w-8"><AvatarImage src="https://placehold.co/100x100.png" /></Avatar>}
-                        </div>
-                    ))}
-                </div>
-            </ScrollArea>
-            <div className="p-4 border-t shrink-0">
-                <form className="flex items-center gap-2" onSubmit={handleSendMessage}>
-                    <Input 
-                        placeholder={"Écrivez un message..."} 
-                        className="flex-1"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                    />
-                    <Button type="submit"><Send className="h-4 w-4" /></Button>
-                </form>
-            </div>
-        </div>
-    );
 
     return (
         <div className="h-[calc(100vh-10rem)] flex flex-col">
@@ -255,7 +259,12 @@ export default function MessagesPage() {
                  <div className="grid md:grid-cols-[300px_1fr] flex-1 overflow-hidden">
                     {isMobile ? (
                         selectedConversation ? (
-                            <MessageView conversation={selectedConversation} />
+                            <MessageView 
+                                conversation={selectedConversation} 
+                                onSendMessage={handleSendMessage}
+                                isMobile={isMobile}
+                                onBack={() => setSelectedConversation(null)} 
+                            />
                         ) : (
                             <ConversationList />
                         )
@@ -264,7 +273,12 @@ export default function MessagesPage() {
                             <ConversationList />
                             <div className="flex flex-col">
                                 {selectedConversation ? (
-                                    <MessageView conversation={selectedConversation} />
+                                    <MessageView 
+                                        conversation={selectedConversation} 
+                                        onSendMessage={handleSendMessage}
+                                        isMobile={isMobile}
+                                        onBack={() => setSelectedConversation(null)} 
+                                    />
                                 ) : (
                                     <div className="flex-1 flex flex-col items-center justify-center text-center">
                                         <MessageSquare className="h-16 w-16 text-muted-foreground/50" />
