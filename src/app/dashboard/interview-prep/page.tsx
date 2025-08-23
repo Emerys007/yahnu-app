@@ -19,15 +19,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Wand2, Loader2, UserCheck, Code, Lightbulb, BrainCircuit } from "lucide-react"
-import { useLocalization } from "@/context/localization-context"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 const formSchema = z.object({
-  jobDescription: z.string().min(50, { message: "Job description must be at least 50 characters." }),
+  jobDescription: z.string().min(50, { message: "La description de poste doit contenir au moins 50 caractères." }),
 })
 
 export default function InterviewPrepPage() {
-  const { t } = useLocalization();
   const { toast } = useToast()
   const [isGenerating, setIsGenerating] = useState(false)
   const [questions, setQuestions] = useState<GenerateInterviewQuestionsOutput | null>(null)
@@ -43,22 +41,22 @@ export default function InterviewPrepPage() {
     setIsGenerating(true)
     setQuestions(null)
     toast({
-      title: t('Generating Questions...'),
-      description: t('Our AI is crafting your interview prep questions.'),
+      title: "Génération des questions...",
+      description: "Notre IA élabore vos questions de préparation à l'entretien.",
     })
 
     try {
       const result = await generateInterviewQuestions(values)
       setQuestions(result)
       toast({
-        title: t('Prep Material Generated!'),
-        description: t('Your interview questions are ready below.'),
+        title: "Matériel de préparation généré !",
+        description: "Vos questions d'entretien sont prêtes ci-dessous.",
       })
     } catch (error) {
       console.error("Interview question generation failed:", error)
       toast({
-        title: t('Generation Failed'),
-        description: t('There was a problem creating the prep material.'),
+        title: "Échec de la génération",
+        description: "Un problème est survenu lors de la création du matériel de préparation.",
         variant: "destructive",
       })
     } finally {
@@ -73,15 +71,15 @@ export default function InterviewPrepPage() {
           <BrainCircuit className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('AI Interview Prep')}</h1>
-          <p className="text-muted-foreground mt-1">{t('Paste a job description to generate tailored interview questions and tips.')}</p>
+          <h1 className="text-3xl font-bold tracking-tight">Préparation aux entretiens par l'IA</h1>
+          <p className="text-muted-foreground mt-1">Collez une description de poste pour générer des questions d'entretien et des conseils personnalisés.</p>
         </div>
       </div>
       
       <Card>
         <CardHeader>
-          <CardTitle>{t('Job Details')}</CardTitle>
-          <CardDescription>{t('Provide the job description for the role you are interviewing for.')}</CardDescription>
+          <CardTitle>Détails du poste</CardTitle>
+          <CardDescription>Fournissez la description du poste pour lequel vous passez un entretien.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -91,9 +89,9 @@ export default function InterviewPrepPage() {
                 name="jobDescription"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('Job Description')}</FormLabel>
+                    <FormLabel>Description du poste</FormLabel>
                     <FormControl>
-                      <Textarea placeholder={t("Paste the full job description here...")} rows={10} {...field} />
+                      <Textarea placeholder="Collez ici la description complète du poste..." rows={10} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -103,12 +101,12 @@ export default function InterviewPrepPage() {
                 {isGenerating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('Generating...')}
+                    Génération en cours...
                   </>
                 ) : (
                   <>
                     <Wand2 className="mr-2 h-4 w-4" />
-                    {t('Generate Prep Questions')}
+                    Générer les questions de préparation
                   </>
                 )}
               </Button>
@@ -121,8 +119,8 @@ export default function InterviewPrepPage() {
         <div className="grid md:grid-cols-2 gap-8">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><UserCheck /> {t('Behavioral Questions')}</CardTitle>
-              <CardDescription>{t('Assesses soft skills, cultural fit, and situational judgment.')}</CardDescription>
+              <CardTitle className="flex items-center gap-2"><UserCheck /> Questions comportementales</CardTitle>
+              <CardDescription>Évalue les compétences non techniques, l'adéquation culturelle et le jugement situationnel.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
@@ -132,7 +130,7 @@ export default function InterviewPrepPage() {
                             <AccordionContent className="space-y-2">
                                 <p className="flex items-start gap-2 text-primary">
                                     <Lightbulb className="h-4 w-4 mt-1 flex-shrink-0" />
-                                    <span className="font-semibold">{t('Tip')}:</span>
+                                    <span className="font-semibold">Conseil :</span>
                                 </p>
                                 <p className="pl-6">{q.tip}</p>
                             </AccordionContent>
@@ -143,8 +141,8 @@ export default function InterviewPrepPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Code /> {t('Technical Questions')}</CardTitle>
-              <CardDescription>{t('Tests specific hard skills and role-related knowledge.')}</CardDescription>
+              <CardTitle className="flex items-center gap-2"><Code /> Questions techniques</CardTitle>
+              <CardDescription>Teste les compétences techniques spécifiques et les connaissances liées au poste.</CardDescription>
             </CardHeader>
             <CardContent>
                  <Accordion type="single" collapsible className="w-full">
@@ -154,7 +152,7 @@ export default function InterviewPrepPage() {
                             <AccordionContent className="space-y-2">
                                 <p className="flex items-start gap-2 text-primary">
                                     <Lightbulb className="h-4 w-4 mt-1 flex-shrink-0" />
-                                    <span className="font-semibold">{t('Tip')}:</span>
+                                    <span className="font-semibold">Conseil :</span>
                                 </p>
                                 <p className="pl-6">{q.tip}</p>
                             </AccordionContent>
