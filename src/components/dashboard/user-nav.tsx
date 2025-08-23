@@ -31,13 +31,13 @@ export function UserNav() {
       await signOut()
       router.push('/')
       toast({
-        title: t("auth.logout_success_title"),
-        description: t("auth.logout_success_desc"),
+        title: t("Déconnexion réussie"),
+        description: t("Vous avez été déconnecté avec succès."),
       })
     } catch (error) {
       toast({
         title: t("common.error"),
-        description: t("auth.logout_failed_desc"),
+        description: t("Un problème est survenu lors de votre déconnexion."),
         variant: "destructive",
       })
     }
