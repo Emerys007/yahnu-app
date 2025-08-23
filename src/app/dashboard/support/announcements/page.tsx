@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Megaphone, Plus, Edit, Trash2, Users, Clock } from "lucide-react"
 import { useState } from "react"
+import { motion } from "framer-motion"
 
 export default function AnnouncementsPage() {
     const [announcements, setAnnouncements] = useState([
@@ -39,7 +40,12 @@ export default function AnnouncementsPage() {
     ]);
 
     return (
-        <div className="space-y-8">
+        <motion.div 
+            className="space-y-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
             <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
                     <div className="bg-primary/10 p-3 rounded-lg">
@@ -63,7 +69,13 @@ export default function AnnouncementsPage() {
                 <CardContent>
                     <div className="space-y-6">
                         {announcements.map((announcement) => (
-                            <div key={announcement.id} className="border rounded-lg p-6 space-y-4">
+                            <motion.div 
+                                key={announcement.id} 
+                                className="border rounded-lg p-6 space-y-4"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.3 }}
+                            >
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-2">
@@ -97,11 +109,11 @@ export default function AnnouncementsPage() {
                                         </Button>
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
                 </CardContent>
             </Card>
-        </div>
+        </motion.div>
     );
 }

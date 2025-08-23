@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button"
 import { Clock, XCircle, Eye } from "lucide-react"
+import { motion } from "framer-motion";
 
 type User = {
   id: string
@@ -136,10 +137,28 @@ export default function AdminOverviewPage() {
             default: return accountType;
         }
     }
+    
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+        },
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } },
+    };
 
     return (
         <div className="space-y-8">
-            <div className="flex items-start gap-4">
+            <motion.div 
+                className="flex items-start gap-4"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
                 <div className="bg-primary/10 p-3 rounded-lg">
                     <Shield className="h-6 w-6 text-primary" />
                 </div>
@@ -147,57 +166,75 @@ export default function AdminOverviewPage() {
                     <h1 className="text-3xl font-bold tracking-tight">Tableau de Bord</h1>
                     <p className="text-muted-foreground mt-1">Aperçu global de l'activité de la plateforme.</p>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Utilisateurs au total</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold"><CountUp end={stats.totalUsers} /></div>
-                        <p className="text-xs text-muted-foreground">Total des utilisateurs actifs sur la plateforme.</p>
-                    </CardContent>
-                </Card>
+            <motion.div 
+                className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+            >
+                <motion.div variants={itemVariants}>
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Utilisateurs au total</CardTitle>
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold"><CountUp end={stats.totalUsers} /></div>
+                            <p className="text-xs text-muted-foreground">Total des utilisateurs actifs sur la plateforme.</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Entreprises Actives</CardTitle>
-                        <Building className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold"><CountUp end={stats.activeCompanies} /></div>
-                        <p className="text-xs text-muted-foreground">Entreprises partenaires actives.</p>
-                    </CardContent>
-                </Card>
+                <motion.div variants={itemVariants}>
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Entreprises Actives</CardTitle>
+                            <Building className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold"><CountUp end={stats.activeCompanies} /></div>
+                            <p className="text-xs text-muted-foreground">Entreprises partenaires actives.</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Écoles Partenaires</CardTitle>
-                        <GraduationCap className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold"><CountUp end={stats.activeSchools} /></div>
-                         <p className="text-xs text-muted-foreground">Écoles et universités partenaires.</p>
-                    </CardContent>
-                </Card>
+                <motion.div variants={itemVariants}>
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Écoles Partenaires</CardTitle>
+                            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold"><CountUp end={stats.activeSchools} /></div>
+                             <p className="text-xs text-muted-foreground">Écoles et universités partenaires.</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Santé du système</CardTitle>
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">99.8%</div>
-                        <p className="text-xs text-muted-foreground">Disponibilité des 30 derniers jours.</p>
-                    </CardContent>
-                </Card>
-            </div>
+                <motion.div variants={itemVariants}>
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Santé du système</CardTitle>
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">99.8%</div>
+                            <p className="text-xs text-muted-foreground">Disponibilité des 30 derniers jours.</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+            </motion.div>
 
             {/* Pending Requests and Recent Activity */}
-            <div className="grid lg:grid-cols-3 gap-8 items-start">
+            <motion.div 
+                className="grid lg:grid-cols-3 gap-8 items-start"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+            >
                 <div className="lg:col-span-2">
                     <Card className="md:col-span-2">
                         <CardHeader>
@@ -272,7 +309,7 @@ export default function AdminOverviewPage() {
                         </CardContent>
                     </Card>
                 </div>
-            </div>
+            </motion.div>
 
         </div>
     )

@@ -2,11 +2,12 @@
 "use client"
 
 import * as React from "react"
-import { Eye, EyeOff, Copy, Sparkles } from "lucide-react"
+import { Eye, EyeOff, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip"
 
 export interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     hideSuggestions?: boolean,
@@ -44,32 +45,50 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
       <div className="relative">
         <Input
           type={showPassword ? "text" : "password"}
-          className={cn("pr-10", className)}
+          className={cn("pr-20", className)}
           ref={ref}
           {...props}
         />
-        <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
-            <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 hover:bg-transparent text-muted-foreground"
-                onClick={() => setShowPassword(prev => !prev)}
-            >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                <span className="sr-only">{showPassword ? 'Cacher le mot de passe' : 'Afficher le mot de passe'}</span>
-            </Button>
+        <div className="absolute inset-y-0 right-0 pr-1 flex items-center text-sm leading-5">
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                         <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 hover:bg-transparent text-muted-foreground"
+                            onClick={() => setShowPassword(prev => !prev)}
+                        >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            <span className="sr-only">{showPassword ? 'Cacher le mot de passe' : 'Afficher le mot de passe'}</span>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>{showPassword ? 'Cacher' : 'Afficher'} le mot de passe</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
             {!hideSuggestions && onSuggest && (
-                 <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 hover:bg-transparent text-muted-foreground"
-                    onClick={suggestPassword}
-                >
-                    <Sparkles className="h-4 w-4" />
-                    <span className="sr-only">Suggérer un mot de passe fort</span>
-                </Button>
+                 <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                             <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 hover:bg-transparent text-muted-foreground"
+                                onClick={suggestPassword}
+                            >
+                                <Sparkles className="h-4 w-4" />
+                                <span className="sr-only">Suggérer un mot de passe fort</span>
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Suggérer un mot de passe</p>
+                        </TooltipContent>
+                    </Tooltip>
+                 </TooltipProvider>
             )}
         </div>
       </div>

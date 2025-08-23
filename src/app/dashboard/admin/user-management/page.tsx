@@ -8,6 +8,7 @@ import { db } from "@/lib/firebase";
 import { collection, query, getDocs, DocumentData, where } from "firebase/firestore";
 import { type Role, type UserStatus } from "@/context/auth-context";
 import React, { useState, useEffect } from 'react';
+import { Skeleton } from "@/components/ui/skeleton"
 
 type User = {
   id: string;
@@ -44,7 +45,7 @@ export default function ManageUsersPage() {
                     } as User);
                 });
 
-                return users; // No need to sort here if the original didn't
+                return users;
             } catch (error) {
                 console.error("Error fetching users:", error);
                 return [];
@@ -57,25 +58,6 @@ export default function ManageUsersPage() {
         });
     }, []);
 
-    if (loading) {
-        return (
-            <div className="space-y-8">
-                <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-4">
-                        <div className="bg-primary/10 p-3 rounded-lg">
-                            <UserCog className="h-6 w-6 text-primary" />
-                        </div>
-                        <div>
-                            {/* Client-side rendered title and description to respect language context */}
-                            <UserManagementHeader />
-                        </div>
-                    </div>
-                </div>
-                <div className="text-center">Chargement...</div>
-            </div>
-        );
-    }
-
     return (
         <div className="space-y-8">
             <div className="flex items-start justify-between">
@@ -84,12 +66,22 @@ export default function ManageUsersPage() {
                         <UserCog className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                        {/* Client-side rendered title and description to respect language context */}
                         <UserManagementHeader />
                     </div>
                 </div>
             </div>
-            <UserManagementClient initialUsers={users} />
+            {loading ? (
+                <div className="space-y-4">
+                    <div className="flex gap-4">
+                        <Skeleton className="h-10 flex-1" />
+                        <Skeleton className="h-10 w-[180px]" />
+                        <Skeleton className="h-10 w-[180px]" />
+                    </div>
+                    <Skeleton className="h-[400px] w-full" />
+                </div>
+            ) : (
+                <UserManagementClient initialUsers={users} />
+            )}
         </div>
     )
 }

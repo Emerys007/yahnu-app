@@ -1,3 +1,4 @@
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -14,7 +15,13 @@ export function exportToCsv<T extends Record<string, any>>(data: T[], filename: 
   const header = Object.keys(data[0]);
   const csv = [
     header.join(','), 
-    ...data.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+    ...data.map(row => header.map(fieldName => {
+        const value = row[fieldName];
+        if (typeof value === 'string' && value.includes(',')) {
+            return `"${value}"`;
+        }
+        return JSON.stringify(value, replacer);
+    }).join(','))
   ].join('\r\n');
 
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
