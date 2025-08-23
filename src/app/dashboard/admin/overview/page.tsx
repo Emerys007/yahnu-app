@@ -126,6 +126,15 @@ export default function AdminOverviewPage() {
         return new Date(dateString).toLocaleDateString('en-US');
     };
 
+    const formatActivityTime = (minutes: string) => {
+        const mins = parseInt(minutes, 10);
+        if (mins < 60) return t('common.time.minutes_ago', { count: mins });
+        const hours = Math.floor(mins / 60);
+        if (hours < 24) return t('common.time.hours_ago', { count: hours });
+        const days = Math.floor(hours / 24);
+        return t('common.time.days_ago', { count: days });
+    };
+
     return (
         <div className="space-y-8">
             <div className="flex items-start gap-4">
@@ -236,17 +245,12 @@ export default function AdminOverviewPage() {
                         <CardContent className="space-y-4">
                              {recentActivity.map((activity) => {
                                 let displayText = "";
-                                let displayTime = "";
-                                const minutes = parseInt(activity.time);
+                                const [name, detail] = activity.text.split('|');
 
                                 if (activity.type === 'new_user') {
-                                    const [name, role] = activity.text.split('|');
-                                    displayText = `${name} ${t('dashboard.overview.signedUpAs')} ${t(`common.${role.toLowerCase()}`)}.`;
-                                    displayTime = t('common.time.minutes_ago', { count: minutes });
+                                    displayText = `${name} ${t('dashboard.overview.signedUpAs')} ${t(`common.${detail.toLowerCase()}`)}.`;
                                 } else if (activity.type === 'new_job') {
-                                    const [company, job] = activity.text.split('|');
-                                    displayText = `${company} ${t('dashboard.overview.postedNewJob')}: "${job}".`;
-                                    displayTime = t('common.time.minutes_ago', { count: minutes });
+                                    displayText = `${name} ${t('dashboard.overview.postedNewJob')}: "${detail}".`;
                                 }
 
                                 return (
@@ -258,7 +262,7 @@ export default function AdminOverviewPage() {
                                         </Avatar>
                                         <div className="grid gap-1">
                                             <p className="text-sm font-medium leading-none">{displayText}</p>
-                                            <p className="text-sm text-muted-foreground">{displayTime}</p>
+                                            <p className="text-sm text-muted-foreground">{formatActivityTime(activity.time)}</p>
                                         </div>
                                     </div>
                                 );
@@ -270,5 +274,4 @@ export default function AdminOverviewPage() {
 
         </div>
     )
-
-    
+}
