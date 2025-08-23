@@ -23,60 +23,8 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Search, MapPin, Briefcase, Building } from "lucide-react"
-import { useLocalization } from '@/context/localization-context'
 
-const jobListingsData = {
-  en: [
-    {
-      title: "Software Engineer, Frontend",
-      company: "Innovate Inc.",
-      location: "Remote",
-      type: "Full-time",
-      workplace: "remote",
-      tags: ["React", "TypeScript", "Next.js"],
-    },
-    {
-      title: "Product Manager",
-      company: "DataDriven Co.",
-      location: "New York, NY",
-      type: "Full-time",
-      workplace: "on-site",
-      tags: ["Agile", "Roadmap", "SaaS"],
-    },
-    {
-      title: "UX/UI Designer",
-      company: "Creative Solutions",
-      location: "San Francisco, CA",
-      type: "Contract",
-      workplace: "hybrid",
-      tags: ["Figma", "User Research", "Prototyping"],
-    },
-    {
-      title: "Data Scientist",
-      company: "QuantumLeap",
-      location: "Boston, MA",
-      type: "Full-time",
-      workplace: "on-site",
-      tags: ["Python", "Machine Learning", "SQL"],
-    },
-    {
-      title: "DevOps Engineer",
-      company: "CloudNine",
-      location: "Austin, TX",
-      type: "Full-time",
-      workplace: "hybrid",
-      tags: ["AWS", "Kubernetes", "CI/CD"],
-    },
-    {
-      title: "Frontend Developer",
-      company: "Innovate Inc.",
-      location: "Remote",
-      type: "Contract",
-      workplace: "remote",
-      tags: ["Vue", "JavaScript"],
-    },
-  ],
-  fr: [
+const jobListingsData = [
     {
       title: "Ingénieur logiciel, Frontend",
       company: "Innovate Inc.",
@@ -125,12 +73,10 @@ const jobListingsData = {
       workplace: "remote",
       tags: ["Vue", "JavaScript"],
     },
-  ]
-};
+  ];
 
 export default function JobSearchPage() {
-  const { language, t } = useLocalization();
-  const jobListings = jobListingsData[language as keyof typeof jobListingsData] || jobListingsData.en;
+  const jobListings = jobListingsData;
   
   const [filters, setFilters] = useState({
     keywords: "",
@@ -177,17 +123,17 @@ export default function JobSearchPage() {
     <div className="grid md:grid-cols-[280px_1fr] gap-8 items-start">
       <Card className="sticky top-20">
         <CardHeader>
-          <CardTitle>{t('Filter Jobs')}</CardTitle>
-          <CardDescription>{t('Refine your search to find the perfect fit.')}</CardDescription>
+          <CardTitle>Filtrer les emplois</CardTitle>
+          <CardDescription>Affinez votre recherche pour trouver le poste idéal.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="keywords">{t('Keywords')}</Label>
+            <Label htmlFor="keywords">Mots-clés</Label>
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input 
                 id="keywords" 
-                placeholder={t("Job title, skills...")}
+                placeholder="Titre du poste, compétences..."
                 className="pl-8" 
                 value={filters.keywords}
                 onChange={(e) => handleFilterChange('keywords', e.target.value)}
@@ -196,12 +142,12 @@ export default function JobSearchPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="location">{t('Location')}</Label>
+            <Label htmlFor="location">Lieu</Label>
              <div className="relative">
               <MapPin className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input 
                 id="location" 
-                placeholder={t("City, state, remote")}
+                placeholder="Ville, état, télétravail"
                 className="pl-8"
                 value={filters.location}
                 onChange={(e) => handleFilterChange('location', e.target.value)}
@@ -209,36 +155,36 @@ export default function JobSearchPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="job-type">{t('Job Type')}</Label>
+            <Label htmlFor="job-type">Type de poste</Label>
             <Select 
               value={filters.type}
               onValueChange={(value) => handleFilterChange('type', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder={t('All types')} />
+                <SelectValue placeholder="Tous types" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t('All Types')}</SelectItem>
-                <SelectItem value="Full-time">{t('Full-time')}</SelectItem>
-                <SelectItem value="Part-time">{t('Part-time')}</SelectItem>
-                <SelectItem value="Contract">{t('Contract')}</SelectItem>
-                <SelectItem value="Internship">{t('Internship')}</SelectItem>
+                <SelectItem value="all">Tous types</SelectItem>
+                <SelectItem value="Full-time">Temps plein</SelectItem>
+                <SelectItem value="Part-time">Temps partiel</SelectItem>
+                <SelectItem value="Contract">Contrat</SelectItem>
+                <SelectItem value="Internship">Stage</SelectItem>
               </SelectContent>
             </Select>
           </div>
            <div className="space-y-2 pt-2">
-             <Label>{t('Workplace')}</Label>
+             <Label>Lieu de travail</Label>
               <div className="flex items-center space-x-2">
                 <Checkbox id="remote" checked={filters.workplace.remote} onCheckedChange={() => handleWorkplaceChange('remote')} />
-                <Label htmlFor="remote" className="font-normal">{t('Remote')}</Label>
+                <Label htmlFor="remote" className="font-normal">Télétravail</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox id="on-site" checked={filters.workplace.onSite} onCheckedChange={() => handleWorkplaceChange('onSite')} />
-                <Label htmlFor="on-site" className="font-normal">{t('On-site')}</Label>
+                <Label htmlFor="on-site" className="font-normal">Sur site</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox id="hybrid" checked={filters.workplace.hybrid} onCheckedChange={() => handleWorkplaceChange('hybrid')} />
-                <Label htmlFor="hybrid" className="font-normal">{t('Hybrid')}</Label>
+                <Label htmlFor="hybrid" className="font-normal">Hybride</Label>
               </div>
             </div>
         </CardContent>
@@ -246,8 +192,8 @@ export default function JobSearchPage() {
 
       <div className="space-y-6">
         <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t('Job Opportunities')}</h1>
-            <p className="text-muted-foreground mt-1">{t('Showing')} {filteredJobs.length} {t('results')}</p>
+            <h1 className="text-3xl font-bold tracking-tight">Opportunités d'emploi</h1>
+            <p className="text-muted-foreground mt-1">Affichage de {filteredJobs.length} résultats</p>
         </div>
         <div className="space-y-4">
           {filteredJobs.length > 0 ? filteredJobs.map((job, index) => (
@@ -259,10 +205,10 @@ export default function JobSearchPage() {
                     <CardDescription className="mt-1 flex items-center gap-4 pt-1">
                       <span className="flex items-center gap-1.5"><Building className="h-4 w-4"/> {job.company}</span>
                       <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4"/> {job.location}</span>
-                      <span className="flex items-center gap-1.5"><Briefcase className="h-4 w-4"/> {t(job.type)}</span>
+                      <span className="flex items-center gap-1.5"><Briefcase className="h-4 w-4"/> {job.type}</span>
                     </CardDescription>
                   </div>
-                  <Button>{t('Apply')}</Button>
+                  <Button>Postuler</Button>
                 </div>
               </CardHeader>
               <CardContent>
@@ -276,8 +222,8 @@ export default function JobSearchPage() {
           )) : (
             <Card>
               <CardContent className="py-12 text-center">
-                  <p className="font-semibold">{t('No jobs found')}</p>
-                  <p className="text-muted-foreground mt-2">{t("Try adjusting your filters to find what you're looking for.")}</p>
+                  <p className="font-semibold">Aucune offre d'emploi trouvée</p>
+                  <p className="text-muted-foreground mt-2">Essayez d'ajuster vos filtres pour trouver ce que vous cherchez.</p>
               </CardContent>
             </Card>
           )}
