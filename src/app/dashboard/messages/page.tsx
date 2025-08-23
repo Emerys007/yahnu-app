@@ -3,7 +3,6 @@
 
 import { useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { useLocalization } from "@/context/localization-context"
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -30,55 +29,54 @@ type Conversation = {
     messages: Message[]
 }
 
-const getInitialConversations = (t: any): Conversation[] => [
+const getInitialConversations = (): Conversation[] => [
     {
         id: "amina-diallo",
-        name: t("dashboard.messages.conversations.amina_diallo.name"),
+        name: "Amina Diallo",
         avatar: "https://placehold.co/100x100.png",
-        lastMessage: t("dashboard.messages.conversations.amina_diallo.last_message"),
+        lastMessage: "Merci !",
         time: "10:42 AM",
         unread: 0,
         messages: [
-            { id: 1, sender: "them", text: t("dashboard.messages.conversations.amina_diallo.messages.interview_offer"), time: "10:40 AM" },
-            { id: 2, sender: "me", text: t("dashboard.messages.conversations.amina_diallo.messages.availability_response"), time: "10:41 AM" },
-            { id: 3, sender: "them", text: t("dashboard.messages.conversations.amina_diallo.messages.schedule_confirmation"), time: "10:41 AM" },
-            { id: 4, sender: "me", text: t("dashboard.messages.conversations.amina_diallo.messages.thank_you_response"), time: "10:42 AM" },
+            { id: 1, sender: "them", text: "Bonjour Amina, nous avons été impressionnés par votre profil et aimerions vous inviter à un entretien.", time: "10:40 AM" },
+            { id: 2, sender: "me", text: "Bonjour, merci beaucoup ! Je suis disponible mardi ou jeudi après-midi.", time: "10:41 AM" },
+            { id: 3, sender: "them", text: "Parfait. Rendez-vous est pris pour mardi à 15h. Vous recevrez un lien de visioconférence bientôt.", time: "10:41 AM" },
+            { id: 4, sender: "me", text: "Merci !", time: "10:42 AM" },
         ]
     },
     {
         id: "tech-solutions",
-        name: t("dashboard.messages.conversations.tech_solutions.name"),
+        name: "Tech Solutions",
         avatar: "https://placehold.co/100x100.png",
-        lastMessage: t("dashboard.messages.conversations.tech_solutions.last_message"),
-        time: "Yesterday",
+        lastMessage: "Pouvez-vous m'en dire plus sur la culture de l'entreprise ?",
+        time: "Hier",
         unread: 2,
         messages: [
-            { id: 1, sender: "me", text: t("dashboard.messages.conversations.tech_solutions.messages.initial_interest"), time: "Yesterday" },
-            { id: 2, sender: "me", text: t("dashboard.messages.conversations.tech_solutions.messages.culture_question"), time: "Yesterday" },
+            { id: 1, sender: "me", text: "Bonjour, je suis très intéressé par le poste d'ingénieur Frontend.", time: "Hier" },
+            { id: 2, sender: "me", text: "Pouvez-vous m'en dire plus sur la culture de l'entreprise ?", time: "Hier" },
         ]
     },
      {
         id: "inp-hb-admin",
-        name: t("dashboard.messages.conversations.inp_hb_admin.name"),
+        name: "Admin INP-HB",
         avatar: "/images/University.png",
-        lastMessage: t("dashboard.messages.conversations.inp_hb_admin.last_message"),
-        time: "2 days ago",
+        lastMessage: "Votre diplôme a été vérifié avec succès.",
+        time: "Il y a 2 jours",
         unread: 0,
         messages: [
-            { id: 1, sender: "me", text: t("dashboard.messages.conversations.inp_hb_admin.messages.degree_verification"), time: "2 days ago" },
-            { id: 2, sender: "them", text: t("dashboard.messages.conversations.inp_hb_admin.messages.admin_response"), time: "2 days ago" },
+            { id: 1, sender: "me", text: "Bonjour, pourriez-vous s'il vous plaît vérifier mon diplôme ?", time: "Il y a 2 jours" },
+            { id: 2, sender: "them", text: "Bonjour, bien sûr. Votre diplôme a été vérifié avec succès.", time: "Il y a 2 jours" },
         ]
     },
 ];
 
 const getNewConvoName = (id: string, name?: string | null) => {
     if (name) return name;
-    if (id === 'inp-hb-admin') return 'INP-HB Admin';
-    return id.replace(/-/g, ' ').replace(/\w/g, l => l.toUpperCase());
+    if (id === 'inp-hb-admin') return 'Admin INP-HB';
+    return id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
 
 export default function MessagesPage() {
-    const { t } = useLocalization()
     const router = useRouter();
     const searchParams = useSearchParams();
     const isMobile = useIsMobile();
@@ -89,9 +87,9 @@ export default function MessagesPage() {
 
     // Initialize conversations with localized content
     useEffect(() => {
-        const localizedConversations = getInitialConversations(t);
+        const localizedConversations = getInitialConversations();
         setConversations(localizedConversations);
-    }, [t]);
+    }, []);
 
     useEffect(() => {
         const newConvoId = searchParams.get('new');
@@ -107,7 +105,7 @@ export default function MessagesPage() {
                     name: getNewConvoName(newConvoId, newConvoName),
                     avatar: newConvoId.includes('admin') ? "/images/University.png" : "https://placehold.co/100x100.png",
                     lastMessage: "",
-                    time: "Now",
+                    time: "Maintenant",
                     unread: 0,
                     messages: [],
                 };
@@ -119,7 +117,7 @@ export default function MessagesPage() {
                 name: getNewConvoName(newConvoId, newConvoName),
                 avatar: newConvoId.includes('admin') ? "/images/University.png" : "https://placehold.co/100x100.png",
                 lastMessage: "",
-                time: "Now",
+                time: "Maintenant",
                 unread: 0,
                 messages: [],
             };
@@ -148,7 +146,7 @@ export default function MessagesPage() {
             ...selectedConversation,
             messages: [...selectedConversation.messages, newMessage],
             lastMessage: message,
-            time: "Now"
+            time: "Maintenant"
         };
         
         setSelectedConversation(updatedConversation);
@@ -161,7 +159,7 @@ export default function MessagesPage() {
             <div className="p-4 border-b">
                 <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder={t("dashboard.messages.search_conversations")} className="pl-8" />
+                    <Input placeholder={"Rechercher des conversations"} className="pl-8" />
                 </div>
             </div>
             <ScrollArea className="h-[calc(100vh-18rem)]">
@@ -230,7 +228,7 @@ export default function MessagesPage() {
             <div className="p-4 border-t">
                 <form className="flex items-center gap-2" onSubmit={handleSendMessage}>
                     <Input 
-                        placeholder={t("dashboard.messages.type_message")} 
+                        placeholder={"Écrivez un message..."} 
                         className="flex-1"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
@@ -248,8 +246,8 @@ export default function MessagesPage() {
                     <MessageSquare className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t('common.messages')}</h1>
-                    <p className="text-muted-foreground mt-1">{t('dashboard.messages.description')}</p>
+                    <h1 className="text-3xl font-bold tracking-tight">Messagerie</h1>
+                    <p className="text-muted-foreground mt-1">Communiquez avec les entreprises, les écoles et les candidats.</p>
                 </div>
             </div>
 
@@ -269,7 +267,7 @@ export default function MessagesPage() {
                             ) : (
                                 <div className="flex-1 flex flex-col items-center justify-center text-center">
                                     <MessageSquare className="h-16 w-16 text-muted-foreground/50" />
-                                    <p className="mt-4 text-muted-foreground">{t('dashboard.messages.select_conversation')}</p>
+                                    <p className="mt-4 text-muted-foreground">Sélectionnez une conversation pour commencer à discuter.</p>
                                 </div>
                             )}
                         </div>
