@@ -1,16 +1,13 @@
 
 "use client"
 
-import { Shield, Users, Building, GraduationCap, TrendingUp, AlertCircle, CheckCircle, UserPlus, Briefcase } from "lucide-react";
-import { AdminClient } from "../admin-client";
+import { Shield, Users, Building, GraduationCap, CheckCircle, UserPlus, Briefcase } from "lucide-react";
 import { type UserStatus } from "@/context/auth-context";
 import { db } from "@/lib/firebase";
 import { collection, query, where, getDocs, DocumentData, orderBy, limit } from "firebase/firestore";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CountUp } from "@/components/ui/count-up";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { useLocalization } from "@/context/localization-context";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button"
 import { Clock, XCircle, Eye } from "lucide-react"
@@ -104,7 +101,6 @@ async function getAdminDashboardData() {
 }
 
 export default function AdminOverviewPage() {
-    const { t, language } = useLocalization();
     const [stats, setStats] = useState({ totalUsers: 0, activeCompanies: 0, activeSchools: 0 });
     const [pendingRequests, setPendingRequests] = useState<User[]>([]);
     const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
@@ -120,20 +116,26 @@ export default function AdminOverviewPage() {
     }, []);
 
     const formatDate = (dateString: string) => {
-        if (language === 'fr') {
-            return new Date(dateString).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        }
-        return new Date(dateString).toLocaleDateString('en-US');
+        return new Date(dateString).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
     };
 
     const formatActivityTime = (minutes: string) => {
         const mins = parseInt(minutes, 10);
-        if (mins < 60) return t('common.time.minutes_ago', { count: mins });
+        if (mins < 60) return `Il y a ${mins} minutes`;
         const hours = Math.floor(mins / 60);
-        if (hours < 24) return t('common.time.hours_ago', { count: hours });
+        if (hours < 24) return `Il y a ${hours} heures`;
         const days = Math.floor(hours / 24);
-        return t('common.time.days_ago', { count: days });
+        return `Il y a ${days} jours`;
     };
+    
+    const getAccountTypeFrench = (accountType: string) => {
+        switch(accountType.toLowerCase()){
+            case 'company': return 'Entreprise';
+            case 'school': return 'École';
+            case 'graduate': return 'Diplômé';
+            default: return accountType;
+        }
+    }
 
     return (
         <div className="space-y-8">
@@ -142,8 +144,8 @@ export default function AdminOverviewPage() {
                     <Shield className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.overview.title')}</h1>
-                    <p className="text-muted-foreground mt-1">{t('dashboard.overview.description')}</p>
+                    <h1 className="text-3xl font-bold tracking-tight">Tableau de Bord</h1>
+                    <p className="text-muted-foreground mt-1">Aperçu global de l'activité de la plateforme.</p>
                 </div>
             </div>
 
@@ -151,45 +153,45 @@ export default function AdminOverviewPage() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('dashboard.overview.totalUsers')}</CardTitle>
+                        <CardTitle className="text-sm font-medium">Utilisateurs au total</CardTitle>
                         <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold"><CountUp end={stats.totalUsers} /></div>
-                        <p className="text-xs text-muted-foreground">{t('dashboard.overview.totalUsersDescription')}</p>
+                        <p className="text-xs text-muted-foreground">Total des utilisateurs actifs sur la plateforme.</p>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('dashboard.overview.activeCompanies')}</CardTitle>
+                        <CardTitle className="text-sm font-medium">Entreprises Actives</CardTitle>
                         <Building className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold"><CountUp end={stats.activeCompanies} /></div>
-                        <p className="text-xs text-muted-foreground">{t('dashboard.overview.activeCompaniesDescription')}</p>
+                        <p className="text-xs text-muted-foreground">Entreprises partenaires actives.</p>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('dashboard.overview.partnerSchools')}</CardTitle>
+                        <CardTitle className="text-sm font-medium">Écoles Partenaires</CardTitle>
                         <GraduationCap className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold"><CountUp end={stats.activeSchools} /></div>
-                         <p className="text-xs text-muted-foreground">{t('dashboard.overview.partnerSchoolsDescription')}</p>
+                         <p className="text-xs text-muted-foreground">Écoles et universités partenaires.</p>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('dashboard.admin.system_health')}</CardTitle>
+                        <CardTitle className="text-sm font-medium">Santé du système</CardTitle>
                         <CheckCircle className="h-4 w-4 text-green-500" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">99.8%</div>
-                        <p className="text-xs text-muted-foreground">{t('dashboard.system_health.uptime_desc')}</p>
+                        <p className="text-xs text-muted-foreground">Disponibilité des 30 derniers jours.</p>
                     </CardContent>
                 </Card>
             </div>
@@ -201,33 +203,33 @@ export default function AdminOverviewPage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                               <Clock className="h-5 w-5" />
-                              {t('dashboard.overview.pendingRequests')}
+                              Demandes en attente
                             </CardTitle>
-                            <CardDescription>{t('dashboard.overview.pendingRequestsDescription')}</CardDescription>
+                            <CardDescription>Approuver les nouvelles inscriptions d'entreprises et d'écoles.</CardDescription>
                           </CardHeader>
                           <CardContent>
                             <div className="space-y-4">
                               {pendingRequests.length === 0 ? (
-                                <p className="text-center text-muted-foreground py-4">{t('dashboard.overview.noPendingRequests')}</p>
+                                <p className="text-center text-muted-foreground py-4">Aucune demande en attente.</p>
                               ) : (
                                 pendingRequests.map((request) => (
                                   <div key={request.id} className="flex items-center justify-between p-3 border rounded-lg">
                                     <div>
                                       <p className="font-medium">{request.name}</p>
-                                      <p className="text-sm text-muted-foreground capitalize">{t(`common.${request.accountType.toLowerCase()}`)} • {formatDate(request.date)}</p>
+                                      <p className="text-sm text-muted-foreground capitalize">{getAccountTypeFrench(request.accountType)} • {formatDate(request.date)}</p>
                                     </div>
                                     <div className="flex gap-2">
                                       <Button size="sm" variant="outline">
                                         <Eye className="h-4 w-4 mr-1" />
-                                        {t('common.view_profile')}
+                                        Voir profil
                                       </Button>
                                       <Button size="sm" variant="outline">
                                         <CheckCircle className="h-4 w-4 mr-1" />
-                                        {t('dashboard.user_management.activate')}
+                                        Activer
                                       </Button>
                                       <Button size="sm" variant="destructive">
                                         <XCircle className="h-4 w-4 mr-1" />
-                                        {t('common.reject')}
+                                        Rejeter
                                       </Button>
                                     </div>
                                   </div>
@@ -240,7 +242,7 @@ export default function AdminOverviewPage() {
                 <div className="lg:col-span-1">
                      <Card>
                         <CardHeader>
-                            <CardTitle>{t('dashboard.overview.recentActivity')}</CardTitle>
+                            <CardTitle>Activité Récente</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                              {recentActivity.map((activity) => {
@@ -248,9 +250,9 @@ export default function AdminOverviewPage() {
                                 const [name, detail] = activity.text.split('|');
 
                                 if (activity.type === 'new_user') {
-                                    displayText = `${name} ${t('dashboard.overview.signedUpAs')} ${t(`common.${detail.toLowerCase()}`)}.`;
+                                    displayText = `${name} s'est inscrit en tant que ${getAccountTypeFrench(detail)}.`;
                                 } else if (activity.type === 'new_job') {
-                                    displayText = `${name} ${t('dashboard.overview.postedNewJob')}: "${detail}".`;
+                                    displayText = `${name} a publié une nouvelle offre : "${detail}".`;
                                 }
 
                                 return (
