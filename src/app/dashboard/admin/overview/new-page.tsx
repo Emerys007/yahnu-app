@@ -57,7 +57,6 @@ import {
   import { type UserStatus } from "@/context/auth-context"
   import { db } from "@/lib/firebase"
   import { collection, query, where, getDocs, DocumentData, orderBy, limit } from "firebase/firestore"
-  import { useLocalization } from "@/context/localization-context"
   import { useEffect, useState } from "react"
   import { motion } from "framer-motion"
   import { CountUp } from "@/components/ui/count-up"
@@ -189,7 +188,6 @@ import {
     };
   
   export default function NewAdminOverviewPage() {
-      const { t } = useLocalization();
       const router = useRouter();
       const [stats, setStats] = useState({ totalUsers: 0, activeGraduates: 0, activeCompanies: 0, activeSchools: 0 });
       const [pendingRequests, setPendingRequests] = useState<User[]>([]);
@@ -211,17 +209,22 @@ import {
   
       const formatActivityTime = (minutes: string) => {
           const mins = parseInt(minutes, 10);
-          if (mins < 60) return t('common.time.minutes_ago', { count: mins });
+          if (mins < 60) return `Il y a ${mins} minutes`;
           const hours = Math.floor(mins / 60);
-          if (hours < 24) return t('common.time.hours_ago', { count: hours });
+          if (hours < 24) return `Il y a ${hours} heures`;
           const days = Math.floor(hours / 24);
-          return t('common.time.days_ago', { count: days });
+          return `Il y a ${days} jours`;
       };
       
       const getRoleTranslation = (role: string) => {
-          const roleKey = `common.${role.toLowerCase()}`;
-          const translation = t(roleKey);
-          return translation === roleKey ? role : translation;
+          const roleMap: Record<string, string> = {
+            graduate: "Diplômé",
+            company: "Entreprise",
+            school: "École",
+            admin: "Admin",
+          };
+          const key = role.toLowerCase();
+          return roleMap[key] || role;
       }
 
       const handleGenerateReport = () => {
@@ -263,8 +266,8 @@ import {
                         <Shield className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.overview.title')}</h1>
-                        <p className="text-muted-foreground mt-1">{t('dashboard.overview.description')}</p>
+                        <h1 className="text-3xl font-bold tracking-tight">Tableau de Bord d'Administration</h1>
+                        <p className="text-muted-foreground mt-1">Vue d'ensemble de l'activité et des métriques de la plateforme.</p>
                     </div>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -292,7 +295,7 @@ import {
                   >
                       <Card>
                           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                              <CardTitle className="text-sm font-medium">{t('dashboard.overview.totalUsers')}</CardTitle>
+                              <CardTitle className="text-sm font-medium">Utilisateurs Totaux</CardTitle>
                               <Users className="h-4 w-4 text-muted-foreground" />
                           </CardHeader>
                           <CardContent>
@@ -308,7 +311,7 @@ import {
                   >
                       <Card>
                           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                              <CardTitle className="text-sm font-medium">{t('dashboard.overview.activeCompanies')}</CardTitle>
+                              <CardTitle className="text-sm font-medium">Entreprises Actives</CardTitle>
                               <Building className="h-4 w-4 text-muted-foreground" />
                           </CardHeader>
                           <CardContent>
@@ -324,7 +327,7 @@ import {
                     >
                       <Card>
                           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                              <CardTitle className="text-sm font-medium">{t('dashboard.nav.graduates')}</CardTitle>
+                              <CardTitle className="text-sm font-medium">Diplômés</CardTitle>
                               <GraduationCap className="h-4 w-4 text-muted-foreground" />
                           </CardHeader>
                           <CardContent>
@@ -406,9 +409,9 @@ import {
                                 let displayText = "";
                                 const [name, detail] = activity.text.split('|');
                                 if (activity.type === 'new_user') {
-                                    displayText = t('dashboard.overview.signedUpAs', { name, role: getRoleTranslation(detail) });
+                                    displayText = `${name} s'est inscrit en tant que ${getRoleTranslation(detail)}`;
                                 } else if (activity.type === 'new_job') {
-                                    displayText = t('dashboard.overview.postedNewJob', { name, jobTitle: detail });
+                                    displayText = `${name} a publié une nouvelle offre : ${detail}`;
                                 } else {
                                     displayText = `${name}: ${detail}`;
                                 }
@@ -438,8 +441,8 @@ import {
               >
                 <Card>
                     <CardHeader>
-                        <CardTitle>{t('dashboard.overview.pendingRequests')}</CardTitle>
-                        <CardDescription>{t('dashboard.overview.pendingRequestsDescription')}</CardDescription>
+                        <CardTitle>Demandes en Attente</CardTitle>
+                        <CardDescription>Approuvez ou rejetez les nouvelles inscriptions d'entreprises et d'écoles.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Table>
@@ -473,7 +476,7 @@ import {
                             )) : (
                                 <TableRow>
                                     <TableCell colSpan={4} className="h-24 text-center">
-                                    {t('dashboard.overview.noPendingRequests')}
+                                    Aucune demande en attente pour le moment.
                                     </TableCell>
                                 </TableRow>
                             )}
