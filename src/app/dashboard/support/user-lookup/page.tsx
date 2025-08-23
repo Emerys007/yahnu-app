@@ -3,7 +3,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, User, Mail, Briefcase, Building, School, UserCheck, Loader2 } from 'lucide-react';
+import { Search, User, Mail, Briefcase, Building, School, UserCheck, Loader2, CheckCircle, Clock, XCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,9 @@ import Link from 'next/link';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { db } from "@/lib/firebase";
 import { collection, query, where, getDocs, DocumentData } from "firebase/firestore";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 
 type UserAccount = {
     id: string;
@@ -20,7 +23,96 @@ type UserAccount = {
     type: 'graduate' | 'company' | 'school' | 'admin';
     status: 'active' | 'pending' | 'suspended';
     slug?: string;
+    schoolName?: string;
+    industry?: string;
+    joinDate: string;
 };
+
+const UserProfileDialog = ({ user }: { user: UserAccount }) => {
+    const getAccountTypeIcon = (type: UserAccount['type']) => {
+        switch(type) {
+            case 'graduate': return <UserCheck className="h-5 w-5 text-muted-foreground" />;
+            case 'company': return <Building className="h-5 w-5 text-muted-foreground" />;
+            case 'school': return <School className="h-5 w-5 text-muted-foreground" />;
+            case 'admin': return <Briefcase className="h-5 w-5 text-muted-foreground" />;
+        }
+    };
+    
+    const statusIcons = {
+        active: <CheckCircle className="h-4 w-4 text-green-500" />,
+        pending: <Clock className="h-4 w-4 text-yellow-500" />,
+        suspended: <XCircle className="h-4 w-4 text-red-500" />,
+    };
+
+    const roleTranslations: Record<UserAccount['type'], string> = {
+        graduate: "Diplômé",
+        company: "Entreprise",
+        school: "École",
+        admin: "Admin",
+    };
+
+    const statusTranslations: Record<UserAccount['status'], string> = {
+        active: "Actif",
+        pending: "En attente",
+        suspended: "Suspendu",
+    };
+
+    return (
+        <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+                <DialogTitle>Profil de l'utilisateur</DialogTitle>
+                <DialogDescription>
+                    Aperçu des informations du compte de l'utilisateur.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+                <div className="flex items-center gap-4">
+                    <Avatar className="h-16 w-16">
+                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <h3 className="text-xl font-semibold">{user.name}</h3>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                    </div>
+                </div>
+                <Separator />
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="space-y-1">
+                        <p className="text-muted-foreground">Type de compte</p>
+                        <div className="flex items-center gap-2">
+                             {getAccountTypeIcon(user.type)}
+                            <p>{roleTranslations[user.type]}</p>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-muted-foreground">Statut</p>
+                        <div className="flex items-center gap-2">
+                            {statusIcons[user.status]}
+                            <p className="capitalize">{statusTranslations[user.status]}</p>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-muted-foreground">Date d'inscription</p>
+                        <p>{new Date(user.joinDate).toLocaleDateString('fr-FR')}</p>
+                    </div>
+                     {user.type === 'graduate' && user.schoolName && (
+                        <div className="space-y-1">
+                            <p className="text-muted-foreground">École</p>
+                            <p>{user.schoolName}</p>
+                        </div>
+                    )}
+                    {user.type === 'company' && user.industry && (
+                        <div className="space-y-1">
+                            <p className="text-muted-foreground">Secteur</p>
+                            <p>{user.industry}</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </DialogContent>
+    );
+};
+
 
 export default function UserLookupPage() {
     const router = useRouter();
@@ -44,6 +136,9 @@ export default function UserLookupPage() {
                         type: data.role,
                         status: data.status,
                         slug: data.slug || doc.id,
+                        schoolName: data.schoolName || '',
+                        industry: data.industry || '',
+                        joinDate: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
                     } as UserAccount;
                 });
                 setAllUsers(usersList);
@@ -86,16 +181,6 @@ export default function UserLookupPage() {
             case 'company': return <Building className="h-4 w-4" />;
             case 'school': return <School className="h-4 w-4" />;
             case 'admin': return <Briefcase className="h-4 w-4" />;
-        }
-    }
-    
-    const getProfileLink = (user: UserAccount) => {
-        if (!user.slug) return null;
-        switch(user.type) {
-            case 'graduate': return `/dashboard/talent-pool/${user.slug}`;
-            case 'company': return `/companies/${user.slug}`;
-            case 'school': return `/schools/${user.slug}`;
-            default: return null;
         }
     }
 
@@ -178,11 +263,12 @@ export default function UserLookupPage() {
                                         <Badge variant={getStatusVariant(user.status)}>{statusTranslations[user.status]}</Badge>
                                     </TableCell>
                                     <TableCell className="text-right space-x-2">
-                                        {getProfileLink(user) && (
-                                            <Button asChild variant="outline" size="sm">
-                                                <Link href={getProfileLink(user)!} target="_blank">Voir le Profil</Link>
-                                            </Button>
-                                        )}
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <Button variant="outline" size="sm">Voir le Profil</Button>
+                                            </DialogTrigger>
+                                            <UserProfileDialog user={user} />
+                                        </Dialog>
                                         <Button variant="outline" size="sm" onClick={() => handleSendMessage(user)}>
                                             Message
                                         </Button>
