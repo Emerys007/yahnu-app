@@ -34,7 +34,7 @@ const getInitialConversations = (): Conversation[] => [
         id: "amina-diallo",
         name: "Amina Diallo",
         avatar: "https://placehold.co/100x100.png?text=AD",
-        lastMessage: "Bonjour, mon profil ne semble pas être visible par les entreprises.",
+        lastMessage: "Bonjour, mon profil ne semble pas être visible par les entreprises. Pouvez-vous m'aider s'il vous plaît ?",
         time: "Il y a 2 heures",
         unread: 1,
         messages: [
@@ -66,7 +66,7 @@ const getInitialConversations = (): Conversation[] => [
         ]
     },
     {
-        id: "alice-w",
+        id: "alice-williams",
         name: "Alice Williams",
         avatar: "https://placehold.co/100x100.png?text=AW",
         lastMessage: "Merci, ça a fonctionné !",
@@ -313,3 +313,5 @@ export default function MessagesPage() {
         </div>
     )
 }
+
+    
