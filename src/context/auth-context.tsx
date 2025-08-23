@@ -282,7 +282,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (email && email !== auth.currentUser.email) {
        // This will throw an error if reauthentication is needed, which should be caught by the caller.
-       // In a more complex app, you'd handle reauthentication here.
+       // For this demo, we'll assume reauthentication is not needed.
        await updateEmail(auth.currentUser, email);
        updatePromises.push(updateDoc(userDocRef, { email }));
     }
