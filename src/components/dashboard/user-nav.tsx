@@ -1,3 +1,5 @@
+
+
 "use client"
 
 import { LogOut, User, Settings, Building, MessageSquare } from "lucide-react"
@@ -29,13 +31,13 @@ export function UserNav() {
       await signOut()
       router.push('/')
       toast({
-        title: "Logged Out",
-        description: "You have been successfully logged out.",
+        title: t("auth.logout_success_title"),
+        description: t("auth.logout_success_desc"),
       })
     } catch (error) {
       toast({
-        title: "Uh oh! Something went wrong.",
-        description: "There was a problem logging you out.",
+        title: t("common.error"),
+        description: t("auth.logout_failed_desc"),
         variant: "destructive",
       })
     }
@@ -74,7 +76,7 @@ export function UserNav() {
           {user?.role === 'company' && (
             <DropdownMenuItem onClick={() => router.push('/dashboard/company-profile')}>
               <Building className="mr-2 h-4 w-4" />
-              <span>{t("Company Profile")}</span>
+              <span>{t("profile.company_profile_title")}</span>
             </DropdownMenuItem>
           )}
            <DropdownMenuItem onClick={() => router.push('/dashboard/messages')}>

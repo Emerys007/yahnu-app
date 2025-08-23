@@ -351,8 +351,8 @@ const ProctoringSetup = ({ onSetupComplete }: { onSetupComplete: () => void }) =
         setHasPermission(false);
         toast({
           variant: 'destructive',
-          title: t('Camera Access Denied'),
-          description: t('Please enable camera and microphone permissions in your browser settings to continue.'),
+          title: t('assessment.camera_access_denied_title'),
+          description: t('assessment.camera_access_denied_desc'),
         });
       }
     };
@@ -362,31 +362,31 @@ const ProctoringSetup = ({ onSetupComplete }: { onSetupComplete: () => void }) =
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>{t('Assessment Setup')}</CardTitle>
-        <CardDescription>{t('Please complete the following steps to begin your proctored assessment.')}</CardDescription>
+        <CardTitle>{t('assessment.setup_title')}</CardTitle>
+        <CardDescription>{t('assessment.setup_desc')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between p-3 border rounded-lg">
           <div className="flex items-center gap-3">
             <Video className="h-5 w-5" />
-            <span>{t('Camera Access')}</span>
+            <span>{t('assessment.camera_access')}</span>
           </div>
           <span className={`text-sm font-semibold ${hasPermission ? 'text-green-600' : 'text-destructive'}`}>
-            {hasPermission ? t('Enabled') : t('Disabled')}
+            {hasPermission ? t('assessment.enabled') : t('assessment.disabled')}
           </span>
         </div>
         <Alert variant="destructive">
           <ShieldAlert className="h-4 w-4" />
-          <AlertTitle>{t('Assessment Rules')}</AlertTitle>
+          <AlertTitle>{t('assessment.rules_title')}</AlertTitle>
           <AlertDescription>
-            {t('You must remain in the browser window for the duration of the test. Navigating away will be flagged.')}
+            {t('assessment.rules_desc')}
           </AlertDescription>
         </Alert>
         <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted />
       </CardContent>
       <CardFooter>
         <Button onClick={onSetupComplete} disabled={!hasPermission} className="w-full">
-          {hasPermission ? t("Start Assessment") : <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('Waiting for permissions...')}</>}
+          {hasPermission ? t("assessment.start_button") : <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('assessment.permissions_wait')}</>}
         </Button>
       </CardFooter>
     </Card>
@@ -477,8 +477,8 @@ const TestInterface = ({ testId, onTestComplete, onDisqualify }: { testId: TestI
   const handleNext = () => {
     if (answers[currentQuestion] === undefined) {
         toast({
-            title: "Please answer the question",
-            description: "You must select an answer before proceeding.",
+            title: t("assessment.answer_required_title"),
+            description: t("assessment.answer_required_desc"),
             variant: "destructive",
         });
         return;
@@ -505,7 +505,7 @@ const TestInterface = ({ testId, onTestComplete, onDisqualify }: { testId: TestI
                           <div className="font-mono text-lg">{`${Math.floor(timeLeft / 60).toString().padStart(2, '0')}:${(timeLeft % 60).toString().padStart(2, '0')}`}</div>
                       </div>
                       <Progress value={progress} className="w-full" />
-                      <CardDescription>{t('Question {current} of {total}', {current: currentQuestion + 1, total: totalQuestions})}</CardDescription>
+                      <CardDescription>{t('assessment.question_of_total', {current: currentQuestion + 1, total: totalQuestions})}</CardDescription>
                   </CardHeader>
                   <CardContent>
                       <p className="font-semibold text-lg mb-6">{q.question}</p>
@@ -520,7 +520,7 @@ const TestInterface = ({ testId, onTestComplete, onDisqualify }: { testId: TestI
                   </CardContent>
                   <CardFooter>
                       <Button onClick={handleNext} className="ml-auto">
-                          {currentQuestion < totalQuestions - 1 ? t('Next Question') : t('Finish & Submit')}
+                          {currentQuestion < totalQuestions - 1 ? t('assessment.next_question') : t('assessment.finish_submit')}
                       </Button>
                   </CardFooter>
               </Card>
@@ -529,9 +529,9 @@ const TestInterface = ({ testId, onTestComplete, onDisqualify }: { testId: TestI
               <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted />
               <Alert>
                   <ShieldAlert className="h-4 w-4" />
-                  <AlertTitle>{t('Proctoring Enabled')}</AlertTitle>
+                  <AlertTitle>{t('assessment.proctoring_enabled_title')}</AlertTitle>
                   <AlertDescription>
-                      {t('Your session is being monitored. Please remain focused on the test.')}
+                      {t('assessment.proctoring_enabled_desc')}
                   </AlertDescription>
               </Alert>
           </div>
@@ -542,13 +542,13 @@ const TestInterface = ({ testId, onTestComplete, onDisqualify }: { testId: TestI
                 <AlertDialogHeader>
                     <AlertDialogTitle className="flex items-center gap-2">
                         <TriangleAlert className="h-6 w-6 text-yellow-500" />
-                        First Warning
+                        {t('assessment.warning_title')}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        You have navigated away from the test window. This is the first and only warning. If this happens again, your test will be automatically failed, and you will be unable to retake this assessment for 3 months.
+                        {t('assessment.warning_desc')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogAction onClick={() => setShowWarningModal(false)}>I Understand</AlertDialogAction>
+                <AlertDialogAction onClick={() => setShowWarningModal(false)}>{t('assessment.warning_understand')}</AlertDialogAction>
             </AlertDialogContent>
         </AlertDialog>
     </>
@@ -581,7 +581,7 @@ export default function TakeAssessmentPage() {
   };
 
   if (step === 'invalid') {
-    return <div>{t('Test not found')}</div>;
+    return <div>{t('assessment.not_found')}</div>;
   }
 
   return (

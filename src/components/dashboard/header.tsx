@@ -1,4 +1,5 @@
 
+
 "use client"
 import Link from "next/link"
 import React from "react"
@@ -39,19 +40,19 @@ type NotificationItem = {
     read: boolean;
 };
 
-const formatDistanceToNow = (date: Date, t: (key: string) => string): string => {
+const formatDistanceToNow = (date: Date, t: (key: string, values?: { [key: string]: string | number }) => string): string => {
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
     let interval = seconds / 31536000;
-    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.years_ago')}`;
+    if (interval > 1) return t('common.time.years_ago', { count: Math.floor(interval) });
     interval = seconds / 2592000;
-    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.months_ago')}`;
+    if (interval > 1) return t('common.time.months_ago', { count: Math.floor(interval) });
     interval = seconds / 86400;
-    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.days_ago')}`;
+    if (interval > 1) return t('common.time.days_ago', { count: Math.floor(interval) });
     interval = seconds / 3600;
-    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.hours_ago')}`;
+    if (interval > 1) return t('common.time.hours_ago', { count: Math.floor(interval) });
     interval = seconds / 60;
-    if (interval > 1) return `${Math.floor(interval)} ${t('common.time.minutes_ago')}`;
-    return `${Math.floor(seconds)} ${t('common.time.seconds_ago')}`;
+    if (interval > 1) return t('common.time.minutes_ago', { count: Math.floor(interval) });
+    return t('common.time.seconds_ago', { count: Math.floor(seconds) });
 };
 
 const getReadNotificationIds = (): string[] => {

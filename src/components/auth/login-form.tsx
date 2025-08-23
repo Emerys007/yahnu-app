@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import * as React from "react"
@@ -50,26 +51,26 @@ export function LoginForm() {
     try {
         await signIn(values.email, values.password);
         toast({
-            title: t("Connexion réussie !"),
-            description: t("Bon retour sur Yahnu."),
+            title: t("auth.login_success_title"),
+            description: t("auth.welcome_back_yahnu"),
         });
         router.push('/dashboard');
     } catch (error: any) {
-        let errorMessage = t("Identifiants invalides. Veuillez réessayer.");
+        let errorMessage = t("auth.invalid_credentials");
         if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-            errorMessage = t("E-mail ou mot de passe invalide. Veuillez vérifier vos informations.");
+            errorMessage = t("auth.invalid_email_or_password");
         } else if (error.code === 'auth/too-many-requests') {
-            errorMessage = t("L'accès à ce compte a été temporairement désactivé en raison de nombreuses tentatives de connexion infructueuses. Vous pouvez le restaurer immédiatement en réinitialisant votre mot de passe ou réessayer plus tard.")
+            errorMessage = t("auth.too_many_requests")
         } else if (error.message === 'pending_graduate') {
-            errorMessage = t("Votre compte est en attente d'approbation de la part de l'administrateur de votre école.");
+            errorMessage = t("auth.pending_graduate");
         } else if (error.message === 'pending_org') {
-             errorMessage = t("Votre inscription est en attente d'approbation par un administrateur de Yahnu.");
+             errorMessage = t("auth.pending_org");
         } else if (error.message === "suspended") {
-            errorMessage = t("Votre compte a été suspendu. Veuillez contacter le support.");
+            errorMessage = t("auth.suspended");
         }
 
         toast({
-            title: t("Oh non ! La connexion a échoué."),
+            title: t("auth.login_failed_title"),
             description: errorMessage,
             variant: "destructive",
         });
@@ -83,21 +84,21 @@ export function LoginForm() {
     try {
       await signInWithGoogle();
       toast({
-        title: t("Connecté avec succès !"),
-        description: t("Bienvenue sur Yahnu."),
+        title: t("auth.login_success_title"),
+        description: t("auth.welcome_back_yahnu"),
       });
       router.push('/dashboard');
     } catch (error: any) {
-      let errorMessage = error.message || t("Impossible de se connecter avec Google.");
+      let errorMessage = error.message || t("auth.google_login_failed");
        if (error.message === "pending_graduate") {
-            errorMessage = t("Votre compte est en attente d'approbation de la part de l'administrateur de votre école.");
+            errorMessage = t("auth.pending_graduate");
         } else if (error.message === 'pending_org') {
-             errorMessage = t("Votre inscription est en attente d'approbation par un administrateur de Yahnu.");
+             errorMessage = t("auth.pending_org");
         } else if (error.message === "suspended") {
-            errorMessage = t("Votre compte a été suspendu. Veuillez contacter le support.");
+            errorMessage = t("auth.suspended");
         }
       toast({
-        title: t("Oh non ! Quelque chose s'est mal passé."),
+        title: t("common.error"),
         description: errorMessage,
         variant: "destructive",
       });

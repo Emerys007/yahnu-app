@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import * as React from "react"
@@ -36,8 +37,8 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
             onSuggest(password);
             navigator.clipboard.writeText(password);
             toast({
-                title: t('Password Copied'),
-                description: t('The suggested password has been copied to your clipboard.'),
+                title: t('common.password_copied_title'),
+                description: t('common.password_copied_desc'),
             });
         }
     }
@@ -59,7 +60,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
                 onClick={() => setShowPassword(prev => !prev)}
             >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                <span className="sr-only">{showPassword ? t('Hide password') : t('Show password')}</span>
+                <span className="sr-only">{showPassword ? t('common.hide_password') : t('common.show_password')}</span>
             </Button>
             {!hideSuggestions && onSuggest && (
                  <Button
@@ -70,7 +71,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
                     onClick={suggestPassword}
                 >
                     <Sparkles className="h-4 w-4" />
-                    <span className="sr-only">{t('Suggest strong password')}</span>
+                    <span className="sr-only">{t('common.suggest_strong_password')}</span>
                 </Button>
             )}
         </div>

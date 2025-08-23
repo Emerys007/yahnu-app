@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -29,14 +30,14 @@ import { Switch } from "@/components/ui/switch"
 import { useLocalization } from "@/context/localization-context"
 
 const educationSchema = z.object({
-  degree: z.string().min(2, "Degree is required."),
-  field: z.string().min(2, "Field of study is required."),
-  gradYear: z.string().min(4, "Graduation year is required."),
+  degree: z.string().min(2, "Le diplôme est requis."),
+  field: z.string().min(2, "Le domaine d'études est requis."),
+  gradYear: z.string().min(4, "L'année d'obtention du diplôme est requise."),
   verified: z.boolean().default(false),
 })
 
 const profileSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  name: z.string().min(2, { message: "Le nom doit comporter au moins 2 caractères." }),
   email: z.string().email(),
   phone: z.string().optional(),
   experience: z.string().optional(),
@@ -46,8 +47,8 @@ const profileSchema = z.object({
 
 // Mock data for badges
 const earnedBadges = [
-    { id: 'frontend-basics', name: "Frontend Development (React)", visible: true },
-    { id: 'financial-analysis', name: "Financial Analysis", visible: false },
+    { id: 'frontend-basics', name: "Développement Frontend (React)", visible: true },
+    { id: 'financial-analysis', name: "Analyse Financière", visible: false },
 ]
 
 export default function ProfilePage() {
@@ -103,8 +104,8 @@ export default function ProfilePage() {
 
     setIsParsing(true)
     toast({
-      title: "Parsing Resume...",
-      description: "Our AI is analyzing your resume. This may take a moment.",
+      title: t("profile.parsing_resume_title"),
+      description: t("profile.parsing_resume_desc"),
     })
 
     try {
@@ -129,15 +130,15 @@ export default function ProfilePage() {
       form.setValue("skills", result.skills?.join(", ") || "")
 
       toast({
-        title: "Success!",
-        description: "Your profile has been pre-filled from your resume. Please review and save.",
+        title: t("profile.parsing_success_title"),
+        description: t("profile.parsing_success_desc"),
         variant: "default",
       })
     } catch (error) {
       console.error("Resume parsing failed:", error)
       toast({
-        title: "Uh oh! Something went wrong.",
-        description: "There was a problem with parsing your resume.",
+        title: t("profile.parsing_failed_title"),
+        description: t("profile.parsing_failed_desc"),
         variant: "destructive",
       })
     } finally {
@@ -147,7 +148,7 @@ export default function ProfilePage() {
 
   async function onSubmit(values: z.infer<typeof profileSchema>) {
     if (!user) {
-        toast({ title: "Error", description: "You must be logged in to update your profile.", variant: "destructive" });
+        toast({ title: t("common.error"), description: t("profile.must_be_logged_in"), variant: "destructive" });
         return;
     }
     setIsSaving(true);
@@ -165,12 +166,12 @@ export default function ProfilePage() {
             lastName,
         });
         toast({
-            title: "Profile Updated",
-            description: "Your professional profile has been saved successfully.",
+            title: t("profile.update_success_title"),
+            description: t("profile.update_success_desc"),
         });
     } catch (error) {
         console.error("Profile update failed:", error);
-        toast({ title: "Error", description: "Failed to update profile.", variant: "destructive" });
+        toast({ title: t("common.error"), description: t("profile.update_failed_desc"), variant: "destructive" });
     } finally {
         setIsSaving(false);
     }
@@ -192,14 +193,14 @@ export default function ProfilePage() {
                 <UserIcon className="h-6 w-6 text-primary" />
             </div>
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">{t('Professional Profile')}</h1>
-                <p className="text-muted-foreground mt-1">{t('Build and maintain your professional identity.')}</p>
+                <h1 className="text-3xl font-bold tracking-tight">{t('profile.title')}</h1>
+                <p className="text-muted-foreground mt-1">{t('profile.description')}</p>
             </div>
         </div>
         <div className="relative shrink-0 w-full sm:w-auto">
             <Button disabled={isParsing} className="w-full">
                 <Upload className="mr-2 h-4 w-4" />
-                {isParsing ? "Parsing..." : "Upload Resume"}
+                {isParsing ? t("profile.parsing_button") : t("profile.upload_resume_button")}
             </Button>
             <input
                 type="file"
@@ -216,8 +217,8 @@ export default function ProfilePage() {
             <div className="lg:col-span-2 space-y-8">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('Personal Information')}</CardTitle>
-                  <CardDescription>{t('This information will be visible on your public profile.')}</CardDescription>
+                  <CardTitle>{t('profile.personal_info_title')}</CardTitle>
+                  <CardDescription>{t('profile.personal_info_desc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-2 gap-6">
                   <FormField
@@ -225,7 +226,7 @@ export default function ProfilePage() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('Full Name')}</FormLabel>
+                        <FormLabel>{t('common.full_name')}</FormLabel>
                         <FormControl>
                           <Input placeholder="John Doe" {...field} />
                         </FormControl>
@@ -238,7 +239,7 @@ export default function ProfilePage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('Email Address')}</FormLabel>
+                        <FormLabel>{t('common.email')}</FormLabel>
                         <FormControl>
                           <Input placeholder="you@example.com" {...field} disabled />
                         </FormControl>
@@ -251,7 +252,7 @@ export default function ProfilePage() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('Phone Number (Optional)')}</FormLabel>
+                        <FormLabel>{t('profile.phone_optional')}</FormLabel>
                         <FormControl>
                           <Input placeholder="(123) 456-7890" {...field} />
                         </FormControl>
@@ -266,12 +267,12 @@ export default function ProfilePage() {
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <div>
-                            <CardTitle>{t('Education')}</CardTitle>
-                            <CardDescription>{t('Your academic background. Add each degree separately.')}</CardDescription>
+                            <CardTitle>{t('profile.education_title')}</CardTitle>
+                            <CardDescription>{t('profile.education_desc')}</CardDescription>
                         </div>
                         <Button type="button" variant="outline" size="sm" onClick={() => append({ degree: '', field: '', gradYear: '', verified: false })}>
                             <PlusCircle className="mr-2 h-4 w-4" />
-                            {t('Add Degree')}
+                            {t('profile.add_degree_button')}
                         </Button>
                     </div>
                 </CardHeader>
@@ -284,8 +285,8 @@ export default function ProfilePage() {
                                     name={`education.${index}.degree`}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>{t('Degree')}</FormLabel>
-                                            <FormControl><Input placeholder="e.g. Bachelor of Science" {...field} /></FormControl>
+                                            <FormLabel>{t('profile.degree')}</FormLabel>
+                                            <FormControl><Input placeholder={t('profile.degree_placeholder')} {...field} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -295,8 +296,8 @@ export default function ProfilePage() {
                                     name={`education.${index}.field`}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>{t('Field of Study')}</FormLabel>
-                                            <FormControl><Input placeholder="e.g. Computer Science" {...field} /></FormControl>
+                                            <FormLabel>{t('profile.field_of_study')}</FormLabel>
+                                            <FormControl><Input placeholder={t('profile.field_of_study_placeholder')} {...field} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -306,7 +307,7 @@ export default function ProfilePage() {
                                     name={`education.${index}.gradYear`}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>{t('Graduation Year')}</FormLabel>
+                                            <FormLabel>{t('profile.grad_year')}</FormLabel>
                                             <FormControl><Input type="number" placeholder="e.g. 2024" {...field} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -325,15 +326,15 @@ export default function ProfilePage() {
                         </div>
                     ))}
                     {fields.length === 0 && (
-                        <p className="text-sm text-muted-foreground text-center py-4">{t('No education history added yet.')}</p>
+                        <p className="text-sm text-muted-foreground text-center py-4">{t('profile.no_education')}</p>
                     )}
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('Work Experience')}</CardTitle>
-                  <CardDescription>{t('Detail your professional journey.')}</CardDescription>
+                  <CardTitle>{t('profile.experience_title')}</CardTitle>
+                  <CardDescription>{t('profile.experience_desc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <FormField
@@ -342,7 +343,7 @@ export default function ProfilePage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Textarea placeholder={t("Describe your work experience...")} rows={10} {...field} />
+                          <Textarea placeholder={t("profile.experience_placeholder")} rows={10} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -352,8 +353,8 @@ export default function ProfilePage() {
               </Card>
                 <Card>
                 <CardHeader>
-                    <CardTitle>{t('Skills')}</CardTitle>
-                    <CardDescription>{t('Your key competencies.')}</CardDescription>
+                    <CardTitle>{t('profile.skills_title')}</CardTitle>
+                    <CardDescription>{t('profile.skills_desc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <FormField
@@ -362,7 +363,7 @@ export default function ProfilePage() {
                     render={({ field }) => (
                         <FormItem>
                         <FormControl>
-                            <Textarea placeholder={t("e.g., JavaScript, Product Management, ...")} rows={5} {...field} />
+                            <Textarea placeholder={t("profile.skills_placeholder")} rows={5} {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -373,15 +374,15 @@ export default function ProfilePage() {
               
               <div className="flex justify-end">
                 <Button type="submit" disabled={isSaving || isParsing} data-hs-event-name="profile_updated">
-                  {isSaving ? t("Saving...") : t("Save Profile")}
+                  {isSaving ? t("profile.saving_button") : t("profile.save_button")}
                 </Button>
               </div>
             </div>
             <div className="lg:col-span-1 space-y-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Award /> {t('Certifications & Badges')}</CardTitle>
-                        <CardDescription>{t('Manage the visibility of your earned skill badges.')}</CardDescription>
+                        <CardTitle className="flex items-center gap-2"><Award /> {t('profile.badges_title')}</CardTitle>
+                        <CardDescription>{t('profile.badges_desc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {badges.length > 0 ? badges.map(badge => (
@@ -400,10 +401,10 @@ export default function ProfilePage() {
                                 </div>
                             </div>
                         )) : (
-                            <p className="text-sm text-muted-foreground text-center py-4">{t('No badges earned yet. Take an assessment to get started!')}</p>
+                            <p className="text-sm text-muted-foreground text-center py-4">{t('profile.no_badges')}</p>
                         )}
                         <Button variant="secondary" asChild className="w-full">
-                            <Link href="/dashboard/assessments">{t('Take a New Assessment')}</Link>
+                            <Link href="/dashboard/assessments">{t('profile.take_assessment_button')}</Link>
                         </Button>
                     </CardContent>
                 </Card>
