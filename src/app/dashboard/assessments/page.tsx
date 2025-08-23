@@ -1,37 +1,35 @@
 
 "use client"
 
-import { useLocalization } from "@/context/localization-context";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Award, BrainCircuit, Code, DollarSign, Leaf, Truck, HeartHandshake } from "lucide-react";
 import Link from "next/link";
-import { useAuth } from "@/context/auth-context";
 import { motion } from "framer-motion";
 
 const assessments = [
   {
     id: "frontend-basics",
-    title: "Frontend Development (React)",
-    description: "Validate your fundamental skills in React, JavaScript, and modern CSS.",
+    title: "Développement Frontend (React)",
+    description: "Validez vos compétences fondamentales en React, JavaScript et CSS moderne.",
     questions: 20,
     time: 35,
     icon: Code,
-    category: "IT & Telecoms"
+    category: "IT & Télécoms"
   },
   {
     id: "financial-analysis",
-    title: "Financial Analysis Fundamentals",
-    description: "Test your knowledge of financial statements, valuation, and modeling.",
+    title: "Principes de l'Analyse Financière",
+    description: "Testez vos connaissances sur les états financiers, l'évaluation et la modélisation.",
     questions: 20,
     time: 35,
     icon: DollarSign,
-    category: "Finance & Banking"
+    category: "Finance & Banque"
   },
   {
     id: "agronomy-principles",
-    title: "Modern Agronomy Principles",
-    description: "Assess your understanding of crop science, soil management, and sustainable practices.",
+    title: "Principes d'Agronomie Moderne",
+    description: "Évaluez votre compréhension de la science des cultures, de la gestion des sols et des pratiques durables.",
     questions: 20,
     time: 30,
     icon: Leaf,
@@ -39,35 +37,34 @@ const assessments = [
   },
    {
     id: "supply-chain",
-    title: "Supply Chain Essentials",
-    description: "Demonstrate your expertise in logistics, inventory management, and transportation.",
+    title: "Essentiels de la Chaîne d'Approvisionnement",
+    description: "Démontrez votre expertise en logistique, gestion des stocks et transport.",
     questions: 20,
     time: 30,
     icon: Truck,
-    category: "Logistics"
+    category: "Logistique"
   },
   {
     id: "customer-service",
-    title: "Customer Service Excellence",
-    description: "Prove your ability to handle customer inquiries and resolve issues effectively.",
+    title: "Excellence du Service Client",
+    description: "Prouvez votre capacité à traiter les demandes des clients et à résoudre les problèmes efficacement.",
     questions: 20,
     time: 30,
     icon: HeartHandshake,
-    category: "General Professional"
+    category: "Professionnel Général"
   },
   {
     id: "cognitive-aptitude",
-    title: "Cognitive Aptitude Test",
-    description: "Measure your problem-solving, critical thinking, and numerical reasoning skills.",
+    title: "Test d'Aptitude Cognitive",
+    description: "Mesurez vos compétences en résolution de problèmes, en pensée critique et en raisonnement numérique.",
     questions: 20,
     time: 25,
     icon: BrainCircuit,
-    category: "General Professional"
+    category: "Professionnel Général"
   }
 ];
 
 export default function AssessmentsPage() {
-    const { t } = useLocalization();
     const categories = [...new Set(assessments.map(a => a.category))].sort((a, b) => a.localeCompare(b));
     
     return (
@@ -82,8 +79,8 @@ export default function AssessmentsPage() {
           <Award className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('Skill Certifications')}</h1>
-          <p className="text-muted-foreground mt-1">{t('Prove your skills by taking our proctored assessments and earn badges for your profile.')}</p>
+          <h1 className="text-3xl font-bold tracking-tight">Certifications de Compétences</h1>
+          <p className="text-muted-foreground mt-1">Prouvez vos compétences en passant nos évaluations surveillées et gagnez des badges pour votre profil.</p>
         </div>
       </motion.div>
 
@@ -94,7 +91,7 @@ export default function AssessmentsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: i * 0.1 }}
         >
-            <h2 className="text-2xl font-bold tracking-tight mb-4">{t(category)}</h2>
+            <h2 className="text-2xl font-bold tracking-tight mb-4">{category}</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {assessments.filter(a => a.category === category).map((assessment) => (
                 <Card key={assessment.id}>
@@ -103,19 +100,19 @@ export default function AssessmentsPage() {
                             <assessment.icon className="h-6 w-6 text-primary" />
                         </div>
                         <div>
-                            <CardTitle>{t(assessment.title)}</CardTitle>
-                            <CardDescription className="mt-1">{t(assessment.description)}</CardDescription>
+                            <CardTitle>{assessment.title}</CardTitle>
+                            <CardDescription className="mt-1">{assessment.description}</CardDescription>
                         </div>
                     </CardHeader>
                     <CardContent>
                         <div className="flex justify-between text-sm text-muted-foreground">
-                            <span>{t('{count} questions', { count: assessment.questions })}</span>
-                            <span>{t('{count} minutes', { count: assessment.time })}</span>
+                            <span>{assessment.questions} questions</span>
+                            <span>{assessment.time} minutes</span>
                         </div>
                     </CardContent>
                     <CardFooter>
                         <Button asChild className="w-full" data-hs-event-name="assessment_started">
-                            <Link href={`/dashboard/assessment/${assessment.id}`}>{t('Start Assessment')}</Link>
+                            <Link href={`/dashboard/assessment/${assessment.id}`}>Démarrer l'évaluation</Link>
                         </Button>
                     </CardFooter>
                 </Card>
