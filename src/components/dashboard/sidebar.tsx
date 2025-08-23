@@ -39,105 +39,104 @@ import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "../ui/tooltip";
-import { useLocalization } from "@/context/localization-context";
 import { useAuth, type Role } from "@/context/auth-context";
 import { Separator } from "../ui/separator";
 import { useToast } from "@/hooks/use-toast";
 
-const getNavItems = (t: (key: string) => string, role: Role) => {
+const getNavItems = (role: Role) => {
   const baseNav = [
-    { href: "/dashboard", icon: LayoutDashboard, label: t('Dashboard') },
+    { href: "/dashboard", icon: LayoutDashboard, label: 'Tableau de bord' },
   ];
 
   const graduateNav = [
     ...baseNav,
-    { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
-    { href: "/dashboard/profile", icon: User, label: t('Profile') },
-    { href: "/dashboard/jobs", icon: Briefcase, label: t('Job Search') },
-    { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
-    { href: "/dashboard/events", icon: Calendar, label: t('Events') },
-    { type: "divider", label: t('AI & Assessments') },
-    { href: "/dashboard/assessments", icon: Award, label: t('Skill Certifications') },
-    { href: "/dashboard/interview-prep", icon: BrainCircuit, label: t('Interview Prep') },
+    { href: "/dashboard/messages", icon: MessageSquare, label: 'Messagerie' },
+    { href: "/dashboard/profile", icon: User, label: 'Profil' },
+    { href: "/dashboard/jobs", icon: Briefcase, label: 'Recherche d\'emploi' },
+    { href: "/dashboard/applications", icon: FileText, label: 'Candidatures' },
+    { href: "/dashboard/events", icon: Calendar, label: 'Événements' },
+    { type: "divider", label: 'IA & Évaluations' },
+    { href: "/dashboard/assessments", icon: Award, label: 'Certifications' },
+    { href: "/dashboard/interview-prep", icon: BrainCircuit, label: 'Préparation aux entretiens' },
   ];
 
   const companyNav = [
     ...baseNav,
-    { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
-    { href: "/dashboard/organization-profile", icon: Building, label: t('Company Profile') },
-    { href: "/dashboard/job-postings", icon: Briefcase, label: t('Job Postings')},
-    { href: "/dashboard/applicants", icon: FileText, label: t('Applicants') },
-    { href: "/dashboard/company-events", icon: Calendar, label: t('Event Management') },
-    { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
-    { href: "/dashboard/talent-pool", icon: Users2, label: t('Talent Pool') },
-    { type: "divider", label: "Analytics" },
-    { href: "/dashboard/reports/company-analytics", icon: BarChart3, label: t('Analytics') },
-    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('Report Generator') },
+    { href: "/dashboard/messages", icon: MessageSquare, label: 'Messagerie' },
+    { href: "/dashboard/organization-profile", icon: Building, label: 'Profil de l\'entreprise' },
+    { href: "/dashboard/job-postings", icon: Briefcase, label: 'Offres d\'emploi'},
+    { href: "/dashboard/applicants", icon: FileText, label: 'Candidats' },
+    { href: "/dashboard/company-events", icon: Calendar, label: 'Gestion d\'événements' },
+    { href: "/dashboard/partnerships", icon: Handshake, label: 'Partenariats' },
+    { href: "/dashboard/talent-pool", icon: Users2, label: 'Vivier de talents' },
+    { type: "divider", label: "Analytique" },
+    { href: "/dashboard/reports/company-analytics", icon: BarChart3, label: 'Analytique' },
+    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: 'Générateur de rapports' },
   ];
   
   const schoolNav = [
     ...baseNav,
-    { href: "/dashboard/messages", icon: MessageSquare, label: t('Messages') },
-    { href: "/dashboard/organization-profile", icon: School, label: t('School Profile')},
-    { href: "/dashboard/graduates", icon: UserCheck, label: t('Manage Graduates')},
-    { href: "/dashboard/school-events", icon: Calendar, label: t('Event Management')},
-    { href: "/dashboard/partnerships", icon: Handshake, label: t('Partnerships') },
-    { type: "divider", label: "Analytics" },
-    { href: "/dashboard/reports/school-analytics", icon: BarChart3, label: t('Analytics') },
-    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('Report Generator') },
+    { href: "/dashboard/messages", icon: MessageSquare, label: 'Messagerie' },
+    { href: "/dashboard/organization-profile", icon: School, label: 'Profil de l\'école'},
+    { href: "/dashboard/graduates", icon: UserCheck, label: 'Gestion des diplômés'},
+    { href: "/dashboard/school-events", icon: Calendar, label: 'Gestion d\'événements'},
+    { href: "/dashboard/partnerships", icon: Handshake, label: 'Partenariats' },
+    { type: "divider", label: "Analytique" },
+    { href: "/dashboard/reports/school-analytics", icon: BarChart3, label: 'Analytique' },
+    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: 'Générateur de rapports' },
   ];
 
   const superAdminNav = [
-    { href: "/dashboard/admin/overview", icon: Shield, label: t('dashboard.overview.title') },
-    { href: "/dashboard/admin/user-management", icon: UserCog, label: t('dashboard.user_management.title') },
-    { href: "/dashboard/admin/manage-team", icon: Users2, label: t('dashboard.admin.manage_team') },
-    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('dashboard.analytics.title') },
-    { href: "/dashboard/content", icon: Newspaper, label: t('dashboard.content.title') },
-    { href: "/dashboard/support/center", icon: LifeBuoy, label: t('common.support') },
-    { type: "divider", label: t('dashboard.admin.support_tools') },
-    { href: "/dashboard/support/announcements", icon: Megaphone, label: t('dashboard.admin.announcements') },
-    { href: "/dashboard/support/system-health", icon: HeartPulse, label: t('dashboard.admin.system_health') },
-    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: t('dashboard.admin.knowledge_base') },
-    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('dashboard.admin.report_generator') },
+    { href: "/dashboard/admin/overview", icon: Shield, label: 'Aperçu' },
+    { href: "/dashboard/admin/user-management", icon: UserCog, label: 'Gestion des utilisateurs' },
+    { href: "/dashboard/admin/manage-team", icon: Users2, label: 'Gérer l\'équipe' },
+    { href: "/dashboard/admin/analytics", icon: BarChart3, label: 'Analytique' },
+    { href: "/dashboard/content", icon: Newspaper, label: 'Gestion de contenu' },
+    { href: "/dashboard/support/center", icon: LifeBuoy, label: 'Support' },
+    { type: "divider", label: 'Outils de support' },
+    { href: "/dashboard/support/announcements", icon: Megaphone, label: 'Annonces' },
+    { href: "/dashboard/support/system-health", icon: HeartPulse, label: 'Santé du système' },
+    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: 'Base de connaissances' },
+    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: 'Générateur de rapports' },
   ];
 
   const adminNav = [
-    { href: "/dashboard/admin/overview", icon: Shield, label: t('dashboard.overview.title') },
-    { href: "/dashboard/admin/user-management", icon: UserCog, label: t('dashboard.user_management.title') },
-    { href: "/dashboard/admin/analytics", icon: BarChart3, label: t('dashboard.analytics.title') },
-    { href: "/dashboard/content", icon: Newspaper, label: t('dashboard.content.title') },
-    { href: "/dashboard/support/center", icon: LifeBuoy, label: t('common.support') },
-    { type: "divider", label: t('dashboard.admin.support_tools') },
-    { href: "/dashboard/support/announcements", icon: Megaphone, label: t('dashboard.admin.announcements') },
-    { href: "/dashboard/support/system-health", icon: HeartPulse, label: t('dashboard.admin.system_health') },
-    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: t('dashboard.admin.knowledge_base') },
-    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: t('dashboard.admin.report_generator') },
+    { href: "/dashboard/admin/overview", icon: Shield, label: 'Aperçu' },
+    { href: "/dashboard/admin/user-management", icon: UserCog, label: 'Gestion des utilisateurs' },
+    { href: "/dashboard/admin/analytics", icon: BarChart3, label: 'Analytique' },
+    { href: "/dashboard/content", icon: Newspaper, label: 'Gestion de contenu' },
+    { href: "/dashboard/support/center", icon: LifeBuoy, label: 'Support' },
+    { type: "divider", label: 'Outils de support' },
+    { href: "/dashboard/support/announcements", icon: Megaphone, label: 'Annonces' },
+    { href: "/dashboard/support/system-health", icon: HeartPulse, label: 'Santé du système' },
+    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: 'Base de connaissances' },
+    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: 'Générateur de rapports' },
   ];
   
   const contentManagerNav = [
-    { href: "/dashboard/content", icon: Newspaper, label: t('Content Management') },
+    { href: "/dashboard/content", icon: Newspaper, label: 'Gestion de contenu' },
   ];
   
   const supportStaffNav = [
-    { href: "/dashboard/support/center", icon: LifeBuoy, label: t('common.support') },
-    { type: "divider", label: t('dashboard.admin.tools') },
-    { href: "/dashboard/support/ticket-management", icon: Ticket, label: t('dashboard.admin.ticket_management') },
-    { href: "/dashboard/support/user-lookup", icon: Search, label: t('dashboard.admin.user_lookup') },
-    { href: "/dashboard/support/announcements", icon: Megaphone, label: t('dashboard.admin.announcements') },
-    { href: "/dashboard/support/system-health", icon: HeartPulse, label: t('dashboard.admin.system_health') },
-    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: t('dashboard.admin.knowledge_base') },
+    { href: "/dashboard/support/center", icon: LifeBuoy, label: 'Centre de support' },
+    { type: "divider", label: 'Outils' },
+    { href: "/dashboard/support/ticket-management", icon: Ticket, label: 'Gestion des tickets' },
+    { href: "/dashboard/support/user-lookup", icon: Search, label: 'Recherche d\'utilisateur' },
+    { href: "/dashboard/support/announcements", icon: Megaphone, label: 'Annonces' },
+    { href: "/dashboard/support/system-health", icon: HeartPulse, label: 'Santé du système' },
+    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: 'Base de connaissances' },
   ];
   
   const bottomNav = [
-      { href: "/dashboard/settings", icon: Settings, label: t('common.settings') },
-      { href: "/dashboard/support", icon: LifeBuoy, label: t('common.support') },
+      { href: "/dashboard/settings", icon: Settings, label: 'Paramètres' },
+      { href: "/dashboard/support", icon: LifeBuoy, label: 'Support' },
       { type: "divider" },
-      { action: "logout", icon: LogOut, label: t('auth.logout') },
+      { action: "logout", icon: LogOut, label: 'Déconnexion' },
   ]
   
   const adminFooterNav = [
-       { href: "/dashboard/settings", icon: Settings, label: t('common.settings') },
-       { action: "logout", icon: LogOut, label: t('auth.logout') },
+       { href: "/dashboard/settings", icon: Settings, label: 'Paramètres' },
+       { action: "logout", icon: LogOut, label: 'Déconnexion' },
   ]
 
   switch (role) {
@@ -201,24 +200,23 @@ export function DashboardSidebar() {
   const pathname = usePathname()
   const router = useRouter();
   const { isCollapsed, isMobile, toggleSidebar } = useSidebar();
-  const { t } = useLocalization();
   const { role, signOut } = useAuth();
   const { toast } = useToast();
 
-  const { main: navItems, footer: footerNavItems } = getNavItems(t, role);
+  const { main: navItems, footer: footerNavItems } = getNavItems(role);
 
   const handleSignOut = async () => {
     try {
       await signOut();
       router.push('/');
       toast({
-        title: "Logged Out",
-        description: "You have been successfully logged out.",
+        title: "Déconnecté",
+        description: "Vous avez été déconnecté avec succès.",
       });
     } catch (error) {
       toast({
-        title: "Uh oh! Something went wrong.",
-        description: "There was a problem logging you out.",
+        title: "Oh non ! Une erreur s'est produite.",
+        description: "Un problème est survenu lors de votre déconnexion.",
         variant: "destructive",
       });
     }
@@ -295,7 +293,7 @@ export function DashboardSidebar() {
           <DashboardLogo className={cn("h-12 w-12 text-primary transition-all", isCollapsed && "h-8 w-8")} />
           <div className={cn("flex flex-col transition-opacity duration-200", isCollapsed && "opacity-0 hidden")}>
             <h1 className="text-xl font-bold">Yahnu</h1>
-            <p className="text-xs text-muted-foreground">{t('Your future starts here')}</p>
+            <p className="text-xs text-muted-foreground">{"Votre avenir commence ici"}</p>
           </div>
         </Link>
       </div>

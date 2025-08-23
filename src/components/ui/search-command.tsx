@@ -46,25 +46,25 @@ const getNavItems = (role: Role) => {
                 { icon: LayoutDashboard, text: 'Accueil', onSelect: (router) => router.push('/dashboard') },
                 { icon: User, text: 'Profil', onSelect: (router) => router.push('/dashboard/profile') },
             ],
-            roles: ['admin', 'graduate', 'company', 'school'],
+            roles: ['admin', 'graduate', 'company', 'school', 'super_admin', 'content_manager', 'support_staff'],
         },
         {
             group: 'Offres d\'emploi',
             items: [
-                { icon: Briefcase, text: 'Mes candidatures', onSelect: (router) => router.push('/dashboard/my-applications') },
-                { icon: Building, text: 'Profils d\'entreprises', onSelect: (router) => router.push('/dashboard/company-profiles') },
-                { icon: School, text: 'Profils d\'écoles', onSelect: (router) => router.push('/dashboard/school-profiles') },
+                { icon: Briefcase, text: 'Mes candidatures', onSelect: (router) => router.push('/dashboard/applications') },
+                { icon: Building, text: 'Profils d\'entreprises', onSelect: (router) => router.push('/dashboard/companies') },
+                { icon: School, text: 'Profils d\'écoles', onSelect: (router) => router.push('/dashboard/schools') },
             ],
-            roles: ['admin', 'graduate'],
+            roles: ['graduate'],
         },
         {
             group: 'Recrutement',
             items: [
-                { icon: FileText, text: 'Publier une offre', onSelect: (router) => router.push('/dashboard/job-postings/new') },
-                { icon: Users2, text: 'Candidats', onSelect: (router) => router.push('/dashboard/candidates') },
+                { icon: FileText, text: 'Publier une offre', onSelect: (router) => router.push('/dashboard/job-postings') },
+                { icon: Users2, text: 'Vivier de Talents', onSelect: (router) => router.push('/dashboard/talent-pool') },
                 { icon: Handshake, text: 'Partenariats', onSelect: (router) => router.push('/dashboard/partnerships') },
             ],
-            roles: ['admin', 'company', 'school'],
+            roles: ['company', 'school'],
         },
     ];
 
@@ -75,25 +75,24 @@ const getNavItems = (role: Role) => {
                 { icon: Settings, text: 'Paramètres', onSelect: (router) => router.push('/dashboard/settings') },
                 { icon: LifeBuoy, text: 'Support', onSelect: (router) => router.push('/dashboard/support') },
             ],
-            roles: ['admin', 'graduate', 'company', 'school'],
+            roles: ['admin', 'graduate', 'company', 'school', 'super_admin', 'content_manager', 'support_staff'],
         },
         {
             group: 'Admin',
             items: [
-                { icon: Shield, text: 'Sécurité', onSelect: (router) => router.push('/dashboard/admin/security') },
-                { icon: UserCheck, text: 'Approbations', onSelect: (router) => router.push('/dashboard/admin/approvals') },
+                { icon: Shield, text: 'Aperçu', onSelect: (router) => router.push('/dashboard/admin/overview') },
+                { icon: UserCheck, text: 'Approbations', onSelect: (router) => router.push('/dashboard/admin/overview') },
                 { icon: UserCog, text: 'Gestion des utilisateurs', onSelect: (router) => router.push('/dashboard/admin/user-management') },
             ],
-            roles: ['admin'],
+            roles: ['admin', 'super_admin'],
         },
         {
             group: 'Outils IA',
             items: [
-                { icon: BrainCircuit, text: 'Aperçus IA', onSelect: (router) => router.push('/dashboard/ai/insights') },
-                { icon: MessageSquare, text: 'Constructeur de chatbot', onSelect: (router) => router.push('/dashboard/ai/chatbot-builder') },
-                { icon: Award, text: 'Générateur d\'évaluations', onSelect: (router) => router.push('/dashboard/ai/assessment-generator') },
+                { icon: BrainCircuit, text: 'Préparation aux entretiens', onSelect: (router) => router.push('/dashboard/interview-prep') },
+                { icon: Award, text: 'Certifications', onSelect: (router) => router.push('/dashboard/assessments') },
             ],
-            roles: ['admin', 'company', 'school'],
+            roles: ['graduate'],
         },
         {
             group: 'Rapports',
@@ -101,7 +100,7 @@ const getNavItems = (role: Role) => {
                  { icon: BarChart3, text: 'Analytique', onSelect: (router) => router.push('/dashboard/reports') },
                  { icon: Wrench, text: 'Générateur de rapports', onSelect: (router) => router.push('/dashboard/reports/custom-report-generator') },
             ],
-             roles: ['admin', 'company', 'school'],
+             roles: ['admin', 'company', 'school', 'super_admin'],
         }
     ];
 
