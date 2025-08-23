@@ -1,7 +1,7 @@
 
 "use client"
 
-import { LogOut, User, Settings, Building, MessageSquare } from "lucide-react"
+import { LogOut, User, Settings, Building, MessageSquare, BadgeCheck } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -15,11 +15,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useAuth } from "@/context/auth-context"
+import { useAuth, type Role } from "@/context/auth-context"
 import { useToast } from "@/hooks/use-toast"
+import { Badge } from "../ui/badge"
 
 export function UserNav() {
-  const { user, signOut } = useAuth()
+  const { user, signOut, role } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
 
@@ -44,6 +45,20 @@ export function UserNav() {
     if (!name) return "U"
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   }
+  
+  const getRoleDisplayName = (role: Role) => {
+    const roleMap: Record<Role, string> = {
+      graduate: 'Diplômé',
+      company: 'Entreprise',
+      school: 'École',
+      admin: 'Admin',
+      super_admin: 'Super Admin',
+      content_manager: 'Gestionnaire de contenu',
+      support_staff: 'Support',
+    };
+    return roleMap[role] || role;
+  };
+
 
   return (
     <DropdownMenu>
@@ -57,11 +72,17 @@ export function UserNav() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user?.name || "Utilisateur"}</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {user?.email}
-            </p>
+          <div className="flex flex-col space-y-2">
+            <div className="space-y-1">
+                <p className="text-sm font-medium leading-none">{user?.name || "Utilisateur"}</p>
+                <p className="text-xs leading-none text-muted-foreground">
+                {user?.email}
+                </p>
+            </div>
+            <Badge variant="outline" className="w-fit">
+                <BadgeCheck className="mr-1 h-3 w-3 text-primary" />
+                {getRoleDisplayName(role)}
+            </Badge>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
