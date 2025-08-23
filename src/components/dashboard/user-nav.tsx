@@ -59,6 +59,8 @@ export function UserNav() {
     return roleMap[role] || role;
   };
 
+  const hasDistinctProfilePage = role === 'graduate' || role === 'company' || role === 'school';
+  const canReceiveMessages = role === 'graduate' || role === 'company' || role === 'school' || role === 'support_staff';
 
   return (
     <DropdownMenu>
@@ -87,20 +89,18 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
-            <User className="mr-2 h-4 w-4" />
-            <span>Profil</span>
-          </DropdownMenuItem>
-          {user?.role === 'company' && (
-            <DropdownMenuItem onClick={() => router.push('/dashboard/company-profile')}>
-              <Building className="mr-2 h-4 w-4" />
-              <span>Profil de l'entreprise</span>
+          {hasDistinctProfilePage && (
+            <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
+              <User className="mr-2 h-4 w-4" />
+              <span>Profil</span>
             </DropdownMenuItem>
           )}
-           <DropdownMenuItem onClick={() => router.push('/dashboard/messages')}>
-            <MessageSquare className="mr-2 h-4 w-4" />
-            <span>Messages</span>
-          </DropdownMenuItem>
+           {canReceiveMessages && (
+             <DropdownMenuItem onClick={() => router.push('/dashboard/messages')}>
+                <MessageSquare className="mr-2 h-4 w-4" />
+                <span>Messages</span>
+            </DropdownMenuItem>
+           )}
           <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>
             <Settings className="mr-2 h-4 w-4" />
             <span>Paramètres</span>
