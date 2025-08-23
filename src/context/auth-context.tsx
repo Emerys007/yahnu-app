@@ -265,14 +265,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const createPassword = async () => {
       if (!auth.currentUser || !auth.currentUser.email) {
-          throw new Error("No user is currently signed in or user has no email.");
+          throw new Error("Aucun utilisateur n'est actuellement connecté ou l'utilisateur n'a pas d'e-mail.");
       }
       await sendPasswordResetEmail(auth, auth.currentUser.email);
   }
 
   const updateProfile = async (updates: Partial<UserProfile>) => {
     if (!auth.currentUser) {
-      throw new Error("No user is currently signed in.");
+      throw new Error("Aucun utilisateur n'est actuellement connecté.");
     }
 
     const { email, ...otherUpdates } = updates;
@@ -285,14 +285,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Do NOT update the email in firestore here. The onAuthStateChanged listener
         // will handle syncing the new, verified email to Firestore.
       } catch (error: any) {
-        console.error("Error sending verification email for email update:", error);
+        console.error("Erreur lors de l'envoi de l'e-mail de vérification pour la mise à jour de l'e-mail:", error);
         if (error.code === 'auth/requires-recent-login') {
-          throw new Error("Please sign out and sign in again to update your email.");
+          throw new Error("Veuillez vous déconnecter et vous reconnecter pour mettre à jour votre e-mail.");
         }
         if (error.code === 'auth/email-already-in-use') {
-          throw new Error("This email is already in use by another account.");
+          throw new Error("Cet e-mail est déjà utilisé par un autre compte.");
         }
-        throw new Error("Failed to send verification email for email update.");
+        throw new Error("Échec de l'envoi de l'e-mail de vérification pour la mise à jour de l'e-mail.");
       }
     }
 
