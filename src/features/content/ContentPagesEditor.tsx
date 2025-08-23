@@ -21,30 +21,30 @@ import { Separator } from "@/components/ui/separator"
 // --- Schemas and Default Values (Defined at the top level) ---
 
 const teamMemberSchema = z.object({
-  name: z.string().min(1, "Name is required."),
-  role: z.string().min(1, "Role is required."),
-  imageUrl: z.string().url("Must be a valid URL.").or(z.literal("")),
+  name: z.string().min(1, "Le nom est requis."),
+  role: z.string().min(1, "Le rôle est requis."),
+  imageUrl: z.string().url("Doit être une URL valide.").or(z.literal("")),
 });
 
 const aboutPageSchema = z.object({
-    aboutTitle: z.string().min(1, "Required"),
-    aboutSubtitle: z.string().min(1, "Required"),
-    storyTitle: z.string().min(1, "Required"),
-    storyContent1: z.string().min(1, "Required"),
-    storyContent2: z.string().min(1, "Required"),
-    missionTitle: z.string().min(1, "Required"),
-    missionContent: z.string().min(1, "Required"),
-    visionTitle: z.string().min(1, "Required"),
-    visionContent: z.string().min(1, "Required"),
-    valuesTitle: z.string().min(1, "Required"),
-    valuesContent: z.string().min(1, "Required"),
+    aboutTitle: z.string().min(1, "Requis"),
+    aboutSubtitle: z.string().min(1, "Requis"),
+    storyTitle: z.string().min(1, "Requis"),
+    storyContent1: z.string().min(1, "Requis"),
+    storyContent2: z.string().min(1, "Requis"),
+    missionTitle: z.string().min(1, "Requis"),
+    missionContent: z.string().min(1, "Requis"),
+    visionTitle: z.string().min(1, "Requis"),
+    visionContent: z.string().min(1, "Requis"),
+    valuesTitle: z.string().min(1, "Requis"),
+    valuesContent: z.string().min(1, "Requis"),
     teamMembers: z.array(teamMemberSchema).optional(),
 });
 
 const legalPageSchema = z.object({
-    title: z.string().min(1, "Required"),
-    lastUpdated: z.string().min(1, "Required"),
-    content: z.string().min(50, "Content must be at least 50 characters."),
+    title: z.string().min(1, "Requis"),
+    lastUpdated: z.string().min(1, "Requis"),
+    content: z.string().min(50, "Le contenu doit comporter au moins 50 caractères."),
 })
 
 export const defaultAboutValues: z.infer<typeof aboutPageSchema> = {
