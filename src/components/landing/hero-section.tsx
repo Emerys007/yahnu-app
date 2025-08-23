@@ -5,7 +5,7 @@ import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import Autoplay from "embla-carousel-autoplay"
-import { ArrowRight, Search, PlusCircle, Handshake } from "lucide-react"
+import { Search, PlusCircle, Handshake } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 import {
@@ -17,39 +17,38 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
-import { useLocalization } from "@/context/localization-context"
 import { cn } from "@/lib/utils"
 
-const getSlides = (t: (key: string) => string) => [
+const slides = [
     {
-        role: "Graduates",
-        headline: t("landing.hero.graduates.headline"),
-        subtitle: t("landing.hero.graduates.subtitle"),
-        buttonText: t("landing.hero.graduates.buttonText"),
+        role: "Diplômés",
+        headline: "Votre carrière de rêve vous attend",
+        subtitle: "Découvrez des opportunités exclusives auprès des meilleures entreprises de Côte d'Ivoire.",
+        buttonText: "Trouver mon prochain emploi",
         buttonIcon: <Search />,
-        imageUrl: "/images/dream-job.jpg",
+        imageUrl: "/images/hero/dream-job.jpg",
         imageHint: "confident graduate looking towards the future",
         href: "/signup?role=graduate"
       },
       {
-        role: "Companies",
-        headline: t("landing.hero.companies.headline"),
-        subtitle: t("landing.hero.companies.subtitle"),
-        buttonText: t("landing.hero.companies.buttonText"),
+        role: "Entreprises",
+        headline: "Recrutez les meilleurs talents, sans effort",
+        subtitle: "Accédez à un vivier de diplômés qualifiés et prêts à avoir un impact.",
+        buttonText: "Publier une offre d'emploi",
         buttonIcon: <PlusCircle />,
-        imageUrl: "/images/Build-A-Team.jpeg",
-        imageHint: "diverse business team",
+        imageUrl: "/images/hero/build-a-team.jpeg",
+        imageHint: "diverse team collaborating in a modern office",
         href: "/signup?role=company"
       },
       {
-        role: "Universities",
-        headline: t("landing.hero.universities.headline"),
-        subtitle: t("landing.hero.universities.subtitle"),
-        buttonText: t("landing.hero.universities.buttonText"),
+        role: "Universités",
+        headline: "Renforcez l'employabilité de vos diplômés",
+        subtitle: "Établissez des partenariats avec des leaders de l'industrie et suivez le succès de vos anciens élèves.",
+        buttonText: "Devenir un partenaire",
         buttonIcon: <Handshake />,
-        imageUrl: "/images/Industry.webp",
+        imageUrl: "/images/hero/industry-partnership.webp",
         imageHint: "university building and a handshake representing partnership",
-        href: "/signup?role=school_administrator"
+        href: "/signup?role=school"
       },
 ]
 
@@ -57,13 +56,10 @@ export function HeroSection() {
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   )
-  const { t } = useLocalization();
-  
 
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)
-  
-  const slides = getSlides(t);
+  const [activeSlide, setActiveSlide] = React.useState(slides[0])
 
   React.useEffect(() => {
     if (!api) {
@@ -71,16 +67,32 @@ export function HeroSection() {
     }
  
     setCurrent(api.selectedScrollSnap())
+    setActiveSlide(slides[api.selectedScrollSnap()])
  
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap())
+      setActiveSlide(slides[api.selectedScrollSnap()])
     })
-  }, [api])
+  }, [api, slides])
 
   const scrollTo = React.useCallback(
     (index: number) => api && api.scrollTo(index),
     [api]
   );
+  const titleVariants = {
+    hidden: { opacity: 0, y: -30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  };
+
+  const subtitleVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut", delay: 0.2 } },
+  };
+
+  const buttonVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut", delay: 0.4 } },
+  };
 
   return (
     <section className="relative w-full h-[70vh] md:h-[90vh] overflow-hidden">
@@ -107,79 +119,68 @@ export function HeroSection() {
                   data-ai-hint={slide.imageHint}
                   priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
-                  <AnimatePresence>
-                  {current === index && (
-                    <motion.div
-                      className="max-w-4xl mx-auto space-y-8"
-                      initial="hidden"
-                      animate="visible"
-                      exit="hidden"
-                      variants={{
-                        visible: { transition: { staggerChildren: 0.2 } },
-                      }}
-                    >
-                      <motion.h1
-                        className="text-4xl md:text-7xl font-bold tracking-tight drop-shadow-2xl leading-tight"
-                        variants={{
-                          hidden: { opacity: 0, y: 20 },
-                          visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeInOut" } },
-                        }}
-                      >
-                        {slide.headline}
-                      </motion.h1>
-                      <motion.p
-                        className="text-lg md:text-2xl text-white/90 drop-shadow-xl max-w-3xl mx-auto"
-                         variants={{
-                          hidden: { opacity: 0, y: 20 },
-                          visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeInOut", delay: 0.2 } },
-                        }}
-                      >
-                        {slide.subtitle}
-                      </motion.p>
-                      <motion.div
-                        className="flex flex-col sm:flex-row gap-4 justify-center"
-                        variants={{
-                          hidden: { opacity: 0, y: 20 },
-                          visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeInOut", delay: 0.4 } },
-                        }}
-                      >
-                          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Button size="lg" asChild className="text-base px-8 py-6">
-                                <Link href={slide.href}>
-                                    <div className="flex items-center gap-2">
-                                        {slide.buttonText}
-                                         <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-                                    </div>
-                                </Link>
-                            </Button>
-                          </motion.div>
-                      </motion.div>
-                    </motion.div>
-                  )}
-                  </AnimatePresence>
-                </div>
               </div>
             </CarouselItem>
           ))}
         </CarouselContent>
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
+            <div className="max-w-4xl space-y-8">
+                <AnimatePresence mode="wait">
+                    {activeSlide && (
+                        <motion.div
+                            key={activeSlide.headline}
+                            initial="hidden"
+                            animate="visible"
+                            exit="hidden"
+                        >
+                            <motion.h1
+                                variants={titleVariants}
+                                className="text-4xl md:text-7xl font-bold tracking-tight drop-shadow-2xl leading-tight"
+                            >
+                                {activeSlide.headline}
+                            </motion.h1>
+                            <motion.p
+                                variants={subtitleVariants}
+                                className="text-lg md:text-2xl text-white/90 drop-shadow-xl max-w-3xl mx-auto mt-4"
+                            >
+                                {activeSlide.subtitle}
+                            </motion.p>
+                            <motion.div variants={buttonVariants} className="mt-8">
+                                <Button size="lg" asChild className="text-base px-8 py-6">
+                                    <Link href={activeSlide.href}>
+                                        <div className="flex items-center gap-2">
+                                            {activeSlide.buttonIcon}
+                                            {activeSlide.buttonText}
+                                        </div>
+                                    </Link>
+                                </Button>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        </div>
+
         <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex h-12 w-12" />
         <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex h-12 w-12" />
+
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex space-x-2">
+            {slides.map((_, index) => (
+            <button
+                key={index}
+                onClick={() => scrollTo(index)}
+                className={cn(
+                "h-2 w-2 rounded-full bg-white/50 transition-all duration-300",
+                current === index ? "w-4 bg-white" : "hover:bg-white/75"
+                )}
+                aria-label={`Go to slide ${index + 1}`}
+            />
+            ))}
+        </div>
       </Carousel>
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex space-x-2">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => scrollTo(index)}
-            className={cn(
-              "h-2 w-2 rounded-full bg-white/50 transition-all duration-300",
-              current === index ? "w-4 bg-white" : "hover:bg-white/75"
-            )}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
     </section>
   )
 }

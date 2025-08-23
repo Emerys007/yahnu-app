@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useMemo } from 'react'
@@ -22,69 +23,11 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Search, MapPin, Briefcase, Building, ArrowRight } from "lucide-react"
-import { useLocalization } from '@/context/localization-context'
 import Link from 'next/link'
 import { MainNav } from '@/components/landing/main-nav'
 import { Footer } from '@/components/landing/footer'
 
-const jobListingsData = {
-  en: [
-    {
-      slug: "tech-lead-orange",
-      title: "Tech Lead - Mobile Money",
-      company: "Orange Ivory Coast",
-      location: "Abidjan, Ivory Coast",
-      type: "Full-time",
-      workplace: "hybrid",
-      tags: ["Fintech", "Mobile", "Management", "API"],
-    },
-    {
-      slug: "agronomist-sifca",
-      title: "Agronomist",
-      company: "SIFCA",
-      location: "Yamoussoukro, Ivory Coast",
-      type: "Full-time",
-      workplace: "on-site",
-      tags: ["Agriculture", "Agronomy", "Field Work"],
-    },
-    {
-      slug: "data-analyst-bridge-bank",
-      title: "Data Analyst",
-      company: "Bridge Bank Group",
-      location: "Abidjan, Ivory Coast",
-      type: "Full-time",
-      workplace: "on-site",
-      tags: ["Finance", "Data Analysis", "SQL", "Power BI"],
-    },
-    {
-      slug: "marketing-manager-solibra",
-      title: "Marketing Manager",
-      company: "SOLIBRA",
-      location: "Abidjan, Ivory Coast",
-      type: "Full-time",
-      workplace: "hybrid",
-      tags: ["FMCG", "Marketing", "Branding"],
-    },
-    {
-      slug: "logistics-coordinator-bollore",
-      title: "Logistics Coordinator",
-      company: "Bolloré Logistics",
-      location: "San-Pédro, Ivory Coast",
-      type: "Full-time",
-      workplace: "on-site",
-      tags: ["Logistics", "Supply Chain", "Port Operations"],
-    },
-    {
-      slug: "ui-ux-designer-jambaars",
-      title: "UI/UX Designer",
-      company: "Jambaars",
-      location: "Remote",
-      type: "Contract",
-      workplace: "remote",
-      tags: ["UI/UX", "Figma", "SaaS", "Startup"],
-    },
-  ],
-  fr: [
+const jobListingsData = [
     {
       slug: "tech-lead-orange",
       title: "Lead Technique - Orange Money",
@@ -139,13 +82,9 @@ const jobListingsData = {
       workplace: "remote",
       tags: ["UI/UX", "Figma", "SaaS", "Startup"],
     },
-  ]
-};
+];
 
 export default function PublicJobSearchPage() {
-  const { language, t } = useLocalization();
-  const jobListings = jobListingsData[language as keyof typeof jobListingsData] || jobListingsData.en;
-
   const [filters, setFilters] = useState({
     keywords: "",
     location: "",
@@ -169,7 +108,7 @@ export default function PublicJobSearchPage() {
   }
 
   const filteredJobs = useMemo(() => {
-    return jobListings.filter(job => {
+    return jobListingsData.filter(job => {
       const { keywords, location, type, workplace } = filters;
 
       const keywordsMatch = (job.title.toLowerCase().includes(keywords.toLowerCase()) || 
@@ -185,32 +124,32 @@ export default function PublicJobSearchPage() {
 
       return keywordsMatch && locationMatch && typeMatch && workplaceMatch;
     })
-  }, [filters, jobListings]);
+  }, [filters]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <MainNav />
       <main className="flex-1 container mx-auto py-12">
         <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold tracking-tight">{t('pages.jobs.find_your_next_opportunity')}</h1>
+            <h1 className="text-5xl font-bold tracking-tight">Trouvez votre prochaine opportunité</h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t('pages.jobs.browse_jobs_description')}
+                Parcourez des centaines d'offres d'emploi et de stages auprès d'entreprises de premier plan.
             </p>
         </div>
         <div className="grid md:grid-cols-[320px_1fr] gap-8 items-start">
           <Card>
             <CardHeader>
-              <CardTitle>{t('pages.jobs.filter_jobs')}</CardTitle>
-              <CardDescription>{t('pages.jobs.refine_search')}</CardDescription>
+              <CardTitle>Filtrer les emplois</CardTitle>
+              <CardDescription>Affinez votre recherche pour trouver le poste idéal.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="keywords">{t('pages.jobs.keywords')}</Label>
+                <Label htmlFor="keywords">Mots-clés</Label>
                 <div className="relative">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input 
                     id="keywords" 
-                    placeholder={t("pages.jobs.job_title_skills")}
+                    placeholder={"Titre du poste, compétences..."}
                     className="pl-8" 
                     value={filters.keywords}
                     onChange={(e) => handleFilterChange('keywords', e.target.value)}
@@ -218,12 +157,12 @@ export default function PublicJobSearchPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="location">{t('pages.jobs.location')}</Label>
+                <Label htmlFor="location">Lieu</Label>
                 <div className="relative">
                   <MapPin className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input 
                     id="location" 
-                    placeholder={t("pages.jobs.city_state_remote")}
+                    placeholder={"Ville, télétravail"}
                     className="pl-8"
                     value={filters.location}
                     onChange={(e) => handleFilterChange('location', e.target.value)}
@@ -231,36 +170,36 @@ export default function PublicJobSearchPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="job-type">{t('pages.jobs.job_type')}</Label>
+                <Label htmlFor="job-type">Type de contrat</Label>
                 <Select 
                   value={filters.type}
                   onValueChange={(value) => handleFilterChange('type', value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('pages.jobs.all_types')} />
+                    <SelectValue placeholder={'Tous types'} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t('pages.jobs.all_types')}</SelectItem>
-                    <SelectItem value="Full-time">{t('pages.jobs.full_time')}</SelectItem>
-                    <SelectItem value="Part-time">{t('pages.jobs.part_time')}</SelectItem>
-                    <SelectItem value="Contract">{t('pages.jobs.contract')}</SelectItem>
-                    <SelectItem value="Internship">{t('pages.jobs.internship')}</SelectItem>
+                    <SelectItem value="all">Tous types</SelectItem>
+                    <SelectItem value="Full-time">Temps plein</SelectItem>
+                    <SelectItem value="Part-time">Temps partiel</SelectItem>
+                    <SelectItem value="Contract">Contrat</SelectItem>
+                    <SelectItem value="Internship">Stage</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2 pt-2">
-                <Label>{t('pages.jobs.workplace')}</Label>
+                <Label>Lieu de travail</Label>
                   <div className="flex items-center space-x-2">
                     <Checkbox id="remote" checked={filters.workplace.remote} onCheckedChange={() => handleWorkplaceChange('remote')} />
-                    <Label htmlFor="remote" className="font-normal">{t('pages.jobs.remote')}</Label>
+                    <Label htmlFor="remote" className="font-normal">Télétravail</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Checkbox id="on-site" checked={filters.workplace.onSite} onCheckedChange={() => handleWorkplaceChange('onSite')} />
-                    <Label htmlFor="on-site" className="font-normal">{t('pages.jobs.on_site')}</Label>
+                    <Label htmlFor="on-site" className="font-normal">Sur site</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Checkbox id="hybrid" checked={filters.workplace.hybrid} onCheckedChange={() => handleWorkplaceChange('hybrid')} />
-                    <Label htmlFor="hybrid" className="font-normal">{t('pages.jobs.hybrid')}</Label>
+                    <Label htmlFor="hybrid" className="font-normal">Hybride</Label>
                   </div>
                 </div>
             </CardContent>
@@ -277,11 +216,11 @@ export default function PublicJobSearchPage() {
                         <CardDescription className="mt-1 flex flex-col sm:flex-row sm:items-center sm:gap-4 pt-1">
                           <span className="flex items-center gap-1.5"><Building className="h-4 w-4"/> {job.company}</span>
                           <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4"/> {job.location}</span>
-                          <span className="flex items-center gap-1.5"><Briefcase className="h-4 w-4"/> {t(job.type)}</span>
+                          <span className="flex items-center gap-1.5"><Briefcase className="h-4 w-4"/> {job.type}</span>
                         </CardDescription>
                       </div>
                       <Button asChild className="shrink-0">
-                        <Link href="/signup?role=graduate">{t('pages.jobs.view_job')}</Link>
+                        <Link href="/signup?role=graduate">Voir l'offre</Link>
                       </Button>
                     </div>
                   </CardHeader>
@@ -296,18 +235,18 @@ export default function PublicJobSearchPage() {
               )) : (
                 <Card>
                   <CardContent className="py-12 text-center">
-                      <p className="font-semibold">{t('pages.jobs.no_jobs_found')}</p>
-                      <p className="text-muted-foreground mt-2">{t("pages.jobs.adjust_filters")}</p>
+                      <p className="font-semibold">Aucune offre d'emploi trouvée</p>
+                      <p className="text-muted-foreground mt-2">Essayez d'ajuster vos filtres pour trouver ce que vous cherchez.</p>
                   </CardContent>
                 </Card>
               )}
               <Card>
                 <CardContent className="py-8 text-center">
-                    <h3 className="text-2xl font-bold">{t('pages.jobs.unlock_more_opportunities')}</h3>
-                    <p className="text-muted-foreground mt-2 mb-4">{t('pages.jobs.create_account_description')}</p>
+                    <h3 className="text-2xl font-bold">Débloquez plus d'opportunités</h3>
+                    <p className="text-muted-foreground mt-2 mb-4">Créez votre compte pour postuler aux offres, recevoir des alertes d'emploi personnalisées et vous faire remarquer par les recruteurs.</p>
                     <Button asChild size="lg">
                         <Link href="/signup?role=graduate">
-                            {t('pages.jobs.sign_up_now')} <ArrowRight className="ml-2 h-4 w-4"/>
+                            S'inscrire maintenant <ArrowRight className="ml-2 h-4 w-4"/>
                         </Link>
                     </Button>
                 </CardContent>
