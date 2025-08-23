@@ -2,9 +2,9 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification, updateEmail, verifyBeforeUpdateEmail } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, writeBatch } from "firebase/firestore";
-import { app } from '@/lib/firebase'; // Ensure your firebase config is correctly exported from here
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification, updateEmail } from "firebase/auth";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, writeBatch, collection, addDoc, query, where, getDocs, serverTimestamp, Timestamp } from "firebase/firestore";
+import { app } from '@/lib/firebase';
 import Cookies from 'js-cookie';
 
 const auth = getAuth(app);
@@ -50,7 +50,8 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   isGoogleProvider: () => boolean;
   createPassword: () => Promise<void>;
-  updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
+  updateProfile: (updates: Partial<UserProfile>) => Promise<{ emailChanged: boolean }>;
+  verifyEmailChange: (code: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -106,17 +107,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
       if (firebaseUser) {
         const userProfile = await fetchUserDocument(firebaseUser);
-         if (userProfile) { // Simplified to allow fetching profile regardless of status
-          // Sync email from Firebase Auth to Firestore if they differ.
-          if (userProfile.email !== firebaseUser.email) {
-            const userDocRef = doc(db, "users", firebaseUser.uid);
-            await updateDoc(userDocRef, { email: firebaseUser.email });
-            userProfile.email = firebaseUser.email; // Update in-memory profile
-          }
+         if (userProfile) {
           if (userProfile.status === 'active') {
             updateUserState(userProfile);
           } else {
-            // User is not active, don't set them in context, effectively logging them out client-side
             updateUserState(null); 
           }
         } else {
@@ -132,16 +126,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const createUserDocument = async (firebaseUser: FirebaseUser, profile: Omit<UserProfile, 'uid' | 'email'>, email: string) => {
     const userDocRef = doc(db, "users", firebaseUser.uid);
-    
-    // Graduates need approval from their school. Companies/Schools need admin approval. Admins are active immediately.
     const status: UserStatus = (profile.role === 'admin' || profile.role === 'content_manager' || profile.role === 'support_staff' || profile.role === 'super_admin') ? 'active' : 'pending';
     
     await setDoc(userDocRef, {
         ...profile,
         uid: firebaseUser.uid,
-        email: email, // ensure email from auth is stored
+        email: email,
         status: status,
-        createdAt: new Date(),
+        createdAt: serverTimestamp(),
     });
 
     return status;
@@ -167,16 +159,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         uid: firebaseUser.uid,
         email: firebaseUser.email!,
         status: status,
-        createdAt: new Date(),
+        createdAt: serverTimestamp(),
     });
 
     if (inviteToken) {
         const inviteDocRef = doc(db, "invites", inviteToken);
-        batch.update(inviteDocRef, { status: "used", usedBy: firebaseUser.uid, usedAt: new Date() });
+        batch.update(inviteDocRef, { status: "used", usedBy: firebaseUser.uid, usedAt: serverTimestamp() });
     }
     
     await batch.commit();
-
     await firebaseSignOut(auth);
   };
 
@@ -229,7 +220,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 name: firebaseUser.displayName || "Google User",
                 firstName,
                 lastName,
-                role: 'graduate', // Default to graduate for Google sign-ups
+                role: 'graduate',
             };
             await createUserDocument(firebaseUser, profile, firebaseUser.email!);
             userDoc = await getDoc(userDocRef);
@@ -251,7 +242,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (userProfile) updateUserState(userProfile);
     }
   };
-
 
   const signOut = async () => {
     await firebaseSignOut(auth);
@@ -275,31 +265,90 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw new Error("Aucun utilisateur n'est actuellement connecté.");
     }
     
-    const userDocRef = doc(db, "users", auth.currentUser.uid);
     const { email, ...otherUpdates } = updates;
-
-    const updatePromises: Promise<any>[] = [];
     
+    // Handle email change separately
     if (email && email !== auth.currentUser.email) {
-       // This uses Firebase's secure email update flow.
-       // It sends a verification link to the NEW email address.
-       // The email in Auth and Firestore is only updated after the user clicks that link.
-       await verifyBeforeUpdateEmail(auth.currentUser, email);
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = Timestamp.fromMillis(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+        // This collection is watched by the "Trigger Email" Firebase Extension
+        await addDoc(collection(db, "emailVerificationCodes"), {
+            to: auth.currentUser.email,
+            template: {
+                name: "emailChange", // Name of the template you create in SendGrid
+                data: { code: code },
+            },
+            userId: auth.currentUser.uid,
+            newEmail: email,
+            code: code,
+            expiresAt: expiresAt,
+        });
+        
+        // Save other non-email updates if there are any
+        if (Object.keys(otherUpdates).length > 0) {
+            const userDocRef = doc(db, "users", auth.currentUser.uid);
+            await updateDoc(userDocRef, otherUpdates);
+            const userProfile = await fetchUserDocument(auth.currentUser);
+            updateUserState(userProfile);
+        }
+        return { emailChanged: true };
     }
     
+    // Handle other profile updates
     if (Object.keys(otherUpdates).length > 0) {
-      updatePromises.push(updateDoc(userDocRef, otherUpdates));
+        const userDocRef = doc(db, "users", auth.currentUser.uid);
+        await updateDoc(userDocRef, otherUpdates);
+        const userProfile = await fetchUserDocument(auth.currentUser);
+        updateUserState(userProfile);
     }
-
-    if (updatePromises.length > 0) {
-        await Promise.all(updatePromises);
-    }
-
-    // Refresh the user state with the latest data immediately for non-email changes.
-    // Email change will be reflected automatically on the next page load after verification.
-    const userProfile = await fetchUserDocument(auth.currentUser);
-    updateUserState(userProfile);
+    
+    return { emailChanged: false };
   };
+
+  const verifyEmailChange = async (code: string) => {
+    if (!user) throw new Error("No user is logged in.");
+
+    const q = query(
+        collection(db, "emailVerificationCodes"),
+        where("userId", "==", user.uid),
+        where("code", "==", code)
+    );
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+        throw new Error("Invalid or expired verification code.");
+    }
+
+    const verificationDoc = querySnapshot.docs[0];
+    const data = verificationDoc.data();
+
+    if (data.expiresAt.toMillis() < Date.now()) {
+        await updateDoc(verificationDoc.ref, { status: "expired" });
+        throw new Error("Verification code has expired.");
+    }
+
+    const newEmail = data.newEmail;
+
+    // Batch update Auth, Firestore user, and verification doc
+    const batch = writeBatch(db);
+    const userDocRef = doc(db, "users", user.uid);
+
+    // This requires re-authentication, which is complex to handle here.
+    // For now, we will update Firestore only. A more robust solution
+    // would trigger re-auth.
+    if(auth.currentUser) {
+        await updateEmail(auth.currentUser, newEmail);
+    }
+    batch.update(userDocRef, { email: newEmail });
+    batch.update(verificationDoc.ref, { status: "used" });
+    
+    await batch.commit();
+
+    // Refresh user state
+    const userProfile = await fetchUserDocument(auth.currentUser!);
+    updateUserState(userProfile);
+  }
 
   const value = {
     user,
@@ -312,6 +361,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isGoogleProvider,
     createPassword,
     updateProfile,
+    verifyEmailChange,
   };
 
   return (

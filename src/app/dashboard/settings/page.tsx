@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, School as SchoolIcon, KeyRound, Check, ChevronsUpDown } from "lucide-react"
+import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, School as SchoolIcon, KeyRound, Check, ChevronsUpDown, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
 import {
@@ -34,9 +34,12 @@ const EmailVerificationDialog = ({
   onConfirm: (code: string) => void
 }) => {
     const [code, setCode] = useState("");
+    const [isConfirming, setIsConfirming] = useState(false);
 
-    const handleConfirm = () => {
-        onConfirm(code);
+    const handleConfirm = async () => {
+        setIsConfirming(true);
+        await onConfirm(code);
+        setIsConfirming(false);
     }
 
     return (
@@ -54,12 +57,16 @@ const EmailVerificationDialog = ({
                         id="verification-code" 
                         value={code} 
                         onChange={(e) => setCode(e.target.value)} 
-                        placeholder="Entrez le code à 6 chiffres" 
+                        placeholder="Entrez le code à 6 chiffres"
+                        disabled={isConfirming}
                     />
                 </div>
                 <DialogFooter>
-                    <Button variant="outline" onClick={onClose}>Annuler</Button>
-                    <Button onClick={handleConfirm} disabled={!code}>Confirmer</Button>
+                    <Button variant="outline" onClick={onClose} disabled={isConfirming}>Annuler</Button>
+                    <Button onClick={handleConfirm} disabled={!code || isConfirming}>
+                        {isConfirming && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Confirmer
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -68,11 +75,10 @@ const EmailVerificationDialog = ({
 
 
 const UserAccountSettings = () => {
-    const { user, createPassword, isGoogleProvider, updateProfile } = useAuth();
+    const { user, createPassword, isGoogleProvider, updateProfile, verifyEmailChange } = useAuth();
     const { toast } = useToast();
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
-    const [newEmail, setNewEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isVerificationOpen, setIsVerificationOpen] = useState(false);
 
@@ -92,65 +98,41 @@ const UserAccountSettings = () => {
         
         setIsSubmitting(true);
         
-        if (emailChanged) {
-            setNewEmail(email); // Store the new email temporarily
-            // In a real app, you would trigger a backend function here to send a code to user.email
-            console.log("Code de vérification (simulé) envoyé à :", user.email);
-            toast({
-                title: "Code de vérification envoyé",
-                description: `Un code a été envoyé à ${user.email} pour confirmer cette modification.`
-            })
-            setIsVerificationOpen(true); // Open the verification dialog
-            setIsSubmitting(false); // No need to keep it submitting while dialog is open
-            return;
-        }
-        
-        // If only name changed
-        if (nameChanged) {
-            try {
-                await updateProfile({ name });
-                toast({
+        try {
+            const result = await updateProfile({ name, email });
+            if (result.emailChanged) {
+                setIsVerificationOpen(true);
+            } else {
+                 toast({
                     title: "Profil mis à jour",
                     description: "Vos modifications ont été enregistrées avec succès.",
                 });
-            } catch (error: any) {
-                toast({
-                    title: "Erreur",
-                    description: error.message || "La mise à jour du profil a échoué.",
-                    variant: 'destructive',
-                });
             }
+        } catch (error: any) {
+            toast({
+                title: "Erreur",
+                description: error.message || "La mise à jour du profil a échoué.",
+                variant: 'destructive',
+            });
+        } finally {
+            setIsSubmitting(false);
         }
-        setIsSubmitting(false);
     };
 
     const onConfirmVerification = async (code: string) => {
-        if (!user) return;
-        setIsVerificationOpen(false);
-        setIsSubmitting(true);
-
         try {
-            // Here, you would normally verify the code on your backend
-            // For this simulation, we'll just check if the code is not empty
-            if (code.trim() === '') {
-                 throw new Error("Le code de vérification ne peut pas être vide.");
-            }
-            console.log("Code de vérification reçu :", code, "Modification de l'e-mail pour :", newEmail);
-
-             await updateProfile({ email: newEmail });
-             toast({
+            await verifyEmailChange(code);
+            toast({
                 title: "Adresse e-mail mise à jour !",
                 description: "Votre adresse e-mail a été modifiée avec succès.",
             });
+            setIsVerificationOpen(false);
         } catch (error: any) {
              toast({
                 title: "Erreur de vérification",
                 description: error.message || "Le code est incorrect ou a expiré.",
                 variant: 'destructive',
             });
-        } finally {
-            setIsSubmitting(false);
-            setNewEmail(''); // Clear the temporary new email
         }
     };
 
@@ -192,6 +174,7 @@ const UserAccountSettings = () => {
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button onClick={handleSaveChanges} disabled={isSubmitting}>
+                    {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                     {isSubmitting ? "Enregistrement..." : "Enregistrer les modifications"}
                 </Button>
                 <Button variant="outline" onClick={handleCreatePassword}>
