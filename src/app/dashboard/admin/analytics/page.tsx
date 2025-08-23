@@ -1,11 +1,9 @@
+
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart3 } from "lucide-react"
 import { AnalyticsClient } from "./analytics-client"
-import { CreateReportDialog } from "@/features/analytics/CreateReportDialog";
-import { Report, ReportMap } from "@/features/analytics/ReportWidget";
-import { useLocalization } from "@/context/localization-context";
 
 const analyticsData = {
     totalUsers: 1256,
@@ -29,8 +27,6 @@ const analyticsData = {
 }
 
 export default function AdminAnalyticsPage() {
-    const { t } = useLocalization();
-
     return (
         <div className="space-y-8">
             <div className="flex items-start justify-between">
@@ -39,8 +35,8 @@ export default function AdminAnalyticsPage() {
                         <BarChart3 className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.analytics.title')}</h1>
-                        <p className="text-muted-foreground mt-1">{t('dashboard.analytics.description')}</p>
+                        <h1 className="text-3xl font-bold tracking-tight">Analytique de la Plateforme</h1>
+                        <p className="text-muted-foreground mt-1">Aperçu de la croissance et de l'engagement des utilisateurs.</p>
                     </div>
                 </div>
             </div>

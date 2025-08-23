@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,47 +9,45 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { FileText, Download, Eye, Calendar, BarChart3, PieChart, TrendingUp } from "lucide-react"
 import { useState } from "react"
-import { useLocalization } from "@/context/localization-context"
 
 export default function CustomReportGeneratorPage() {
-    const { t } = useLocalization();
     const [reportName, setReportName] = useState("");
     const [reportType, setReportType] = useState("");
     const [dateRange, setDateRange] = useState("");
     const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
 
     const availableMetrics = [
-        { id: "user_registrations", label: t('language') === 'fr' ? "Inscriptions d'utilisateurs" : "User Registrations", category: t('language') === 'fr' ? "Utilisateurs" : "Users" },
-        { id: "job_applications", label: t('language') === 'fr' ? "Candidatures d'emploi" : "Job Applications", category: t('language') === 'fr' ? "Emplois" : "Jobs" },
-        { id: "company_signups", label: t('language') === 'fr' ? "Inscriptions d'entreprises" : "Company Sign-ups", category: t('language') === 'fr' ? "Entreprises" : "Companies" },
-        { id: "profile_completions", label: t('language') === 'fr' ? "Complétions de profil" : "Profile Completions", category: t('language') === 'fr' ? "Utilisateurs" : "Users" },
-        { id: "job_postings", label: t('language') === 'fr' ? "Publications d'emploi" : "Job Postings", category: t('language') === 'fr' ? "Emplois" : "Jobs" },
-        { id: "interview_schedules", label: t('language') === 'fr' ? "Horaires d'entretien" : "Interview Schedules", category: t('language') === 'fr' ? "Recrutement" : "Recruitment" },
-        { id: "partnership_requests", label: t('language') === 'fr' ? "Demandes de partenariat" : "Partnership Requests", category: t('language') === 'fr' ? "Partenariats" : "Partnerships" },
-        { id: "platform_engagement", label: t('language') === 'fr' ? "Engagement de la plateforme" : "Platform Engagement", category: t('language') === 'fr' ? "Engagement" : "Engagement" }
+        { id: "user_registrations", label: "Inscriptions d'utilisateurs", category: "Utilisateurs" },
+        { id: "job_applications", label: "Candidatures d'emploi", category: "Emplois" },
+        { id: "company_signups", label: "Inscriptions d'entreprises", category: "Entreprises" },
+        { id: "profile_completions", label: "Complétions de profil", category: "Utilisateurs" },
+        { id: "job_postings", label: "Publications d'emploi", category: "Emplois" },
+        { id: "interview_schedules", label: "Horaires d'entretien", category: "Recrutement" },
+        { id: "partnership_requests", label: "Demandes de partenariat", category: "Partenariats" },
+        { id: "platform_engagement", label: "Engagement de la plateforme", category: "Engagement" }
     ];
 
     const savedReports = [
         {
             id: 1,
-            name: t('language') === 'fr' ? "Analyses mensuelles des utilisateurs" : "Monthly User Analytics",
-            type: t('language') === 'fr' ? "Analyses d'utilisateurs" : "User Analytics",
+            name: "Analyses mensuelles des utilisateurs",
+            type: "Analyses d'utilisateurs",
             dateGenerated: "2024-01-15",
             status: "ready",
             format: "PDF"
         },
         {
             id: 2,
-            name: t('language') === 'fr' ? "Rapport du marché de l'emploi Q4 2023" : "Q4 2023 Job Market Report",
-            type: t('language') === 'fr' ? "Analyses d'emploi" : "Job Analytics",
+            name: "Rapport du marché de l'emploi Q4 2023",
+            type: "Analyses d'emploi",
             dateGenerated: "2024-01-01",
             status: "ready",
             format: "Excel"
         },
         {
             id: 3,
-            name: t('language') === 'fr' ? "Rapport d'engagement d'entreprise" : "Company Engagement Report",
-            type: t('language') === 'fr' ? "Analyses d'entreprise" : "Company Analytics",
+            name: "Rapport d'engagement d'entreprise",
+            type: "Analyses d'entreprise",
             dateGenerated: "2024-01-12",
             status: "generating",
             format: "PDF"
@@ -70,64 +69,64 @@ export default function CustomReportGeneratorPage() {
                     <FileText className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.reports.custom_generator.title')}</h1>
-                    <p className="text-muted-foreground mt-1">{t('dashboard.reports.custom_generator.description')}</p>
+                    <h1 className="text-3xl font-bold tracking-tight">Générateur de Rapports Personnalisés</h1>
+                    <p className="text-muted-foreground mt-1">Créez, visualisez et téléchargez des rapports sur mesure basés sur les données de la plateforme.</p>
                 </div>
             </div>
             <div className="grid gap-6 lg:grid-cols-2">
                 {/* Report Builder */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>{t('language') === 'fr' ? 'Créer un rapport personnalisé' : 'Create Custom Report'}</CardTitle>
+                        <CardTitle>Créer un rapport personnalisé</CardTitle>
                         <CardDescription>
-                            {t('dashboard.reports.custom_generator.description')}
+                            Sélectionnez les métriques et les plages de dates pour générer votre rapport.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">{t('language') === 'fr' ? 'Nom du rapport' : 'Report Name'}</label>
+                            <label className="text-sm font-medium">Nom du rapport</label>
                             <Input
-                                placeholder={t('language') === 'fr' ? 'Entrer le nom du rapport...' : 'Enter report name...'}
+                                placeholder="Entrer le nom du rapport..."
                                 value={reportName}
                                 onChange={(e) => setReportName(e.target.value)}
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">{t('language') === 'fr' ? 'Type de rapport' : 'Report Type'}</label>
+                            <label className="text-sm font-medium">Type de rapport</label>
                             <Select value={reportType} onValueChange={setReportType}>
                                 <SelectTrigger>
-                                    <SelectValue placeholder={t('language') === 'fr' ? 'Sélectionner le type de rapport' : 'Select report type'} />
+                                    <SelectValue placeholder="Sélectionner le type de rapport" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="user_analytics">{t('language') === 'fr' ? 'Analyses d\'utilisateurs' : 'User Analytics'}</SelectItem>
-                                    <SelectItem value="job_analytics">{t('language') === 'fr' ? 'Analyses d\'emploi' : 'Job Analytics'}</SelectItem>
-                                    <SelectItem value="company_analytics">{t('language') === 'fr' ? 'Analyses d\'entreprise' : 'Company Analytics'}</SelectItem>
-                                    <SelectItem value="engagement_analytics">{t('language') === 'fr' ? 'Analyses d\'engagement' : 'Engagement Analytics'}</SelectItem>
-                                    <SelectItem value="financial_analytics">{t('language') === 'fr' ? 'Analyses financières' : 'Financial Analytics'}</SelectItem>
+                                    <SelectItem value="user_analytics">Analyses d'utilisateurs</SelectItem>
+                                    <SelectItem value="job_analytics">Analyses d'emploi</SelectItem>
+                                    <SelectItem value="company_analytics">Analyses d'entreprise</SelectItem>
+                                    <SelectItem value="engagement_analytics">Analyses d'engagement</SelectItem>
+                                    <SelectItem value="financial_analytics">Analyses financières</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">{t('language') === 'fr' ? 'Plage de dates' : 'Date Range'}</label>
+                            <label className="text-sm font-medium">Plage de dates</label>
                             <Select value={dateRange} onValueChange={setDateRange}>
                                 <SelectTrigger>
-                                    <SelectValue placeholder={t('language') === 'fr' ? 'Sélectionner la plage de dates' : 'Select date range'} />
+                                    <SelectValue placeholder="Sélectionner la plage de dates" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="last_7_days">{t('language') === 'fr' ? 'Les 7 derniers jours' : 'Last 7 Days'}</SelectItem>
-                                    <SelectItem value="last_30_days">{t('language') === 'fr' ? 'Les 30 derniers jours' : 'Last 30 Days'}</SelectItem>
-                                    <SelectItem value="last_3_months">{t('language') === 'fr' ? 'Les 3 derniers mois' : 'Last 3 Months'}</SelectItem>
-                                    <SelectItem value="last_6_months">{t('language') === 'fr' ? 'Les 6 derniers mois' : 'Last 6 Months'}</SelectItem>
-                                    <SelectItem value="last_year">{t('language') === 'fr' ? 'L\'année dernière' : 'Last Year'}</SelectItem>
-                                    <SelectItem value="custom">{t('language') === 'fr' ? 'Plage personnalisée' : 'Custom Range'}</SelectItem>
+                                    <SelectItem value="last_7_days">Les 7 derniers jours</SelectItem>
+                                    <SelectItem value="last_30_days">Les 30 derniers jours</SelectItem>
+                                    <SelectItem value="last_3_months">Les 3 derniers mois</SelectItem>
+                                    <SelectItem value="last_6_months">Les 6 derniers mois</SelectItem>
+                                    <SelectItem value="last_year">L'année dernière</SelectItem>
+                                    <SelectItem value="custom">Plage personnalisée</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
 
                         <div className="space-y-3">
-                            <label className="text-sm font-medium">{t('language') === 'fr' ? 'Sélectionner les métriques' : 'Select Metrics'}</label>
+                            <label className="text-sm font-medium">Sélectionner les métriques</label>
                             <div className="space-y-3 max-h-64 overflow-y-auto">
                                 {availableMetrics.map((metric) => (
                                     <div key={metric.id} className="flex items-center space-x-2">
@@ -148,11 +147,11 @@ export default function CustomReportGeneratorPage() {
                         <div className="flex gap-3">
                             <Button className="flex-1">
                                 <BarChart3 className="h-4 w-4 mr-2" />
-                                {t('language') === 'fr' ? 'Générer le rapport' : 'Generate Report'}
+                                Générer le rapport
                             </Button>
                             <Button variant="outline">
                                 <Eye className="h-4 w-4 mr-1" />
-                                {t('language') === 'fr' ? 'Aperçu' : 'Preview'}
+                                Aperçu
                             </Button>
                         </div>
                     </CardContent>
@@ -160,9 +159,9 @@ export default function CustomReportGeneratorPage() {
                 {/* Saved Reports */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>{t('language') === 'fr' ? 'Rapports sauvegardés' : 'Saved Reports'}</CardTitle>
+                        <CardTitle>Rapports sauvegardés</CardTitle>
                         <CardDescription>
-                            {t('language') === 'fr' ? 'Accédez aux rapports générés précédemment et téléchargez-les dans divers formats.' : 'Access previously generated reports and download them in various formats.'}
+                            Accédez aux rapports générés précédemment et téléchargez-les dans divers formats.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -179,26 +178,26 @@ export default function CustomReportGeneratorPage() {
                                             className={report.status === 'ready' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : ''}
                                         >
                                             {report.status === 'ready' ? 
-                                                (t('language') === 'fr' ? 'Prêt' : 'Ready') : 
-                                                (t('language') === 'fr' ? 'En génération' : 'Generating')}
+                                                'Prêt' : 
+                                                'En génération'}
                                         </Badge>
                                     </div>
                                     <div className="flex items-center justify-between text-sm text-muted-foreground mb-3">
                                         <div className="flex items-center gap-2">
                                             <Calendar className="h-4 w-4" />
-                                            <span>{t('language') === 'fr' ? 'Généré' : 'Generated'}: {report.dateGenerated}</span>
+                                            <span>Généré: {report.dateGenerated}</span>
                                         </div>
-                                        <span>{t('language') === 'fr' ? 'Format' : 'Format'}: {report.format}</span>
+                                        <span>Format: {report.format}</span>
                                     </div>
                                     {report.status === 'ready' && (
                                         <div className="flex gap-2">
                                             <Button variant="outline" size="sm" className="flex-1">
                                                 <Eye className="h-4 w-4 mr-1" />
-                                                {t('common.view_profile')}
+                                                Voir
                                             </Button>
                                             <Button variant="outline" size="sm" className="flex-1">
                                                 <Download className="h-4 w-4 mr-1" />
-                                                {t('language') === 'fr' ? 'Télécharger' : 'Download'}
+                                                Télécharger
                                             </Button>
                                         </div>
                                     )}

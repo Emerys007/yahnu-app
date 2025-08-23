@@ -1,83 +1,82 @@
+
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Activity, Database, Globe, Shield, Server, Zap, AlertTriangle, CheckCircle } from "lucide-react"
-import { useLocalization } from "@/context/localization-context"
 
 export default function SystemHealthPage() {
-    const { t } = useLocalization();
 
     const systemMetrics = [
         {
-            name: t('language') === 'fr' ? "Temps de réponse API" : "API Response Time",
+            name: "Temps de réponse API",
             value: 145,
             unit: "ms",
             status: "healthy",
             icon: Zap,
-            description: t('language') === 'fr' ? "Temps de réponse API moyen au cours des dernières 24 heures" : "Average API response time over the last 24 hours"
+            description: "Temps de réponse API moyen au cours des dernières 24 heures"
         },
         {
-            name: t('language') === 'fr' ? "Performance de la base de données" : "Database Performance",
+            name: "Performance de la base de données",
             value: 98.5,
             unit: "%",
             status: "healthy",
             icon: Database,
-            description: t('language') === 'fr' ? "Performance des requêtes de base de données et santé du pool de connexions" : "Database query performance and connection pool health"
+            description: "Performance des requêtes de base de données et santé du pool de connexions"
         },
         {
-            name: t('language') === 'fr' ? "Statut CDN" : "CDN Status",
+            name: "Statut CDN",
             value: 100,
             unit: "%",
             status: "healthy",
             icon: Globe,
-            description: t('language') === 'fr' ? "Disponibilité du réseau de diffusion de contenu" : "Content delivery network availability"
+            description: "Disponibilité du réseau de diffusion de contenu"
         },
         {
-            name: t('language') === 'fr' ? "Score de sécurité" : "Security Score",
+            name: "Score de sécurité",
             value: 95,
             unit: "%",
             status: "warning",
             icon: Shield,
-            description: t('language') === 'fr' ? "Évaluation globale de la sécurité du système" : "Overall system security assessment"
+            description: "Évaluation globale de la sécurité du système"
         },
         {
-            name: t('language') === 'fr' ? "Charge du serveur" : "Server Load",
+            name: "Charge du serveur",
             value: 65,
             unit: "%",
             status: "healthy",
             icon: Server,
-            description: t('language') === 'fr' ? "Utilisation actuelle du CPU et de la mémoire du serveur" : "Current server CPU and memory utilization"
+            description: "Utilisation actuelle du CPU et de la mémoire du serveur"
         },
         {
-            name: t('language') === 'fr' ? "Temps de fonctionnement" : "Uptime",
+            name: "Temps de fonctionnement",
             value: 99.8,
             unit: "%",
             status: "healthy",
             icon: Activity,
-            description: t('language') === 'fr' ? "Temps de fonctionnement du système au cours des 30 derniers jours" : "System uptime over the last 30 days"
+            description: "Temps de fonctionnement du système au cours des 30 derniers jours"
         }
     ];
 
     const recentAlerts = [
         {
             id: 1,
-            message: t('language') === 'fr' ? "Utilisation mémoire élevée détectée sur serveur-03" : "High memory usage detected on server-03",
+            message: "Utilisation mémoire élevée détectée sur serveur-03",
             severity: "warning",
             timestamp: "2024-01-18 14:32:00",
             resolved: false
         },
         {
             id: 2,
-            message: t('language') === 'fr' ? "Renouvellement du certificat SSL requis" : "SSL certificate renewal required",
+            message: "Renouvellement du certificat SSL requis",
             severity: "info",
             timestamp: "2024-01-18 10:15:00",
             resolved: true
         },
         {
             id: 3,
-            message: t('language') === 'fr' ? "Sauvegarde de la base de données terminée avec succès" : "Database backup completed successfully",
+            message: "Sauvegarde de la base de données terminée avec succès",
             severity: "success",
             timestamp: "2024-01-18 02:00:00",
             resolved: true
@@ -91,8 +90,8 @@ export default function SystemHealthPage() {
                     <Activity className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.support.system_health.title')}</h1>
-                    <p className="text-muted-foreground mt-1">{t('dashboard.support.system_health.description')}</p>
+                    <h1 className="text-3xl font-bold tracking-tight">Santé du Système</h1>
+                    <p className="text-muted-foreground mt-1">Surveillez les métriques de performance et les alertes de la plateforme.</p>
                 </div>
             </div>
             {/* System Metrics Grid */}
@@ -121,10 +120,8 @@ export default function SystemHealthPage() {
                                         metric.status === 'warning' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : ''
                                     }
                                 >
-                                    {t('language') === 'fr' ? 
-                                        (metric.status === 'healthy' ? 'Sain' : 
-                                         metric.status === 'warning' ? 'Avertissement' : 'Critique') : 
-                                        metric.status}
+                                    {metric.status === 'healthy' ? 'Sain' : 
+                                     metric.status === 'warning' ? 'Avertissement' : 'Critique'}
                                 </Badge>
                             </div>
                             {metric.status === 'healthy' && (
@@ -139,8 +136,8 @@ export default function SystemHealthPage() {
             {/* Recent Alerts */}
             <Card>
                 <CardHeader>
-                    <CardTitle>{t('language') === 'fr' ? 'Alertes récentes' : 'Recent Alerts'}</CardTitle>
-                    <CardDescription>{t('language') === 'fr' ? 'Alertes système et notifications des dernières 24 heures' : 'System alerts and notifications from the last 24 hours'}</CardDescription>
+                    <CardTitle>Alertes récentes</CardTitle>
+                    <CardDescription>Alertes système et notifications des dernières 24 heures</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
@@ -165,7 +162,7 @@ export default function SystemHealthPage() {
                                     variant={alert.resolved ? 'secondary' : 'destructive'}
                                     className={alert.resolved ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : ''}
                                 >
-                                    {alert.resolved ? t('common.resolved') : t('dashboard.content.active')}
+                                    {alert.resolved ? 'Résolu' : 'Actif'}
                                 </Badge>
                             </div>
                         ))}

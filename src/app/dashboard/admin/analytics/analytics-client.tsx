@@ -1,3 +1,4 @@
+
 "use client"
 
 import { CountUp } from "@/components/ui/count-up"
@@ -14,15 +15,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from "@/components/ui/button"
 import { exportToCsv } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useLocalization } from "@/context/localization-context"
 import React from "react"
 import { motion } from "framer-motion"
 
 const chartConfig = {
-    graduates: { label: "Graduates", color: "hsl(var(--chart-1))" },
-    companies: { label: "Companies", color: "hsl(var(--chart-2))" },
-    schools: { label: "Schools", color: "hsl(var(--chart-3))" },
-    users: { label: "Users", color: "hsl(var(--primary))" }
+    graduates: { label: "Diplômés", color: "hsl(var(--chart-1))" },
+    companies: { label: "Entreprises", color: "hsl(var(--chart-2))" },
+    schools: { label: "Écoles", color: "hsl(var(--chart-3))" },
+    users: { label: "Utilisateurs", color: "hsl(var(--primary))" }
 }
 
 type UserGrowthDataPoint = {
@@ -52,21 +52,20 @@ type AnalyticsData = {
 }
 
 const CustomGrowthTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
-    const { t } = useLocalization();
     if (active && payload && payload.length) {
         const data: UserGrowthDataPoint = payload[0].payload;
         return (
         <Card className="w-64 shadow-lg">
             <CardHeader className="pb-2">
                 <CardTitle className="text-base">{label}</CardTitle>
-                <CardDescription>{t('dashboard.analytics.new_users_this_month')}</CardDescription>
+                <CardDescription>Nouveaux utilisateurs ce mois-ci</CardDescription>
             </CardHeader>
             <CardContent>
                 <ul className="space-y-1 text-sm">
-                    <li className="flex justify-between"><span>{t('dashboard.analytics.graduates')}:</span> <strong>{data.details.newGraduates}</strong></li>
-                    <li className="flex justify-between"><span>{t('dashboard.analytics.companies')}:</span> <strong>{data.details.newCompanies}</strong></li>
-                    <li className="flex justify-between"><span>{t('dashboard.analytics.schools')}:</span> <strong>{data.details.newSchools}</strong></li>
-                    <li className="flex justify-between font-bold border-t pt-1 mt-1"><span>{t('dashboard.analytics.total')}:</span> <strong>{data.users}</strong></li>
+                    <li className="flex justify-between"><span>Diplômés:</span> <strong>{data.details.newGraduates}</strong></li>
+                    <li className="flex justify-between"><span>Entreprises:</span> <strong>{data.details.newCompanies}</strong></li>
+                    <li className="flex justify-between"><span>Écoles:</span> <strong>{data.details.newSchools}</strong></li>
+                    <li className="flex justify-between font-bold border-t pt-1 mt-1"><span>Total:</span> <strong>{data.users}</strong></li>
                 </ul>
             </CardContent>
         </Card>
@@ -76,7 +75,6 @@ const CustomGrowthTooltip = ({ active, payload, label }: TooltipProps<number, st
 };
 
 const CustomDistributionTooltip = ({ active, payload }: TooltipProps<number, string>) => {
-    const { t } = useLocalization();
     if (active && payload && payload.length) {
         const data: any = payload[0].payload;
         const total = data.total;
@@ -88,7 +86,7 @@ const CustomDistributionTooltip = ({ active, payload }: TooltipProps<number, str
                  <CardTitle className="text-base">{data.name}</CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-sm">{t('dashboard.analytics.user_count')}: <strong>{data.value}</strong> ({percentage}%)</p>
+                <p className="text-sm">Nombre d'utilisateurs: <strong>{data.value}</strong> ({percentage}%)</p>
             </CardContent>
         </Card>
         );
@@ -120,35 +118,42 @@ const containerVariants = {
   };
 
 export function AnalyticsClient({ data }: { data: AnalyticsData }) {
-    const { t } = useLocalization();
-
     const translateMonth = (month: string) => {
       const monthMap: { [key: string]: string } = {
-        'January': t('dashboard.analytics.january'),
-        'February': t('dashboard.analytics.february'),
-        'March': t('dashboard.analytics.march'),
-        'April': t('dashboard.analytics.april'),
-        'May': t('dashboard.analytics.may'),
-        'June': t('dashboard.analytics.june'),
+        'January': 'Janvier',
+        'February': 'Février',
+        'March': 'Mars',
+        'April': 'Avril',
+        'May': 'Mai',
+        'June': 'Juin',
       };
       return monthMap[month] || month;
     };
+    
+    const translateRole = (role: string) => {
+        const roleMap: { [key: string]: string } = {
+          'Graduates': 'Diplômés',
+          'Companies': 'Entreprises',
+          'Schools': 'Écoles',
+        };
+        return roleMap[role] || role;
+      };
 
     const translatedUserGrowthData = React.useMemo(() => {
       return data.userGrowthData.map(item => ({
         ...item,
         month: translateMonth(item.month)
       }))
-    }, [data.userGrowthData, t]);
+    }, [data.userGrowthData]);
 
     const translatedUserDistribution = React.useMemo(() => {
         const total = data.userDistribution.reduce((acc, curr) => acc + curr.value, 0);
         return data.userDistribution.map(d => ({
             ...d,
-            name: t(`dashboard.analytics.${d.name.toLowerCase()}`),
+            name: translateRole(d.name),
             total,
         }))
-    }, [data.userDistribution, t])
+    }, [data.userDistribution])
 
 
     return (
@@ -162,48 +167,48 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
                 <motion.div variants={itemVariants}>
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{t('dashboard.analytics.total_users')}</CardTitle>
+                            <CardTitle className="text-sm font-medium">Utilisateurs au Total</CardTitle>
                             <Users className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold"><CountUp end={data.totalUsers} /></div>
-                            <p className="text-xs text-muted-foreground">{t('dashboard.analytics.+180_this_month')}</p>
+                            <p className="text-xs text-muted-foreground">+180 ce mois-ci</p>
                         </CardContent>
                     </Card>
                 </motion.div>
                 <motion.div variants={itemVariants}>
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{t('dashboard.analytics.active_graduates')}</CardTitle>
+                            <CardTitle className="text-sm font-medium">Diplômés Actifs</CardTitle>
                             <UserCheck className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold"><CountUp end={data.activeGraduates} /></div>
-                            <p className="text-xs text-muted-foreground">{t('dashboard.analytics.on_the_platform')}</p>
+                            <p className="text-xs text-muted-foreground">sur la plateforme</p>
                         </CardContent>
                     </Card>
                 </motion.div>
                 <motion.div variants={itemVariants}>
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{t('dashboard.analytics.active_companies')}</CardTitle>
+                            <CardTitle className="text-sm font-medium">Entreprises Actives</CardTitle>
                             <Building className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold"><CountUp end={data.activeCompanies} /></div>
-                            <p className="text-xs text-muted-foreground">{t('dashboard.analytics.+5_this_month')}</p>
+                            <p className="text-xs text-muted-foreground">+5 ce mois-ci</p>
                         </CardContent>
                     </Card>
                 </motion.div>
                 <motion.div variants={itemVariants}>
                      <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{t('dashboard.analytics.active_schools')}</CardTitle>
+                            <CardTitle className="text-sm font-medium">Écoles Actives</CardTitle>
                             <School className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold"><CountUp end={data.activeSchools} /></div>
-                            <p className="text-xs text-muted-foreground">{t('dashboard.analytics.+1_this_month')}</p>
+                            <p className="text-xs text-muted-foreground">+1 ce mois-ci</p>
                         </CardContent>
                     </Card>
                 </motion.div>
@@ -218,8 +223,8 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
                 <Card className="lg:col-span-3">
                     <CardHeader className="flex flex-row items-center">
                         <div className="grid gap-2">
-                            <CardTitle>{t('dashboard.analytics.user_growth')}</CardTitle>
-                            <CardDescription>{t('dashboard.analytics.total_users_platform')}</CardDescription>
+                            <CardTitle>Croissance des Utilisateurs</CardTitle>
+                            <CardDescription>Total des utilisateurs sur la plateforme.</CardDescription>
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -230,7 +235,7 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => exportToCsv(data.userGrowthData.map(d => ({ month: d.month, total: d.users, ...d.details})), "user_growth.csv")}>
                                     <Download className="mr-2 h-4 w-4" />
-                                    {t('dashboard.analytics.export_as_csv')}
+                                    Exporter en CSV
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -252,7 +257,7 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
                                     strokeWidth={3}
                                     dot={{ r: 6, fill: "hsl(var(--primary))", stroke: "hsl(var(--background))", strokeWidth: 2 }}
                                     activeDot={{ r: 8, fill: "hsl(var(--primary))", stroke: "hsl(var(--background))", strokeWidth: 2 }}
-                                    name="Users"
+                                    name="Utilisateurs"
                                 />
                             </LineChart>
                         </ChartContainer>
@@ -261,8 +266,8 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
                 <Card className="lg:col-span-2">
                     <CardHeader className="flex flex-row items-center">
                         <div className="grid gap-2">
-                            <CardTitle>{t('dashboard.analytics.user_distribution')}</CardTitle>
-                            <CardDescription>{t('dashboard.analytics.breakdown_user_types')}</CardDescription>
+                            <CardTitle>Répartition des Utilisateurs</CardTitle>
+                            <CardDescription>Répartition par type d'utilisateur.</CardDescription>
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -273,7 +278,7 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => exportToCsv(data.userDistribution.map(({fill, ...rest}) => rest), "user_distribution.csv")}>
                                     <Download className="mr-2 h-4 w-4" />
-                                    {t('dashboard.analytics.export_as_csv')}
+                                    Exporter en CSV
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>

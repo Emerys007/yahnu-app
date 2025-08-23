@@ -13,7 +13,7 @@ type User = {
   email: string;
   accountType: Role;
   status: UserStatus;
-  date: string;
+  joinDate: string;
 };
 
 async function getUsers(): Promise<User[]> {
@@ -31,7 +31,7 @@ async function getUsers(): Promise<User[]> {
             email: data.email,
             accountType: data.role,
             status: data.status,
-            date: createdAt.toISOString().split('T')[0],
+            joinDate: createdAt.toISOString().split('T')[0],
         } as User;
     });
 }

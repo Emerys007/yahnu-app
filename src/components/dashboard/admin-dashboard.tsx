@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useEffect } from 'react';
@@ -21,5 +22,6 @@ export function AdminDashboard() {
     }
   }, [role, router]);
 
+  // Return null or a loading spinner while redirecting
   return null;
 }
