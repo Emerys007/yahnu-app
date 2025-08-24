@@ -1,12 +1,12 @@
 
 "use client"
 
+import { useState } from "react";
 import { useAuth, type Role } from "@/context/auth-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LifeBuoy, Mail, Send, University } from "lucide-react";
+import { LifeBuoy, Mail, Send, University, Search } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -29,9 +29,7 @@ const contactFormSchema = z.object({
   message: z.string().min(20, { message: "Le message doit comporter au moins 20 caractères." }),
 });
 
-const FAQSection = ({ title, faqs }: { title: string; faqs: FaqItem[] }) => (
-  <div className="mb-6">
-    <h3 className="text-xl font-semibold mb-4">{title}</h3>
+const FAQSection = ({ faqs }: { faqs: FaqItem[] }) => (
     <Accordion type="single" collapsible className="w-full">
       {faqs.map((faq, index) => (
         <AccordionItem value={`item-${index}`} key={index}>
@@ -40,7 +38,6 @@ const FAQSection = ({ title, faqs }: { title: string; faqs: FaqItem[] }) => (
         </AccordionItem>
       ))}
     </Accordion>
-  </div>
 );
 
 const ContactSupportForm = () => {
@@ -170,19 +167,9 @@ export default function SupportPage() {
       content_manager: [],
       support_staff: [],
   };
-  
-  const roleFaqTitles: Record<string, string> = {
-      graduate: "FAQ pour les Diplômés",
-      company: "FAQ pour les Entreprises",
-      school: "FAQ pour les Écoles",
-      admin: '',
-      super_admin: '',
-      content_manager: '',
-      support_staff: '',
-  };
 
   const specificFaqs = roleFaqs[role] || [];
-  const specificFaqTitle = roleFaqTitles[role] || '';
+  const allFaqs = [...specificFaqs, ...generalFaqs];
 
   return (
     <motion.div 
@@ -203,19 +190,22 @@ export default function SupportPage() {
         
         <div className="grid lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-8">
-                 <ContactSupportForm />
-            </div>
-            <div className="lg:col-span-1 sticky top-24 space-y-4">
-                 <Card>
+                <Card>
                     <CardHeader>
-                        <CardTitle>Questions Fréquemment Posées</CardTitle>
-                        <CardDescription>Trouvez ici les réponses aux questions courantes.</CardDescription>
+                        <CardTitle>Base de connaissances</CardTitle>
+                        <CardDescription>Recherchez des réponses dans nos articles d'aide.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {specificFaqs.length > 0 && <FAQSection title={specificFaqTitle} faqs={specificFaqs} />}
-                        <FAQSection title={"Questions Générales"} faqs={generalFaqs} />
+                        <div className="relative mb-6">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input placeholder="Rechercher des articles..." className="pl-10" />
+                        </div>
+                        <FAQSection faqs={allFaqs} />
                     </CardContent>
                 </Card>
+            </div>
+            <div className="lg:col-span-1 sticky top-24 space-y-4">
+                 <ContactSupportForm />
                 {role === 'graduate' && (
                     <Card>
                         <CardHeader>
