@@ -46,24 +46,24 @@ type Graduate = {
 const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
     const { toast } = useToast();
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedRecipients, setSelectedRecipients] = useState<MultiSelectOption[]>([]);
+    const [selectedRecipients, setSelectedRecipients] = useState<string[]>([]);
     
-    const graduateOptions: MultiSelectOption[] = useMemo(() => 
-        graduates.map(g => ({ value: g.id, label: g.name })),
-    [graduates]);
-
-    const groupOptions: MultiSelectOption[] = useMemo(() => [
-        { value: 'all', label: 'Tous les diplômés' },
-        { value: 'pending', label: 'Diplômés en attente' },
-        { value: 'active', label: 'Diplômés actifs' }
-    ], []);
+    const recipientOptions: MultiSelectOption[] = useMemo(() => {
+        const groupOptions: MultiSelectOption[] = [
+            { value: 'group-all', label: 'Tous les diplômés' },
+            { value: 'group-pending', label: 'Diplômés en attente' },
+            { value: 'group-active', label: 'Diplômés actifs' }
+        ];
+        const individualOptions: MultiSelectOption[] = graduates.map(g => ({ value: g.id, label: g.name }));
+        return [...groupOptions, ...individualOptions];
+    }, [graduates]);
 
 
     const handleSendBroadcast = () => {
         // In a real app, this would trigger a backend process
         // You would resolve the selected recipients (groups and individuals) into a list of UIDs
         // and send the message via a server-side function.
-        console.log("Sending broadcast to:", selectedRecipients.map(r => r.value));
+        console.log("Sending broadcast to:", selectedRecipients);
         
         toast({
             title: "Message diffusé envoyé",
@@ -92,10 +92,7 @@ const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
                     <div>
                         <Label htmlFor="recipients">Destinataires</Label>
                         <MultiSelect
-                            groups={[
-                                { label: 'Groupes', options: groupOptions },
-                                { label: 'Individus', options: graduateOptions }
-                            ]}
+                            options={recipientOptions}
                             selected={selectedRecipients}
                             onChange={setSelectedRecipients}
                             placeholder={"Sélectionnez des destinataires..."}
@@ -311,3 +308,5 @@ export default function GraduateManagementPage() {
     </div>
   )
 }
+
+    
