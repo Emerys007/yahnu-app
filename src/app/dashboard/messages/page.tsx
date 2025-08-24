@@ -56,7 +56,7 @@ const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedRecipients, setSelectedRecipients] = useState<string[]>([]);
     
-    const recipientOptions: MultiSelectOption[] = useMemo(() => {
+    const recipientOptions = useMemo(() => {
         const groupOptions: MultiSelectOption[] = [
             { value: 'group-all', label: 'Tous les diplômés' },
             { value: 'group-pending', label: 'Diplômés en attente' },
@@ -221,7 +221,7 @@ export default function MessagesPage() {
         if (role === 'school' && user) {
             const graduatesQuery = query(collection(db, "users"), where("role", "==", "graduate"), where("schoolId", "==", user.uid));
             const unsubscribe = onSnapshot(graduatesQuery, (querySnapshot) => {
-                const grads = querySnapshot.docs.map(doc => doc.data() as Graduate);
+                const grads = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Graduate));
                 setGraduates(grads);
             });
             return () => unsubscribe();
