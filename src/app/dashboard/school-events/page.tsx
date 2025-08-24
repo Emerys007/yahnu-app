@@ -17,6 +17,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {
   Form,
   FormControl,
   FormField,
@@ -45,14 +56,15 @@ type Event = {
 }
 
 const initialSchoolEvents: Event[] = [
-  { id: 1, title: "Annual Tech Career Fair", date: "2025-10-20", type: "Career Fair", rsvps: 78, host: "INP-HB" },
-  { id: 2, title: "AI & Machine Learning Workshop", date: "2025-11-05", type: "Workshop", rsvps: 25, host: "INP-HB" },
-  { id: 3, title: "Alumni Networking Night", date: "2025-11-15", type: "Networking", rsvps: 42, host: "INP-HB" },
+  { id: 1, title: "Salon Annuel de l'Emploi Technologique", date: "2025-10-20", type: "Career Fair", rsvps: 78, host: "INP-HB" },
+  { id: 2, title: "Atelier IA & Machine Learning", date: "2025-11-05", type: "Workshop", rsvps: 25, host: "INP-HB" },
+  { id: 3, title: "Soirée de Réseautage des Anciens", date: "2025-11-15", type: "Networking", rsvps: 42, host: "INP-HB" },
 ];
 
 const initialCompanyEvents: Event[] = [
-    { id: 4, title: "Recruitment Day", date: "2025-09-30", type: "Career Fair", rsvps: 150, host: "Tech Solutions Abidjan" },
-    { id: 5, title: "Fintech Webinar", date: "2025-10-10", type: "Webinar", rsvps: 65, host: "Finance & Forte" },
+    { id: 4, title: "Journée Recrutement Orange", date: "2025-09-30", type: "Career Fair", rsvps: 150, host: "Orange Côte d'Ivoire" },
+    { id: 5, title: "Webinaire Fintech", date: "2025-10-10", type: "Webinar", rsvps: 65, host: "Bridge Bank Group" },
+    { id: 6, title: "Atelier sur la Chaîne d'Approvisionnement", date: "2025-10-18", type: "Workshop", rsvps: 40, host: "Ceva Logistics" },
 ];
 
 const eventSchema = z.object({
@@ -64,7 +76,7 @@ const eventSchema = z.object({
   type: z.enum(["Career Fair", "Workshop", "Networking", "Webinar"]),
 });
 
-const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onSave: (values: z.infer<typeof eventSchema>) => void }) => {
+const EventForm = ({ event, onSave, onCancel }: { event?: z.infer<typeof eventSchema>; onSave: (values: z.infer<typeof eventSchema>) => void; onCancel: () => void; }) => {
     const form = useForm<z.infer<typeof eventSchema>>({
         resolver: zodResolver(eventSchema),
         defaultValues: event || {
@@ -76,6 +88,10 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
           type: "Career Fair",
         },
     });
+    
+    React.useEffect(() => {
+        form.reset(event);
+    }, [event, form]);
 
     const onSubmit = (values: z.infer<typeof eventSchema>) => {
         onSave(values);
@@ -88,7 +104,7 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
                     <FormItem><FormLabel>Titre de l'événement</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="description" render={({ field }) => (
-                    <FormItem><FormLabel>Description</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Description</FormLabel><FormControl><RichTextEditor placeholder="Décrivez l'événement..." {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <div className="grid grid-cols-2 gap-4">
                     <FormField control={form.control} name="date" render={({ field }) => (
@@ -115,6 +131,7 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
                     <FormMessage /></FormItem>
                 )} />
                 <DialogFooter>
+                    <Button type="button" variant="ghost" onClick={onCancel}>Annuler</Button>
                     <Button type="submit">Enregistrer l'événement</Button>
                 </DialogFooter>
             </form>
@@ -122,7 +139,7 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
     )
 }
 
-const EventsTable = ({ events, onAction, showHost, canEdit }: { events: Event[], onAction: (id: number) => void, showHost?: boolean, canEdit?: boolean }) => {
+const EventsTable = ({ events, onEdit, onDelete, showHost }: { events: Event[], onEdit?: (event: Event) => void, onDelete?: (id: number) => void, showHost?: boolean }) => {
     return (
         <Table>
             <TableHeader>
@@ -139,14 +156,32 @@ const EventsTable = ({ events, onAction, showHost, canEdit }: { events: Event[],
                 {events.map(event => (
                     <TableRow key={event.id}>
                         <TableCell className="font-medium">{event.title}</TableCell>
-                        {showHost && <TableCell>{event.host}</TableCell>}
-                        <TableCell>{new Date(event.date).toLocaleDateString()}</TableCell>
+                        {showHost && <TableCell><div className="flex items-center gap-2"><Building className="h-4 w-4 text-muted-foreground" />{event.host}</div></TableCell>}
+                        <TableCell>{new Date(event.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric'})}</TableCell>
                         <TableCell>{event.type}</TableCell>
                         <TableCell className="flex items-center gap-2"><Users className="h-4 w-4 text-muted-foreground" /> {event.rsvps}</TableCell>
                         <TableCell className="text-right space-x-2">
-                            {canEdit && <Button size="icon" variant="ghost"><Edit className="h-4 w-4" /></Button>}
-                            {canEdit && <Button size="icon" variant="ghost" onClick={() => onAction(event.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>}
-                            {!canEdit && <Button size="sm" variant="outline">Voir les détails</Button>}
+                           {onEdit && <Button size="icon" variant="ghost" onClick={() => onEdit(event)}><Edit className="h-4 w-4" /></Button>}
+                            {onDelete && (
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button size="icon" variant="ghost"><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                Cette action est irréversible et supprimera définitivement cet événement.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                            <AlertDialogAction onClick={() => onDelete(event.id)}>Supprimer</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            )}
+                             {!onEdit && <Button size="sm" variant="outline">Voir les détails</Button>}
                         </TableCell>
                     </TableRow>
                 ))}
@@ -165,19 +200,53 @@ export default function SchoolEventsPage() {
   const [schoolEvents, setSchoolEvents] = useState<Event[]>(initialSchoolEvents)
   const [companyEvents] = useState<Event[]>(initialCompanyEvents);
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
-  const handleCreateEvent = (values: z.infer<typeof eventSchema>) => {
-    const newEvent: Event = {
-      id: Date.now(),
-      title: values.title,
-      date: values.date,
-      type: values.type,
-      rsvps: 0,
-      host: "INP-HB" // This should be dynamic based on the logged-in school
-    };
-    setSchoolEvents(prev => [newEvent, ...prev]);
-    toast({ title: "Événement créé", description: "Les diplômés de votre école ont été notifiés." });
+  const getFormValuesFromEvent = (event: Event | null): z.infer<typeof eventSchema> => {
+      if (!event) {
+          return {
+            title: "", description: "", date: "", time: "", location: "", type: "Career Fair",
+          };
+      }
+      return {
+          title: event.title,
+          description: `Description pour ${event.title}`,
+          date: event.date,
+          time: "10:00",
+          location: "Défini dans la description",
+          type: event.type,
+      };
+  };
+
+  const handleCreateClick = () => {
+    setEditingEvent(null);
+    setIsDialogOpen(true);
+  }
+
+  const handleEditClick = (event: Event) => {
+    setEditingEvent(event);
+    setIsDialogOpen(true);
+  }
+
+  const handleSaveEvent = (values: z.infer<typeof eventSchema>) => {
+    if (editingEvent) {
+         setSchoolEvents(prev => prev.map(e => e.id === editingEvent.id ? { ...e, ...values } : e));
+         toast({ title: "Événement mis à jour", description: `"${values.title}" a été mis à jour.` });
+    } else {
+        const newEvent: Event = {
+            id: Date.now(),
+            title: values.title,
+            date: values.date,
+            type: values.type,
+            rsvps: 0,
+            host: "INP-HB" // This should be dynamic based on the logged-in school
+        };
+        setSchoolEvents(prev => [newEvent, ...prev]);
+        toast({ title: "Événement créé", description: "Les diplômés de votre école ont été notifiés." });
+    }
+    
     setIsDialogOpen(false);
+    setEditingEvent(null);
   }
 
   const handleDeleteEvent = (eventId: number) => {
@@ -202,16 +271,19 @@ export default function SchoolEventsPage() {
             <p className="text-muted-foreground mt-1">Gérez vos événements et voyez ce que les entreprises organisent.</p>
             </div>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
+            setIsDialogOpen(isOpen);
+            if (!isOpen) setEditingEvent(null);
+        }}>
             <DialogTrigger asChild>
-                <Button><PlusCircle className="mr-2 h-4 w-4" />Créer un événement</Button>
+                <Button onClick={handleCreateClick}><PlusCircle className="mr-2 h-4 w-4" />Créer un événement</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Créer un nouvel événement</DialogTitle>
+                    <DialogTitle>{editingEvent ? "Modifier l'événement" : "Créer un nouvel événement"}</DialogTitle>
                     <DialogDescription>Remplissez les détails ci-dessous pour planifier un nouvel événement.</DialogDescription>
                 </DialogHeader>
-                <EventForm onSave={handleCreateEvent} />
+                <EventForm event={getFormValuesFromEvent(editingEvent)} onSave={handleSaveEvent} onCancel={() => setIsDialogOpen(false)} />
             </DialogContent>
         </Dialog>
       </div>
@@ -225,11 +297,11 @@ export default function SchoolEventsPage() {
                     </TabsList>
                     <TabsContent value="your-events" className="mt-4">
                         <CardDescription>Une liste de tous les événements que vous avez programmés.</CardDescription>
-                        <EventsTable events={schoolEvents} onAction={handleDeleteEvent} canEdit />
+                        <EventsTable events={schoolEvents} onEdit={handleEditClick} onDelete={handleDeleteEvent} />
                     </TabsContent>
                     <TabsContent value="company-events" className="mt-4">
                          <CardDescription>Événements organisés par les entreprises sur la plateforme Yahnu.</CardDescription>
-                        <EventsTable events={companyEvents} onAction={() => {}} showHost />
+                        <EventsTable events={companyEvents} showHost />
                     </TabsContent>
                 </Tabs>
             </CardHeader>
