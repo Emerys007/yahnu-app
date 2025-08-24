@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { User, Mail, Phone, GraduationCap, University, Briefcase, Award, MessageSquare, Send, CheckCircle2 } from "lucide-react";
+import { User, Mail, Phone, GraduationCap, University, Briefcase, Award, MessageSquare, Send, CheckCircle2, ChevronLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import React, { useState } from "react";
@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 const graduatesData = {
   en: [
@@ -251,6 +252,12 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
 
   return (
     <div className="space-y-8">
+       <Button asChild variant="ghost" className="mb-4 px-0">
+          <Link href="/dashboard/talent-pool">
+              <ChevronLeft className="mr-2 h-4 w-4" />
+              Retour au vivier de talents
+          </Link>
+      </Button>
       <Card>
         <CardHeader className="bg-muted/30">
           <div className="flex flex-col md:flex-row items-start gap-6">
@@ -352,3 +359,5 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
     </div>
   );
 }
+
+    

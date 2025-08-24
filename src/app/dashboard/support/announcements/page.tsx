@@ -4,11 +4,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Megaphone, Plus, Edit, Trash2, Users, Clock, CalendarIcon } from "lucide-react"
+import { Megaphone, Plus, Edit, Trash2, Users, Clock, CalendarIcon, MoreVertical } from "lucide-react"
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -299,7 +300,9 @@ export default function AnnouncementsPage() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex gap-2">
+
+                                    {/* Action Buttons for Desktop */}
+                                    <div className="hidden md:flex gap-2">
                                         <Button variant="outline" size="sm" onClick={() => handleEdit(announcement)}>
                                             <Edit className="h-4 w-4 mr-1" />
                                             Modifier
@@ -326,6 +329,46 @@ export default function AnnouncementsPage() {
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
                                         </AlertDialog>
+                                    </div>
+
+                                    {/* Meatball Menu for Mobile */}
+                                    <div className="md:hidden">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="icon">
+                                                    <MoreVertical className="h-5 w-5" />
+                                                    <span className="sr-only">Plus d'options</span>
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuItem onClick={() => handleEdit(announcement)}>
+                                                    <Edit className="h-4 w-4 mr-2" />
+                                                    Modifier
+                                                </DropdownMenuItem>
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                                            <Trash2 className="h-4 w-4 mr-2" />
+                                                            Supprimer
+                                                        </DropdownMenuItem>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent>
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+                                                            <AlertDialogDescription>
+                                                                Cette action ne peut pas être annulée. Cela supprimera définitivement cette annonce.
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                                            <AlertDialogAction onClick={() => handleDelete(announcement.id)}>
+                                                                Supprimer
+                                                            </AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </div>
                                 </div>
                             </motion.div>
