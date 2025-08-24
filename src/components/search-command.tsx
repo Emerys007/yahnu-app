@@ -24,6 +24,7 @@ import {
   Award,
   Wrench,
   Newspaper,
+  BookOpen,
 } from "lucide-react"
 
 import {
@@ -70,16 +71,18 @@ const getNavItems = (role: Role) => {
         { group: 'Admin', text: 'Aperçu', icon: Shield, href: '/dashboard/admin/overview', roles: ['admin', 'super_admin'] },
         { group: 'Admin', text: 'Gestion des utilisateurs', icon: UserCog, href: '/dashboard/admin/user-management', roles: ['admin', 'super_admin'] },
         { group: 'Admin', text: 'Analytique', icon: BarChart3, href: '/dashboard/admin/analytics', roles: ['admin', 'super_admin'] },
-        { group: 'Admin', text: 'Gestion de contenu', icon: Newspaper, href: '/dashboard/content', roles: ['admin', 'super_admin'] },
         { group: 'Admin', text: 'Centre de Support', icon: LifeBuoy, href: '/dashboard/support/center', roles: ['admin', 'super_admin'] },
         { group: 'Admin', text: 'Gérer l\'équipe', icon: Users2, href: '/dashboard/admin/manage-team', roles: ['super_admin'] },
 
         // Content Manager
-        { group: 'Navigation', text: 'Gestion de contenu', icon: Newspaper, href: '/dashboard/content', roles: ['content_manager'] },
+        { group: 'Gestion de Contenu', text: 'Pages Statiques', icon: FileText, href: '/dashboard/content/static-pages', roles: ['content_manager', 'admin', 'super_admin'] },
+        { group: 'Gestion de Contenu', text: 'Articles de Blog', icon: Newspaper, href: '/dashboard/content/blog', roles: ['content_manager', 'admin', 'super_admin'] },
+        { group: 'Gestion de Contenu', text: 'Annonces', icon: LifeBuoy, href: '/dashboard/support/announcements', roles: ['content_manager', 'support_staff', 'admin', 'super_admin'] },
 
         // Support Staff
-        { group: 'Navigation', text: 'Centre de Support', icon: LifeBuoy, href: '/dashboard/support/center', roles: ['support_staff'] },
-        { group: 'Navigation', text: 'Recherche d\'utilisateur', icon: SearchIcon, href: '/dashboard/support/user-lookup', roles: ['support_staff'] },
+        { group: 'Support', text: 'Centre de Support', icon: LifeBuoy, href: '/dashboard/support/center', roles: ['support_staff'] },
+        { group: 'Support', text: 'Recherche d\'utilisateur', icon: SearchIcon, href: '/dashboard/support/user-lookup', roles: ['support_staff'] },
+        { group: 'Support', text: 'Base de connaissances', icon: BookOpen, href: '/dashboard/support/knowledge-base-editor', roles: ['support_staff', 'admin', 'super_admin'] },
         
         // Common
         { group: 'Commun', text: 'Messagerie', icon: MessageSquare, href: '/dashboard/messages', roles: ['graduate', 'company', 'school', 'support_staff'] },

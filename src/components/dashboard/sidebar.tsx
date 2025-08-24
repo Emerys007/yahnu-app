@@ -91,7 +91,9 @@ const getNavItems = (role: Role) => {
     { href: "/dashboard/admin/user-management", icon: UserCog, label: 'Gestion des utilisateurs' },
     { href: "/dashboard/admin/manage-team", icon: Users2, label: "Gérer l'équipe" },
     { href: "/dashboard/admin/analytics", icon: BarChart3, label: 'Analytique' },
-    { href: "/dashboard/content", icon: Newspaper, label: 'Gestion de contenu' },
+    { type: "divider", label: "Contenu & Support" },
+    { href: "/dashboard/content/static-pages", icon: FileText, label: 'Pages statiques' },
+    { href: "/dashboard/content/blog", icon: Newspaper, label: 'Gestion du blog' },
     { href: "/dashboard/support/center", icon: LifeBuoy, label: 'Support' },
     { type: "divider", label: 'Outils de support' },
     { href: "/dashboard/support/announcements", icon: Megaphone, label: 'Annonces' },
@@ -104,7 +106,9 @@ const getNavItems = (role: Role) => {
     { href: "/dashboard/admin/overview", icon: Shield, label: 'Aperçu' },
     { href: "/dashboard/admin/user-management", icon: UserCog, label: 'Gestion des utilisateurs' },
     { href: "/dashboard/admin/analytics", icon: BarChart3, label: 'Analytique' },
-    { href: "/dashboard/content", icon: Newspaper, label: 'Gestion de contenu' },
+    { type: "divider", label: "Contenu & Support" },
+    { href: "/dashboard/content/static-pages", icon: FileText, label: 'Pages statiques' },
+    { href: "/dashboard/content/blog", icon: Newspaper, label: 'Gestion du blog' },
     { href: "/dashboard/support/center", icon: LifeBuoy, label: 'Support' },
     { type: "divider", label: 'Outils de support' },
     { href: "/dashboard/support/announcements", icon: Megaphone, label: 'Annonces' },
@@ -114,7 +118,9 @@ const getNavItems = (role: Role) => {
   ];
   
   const contentManagerNav = [
-    { href: "/dashboard/content", icon: Newspaper, label: 'Gestion de contenu' },
+    { href: "/dashboard/content/static-pages", icon: FileText, label: 'Pages statiques' },
+    { href: "/dashboard/content/blog", icon: Newspaper, label: 'Gestion du blog' },
+    { href: "/dashboard/support/announcements", icon: Megaphone, label: 'Annonces' },
   ];
   
   const supportStaffNav = [
@@ -236,7 +242,7 @@ export function DashboardSidebar() {
         )
     }
 
-    const isActive = item.href && pathname === item.href;
+    const isActive = item.href && pathname.startsWith(item.href);
 
     const buttonContent = (
       <>
