@@ -92,7 +92,7 @@ export default function CustomReportGeneratorPage() {
     const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
     const [isGenerating, setIsGenerating] = useState(false);
     const [savedReports, setSavedReports] = useState<SavedReport[]>([
-        { id: 1, name: "Analyses mensuelles des utilisateurs", type: "Analyses d'utilisateurs", dateGenerated: "2024-01-15", status: "ready", format: "PDF", visualization: 'bar', dataSource: 'user_registrations' },
+        { id: 1, name: "Analyses mensuelles des utilisateurs", type: "Analyses d'utilisateurs", dateGenerated: "2024-01-15", status: "ready", format: "CSV", visualization: 'bar', dataSource: 'user_registrations' },
         { id: 2, name: "Rapport du marché de l'emploi Q4 2023", type: "Analyses d'emploi", dateGenerated: "2024-01-01", status: "ready", format: "CSV", visualization: 'pie', dataSource: 'job_applications' },
     ]);
     const [viewingReport, setViewingReport] = useState<SavedReport | null>(null);
@@ -229,4 +229,3 @@ export default function CustomReportGeneratorPage() {
         </>
     );
 }
-

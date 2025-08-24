@@ -39,7 +39,7 @@ const AnimatedStoryGraphic = ({ text }: { text: string }) => {
     };
 
     return (
-        <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-lg bg-gray-900 flex items-center justify-center p-8">
+        <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-lg bg-primary/10 flex items-center justify-center p-8">
             <div className="absolute inset-0 z-0">
                 {Array.from({ length: 50 }).map((_, i) => (
                     <motion.div
@@ -69,7 +69,7 @@ const AnimatedStoryGraphic = ({ text }: { text: string }) => {
                 ))}
             </div>
             <motion.h2
-                className="relative z-10 text-5xl md:text-6xl font-bold text-center text-white select-none"
+                className="relative z-10 text-5xl md:text-6xl font-bold text-center text-primary-foreground select-none"
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -210,7 +210,7 @@ export default function AboutPage() {
                         transition={{ duration: 0.8 }}
                     >
                         <p className="prose max-w-none text-muted-foreground">{"Fondée par une équipe d'éducateurs et d'entrepreneurs, Yahnu est née d'une vision commune : libérer l'immense potentiel des diplômés en les connectant directement aux industries qui ont besoin de leurs compétences."}</p>
-                        <p className="prose max-w-none text-muted-foreground mt-4">{"Aujourd'hui, Yahnu est une plateforme dynamique qui permet aux étudiants de lancer leur carrière, aide les entreprises à trouver efficacement les bons talents et permet aux écoles de forger des partenariats industriels significatifs. Nous croyons en la construction d'avenirs, une connexion à la fois."}</p>
+                        <p className="prose max-w-none text-muted-foreground mt-4">{"Aujourd'hui, Yahnu est une plateforme dynamique qui permet aux étudiants de lancer leur carrière, aide les entreprises à trouver efficacement les bons talents et permet aux écoles de forger des partenariaments industriels significatifs. Nous croyons en la construction d'avenirs, une connexion à la fois."}</p>
                     </motion.div>
                 </div>
             </div>
