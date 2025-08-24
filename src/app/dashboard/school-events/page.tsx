@@ -5,7 +5,7 @@ import React, { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Calendar, PlusCircle, Edit, Trash2, Users, Building } from "lucide-react"
+import { Calendar, PlusCircle, Edit, Trash2, Users, Building, Clock, MapPin } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import {
   Dialog,
@@ -52,19 +52,22 @@ type Event = {
   date: string
   type: EventType,
   rsvps: number,
-  host: string
+  host: string,
+  description?: string;
+  time?: string;
+  location?: string;
 }
 
 const initialSchoolEvents: Event[] = [
-  { id: 1, title: "Salon Annuel de l'Emploi Technologique", date: "2025-10-20", type: "Career Fair", rsvps: 78, host: "INP-HB" },
-  { id: 2, title: "Atelier IA & Machine Learning", date: "2025-11-05", type: "Workshop", rsvps: 25, host: "INP-HB" },
-  { id: 3, title: "Soirée de Réseautage des Anciens", date: "2025-11-15", type: "Networking", rsvps: 42, host: "INP-HB" },
+  { id: 1, title: "Salon Annuel de l'Emploi Technologique", date: "2025-10-20", type: "Career Fair", rsvps: 78, host: "INP-HB", description: "Rencontrez les meilleures entreprises technologiques qui recrutent pour divers postes.", time: "10:00 - 16:00", location: "Grand Auditorium, INP-HB" },
+  { id: 2, title: "Atelier IA & Machine Learning", date: "2025-11-05", type: "Workshop", rsvps: 25, host: "INP-HB", description: "Un atelier pratique sur les fondamentaux de l'IA et du Machine Learning.", time: "13:00 - 17:00", location: "En ligne" },
+  { id: 3, title: "Soirée de Réseautage des Anciens", date: "2025-11-15", type: "Networking", rsvps: 42, host: "INP-HB", description: "Connectez-vous avec d'autres anciens élèves et développez votre réseau professionnel.", time: "19:00", location: "Salle Sociale de l'Université" },
 ];
 
 const initialCompanyEvents: Event[] = [
-    { id: 4, title: "Journée Recrutement Orange", date: "2025-09-30", type: "Career Fair", rsvps: 150, host: "Orange Côte d'Ivoire" },
-    { id: 5, title: "Webinaire Fintech", date: "2025-10-10", type: "Webinar", rsvps: 65, host: "Bridge Bank Group" },
-    { id: 6, title: "Atelier sur la Chaîne d'Approvisionnement", date: "2025-10-18", type: "Workshop", rsvps: 40, host: "Ceva Logistics" },
+    { id: 4, title: "Journée Recrutement Orange", date: "2025-09-30", type: "Career Fair", rsvps: 150, host: "Orange Côte d'Ivoire", description: "Orange recrute ! Venez découvrir nos offres dans les domaines de la tech, du marketing et de la finance.", time: "09:00 - 17:00", location: "Siège Orange, Abidjan" },
+    { id: 5, title: "Webinaire Fintech", date: "2025-10-10", type: "Webinar", rsvps: 65, host: "Bridge Bank Group", description: "Découvrez l'avenir de la finance avec nos experts. Thèmes abordés : mobile money, blockchain et inclusion financière.", time: "18:00 - 19:30", location: "En ligne (lien sur inscription)" },
+    { id: 6, title: "Atelier sur la Chaîne d'Approvisionnement", date: "2025-10-18", type: "Workshop", rsvps: 40, host: "Ceva Logistics", description: "Atelier interactif sur les défis et innovations de la logistique moderne en Afrique de l'Ouest.", time: "14:00 - 17:00", location: "Zone portuaire, San-Pédro" },
 ];
 
 const eventSchema = z.object({
@@ -139,7 +142,7 @@ const EventForm = ({ event, onSave, onCancel }: { event?: z.infer<typeof eventSc
     )
 }
 
-const EventsTable = ({ events, onEdit, onDelete, showHost }: { events: Event[], onEdit?: (event: Event) => void, onDelete?: (id: number) => void, showHost?: boolean }) => {
+const EventsTable = ({ events, onEdit, onDelete, showHost, onViewDetails }: { events: Event[], onEdit?: (event: Event) => void, onDelete?: (id: number) => void, showHost?: boolean, onViewDetails?: (event: Event) => void }) => {
     return (
         <Table>
             <TableHeader>
@@ -181,7 +184,7 @@ const EventsTable = ({ events, onEdit, onDelete, showHost }: { events: Event[], 
                                     </AlertDialogContent>
                                 </AlertDialog>
                             )}
-                             {!onEdit && <Button size="sm" variant="outline">Voir les détails</Button>}
+                             {!onEdit && onViewDetails && <Button size="sm" variant="outline" onClick={() => onViewDetails(event)}>Voir les détails</Button>}
                         </TableCell>
                     </TableRow>
                 ))}
@@ -199,8 +202,9 @@ export default function SchoolEventsPage() {
   const { toast } = useToast()
   const [schoolEvents, setSchoolEvents] = useState<Event[]>(initialSchoolEvents)
   const [companyEvents] = useState<Event[]>(initialCompanyEvents);
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isFormDialogOpen, setIsFormDialogOpen] = useState(false)
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [viewingEvent, setViewingEvent] = useState<Event | null>(null);
 
   const getFormValuesFromEvent = (event: Event | null): z.infer<typeof eventSchema> => {
       if (!event) {
@@ -210,23 +214,27 @@ export default function SchoolEventsPage() {
       }
       return {
           title: event.title,
-          description: `Description pour ${event.title}`,
+          description: event.description || `Description pour ${event.title}`,
           date: event.date,
-          time: "10:00",
-          location: "Défini dans la description",
+          time: event.time || "10:00",
+          location: event.location || "Défini dans la description",
           type: event.type,
       };
   };
 
   const handleCreateClick = () => {
     setEditingEvent(null);
-    setIsDialogOpen(true);
+    setIsFormDialogOpen(true);
   }
 
   const handleEditClick = (event: Event) => {
     setEditingEvent(event);
-    setIsDialogOpen(true);
+    setIsFormDialogOpen(true);
   }
+
+  const handleViewDetails = (event: Event) => {
+    setViewingEvent(event);
+  };
 
   const handleSaveEvent = (values: z.infer<typeof eventSchema>) => {
     if (editingEvent) {
@@ -239,13 +247,16 @@ export default function SchoolEventsPage() {
             date: values.date,
             type: values.type,
             rsvps: 0,
-            host: "INP-HB" // This should be dynamic based on the logged-in school
+            host: "INP-HB", // This should be dynamic based on the logged-in school
+            description: values.description,
+            time: values.time,
+            location: values.location
         };
         setSchoolEvents(prev => [newEvent, ...prev]);
         toast({ title: "Événement créé", description: "Les diplômés de votre école ont été notifiés." });
     }
     
-    setIsDialogOpen(false);
+    setIsFormDialogOpen(false);
     setEditingEvent(null);
   }
 
@@ -271,8 +282,8 @@ export default function SchoolEventsPage() {
             <p className="text-muted-foreground mt-1">Gérez vos événements et voyez ce que les entreprises organisent.</p>
             </div>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
-            setIsDialogOpen(isOpen);
+        <Dialog open={isFormDialogOpen} onOpenChange={(isOpen) => {
+            setIsFormDialogOpen(isOpen);
             if (!isOpen) setEditingEvent(null);
         }}>
             <DialogTrigger asChild>
@@ -283,7 +294,7 @@ export default function SchoolEventsPage() {
                     <DialogTitle>{editingEvent ? "Modifier l'événement" : "Créer un nouvel événement"}</DialogTitle>
                     <DialogDescription>Remplissez les détails ci-dessous pour planifier un nouvel événement.</DialogDescription>
                 </DialogHeader>
-                <EventForm event={getFormValuesFromEvent(editingEvent)} onSave={handleSaveEvent} onCancel={() => setIsDialogOpen(false)} />
+                <EventForm event={getFormValuesFromEvent(editingEvent)} onSave={handleSaveEvent} onCancel={() => setIsFormDialogOpen(false)} />
             </DialogContent>
         </Dialog>
       </div>
@@ -301,11 +312,33 @@ export default function SchoolEventsPage() {
                     </TabsContent>
                     <TabsContent value="company-events" className="mt-4">
                          <CardDescription>Événements organisés par les entreprises sur la plateforme Yahnu.</CardDescription>
-                        <EventsTable events={companyEvents} showHost />
+                        <EventsTable events={companyEvents} showHost onViewDetails={handleViewDetails} />
                     </TabsContent>
                 </Tabs>
             </CardHeader>
         </Card>
+        
+        <Dialog open={!!viewingEvent} onOpenChange={(open) => !open && setViewingEvent(null)}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{viewingEvent?.title}</DialogTitle>
+                    <DialogDescription>Organisé par {viewingEvent?.host}</DialogDescription>
+                </DialogHeader>
+                <div className="py-4 space-y-4">
+                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: viewingEvent?.description || '' }} />
+                    <Separator />
+                    <div className="text-sm text-muted-foreground space-y-2">
+                        <div className="flex items-center gap-2"><Calendar className="h-4 w-4" /> <span>{viewingEvent && new Date(viewingEvent.date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span></div>
+                        <div className="flex items-center gap-2"><Clock className="h-4 w-4" /> <span>{viewingEvent?.time}</span></div>
+                        <div className="flex items-center gap-2"><MapPin className="h-4 w-4" /> <span>{viewingEvent?.location}</span></div>
+                        <div className="flex items-center gap-2"><Users className="h-4 w-4" /> <span>{viewingEvent?.rsvps} participants inscrits</span></div>
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setViewingEvent(null)}>Fermer</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     </motion.div>
   )
 }
