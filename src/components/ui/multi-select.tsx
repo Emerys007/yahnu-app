@@ -28,7 +28,8 @@ export type MultiSelectOption = {
 }
 
 interface MultiSelectProps {
-  options: MultiSelectOption[]
+  options?: MultiSelectOption[]
+  groups?: { label: string; options: MultiSelectOption[] }[]
   selected: string[]
   onChange: React.Dispatch<React.SetStateAction<string[]>>
   placeholder?: string
@@ -39,6 +40,7 @@ interface MultiSelectProps {
 
 export function MultiSelect({
   options,
+  groups,
   selected,
   onChange,
   placeholder = "Select options...",
@@ -53,7 +55,14 @@ export function MultiSelect({
     onChange(selected.filter((s) => s !== value))
   }
 
-  const selectedOptions = selected.map(value => options.find(option => option.value === value)).filter(Boolean) as MultiSelectOption[];
+  const allOptions = React.useMemo(() => {
+    if (groups) {
+      return groups.flatMap(group => group.options);
+    }
+    return options || [];
+  }, [options, groups]);
+
+  const selectedOptions = selected.map(value => allOptions.find(option => option.value === value)).filter(Boolean) as MultiSelectOption[];
 
   return (
     <Popover open={open} onOpenChange={setOpen} {...props}>
@@ -107,38 +116,68 @@ export function MultiSelect({
           <CommandInput placeholder={searchPlaceholder} />
           <CommandList>
             <CommandEmpty>{emptyPlaceholder}</CommandEmpty>
-            <CommandGroup>
-                {options.map((option) => {
-                    const isSelected = selected.includes(option.value);
-                    return (
-                        <CommandItem
-                            key={option.value}
-                            onSelect={() => {
-                                if (isSelected) {
-                                    handleUnselect(option.value)
-                                } else {
-                                    onChange([...selected, option.value])
-                                }
-                                setOpen(true)
-                            }}
-                        >
-                            <Check
-                            className={cn(
-                                "mr-2 h-4 w-4",
-                                isSelected ? "opacity-100" : "opacity-0"
-                            )}
-                            />
-                             {option.icon && <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />}
-                            {option.label}
-                        </CommandItem>
-                    )
-                })}
-            </CommandGroup>
+            {groups ? (
+                groups.map(group => (
+                    <CommandGroup key={group.label} heading={group.label}>
+                         {group.options.map((option) => {
+                            const isSelected = selected.includes(option.value);
+                            return (
+                                <CommandItem
+                                    key={option.value}
+                                    onSelect={() => {
+                                        if (isSelected) {
+                                            handleUnselect(option.value)
+                                        } else {
+                                            onChange([...selected, option.value])
+                                        }
+                                        setOpen(true)
+                                    }}
+                                >
+                                    <Check
+                                    className={cn(
+                                        "mr-2 h-4 w-4",
+                                        isSelected ? "opacity-100" : "opacity-0"
+                                    )}
+                                    />
+                                     {option.icon && <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />}
+                                    {option.label}
+                                </CommandItem>
+                            )
+                        })}
+                    </CommandGroup>
+                ))
+            ) : (
+                 <CommandGroup>
+                    {allOptions.map((option) => {
+                        const isSelected = selected.includes(option.value);
+                        return (
+                            <CommandItem
+                                key={option.value}
+                                onSelect={() => {
+                                    if (isSelected) {
+                                        handleUnselect(option.value)
+                                    } else {
+                                        onChange([...selected, option.value])
+                                    }
+                                    setOpen(true)
+                                }}
+                            >
+                                <Check
+                                className={cn(
+                                    "mr-2 h-4 w-4",
+                                    isSelected ? "opacity-100" : "opacity-0"
+                                )}
+                                />
+                                {option.icon && <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />}
+                                {option.label}
+                            </CommandItem>
+                        )
+                    })}
+                </CommandGroup>
+            )}
           </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
   )
 }
-
-    
