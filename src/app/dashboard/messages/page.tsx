@@ -8,15 +8,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { MessageSquare, Send, Search, ArrowLeft } from "lucide-react"
+import { MessageSquare, Send, Search, ArrowLeft, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useAuth } from "@/context/auth-context"
+import { db } from "@/lib/firebase"
+import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, updateDoc, getDocs, DocumentData } from "firebase/firestore"
+import { useToast } from "@/hooks/use-toast"
 
 type Message = {
-    id: number
-    sender: "me" | "them"
+    id: string
+    senderId: string
     text: string
-    time: string
+    timestamp: Date
 };
 
 type Conversation = {
@@ -24,61 +28,11 @@ type Conversation = {
     name: string
     avatar: string
     lastMessage: string
-    time: string
+    lastMessageTimestamp: Date
     unread: number
+    participants: string[]
     messages: Message[]
 }
-
-const getInitialConversations = (): Conversation[] => [
-    {
-        id: "amina-diallo",
-        name: "Amina Diallo",
-        avatar: "https://placehold.co/100x100.png?text=AD",
-        lastMessage: "Bonjour, mon profil ne semble pas être visible par les entreprises. Pouvez-vous m'aider s'il vous plaît ?",
-        time: "Il y a 2 heures",
-        unread: 1,
-        messages: [
-            { id: 1, sender: "them", text: "Bonjour, mon profil ne semble pas être visible par les entreprises. Pouvez-vous m'aider s'il vous plaît ?", time: "Il y a 2 heures" },
-        ]
-    },
-    {
-        id: "contact-techsolutions",
-        name: "Tech Solutions",
-        avatar: "https://placehold.co/100x100.png?text=TS",
-        lastMessage: "Nous avons essayé de postuler mais nous recevons une erreur.",
-        time: "Il y a 8 heures",
-        unread: 1,
-        messages: [
-             { id: 1, sender: "them", text: "Bonjour, nous ne parvenons pas à postuler à l'offre 'Data Scientist'. Nous avons essayé de postuler mais nous recevons une erreur.", time: "Il y a 8 heures" },
-             { id: 2, sender: "me", text: "Bonjour, merci de nous avoir contactés. Pourriez-vous me donner plus de détails sur l'erreur que vous rencontrez ?", time: "Il y a 7 heures" },
-        ]
-    },
-     {
-        id: "admin-inphb",
-        name: "Admin INP-HB",
-        avatar: "/images/University.png",
-        lastMessage: "L'un de nos diplômés a des difficultés à faire vérifier son diplôme.",
-        time: "Il y a 1 jour",
-        unread: 0,
-        messages: [
-            { id: 1, sender: "them", text: "Bonjour, l'un de nos diplômés, Jean Dupont, a des difficultés à faire vérifier son diplôme sur la plateforme. Pouvez-vous vérifier son statut ?", time: "Il y a 1 jour" },
-            { id: 2, sender: "me", text: "Bien sûr, je regarde ça tout de suite. Je vous tiens au courant.", time: "Il y a 23 heures" },
-        ]
-    },
-    {
-        id: "alice-williams",
-        name: "Alice Williams",
-        avatar: "https://placehold.co/100x100.png?text=AW",
-        lastMessage: "Merci, ça a fonctionné !",
-        time: "Il y a 3 jours",
-        unread: 0,
-        messages: [
-            { id: 1, sender: "them", text: "Je n'arrive pas à réinitialiser mon mot de passe.", time: "Il y a 3 jours" },
-            { id: 2, sender: "me", text: "Bonjour Alice, j'ai renvoyé le lien de réinitialisation à votre adresse e-mail. Veuillez vérifier votre dossier de spam également.", time: "Il y a 3 jours" },
-            { id: 3, sender: "them", text: "Merci, ça a fonctionné !", time: "Il y a 3 jours" },
-        ]
-    },
-];
 
 const getNewConvoName = (id: string, name?: string | null) => {
     if (name) return name;
@@ -97,6 +51,7 @@ const MessageView = ({
     isMobile: boolean;
     onBack: () => void;
 }) => {
+    const { user } = useAuth();
     const [message, setMessage] = useState("");
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -112,6 +67,11 @@ const MessageView = ({
         if (!message.trim()) return;
         onSendMessage(message);
         setMessage("");
+    }
+    
+    const formatTime = (date: Date) => {
+        if (!date) return "";
+        return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
     return (
@@ -131,16 +91,16 @@ const MessageView = ({
             <ScrollArea className="flex-1" ref={scrollAreaRef}>
                  <div className="p-6 space-y-4">
                     {conversation.messages.map(msg => (
-                        <div key={msg.id} className={cn("flex items-end gap-2", msg.sender === "me" ? "justify-end" : "justify-start")}>
-                            {msg.sender === 'them' && <Avatar className="h-8 w-8"><AvatarImage src={conversation.avatar} /></Avatar>}
+                        <div key={msg.id} className={cn("flex items-end gap-2", msg.senderId === user?.uid ? "justify-end" : "justify-start")}>
+                             {msg.senderId !== user?.uid && <Avatar className="h-8 w-8"><AvatarImage src={conversation.avatar} /></Avatar>}
                             <div className={cn(
                                 "max-w-xs md:max-w-md lg:max-w-lg rounded-xl p-3 text-sm",
-                                msg.sender === "me" ? "bg-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none"
+                                msg.senderId === user?.uid ? "bg-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none"
                             )}>
                                 <p>{msg.text}</p>
-                                <p className="text-xs opacity-70 mt-1 text-right">{msg.time}</p>
+                                <p className="text-xs opacity-70 mt-1 text-right">{formatTime(msg.timestamp)}</p>
                             </div>
-                            {msg.sender === 'me' && <Avatar className="h-8 w-8"><AvatarImage src="https://placehold.co/100x100.png" /></Avatar>}
+                            {msg.senderId === user?.uid && <Avatar className="h-8 w-8"><AvatarFallback>{getNewConvoName("", user?.name)}</AvatarFallback></Avatar>}
                         </div>
                     ))}
                 </div>
@@ -161,77 +121,163 @@ const MessageView = ({
 };
 
 export default function MessagesPage() {
+    const { user } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
+    const { toast } = useToast();
     const isMobile = useIsMobile();
     
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const localizedConversations = getInitialConversations();
-        setConversations(localizedConversations);
-    }, []);
+    const formatTime = (date: Date) => {
+        if (!date) return "";
+        const now = new Date();
+        const diffSeconds = (now.getTime() - date.getTime()) / 1000;
+        if (diffSeconds < 60) return "Maintenant";
+        if (diffSeconds < 3600) return `${Math.floor(diffSeconds / 60)}m`;
+        if (diffSeconds < 86400) return `${Math.floor(diffSeconds / 3600)}h`;
+        return date.toLocaleDateString();
+    }
 
+    // Effect for fetching conversations
     useEffect(() => {
-        const newConvoId = searchParams.get('new');
-        const newConvoName = searchParams.get('name');
-        const initialMessage = searchParams.get('initialMessage');
+        if (!user) return;
+        setIsLoading(true);
+
+        const q = query(collection(db, "conversations"), where("participants", "array-contains", user.uid));
         
-        if (newConvoId) {
-            const existingConvoIndex = conversations.findIndex(c => c.id === newConvoId);
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const convos: Conversation[] = [];
+            querySnapshot.forEach(doc => {
+                const data = doc.data() as DocumentData;
+                convos.push({
+                    id: doc.id,
+                    name: data.name,
+                    avatar: data.avatar,
+                    lastMessage: data.lastMessage,
+                    lastMessageTimestamp: data.lastMessageTimestamp?.toDate(),
+                    unread: data.unread,
+                    participants: data.participants,
+                    messages: (data.messages || []).map((m: any) => ({ ...m, timestamp: m.timestamp?.toDate() }))
+                });
+            });
             
-            if (existingConvoIndex !== -1) {
-                // Conversation exists, select it
-                setSelectedConversation(conversations[existingConvoIndex]);
+            convos.sort((a,b) => b.lastMessageTimestamp.getTime() - a.lastMessageTimestamp.getTime());
+            setConversations(convos);
+            setIsLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [user]);
+
+    // Effect for handling new conversation from query params
+    useEffect(() => {
+        const handleNewConversation = async () => {
+            if (!user || conversations.length === 0) return; // Wait for user and convos to load
+
+            const newConvoId = searchParams.get('new');
+            if (!newConvoId) {
+                 if (!selectedConversation && conversations.length > 0 && !isMobile) {
+                    setSelectedConversation(conversations[0]);
+                }
+                return
+            };
+
+            const existingConvo = conversations.find(c => c.id === newConvoId);
+
+            if (existingConvo) {
+                setSelectedConversation(existingConvo);
             } else {
-                 // Conversation doesn't exist, create it
-                 const newConvo: Conversation = {
+                const newConvoName = searchParams.get('name');
+                const initialMessage = searchParams.get('initialMessage');
+                
+                const newConvo: Conversation = {
                     id: newConvoId,
                     name: getNewConvoName(newConvoId, newConvoName),
-                    avatar: newConvoId.includes('admin') ? "/images/University.png" : "https://placehold.co/100x100.png",
-                    lastMessage: initialMessage || "",
-                    time: "Maintenant",
+                    avatar: newConvoId.includes('school') ? "/images/University.png" : "https://placehold.co/100x100.png",
+                    lastMessage: initialMessage || "Nouvelle conversation",
+                    lastMessageTimestamp: new Date(),
                     unread: initialMessage ? 1 : 0,
+                    participants: [user.uid, newConvoId],
                     messages: initialMessage ? [{
-                        id: Date.now(),
-                        sender: "them",
+                        id: Date.now().toString(),
+                        senderId: newConvoId, // The "other" person
                         text: initialMessage,
-                        time: "Maintenant"
+                        timestamp: new Date(),
                     }] : [],
                 };
+                
+                // This state update is temporary, it will be replaced by the snapshot listener
                 setConversations(prev => [newConvo, ...prev]);
                 setSelectedConversation(newConvo);
             }
-            // Use replace to avoid adding a new entry to the history stack
             router.replace('/dashboard/messages', { scroll: false });
-        } else if (conversations.length > 0 && !selectedConversation && !isMobile) {
-            setSelectedConversation(conversations[0]);
         }
+        
+        handleNewConversation();
+    // We only want this to run when the query params change, or when initial data loads
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams, router, isMobile, conversations]);
-    
-    const handleSendMessage = (text: string) => {
-        if (!selectedConversation) return;
+    }, [searchParams, user, conversations.length > 0]);
+
+    const handleSendMessage = async (text: string) => {
+        if (!selectedConversation || !user) return;
 
         const newMessage: Message = {
-            id: Date.now(),
-            sender: "me",
+            id: Date.now().toString(),
+            senderId: user.uid,
             text: text,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            timestamp: new Date()
         };
         
-        const updatedConversation = {
-            ...selectedConversation,
-            messages: [...selectedConversation.messages, newMessage],
-            lastMessage: text,
-            time: "Maintenant"
-        };
-        
-        setSelectedConversation(updatedConversation);
-        setConversations(conversations.map(c => c.id === updatedConversation.id ? updatedConversation : c));
-    }
+        const updatedMessages = [...selectedConversation.messages, newMessage];
 
+        // Optimistic update
+        setSelectedConversation({ ...selectedConversation, messages: updatedMessages, lastMessage: text, lastMessageTimestamp: newMessage.timestamp });
+
+        try {
+            const convoRef = doc(db, "conversations", selectedConversation.id);
+            const convoDoc = await getDoc(convoRef);
+
+            if (convoDoc.exists()) {
+                await updateDoc(convoRef, {
+                    messages: [...convoDoc.data().messages, { ...newMessage, timestamp: serverTimestamp() }],
+                    lastMessage: text,
+                    lastMessageTimestamp: serverTimestamp()
+                });
+            } else {
+                 await setDoc(convoRef, {
+                    ...selectedConversation,
+                    messages: [{ ...newMessage, timestamp: serverTimestamp() }],
+                    lastMessage: text,
+                    lastMessageTimestamp: serverTimestamp()
+                });
+            }
+            
+            // If support staff sends a message, create a notification for the other participant
+             if (user.role === 'support_staff') {
+                const otherParticipantId = selectedConversation.participants.find(p => p !== user.uid);
+                if (otherParticipantId) {
+                    await addDoc(collection(db, "notifications"), {
+                        userId: otherParticipantId,
+                        text: `Nouvelle réponse du support : "${text.substring(0, 30)}..."`,
+                        read: false,
+                        createdAt: serverTimestamp(),
+                        type: 'message'
+                    });
+                }
+            }
+
+
+        } catch (error) {
+            console.error("Failed to send message:", error);
+            toast({ title: "Erreur", description: "Votre message n'a pas pu être envoyé.", variant: "destructive" });
+            // Revert optimistic update on error
+            setSelectedConversation({ ...selectedConversation, messages: selectedConversation.messages });
+        }
+    };
+    
     const ConversationList = () => (
         <div className="border-r flex flex-col h-full">
             <div className="p-4 border-b shrink-0">
@@ -241,7 +287,12 @@ export default function MessagesPage() {
                 </div>
             </div>
             <ScrollArea className="flex-1">
-                {conversations.map((convo) => (
+                {isLoading ? (
+                     <div className="flex justify-center items-center h-full p-4">
+                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    </div>
+                ) : (
+                    conversations.map((convo) => (
                     <button
                         key={convo.id}
                         className={cn(
@@ -259,7 +310,7 @@ export default function MessagesPage() {
                             <p className="text-sm text-muted-foreground truncate">{convo.lastMessage}</p>
                         </div>
                         <div className="text-xs text-muted-foreground text-right">
-                            <p>{convo.time}</p>
+                            <p>{formatTime(convo.lastMessageTimestamp)}</p>
                             {convo.unread > 0 && (
                                 <div className="mt-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center ml-auto">
                                     {convo.unread}
@@ -267,7 +318,8 @@ export default function MessagesPage() {
                             )}
                         </div>
                     </button>
-                ))}
+                    ))
+                )}
             </ScrollArea>
         </div>
     );

@@ -13,6 +13,7 @@ import {
   Moon,
   MoreVertical,
   Ticket,
+  MessageSquare,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -81,7 +82,16 @@ export function DashboardHeader() {
     if (!user) return;
 
     let q;
-    let notificationParser = (doc: DocumentData): NotificationItem | null => {
+    let notificationParser: (doc: DocumentData) => NotificationItem | null;
+
+    if (role === 'admin' || role === 'super_admin') {
+      q = query(
+        collection(db, "users"), 
+        where('status', '==', 'pending'),
+        where('role', 'in', ['company', 'school']),
+        limit(5)
+      );
+      notificationParser = (doc: DocumentData): NotificationItem | null => {
         const data = doc.data() as DocumentData;
         const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
 
@@ -93,9 +103,6 @@ export function DashboardHeader() {
         } else if (data.role === 'school') {
             notificationText = `Nouvelle école "${data.name}" en attente d'approbation.`;
             icon = School;
-        } else if (data.role === 'graduate') {
-            notificationText = `Nouveau diplômé "${data.name}" en attente d'activation.`;
-            icon = Building; // TODO: Change to a more appropriate icon for a graduate
         }
         
         return {
@@ -105,15 +112,7 @@ export function DashboardHeader() {
             icon: icon,
             read: getReadNotificationIds().includes(doc.id),
         };
-    };
-
-    if (role === 'admin' || role === 'super_admin') {
-      q = query(
-        collection(db, "users"), 
-        where('status', '==', 'pending'),
-        where('role', 'in', ['company', 'school']),
-        limit(5)
-      );
+      };
     } else if (role === 'school') {
         q = query(
             collection(db, "users"),
@@ -122,6 +121,17 @@ export function DashboardHeader() {
             where('schoolId', '==', user.uid),
             limit(5)
         );
+         notificationParser = (doc: DocumentData): NotificationItem | null => {
+            const data = doc.data() as DocumentData;
+            const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+             return {
+                id: doc.id,
+                text: `Nouveau diplômé "${data.name}" en attente d'activation.`,
+                time: formatDistanceToNow(createdAt),
+                icon: Building, // TODO: Change to a more appropriate icon for a graduate
+                read: getReadNotificationIds().includes(doc.id),
+            };
+        };
     } else if (role === 'support_staff') {
         q = query(
             collection(db, "tickets"),
@@ -138,6 +148,28 @@ export function DashboardHeader() {
                 icon: Ticket,
                 read: getReadNotificationIds().includes(doc.id),
             }
+        }
+    } else {
+        // General notifications for graduates, companies
+        q = query(
+            collection(db, "notifications"),
+            where('userId', '==', user.uid),
+            limit(5)
+        );
+        notificationParser = (doc: DocumentData): NotificationItem => {
+             const data = doc.data() as DocumentData;
+             const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+             let icon = MessageSquare;
+             if(data.type === 'job_application') icon = Briefcase;
+             if(data.type === 'event_invite') icon = Calendar;
+
+             return {
+                id: doc.id,
+                text: data.text,
+                time: formatDistanceToNow(createdAt),
+                icon: icon,
+                read: getReadNotificationIds().includes(doc.id),
+             }
         }
     }
 
