@@ -1,7 +1,6 @@
 
 "use client"
 
-import { useLocalization } from "@/context/localization-context"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -38,7 +37,6 @@ const companies = [
 ]
 
 export default function GraduateCompaniesPage() {
-  const { t } = useLocalization()
   return (
     <div className="space-y-8">
       <div className="flex items-start gap-4">
@@ -46,26 +44,26 @@ export default function GraduateCompaniesPage() {
           <Building className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('Partner Companies')}</h1>
-          <p className="text-muted-foreground mt-1">{t('Discover companies hiring on the Yahnu platform.')}</p>
+          <h1 className="text-3xl font-bold tracking-tight">Entreprises Partenaires</h1>
+          <p className="text-muted-foreground mt-1">Découvrez les entreprises qui recrutent sur la plateforme Yahnu.</p>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('Featured Companies')}</CardTitle>
+          <CardTitle>Entreprises en vedette</CardTitle>
           <CardDescription>
-            {t('Explore companies actively recruiting top talent.')}
+            Découvrez les entreprises qui recrutent activement les meilleurs talents.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('Company')}</TableHead>
-                <TableHead>{t('Industry')}</TableHead>
-                <TableHead>{t('Open Jobs')}</TableHead>
-                <TableHead className="text-right">{t('Action')}</TableHead>
+                <TableHead>Entreprise</TableHead>
+                <TableHead>Secteur</TableHead>
+                <TableHead>Offres d'emploi</TableHead>
+                <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -79,7 +77,7 @@ export default function GraduateCompaniesPage() {
                   <TableCell className="text-right">
                     <Button asChild variant="outline" size="sm">
                       <Link href={company.href}>
-                        {t('View Profile')}
+                        Voir le profil
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
                     </Button>

@@ -1,7 +1,6 @@
 
 "use client"
 
-import { useLocalization } from "@/context/localization-context";
 import { notFound, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -179,19 +178,18 @@ const graduatesData = {
 };
 
 const companyJobs = [
-    { id: "swe1", title: "Software Engineer, Frontend" },
-    { id: "pm1", title: "Product Manager" },
+    { id: "swe1", title: "Ingénieur Logiciel, Frontend" },
+    { id: "pm1", title: "Chef de Produit" },
 ]
 
 const InviteDialog = ({ graduateName }: { graduateName: string }) => {
-    const { t } = useLocalization();
     const { toast } = useToast();
     const [isOpen, setIsOpen] = useState(false);
 
     const handleSendInvite = () => {
         toast({
-            title: t('Invitation Sent'),
-            description: `${t('An invitation to apply has been sent to')} ${graduateName}.`
+            title: 'Invitation envoyée',
+            description: `Une invitation à postuler a été envoyée à ${graduateName}.`
         })
         setIsOpen(false);
     }
@@ -201,21 +199,21 @@ const InviteDialog = ({ graduateName }: { graduateName: string }) => {
             <DialogTrigger asChild>
                 <Button>
                     <Send className="mr-2 h-4 w-4" />
-                    {t('Invite to Apply')}
+                    Inviter à postuler
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{t('Invite {name} to a Job', { name: graduateName })}</DialogTitle>
+                    <DialogTitle>{`Inviter ${graduateName} à un poste`}</DialogTitle>
                     <DialogDescription>
-                        {t('Select one of your open positions to invite this candidate to apply.')}
+                        Sélectionnez l'un de vos postes ouverts pour inviter ce candidat à postuler.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="py-4">
-                    <Label htmlFor="job-select">{t('Select a Job Posting')}</Label>
+                    <Label htmlFor="job-select">Sélectionner une offre d'emploi</Label>
                     <Select>
                         <SelectTrigger id="job-select">
-                            <SelectValue placeholder={t('Choose a job...')} />
+                            <SelectValue placeholder="Choisir un poste..." />
                         </SelectTrigger>
                         <SelectContent>
                             {companyJobs.map(job => (
@@ -225,7 +223,7 @@ const InviteDialog = ({ graduateName }: { graduateName: string }) => {
                     </Select>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleSendInvite}>{t('Send Invitation')}</Button>
+                    <Button onClick={handleSendInvite}>Envoyer l'invitation</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -233,30 +231,23 @@ const InviteDialog = ({ graduateName }: { graduateName: string }) => {
 }
 
 export default function GraduateProfilePage({ params }: { params: { slug: string } }) {
-  const { language, t } = useLocalization();
   const { toast } = useToast();
   const router = useRouter();
-  const allGraduates = [...graduatesData.en, ...graduatesData.fr];
-  const graduate = allGraduates.find((g) => g.slug === params.slug);
-  
-  // Get the localized version of the found graduate
-  const localizedGraduates = graduatesData[language as keyof typeof graduatesData] || graduatesData.en;
-  const localizedGraduate = localizedGraduates.find((g) => g.slug === params.slug);
+  const graduate = graduatesData.fr.find((g) => g.slug === params.slug);
 
-
-  if (!graduate || !localizedGraduate) {
+  if (!graduate) {
     notFound();
   }
 
   const handleContact = () => {
     toast({
-      title: t('Contact Initiated'),
-      description: `${t('Redirecting to messages...')}`
+      title: 'Contact initié',
+      description: `Redirection vers la messagerie...`
     });
     router.push(`/dashboard/messages?new=${graduate.slug}`);
   }
 
-  const mainFieldOfStudy = graduate.education.length > 0 ? graduate.education[0].field : "Graduate";
+  const mainFieldOfStudy = graduate.education.length > 0 ? graduate.education[0].field : "Diplômé";
 
   return (
     <div className="space-y-8">
@@ -274,11 +265,11 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
               <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-3xl">{graduate.name}</CardTitle>
-                    <CardDescription className="text-lg">{t(mainFieldOfStudy)}</CardDescription>
+                    <CardDescription className="text-lg">{mainFieldOfStudy}</CardDescription>
                   </div>
                   <Badge variant={graduate.available ? "secondary" : "outline"}>
                     <span className={cn("mr-2 h-2 w-2 rounded-full", graduate.available ? "bg-green-500" : "bg-gray-400")}></span>
-                    {graduate.available ? t('Available') : t('Unavailable')}
+                    {graduate.available ? 'Disponible' : 'Indisponible'}
                   </Badge>
               </div>
               <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
@@ -292,7 +283,7 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
         <CardContent className="p-6 flex gap-2">
             <Button onClick={handleContact} variant="outline">
                 <MessageSquare className="mr-2 h-4 w-4" />
-                {t('Contact Graduate')}
+                Contacter le diplômé
             </Button>
             <InviteDialog graduateName={graduate.name} />
         </CardContent>
@@ -301,25 +292,25 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
       <div className="grid md:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Briefcase /> {t('Work Experience')}</CardTitle>
+            <CardTitle className="flex items-center gap-2"><Briefcase /> Expérience professionnelle</CardTitle>
           </CardHeader>
           <CardContent className="prose prose-sm text-muted-foreground whitespace-pre-line">
-            {t(localizedGraduate.experience)}
+            {graduate.experience}
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><GraduationCap /> {t('Education')}</CardTitle>
+            <CardTitle className="flex items-center gap-2"><GraduationCap /> Formation</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {localizedGraduate.education.map((edu, index) => (
+            {graduate.education.map((edu, index) => (
                 <div key={index} className="p-3 border rounded-lg">
-                    <p className="font-semibold">{t(edu.degree)} {t('in')} {t(edu.field)}</p>
-                    <p className="text-sm text-muted-foreground">{t('Graduated')}: {edu.gradYear}</p>
+                    <p className="font-semibold">{edu.degree} en {edu.field}</p>
+                    <p className="text-sm text-muted-foreground">Diplômé : {edu.gradYear}</p>
                     {edu.verified && (
                         <Badge variant="secondary" className="mt-2 gap-1.5">
                             <CheckCircle2 className="h-3.5 w-3.5" />
-                            {t('Verified by School')}
+                            Vérifié par l'école
                         </Badge>
                     )}
                 </div>
@@ -330,27 +321,27 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
 
        <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Award /> {t('Skills & Certifications')}</CardTitle>
+            <CardTitle className="flex items-center gap-2"><Award /> Compétences & Certifications</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-                <h4 className="font-semibold text-sm mb-2">{t('Self-Reported Skills')}</h4>
+                <h4 className="font-semibold text-sm mb-2">Compétences déclarées</h4>
                 <div className="flex flex-wrap gap-2">
-                {localizedGraduate.skills.map((skill) => (
+                {graduate.skills.map((skill) => (
                     <Badge key={skill} variant="outline" className="text-sm py-1 px-3">
                         {skill}
                     </Badge>
                 ))}
                 </div>
             </div>
-            {localizedGraduate.badges && localizedGraduate.badges.length > 0 && (
+            {graduate.badges && graduate.badges.length > 0 && (
                  <div>
-                    <h4 className="font-semibold text-sm mb-2">{t('Verified Skills')}</h4>
+                    <h4 className="font-semibold text-sm mb-2">Compétences vérifiées</h4>
                     <div className="flex flex-wrap gap-2">
-                    {localizedGraduate.badges.map((badge) => (
+                    {graduate.badges.map((badge) => (
                         <Badge key={badge} variant="secondary" className="text-sm py-1 px-3 gap-1.5">
                              <CheckCircle2 className="h-3.5 w-3.5" />
-                            {t(badge)}
+                            {badge}
                         </Badge>
                     ))}
                     </div>
@@ -361,4 +352,3 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
     </div>
   );
 }
-

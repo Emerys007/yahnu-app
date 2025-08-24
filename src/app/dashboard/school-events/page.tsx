@@ -2,7 +2,6 @@
 "use client"
 
 import React, { useState } from "react"
-import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -57,16 +56,15 @@ const initialCompanyEvents: Event[] = [
 ];
 
 const eventSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters."),
-  description: z.string().min(10, "Description must be at least 10 characters."),
-  date: z.string().min(1, "Date is required."),
-  time: z.string().min(1, "Time is required."),
-  location: z.string().min(3, "Location or link is required."),
+  title: z.string().min(3, "Le titre doit comporter au moins 3 caractères."),
+  description: z.string().min(10, "La description doit comporter au moins 10 caractères."),
+  date: z.string().min(1, "La date est requise."),
+  time: z.string().min(1, "L'heure est requise."),
+  location: z.string().min(3, "Le lieu ou le lien est requis."),
   type: z.enum(["Career Fair", "Workshop", "Networking", "Webinar"]),
 });
 
 const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onSave: (values: z.infer<typeof eventSchema>) => void }) => {
-    const { t } = useLocalization();
     const form = useForm<z.infer<typeof eventSchema>>({
         resolver: zodResolver(eventSchema),
         defaultValues: event || {
@@ -87,37 +85,37 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField control={form.control} name="title" render={({ field }) => (
-                    <FormItem><FormLabel>{t('Event Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Titre de l'événement</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="description" render={({ field }) => (
-                    <FormItem><FormLabel>{t('Description')}</FormLabel><FormControl><Textarea rows={4} {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea rows={4} {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <div className="grid grid-cols-2 gap-4">
                     <FormField control={form.control} name="date" render={({ field }) => (
-                        <FormItem><FormLabel>{t('Date')}</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Date</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="time" render={({ field }) => (
-                        <FormItem><FormLabel>{t('Time')}</FormLabel><FormControl><Input type="time" {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Heure</FormLabel><FormControl><Input type="time" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                 </div>
                  <FormField control={form.control} name="location" render={({ field }) => (
-                    <FormItem><FormLabel>{t('Location / Link')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Lieu / Lien</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                  <FormField control={form.control} name="type" render={({ field }) => (
-                    <FormItem><FormLabel>{t('Event Type')}</FormLabel>
+                    <FormItem><FormLabel>Type d'événement</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
                             <SelectContent>
-                                <SelectItem value="Career Fair">{t('Career Fair')}</SelectItem>
-                                <SelectItem value="Workshop">{t('Workshop')}</SelectItem>
-                                <SelectItem value="Networking">{t('Networking')}</SelectItem>
-                                <SelectItem value="Webinar">{t('Webinar')}</SelectItem>
+                                <SelectItem value="Career Fair">Salon de l'emploi</SelectItem>
+                                <SelectItem value="Workshop">Atelier</SelectItem>
+                                <SelectItem value="Networking">Réseautage</SelectItem>
+                                <SelectItem value="Webinar">Webinaire</SelectItem>
                             </SelectContent>
                         </Select>
                     <FormMessage /></FormItem>
                 )} />
                 <DialogFooter>
-                    <Button type="submit">{t('Save Event')}</Button>
+                    <Button type="submit">Enregistrer l'événement</Button>
                 </DialogFooter>
             </form>
         </Form>
@@ -125,37 +123,36 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
 }
 
 const EventsTable = ({ events, onAction, showHost, canEdit }: { events: Event[], onAction: (id: number) => void, showHost?: boolean, canEdit?: boolean }) => {
-    const { t } = useLocalization();
     return (
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>{t('Event Title')}</TableHead>
-                    {showHost && <TableHead>{t('Host')}</TableHead>}
-                    <TableHead>{t('Date')}</TableHead>
-                    <TableHead>{t('Type')}</TableHead>
-                    <TableHead>{t('RSVPs')}</TableHead>
-                    <TableHead className="text-right">{t('Actions')}</TableHead>
+                    <TableHead>Titre de l'événement</TableHead>
+                    {showHost && <TableHead>Hôte</TableHead>}
+                    <TableHead>Date</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Inscriptions</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {events.map(event => (
                     <TableRow key={event.id}>
-                        <TableCell className="font-medium">{t(event.title)}</TableCell>
-                        {showHost && <TableCell>{t(event.host)}</TableCell>}
+                        <TableCell className="font-medium">{event.title}</TableCell>
+                        {showHost && <TableCell>{event.host}</TableCell>}
                         <TableCell>{new Date(event.date).toLocaleDateString()}</TableCell>
-                        <TableCell>{t(event.type)}</TableCell>
+                        <TableCell>{event.type}</TableCell>
                         <TableCell className="flex items-center gap-2"><Users className="h-4 w-4 text-muted-foreground" /> {event.rsvps}</TableCell>
                         <TableCell className="text-right space-x-2">
                             {canEdit && <Button size="icon" variant="ghost"><Edit className="h-4 w-4" /></Button>}
                             {canEdit && <Button size="icon" variant="ghost" onClick={() => onAction(event.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>}
-                            {!canEdit && <Button size="sm" variant="outline">{t('View Details')}</Button>}
+                            {!canEdit && <Button size="sm" variant="outline">Voir les détails</Button>}
                         </TableCell>
                     </TableRow>
                 ))}
                 {events.length === 0 && (
                     <TableRow>
-                        <TableCell colSpan={showHost ? 6 : 5} className="h-24 text-center">{t('No events found.')}</TableCell>
+                        <TableCell colSpan={showHost ? 6 : 5} className="h-24 text-center">Aucun événement trouvé.</TableCell>
                     </TableRow>
                 )}
             </TableBody>
@@ -164,7 +161,6 @@ const EventsTable = ({ events, onAction, showHost, canEdit }: { events: Event[],
 }
 
 export default function SchoolEventsPage() {
-  const { t } = useLocalization()
   const { toast } = useToast()
   const [schoolEvents, setSchoolEvents] = useState<Event[]>(initialSchoolEvents)
   const [companyEvents] = useState<Event[]>(initialCompanyEvents);
@@ -180,13 +176,13 @@ export default function SchoolEventsPage() {
       host: "INP-HB" // This should be dynamic based on the logged-in school
     };
     setSchoolEvents(prev => [newEvent, ...prev]);
-    toast({ title: t("Event Created"), description: t("Graduates from your school have been notified.") });
+    toast({ title: "Événement créé", description: "Les diplômés de votre école ont été notifiés." });
     setIsDialogOpen(false);
   }
 
   const handleDeleteEvent = (eventId: number) => {
     setSchoolEvents(schoolEvents.filter(e => e.id !== eventId));
-    toast({ title: t("Event Deleted"), variant: "destructive" });
+    toast({ title: "Événement supprimé", variant: "destructive" });
   }
 
   return (
@@ -202,18 +198,18 @@ export default function SchoolEventsPage() {
             <Calendar className="h-6 w-6 text-primary" />
             </div>
             <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t('Event Management')}</h1>
-            <p className="text-muted-foreground mt-1">{t('Manage your events and see what companies are hosting.')}</p>
+            <h1 className="text-3xl font-bold tracking-tight">Gestion des événements</h1>
+            <p className="text-muted-foreground mt-1">Gérez vos événements et voyez ce que les entreprises organisent.</p>
             </div>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-                <Button><PlusCircle className="mr-2 h-4 w-4" />{t('Create Event')}</Button>
+                <Button><PlusCircle className="mr-2 h-4 w-4" />Créer un événement</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{t('Create a New Event')}</DialogTitle>
-                    <DialogDescription>{t('Fill in the details below to schedule a new event.')}</DialogDescription>
+                    <DialogTitle>Créer un nouvel événement</DialogTitle>
+                    <DialogDescription>Remplissez les détails ci-dessous pour planifier un nouvel événement.</DialogDescription>
                 </DialogHeader>
                 <EventForm onSave={handleCreateEvent} />
             </DialogContent>
@@ -224,15 +220,15 @@ export default function SchoolEventsPage() {
             <CardHeader>
                 <Tabs defaultValue="your-events">
                     <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="your-events">{t('Your Events')}</TabsTrigger>
-                        <TabsTrigger value="company-events">{t('Company Events')}</TabsTrigger>
+                        <TabsTrigger value="your-events">Vos événements</TabsTrigger>
+                        <TabsTrigger value="company-events">Événements d'entreprise</TabsTrigger>
                     </TabsList>
                     <TabsContent value="your-events" className="mt-4">
-                        <CardDescription>{t('A list of all events you have scheduled.')}</CardDescription>
+                        <CardDescription>Une liste de tous les événements que vous avez programmés.</CardDescription>
                         <EventsTable events={schoolEvents} onAction={handleDeleteEvent} canEdit />
                     </TabsContent>
                     <TabsContent value="company-events" className="mt-4">
-                         <CardDescription>{t("Events hosted by companies on the Yahnu platform.")}</CardDescription>
+                         <CardDescription>Événements organisés par les entreprises sur la plateforme Yahnu.</CardDescription>
                         <EventsTable events={companyEvents} onAction={() => {}} showHost />
                     </TabsContent>
                 </Tabs>

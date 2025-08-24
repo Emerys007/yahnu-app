@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { PlusCircle, Megaphone, Edit, Trash2, Calendar } from 'lucide-react'
-import { useLocalization } from '@/context/localization-context'
 
 type Announcement = {
   id: string
@@ -28,8 +27,8 @@ type Announcement = {
 const mockAnnouncements: Announcement[] = [
   {
     id: '1',
-    title: 'Platform Maintenance Scheduled',
-    content: 'We will be performing scheduled maintenance on our platform this weekend.',
+    title: 'Maintenance de la plateforme prévue',
+    content: 'Nous effectuerons une maintenance programmée sur notre plateforme ce week-end.',
     targetAudience: 'all_users',
     priority: 'high',
     publishDate: '2025-01-15',
@@ -38,8 +37,8 @@ const mockAnnouncements: Announcement[] = [
   },
   {
     id: '2',
-    title: 'New Features Available',
-    content: 'Check out our latest features including enhanced search and improved messaging.',
+    title: 'Nouvelles fonctionnalités disponibles',
+    content: 'Découvrez nos dernières fonctionnalités, notamment la recherche améliorée et la messagerie améliorée.',
     targetAudience: 'graduates',
     priority: 'medium',
     publishDate: '2025-01-10',
@@ -49,7 +48,6 @@ const mockAnnouncements: Announcement[] = [
 ]
 
 export default function Announcements() {
-  const { t } = useLocalization()
   const [announcements, setAnnouncements] = useState<Announcement[]>(mockAnnouncements)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [newAnnouncement, setNewAnnouncement] = useState({
@@ -91,12 +89,22 @@ export default function Announcements() {
 
   const getAudienceLabel = (audience: string) => {
     switch (audience) {
-      case 'all_users': return t('dashboard.support.announcements.all_users')
-      case 'graduates': return t('dashboard.support.announcements.graduates')
-      case 'companies': return t('dashboard.support.announcements.companies')
-      case 'schools': return t('dashboard.support.announcements.schools')
-      case 'admins': return t('dashboard.support.announcements.admins')
+      case 'all_users': return 'Tous les utilisateurs'
+      case 'graduates': return 'Diplômés'
+      case 'companies': return 'Entreprises'
+      case 'schools': return 'Écoles'
+      case 'admins': return 'Admins'
       default: return audience
+    }
+  }
+  
+    const getPriorityLabel = (priority: string) => {
+    switch (priority) {
+      case 'low': return 'Basse'
+      case 'medium': return 'Moyenne'
+      case 'high': return 'Haute'
+      case 'urgent': return 'Urgente'
+      default: return priority
     }
   }
 
@@ -108,27 +116,27 @@ export default function Announcements() {
             <Megaphone className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.support.announcements.title')}</h1>
-            <p className="text-muted-foreground mt-1">{t('dashboard.support.announcements.description')}</p>
+            <h1 className="text-3xl font-bold tracking-tight">Annonces</h1>
+            <p className="text-muted-foreground mt-1">Créez et gérez les annonces de la plateforme.</p>
           </div>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" />
-              {t('dashboard.support.announcements.create_announcement')}
+              Créer une annonce
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle>{t('dashboard.support.announcements.create_announcement')}</DialogTitle>
+              <DialogTitle>Créer une annonce</DialogTitle>
               <DialogDescription>
-                Create a new announcement for your users.
+                Créez une nouvelle annonce pour vos utilisateurs.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="title">{t('dashboard.support.announcements.title_label')}</Label>
+                <Label htmlFor="title">Titre</Label>
                 <Input
                   id="title"
                   value={newAnnouncement.title}
@@ -136,7 +144,7 @@ export default function Announcements() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="content">{t('dashboard.support.announcements.content_label')}</Label>
+                <Label htmlFor="content">Contenu</Label>
                 <Textarea
                   id="content"
                   value={newAnnouncement.content}
@@ -146,38 +154,38 @@ export default function Announcements() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label>{t('dashboard.support.announcements.target_audience')}</Label>
+                  <Label>Public cible</Label>
                   <Select value={newAnnouncement.targetAudience} onValueChange={(value) => setNewAnnouncement({ ...newAnnouncement, targetAudience: value })}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all_users">{t('dashboard.support.announcements.all_users')}</SelectItem>
-                      <SelectItem value="graduates">{t('dashboard.support.announcements.graduates')}</SelectItem>
-                      <SelectItem value="companies">{t('dashboard.support.announcements.companies')}</SelectItem>
-                      <SelectItem value="schools">{t('dashboard.support.announcements.schools')}</SelectItem>
-                      <SelectItem value="admins">{t('dashboard.support.announcements.admins')}</SelectItem>
+                      <SelectItem value="all_users">Tous les utilisateurs</SelectItem>
+                      <SelectItem value="graduates">Diplômés</SelectItem>
+                      <SelectItem value="companies">Entreprises</SelectItem>
+                      <SelectItem value="schools">Écoles</SelectItem>
+                      <SelectItem value="admins">Admins</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="grid gap-2">
-                  <Label>{t('dashboard.support.announcements.priority')}</Label>
+                  <Label>Priorité</Label>
                   <Select value={newAnnouncement.priority} onValueChange={(value: any) => setNewAnnouncement({ ...newAnnouncement, priority: value })}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="low">{t('dashboard.support.announcements.low')}</SelectItem>
-                      <SelectItem value="medium">{t('dashboard.support.announcements.medium')}</SelectItem>
-                      <SelectItem value="high">{t('dashboard.support.announcements.high')}</SelectItem>
-                      <SelectItem value="urgent">{t('dashboard.support.announcements.urgent')}</SelectItem>
+                      <SelectItem value="low">Basse</SelectItem>
+                      <SelectItem value="medium">Moyenne</SelectItem>
+                      <SelectItem value="high">Haute</SelectItem>
+                      <SelectItem value="urgent">Urgente</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="publishDate">{t('dashboard.support.announcements.publish_date')}</Label>
+                  <Label htmlFor="publishDate">Date de publication</Label>
                   <Input
                     id="publishDate"
                     type="date"
@@ -186,7 +194,7 @@ export default function Announcements() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="expiryDate">{t('dashboard.support.announcements.expiry_date')}</Label>
+                  <Label htmlFor="expiryDate">Date d'expiration</Label>
                   <Input
                     id="expiryDate"
                     type="date"
@@ -198,10 +206,10 @@ export default function Announcements() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                {t('dashboard.support.announcements.cancel')}
+                Annuler
               </Button>
               <Button onClick={handleCreateAnnouncement}>
-                {t('dashboard.support.announcements.create')}
+                Créer
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -209,7 +217,7 @@ export default function Announcements() {
       </div>
 
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold tracking-tight">{t('dashboard.support.announcements.active_announcements')}</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Annonces actives</h2>
         {announcements.length > 0 ? (
           <div className="grid gap-6">
             {announcements.map((announcement) => (
@@ -219,12 +227,12 @@ export default function Announcements() {
                     <div className="space-y-2">
                       <CardTitle className="text-xl">{announcement.title}</CardTitle>
                       <CardDescription>
-                        {getAudienceLabel(announcement.targetAudience)} • {t('dashboard.support.announcements.expires')} {new Date(announcement.expiryDate).toLocaleDateString()}
+                        {getAudienceLabel(announcement.targetAudience)} • Expire le {new Date(announcement.expiryDate).toLocaleDateString()}
                       </CardDescription>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge className={`${getPriorityColor(announcement.priority)} text-white`}>
-                        {t(`dashboard.support.announcements.${announcement.priority}`)}
+                        {getPriorityLabel(announcement.priority)}
                       </Badge>
                       <Button variant="ghost" size="sm">
                         <Edit className="h-4 w-4" />
@@ -240,7 +248,7 @@ export default function Announcements() {
                   <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                     <div className="flex items-center">
                       <Calendar className="mr-1 h-3 w-3" />
-                      Published {new Date(announcement.publishDate).toLocaleDateString()}
+                      Publié le {new Date(announcement.publishDate).toLocaleDateString()}
                     </div>
                   </div>
                 </CardContent>
@@ -251,7 +259,7 @@ export default function Announcements() {
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <Megaphone className="h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-lg font-medium text-muted-foreground">{t('dashboard.support.announcements.no_announcements')}</p>
+              <p className="text-lg font-medium text-muted-foreground">Aucune annonce</p>
             </CardContent>
           </Card>
         )}

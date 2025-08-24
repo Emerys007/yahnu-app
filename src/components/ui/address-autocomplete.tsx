@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils"
 import { africanCountries as countryData, type Country as CountryData } from "@/lib/african-countries"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { useLocalization } from "@/context/localization-context"
 
 const OPENCAGE_API_KEY = process.env.NEXT_PUBLIC_OPENCAGE_API_KEY;
 
@@ -77,7 +76,6 @@ export const AddressAutocomplete = React.forwardRef<
   HTMLDivElement,
   AddressAutocompleteProps
 >(({ value, onChange }, ref) => {
-  const { t } = useLocalization()
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState("")
   const [suggestions, setSuggestions] = React.useState<AddressSuggestion[]>([])
@@ -117,7 +115,7 @@ export const AddressAutocomplete = React.forwardRef<
     <div ref={ref} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Country')}</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pays</label>
           <Select
             onValueChange={(countryName) => {
                 const country = countryData.find(c => c.name === countryName)
@@ -127,7 +125,7 @@ export const AddressAutocomplete = React.forwardRef<
             value={value.country}
           >
             <SelectTrigger>
-              <SelectValue placeholder={t("Select a country")} />
+              <SelectValue placeholder="Sélectionnez un pays" />
             </SelectTrigger>
             <SelectContent>
               {countryData.map((country) => (
@@ -139,7 +137,7 @@ export const AddressAutocomplete = React.forwardRef<
           </Select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Find Address')}</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Rechercher une adresse</label>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
@@ -149,21 +147,21 @@ export const AddressAutocomplete = React.forwardRef<
                 className="w-full justify-between font-normal"
                 disabled={!selectedCountry}
               >
-                <span className="truncate">{search || t("Start typing an address...")}</span>
+                <span className="truncate">{search || "Commencez à taper une adresse..."}</span>
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
               <Command shouldFilter={false}>
                 <CommandInput
-                  placeholder={t("Search for an address...")}
+                  placeholder="Rechercher une adresse..."
                   value={search}
                   onValueChange={setSearch}
                   disabled={!selectedCountry}
                 />
                 <CommandList>
-                  {isLoading && <div className="p-2 text-center text-sm">{t('Loading...')}</div>}
-                  <CommandEmpty>{t('No address found.')}</CommandEmpty>
+                  {isLoading && <div className="p-2 text-center text-sm">Chargement...</div>}
+                  <CommandEmpty>Aucune adresse trouvée.</CommandEmpty>
                   <CommandGroup>
                     {suggestions.map((suggestion) => (
                       <CommandItem
@@ -183,32 +181,32 @@ export const AddressAutocomplete = React.forwardRef<
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Street Address')}</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Adresse</label>
           <Input 
             value={value.street} 
             onChange={e => onChange({...value, street: e.target.value})}
-            placeholder="e.g. 123 Main St"
+            placeholder="Ex: 123 Rue Principale"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('City')}</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ville</label>
           <Input 
             value={value.city}
             onChange={e => onChange({...value, city: e.target.value})}
-            placeholder="e.g. Abidjan"
+            placeholder="Ex: Abidjan"
           />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('State / Province')}</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">État / Province</label>
             <Select
                 onValueChange={(stateName) => onChange({ ...value, state: stateName })}
                 value={value.state}
                 disabled={!selectedCountry || !selectedCountry.states.length}
             >
                 <SelectTrigger>
-                    <SelectValue placeholder={t("Select a state")} />
+                    <SelectValue placeholder="Sélectionnez un état" />
                 </SelectTrigger>
                 <SelectContent>
                     {selectedCountry?.states.map((state) => (
@@ -220,11 +218,11 @@ export const AddressAutocomplete = React.forwardRef<
             </Select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('ZIP / Postal Code')}</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Code postal</label>
           <Input
             value={value.zip}
             onChange={e => onChange({...value, zip: e.target.value})}
-            placeholder="e.g. 10001"
+            placeholder="Ex: 10001"
           />
         </div>
       </div>

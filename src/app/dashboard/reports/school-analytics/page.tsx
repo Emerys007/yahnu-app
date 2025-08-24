@@ -2,7 +2,6 @@
 
 "use client"
 
-import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CountUp } from "@/components/ui/count-up"
 import { TrendingUp, Users, Building, MoreVertical, Download } from "lucide-react"
@@ -50,7 +49,7 @@ const analyticsData = {
     ],
     placementTrends: [
         { 
-            month: "January", 
+            month: "Janvier", 
             graduates: 15,
             details: [
                 { name: "Kouassi Jean", company: "Orange", field: "Telecoms" },
@@ -58,7 +57,7 @@ const analyticsData = {
             ]
         },
         { 
-            month: "February", 
+            month: "Février", 
             graduates: 28,
             details: [
                 { name: "Diallo Fatima", company: "Bridge Bank", field: "Finance" },
@@ -67,7 +66,7 @@ const analyticsData = {
             ]
         },
         { 
-            month: "March", 
+            month: "Mars", 
             graduates: 22,
             details: [
                  { name: "Ouattara Adama", company: "SIFCA", field: "Agronomy" },
@@ -75,7 +74,7 @@ const analyticsData = {
             ]
         },
         { 
-            month: "April", 
+            month: "Avril", 
             graduates: 35,
             details: [
                 { name: "N'Guessan Yann", company: "Jumia", field: "E-commerce" },
@@ -83,7 +82,7 @@ const analyticsData = {
             ]
         },
         { 
-            month: "May", 
+            month: "Mai", 
             graduates: 18,
             details: [
                 { name: "Fofana Isabelle", company: "Unilever", field: "Marketing" },
@@ -91,7 +90,7 @@ const analyticsData = {
             ]
         },
         { 
-            month: "June", 
+            month: "Juin", 
             graduates: 41,
             details: [
                 { name: "Sangaré Aïcha", company: "KPMG", field: "Audit" },
@@ -106,26 +105,25 @@ const chartConfig = {
     it: { label: "IT", color: "hsl(var(--chart-1))" },
     finance: { label: "Finance", color: "hsl(var(--chart-2))" },
     agriculture: { label: "Agriculture", color: "hsl(var(--chart-3))" },
-    other: { label: "Other", color: "hsl(var(--chart-4))" },
-    hires: { label: "Hires", color: "hsl(var(--primary))" }
+    other: { label: "Autre", color: "hsl(var(--chart-4))" },
+    hires: { label: "Embauches", color: "hsl(var(--primary))" }
 }
 
 const CustomPlacementTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
-    const { t } = useLocalization();
     if (active && payload && payload.length) {
         const data: MonthlyHires = payload[0].payload;
         return (
         <Card className="w-80 shadow-2xl" style={{ transform: 'translateX(-50%)' }}>
             <CardHeader>
-                <CardTitle className="text-base">{t(label)}</CardTitle>
-                <CardDescription>{t('{count} graduates hired', { count: data.graduates })}</CardDescription>
+                <CardTitle className="text-base">{label}</CardTitle>
+                <CardDescription>{`${data.graduates} diplômés embauchés`}</CardDescription>
             </CardHeader>
             <CardContent>
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>{t('Name')}</TableHead>
-                            <TableHead>{t('Company')}</TableHead>
+                            <TableHead>Nom</TableHead>
+                            <TableHead>Entreprise</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -141,7 +139,7 @@ const CustomPlacementTooltip = ({ active, payload, label }: TooltipProps<number,
                 </Table>
                 {data.details.length > 5 && (
                     <p className="text-xs text-center text-muted-foreground mt-2">
-                        {t('+{count} more', { count: data.details.length - 5 })}
+                        {`+${data.details.length - 5} autres`}
                     </p>
                 )}
             </CardContent>
@@ -153,52 +151,51 @@ const CustomPlacementTooltip = ({ active, payload, label }: TooltipProps<number,
 };
 
 export default function SchoolAnalyticsPage() {
-  const { t } = useLocalization();
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('Graduate Placement Analytics')}</h1>
-        <p className="text-muted-foreground mt-1">{t('Insights into the success of your graduates in the job market.')}</p>
+        <h1 className="text-3xl font-bold tracking-tight">Analyses de placement des diplômés</h1>
+        <p className="text-muted-foreground mt-1">Aperçu du succès de vos diplômés sur le marché du travail.</p>
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{t('Total Graduates Hired')}</CardTitle>
+                <CardTitle className="text-sm font-medium">Total des diplômés embauchés</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold"><CountUp end={analyticsData.totalHires} /></div>
-                <p className="text-xs text-muted-foreground">{t('+10% from last quarter')}</p>
+                <p className="text-xs text-muted-foreground">+10% par rapport au dernier trimestre</p>
             </CardContent>
         </Card>
          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{t('Avg. Time to Hire')}</CardTitle>
+                <CardTitle className="text-sm font-medium">Délai moyen d'embauche</CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold"><CountUp end={analyticsData.avgTimeToHire} suffix={t(" days")} /></div>
-                <p className="text-xs text-muted-foreground">{t('Down from 32 days last quarter')}</p>
+                <div className="text-2xl font-bold"><CountUp end={analyticsData.avgTimeToHire} suffix={" jours"} /></div>
+                <p className="text-xs text-muted-foreground">En baisse par rapport à 32 jours le trimestre dernier</p>
             </CardContent>
         </Card>
          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{t('Top Partner Company')}</CardTitle>
+                <CardTitle className="text-sm font-medium">Meilleure entreprise partenaire</CardTitle>
                 <Building className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">{analyticsData.topCompanies[0].company}</div>
-                <p className="text-xs text-muted-foreground">{t('{count} hires this year', { count: analyticsData.topCompanies[0].hires })}</p>
+                <p className="text-xs text-muted-foreground">{`${analyticsData.topCompanies[0].hires} embauches cette année`}</p>
             </CardContent>
         </Card>
       </div>
       
        <Card>
         <CardHeader>
-            <CardTitle>{t('Graduate Placement Trends')}</CardTitle>
-            <CardDescription>{t('Number of graduates placed in jobs over the last 6 months.')}</CardDescription>
+            <CardTitle>Tendances de placement des diplômés</CardTitle>
+            <CardDescription>Nombre de diplômés placés dans des emplois au cours des 6 derniers mois.</CardDescription>
         </CardHeader>
         <CardContent>
             <ChartContainer config={chartConfig} className="h-[250px] w-full">
@@ -209,7 +206,7 @@ export default function SchoolAnalyticsPage() {
                     tickLine={false}
                     tickMargin={10}
                     axisLine={false}
-                    tickFormatter={(value) => t(value).slice(0, 3)}
+                    tickFormatter={(value) => value.slice(0, 3)}
                 />
                 <YAxis tickCount={5} />
                 <ChartTooltip
@@ -228,8 +225,8 @@ export default function SchoolAnalyticsPage() {
         <Card className="lg:col-span-3">
             <CardHeader className="flex flex-row items-center">
                 <div className="grid gap-2">
-                    <CardTitle>{t('Top Hiring Companies')}</CardTitle>
-                    <CardDescription>{t('Companies that have hired the most graduates from your institution.')}</CardDescription>
+                    <CardTitle>Principales entreprises qui recrutent</CardTitle>
+                    <CardDescription>Entreprises qui ont embauché le plus de diplômés de votre institution.</CardDescription>
                 </div>
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -240,7 +237,7 @@ export default function SchoolAnalyticsPage() {
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => exportToCsv(analyticsData.topCompanies.map(({fill, ...rest}) => rest), "top_hiring_companies.csv")}>
                             <Download className="mr-2 h-4 w-4" />
-                            {t('Export as CSV')}
+                            Exporter en CSV
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -260,8 +257,8 @@ export default function SchoolAnalyticsPage() {
         <Card className="lg:col-span-2">
             <CardHeader className="flex flex-row items-center">
                 <div className="grid gap-2">
-                    <CardTitle>{t('Hires by Industry')}</CardTitle>
-                    <CardDescription>{t('Distribution of graduate placements across different industries.')}</CardDescription>
+                    <CardTitle>Embauches par secteur</CardTitle>
+                    <CardDescription>Répartition des placements de diplômés dans différents secteurs.</CardDescription>
                 </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -272,7 +269,7 @@ export default function SchoolAnalyticsPage() {
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => exportToCsv(analyticsData.hiresByIndustry.map(({fill, ...rest}) => rest), "hires_by_industry.csv")}>
                             <Download className="mr-2 h-4 w-4" />
-                            {t('Export as CSV')}
+                            Exporter en CSV
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

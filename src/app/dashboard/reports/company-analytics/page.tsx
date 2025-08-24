@@ -2,7 +2,6 @@
 
 "use client"
 
-import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CountUp } from "@/components/ui/count-up"
 import { BarChart3, TrendingUp, Users, Percent, MoreVertical, Download } from "lucide-react"
@@ -18,6 +17,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from "@/components/ui/button"
 import { exportToCsv } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
+import React from 'react'
 
 type AppVolumeDetail = {
     jobTitle: string;
@@ -33,19 +33,19 @@ const analyticsData = {
     avgTimeToHire: 42,
     interviewRate: 35,
     applicantFunnel: [
-        { name: "New Applicants", value: 124, fill: "hsl(var(--chart-1))" },
-        { name: "Screened", value: 80, fill: "hsl(var(--chart-2))" },
-        { name: "Interviewed", value: 43, fill: "hsl(var(--chart-3))" },
-        { name: "Offered", value: 12, fill: "hsl(var(--chart-4))" },
-        { name: "Hired", value: 8, fill: "hsl(var(--chart-5))" },
+        { name: "Nouveaux candidats", value: 124, fill: "hsl(var(--chart-1))" },
+        { name: "Présélectionnés", value: 80, fill: "hsl(var(--chart-2))" },
+        { name: "Entretien", value: 43, fill: "hsl(var(--chart-3))" },
+        { name: "Offre", value: 12, fill: "hsl(var(--chart-4))" },
+        { name: "Embauché", value: 8, fill: "hsl(var(--chart-5))" },
     ],
     applicationVolume: [
-        { date: "2023-01-01", count: 15, details: [{ jobTitle: "Software Engineer", count: 10 }, { jobTitle: "Product Manager", count: 5 }] },
-        { date: "2023-02-01", count: 28, details: [{ jobTitle: "Software Engineer", count: 18 }, { jobTitle: "Product Manager", count: 10 }] },
-        { date: "2023-03-01", count: 22, details: [{ jobTitle: "UX/UI Designer", count: 12 }, { jobTitle: "Software Engineer", count: 10 }] },
-        { date: "2023-04-01", count: 45, details: [{ jobTitle: "Data Scientist", count: 20 }, { jobTitle: "Software Engineer", count: 15 }, { jobTitle: "Product Manager", count: 10 }] },
-        { date: "2023-05-01", count: 38, details: [{ jobTitle: "Data Scientist", count: 18 }, { jobTitle: "DevOps Engineer", count: 20 }] },
-        { date: "2023-06-01", count: 53, details: [{ jobTitle: "Software Engineer", count: 30 }, { jobTitle: "DevOps Engineer", count: 23 }] },
+        { date: "2023-01-01", count: 15, details: [{ jobTitle: "Ingénieur Logiciel", count: 10 }, { jobTitle: "Chef de Produit", count: 5 }] },
+        { date: "2023-02-01", count: 28, details: [{ jobTitle: "Ingénieur Logiciel", count: 18 }, { jobTitle: "Chef de Produit", count: 10 }] },
+        { date: "2023-03-01", count: 22, details: [{ jobTitle: "Designer UX/UI", count: 12 }, { jobTitle: "Ingénieur Logiciel", count: 10 }] },
+        { date: "2023-04-01", count: 45, details: [{ jobTitle: "Data Scientist", count: 20 }, { jobTitle: "Ingénieur Logiciel", count: 15 }, { jobTitle: "Chef de Produit", count: 10 }] },
+        { date: "2023-05-01", count: 38, details: [{ jobTitle: "Data Scientist", count: 18 }, { jobTitle: "Ingénieur DevOps", count: 20 }] },
+        { date: "2023-06-01", count: 53, details: [{ jobTitle: "Ingénieur Logiciel", count: 30 }, { jobTitle: "Ingénieur DevOps", count: 23 }] },
     ],
     applicantsBySchool: [
         { name: "INP-HB", value: 58, fill: "hsl(var(--chart-1))" },
@@ -55,15 +55,15 @@ const analyticsData = {
 }
 
 const funnelChartConfig = {
-    newApplicants: { label: "New Applicants", color: "hsl(var(--chart-1))" },
-    screened: { label: "Screened", color: "hsl(var(--chart-2))" },
-    interviewed: { label: "Interviewed", color: "hsl(var(--chart-3))" },
-    offered: { label: "Offered", color: "hsl(var(--chart-4))" },
-    hired: { label: "Hired", color: "hsl(var(--chart-5))" },
+    newApplicants: { label: "Nouveaux candidats", color: "hsl(var(--chart-1))" },
+    screened: { label: "Présélectionnés", color: "hsl(var(--chart-2))" },
+    interviewed: { label: "Entretien", color: "hsl(var(--chart-3))" },
+    offered: { label: "Offre", color: "hsl(var(--chart-4))" },
+    hired: { label: "Embauché", color: "hsl(var(--chart-5))" },
 }
 
 const lineChartConfig = {
-    count: { label: "Applicants", color: "hsl(var(--primary))" },
+    count: { label: "Candidats", color: "hsl(var(--primary))" },
 }
 
 const pieChartConfig = {
@@ -73,14 +73,13 @@ const pieChartConfig = {
 }
 
 const CustomVolumeTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
-    const { t } = useLocalization();
     if (active && payload && payload.length) {
       const data: ApplicationVolumePoint = payload[0].payload;
       return (
         <Card className="w-64 shadow-lg">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">{language === 'fr' ? new Date(label).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date(label).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</CardTitle>
-            <CardDescription>{t('{count} total applications', { count: data.count })}</CardDescription>
+            <CardTitle className="text-base">{new Date(label).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</CardTitle>
+            <CardDescription>{`${data.count} candidatures totales`}</CardDescription>
           </CardHeader>
           <CardContent>
             <ul className="space-y-1 text-sm">
@@ -99,44 +98,44 @@ const CustomVolumeTooltip = ({ active, payload, label }: TooltipProps<number, st
 };
 
 export default function CompanyAnalyticsPage() {
-  const { t } = useLocalization();
+  const [funnelData, setFunnelData] = React.useState(analyticsData.applicantFunnel);
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('Recruitment Analytics')}</h1>
-        <p className="text-muted-foreground mt-1">{t('Insights into your hiring funnel and applicant data.')}</p>
+        <h1 className="text-3xl font-bold tracking-tight">Analyses de recrutement</h1>
+        <p className="text-muted-foreground mt-1">Aperçu de votre entonnoir de recrutement et des données sur les candidats.</p>
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{t('Total Applicants')}</CardTitle>
+                <CardTitle className="text-sm font-medium">Total des candidats</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold"><CountUp end={analyticsData.totalApplicants} /></div>
-                <p className="text-xs text-muted-foreground">{t('+20% from last month')}</p>
+                <p className="text-xs text-muted-foreground">+20% par rapport au mois dernier</p>
             </CardContent>
         </Card>
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{t('Avg. Time to Hire')}</CardTitle>
+                <CardTitle className="text-sm font-medium">Délai moyen d'embauche</CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold"><CountUp end={analyticsData.avgTimeToHire} suffix=" days" /></div>
-                <p className="text-xs text-muted-foreground">{t('-5 days from last quarter')}</p>
+                <div className="text-2xl font-bold"><CountUp end={analyticsData.avgTimeToHire} suffix=" jours" /></div>
+                <p className="text-xs text-muted-foreground">-5 jours par rapport au dernier trimestre</p>
             </CardContent>
         </Card>
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{t('Interview Rate')}</CardTitle>
+                <CardTitle className="text-sm font-medium">Taux d'entretien</CardTitle>
                 <Percent className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold"><CountUp end={analyticsData.interviewRate} suffix="%" /></div>
-                <p className="text-xs text-muted-foreground">{t('Screened to interview ratio')}</p>
+                <p className="text-xs text-muted-foreground">Ratio présélectionnés/entretien</p>
             </CardContent>
         </Card>
       </div>
@@ -144,8 +143,8 @@ export default function CompanyAnalyticsPage() {
       <Card>
         <CardHeader className="flex flex-row items-center">
             <div className="grid gap-2">
-                <CardTitle>{t('Applicant Funnel')}</CardTitle>
-                <CardDescription>{t('Progression of candidates through hiring stages.')}</CardDescription>
+                <CardTitle>Entonnoir de candidats</CardTitle>
+                <CardDescription>Progression des candidats à travers les étapes de recrutement.</CardDescription>
             </div>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -154,16 +153,16 @@ export default function CompanyAnalyticsPage() {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => exportToCsv(analyticsData.applicantFunnel.map(({fill, ...rest}) => rest), "applicant_funnel.csv")}>
+                    <DropdownMenuItem onClick={() => exportToCsv(funnelData.map(({fill, ...rest}) => rest), "applicant_funnel.csv")}>
                         <Download className="mr-2 h-4 w-4" />
-                        {t('Export as CSV')}
+                        Exporter en CSV
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         </CardHeader>
         <CardContent>
             <ChartContainer config={funnelChartConfig} className="mx-auto aspect-video max-h-[300px]">
-                <FunnelChart layout="horizontal" data={analyticsData.applicantFunnel}>
+                <FunnelChart layout="horizontal" data={funnelData}>
                     <Tooltip content={<ChartTooltipContent indicator="line" />} />
                     <Funnel dataKey="value" nameKey="name" isAnimationActive>
                         <LabelList position="center" fill="#fff" stroke="none" dataKey="name" />
@@ -177,8 +176,8 @@ export default function CompanyAnalyticsPage() {
         <Card className="lg:col-span-3">
             <CardHeader className="flex flex-row items-center">
                 <div className="grid gap-2">
-                    <CardTitle>{t('Application Volume')}</CardTitle>
-                    <CardDescription>{t('Number of applications received over time.')}</CardDescription>
+                    <CardTitle>Volume de candidatures</CardTitle>
+                    <CardDescription>Nombre de candidatures reçues au fil du temps.</CardDescription>
                 </div>
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -189,7 +188,7 @@ export default function CompanyAnalyticsPage() {
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => exportToCsv(analyticsData.applicationVolume.map(d => ({ date: d.date, count: d.count })), "application_volume.csv")}>
                             <Download className="mr-2 h-4 w-4" />
-                            {t('Export as CSV')}
+                            Exporter en CSV
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -198,7 +197,7 @@ export default function CompanyAnalyticsPage() {
                  <ChartContainer config={lineChartConfig} className="min-h-[300px] w-full">
                     <LineChart accessibilityLayer data={analyticsData.applicationVolume}>
                         <CartesianGrid vertical={false} />
-                        <XAxis dataKey="date" tickFormatter={(val) => language === 'fr' ? new Date(val).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) : new Date(val).toLocaleDateString('en-US', { month: 'short' })} />
+                        <XAxis dataKey="date" tickFormatter={(val) => new Date(val).toLocaleDateString('fr-FR', { month: 'short' })} />
                         <YAxis />
                         <ChartTooltip cursor={false} content={<CustomVolumeTooltip />} />
                         <Line type="monotone" dataKey="count" stroke="hsl(var(--primary))" strokeWidth={2} dot={{r: 4, fill: "hsl(var(--primary))" }} />
@@ -209,8 +208,8 @@ export default function CompanyAnalyticsPage() {
         <Card className="lg:col-span-2">
             <CardHeader className="flex flex-row items-center">
                 <div className="grid gap-2">
-                    <CardTitle>{t('Applicants by School')}</CardTitle>
-                    <CardDescription>{t('Source of applicants by academic institution.')}</CardDescription>
+                    <CardTitle>Candidats par école</CardTitle>
+                    <CardDescription>Source des candidats par établissement académique.</CardDescription>
                 </div>
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -221,7 +220,7 @@ export default function CompanyAnalyticsPage() {
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => exportToCsv(analyticsData.applicantsBySchool.map(({fill, ...rest}) => rest), "applicants_by_school.csv")}>
                             <Download className="mr-2 h-4 w-4" />
-                            {t('Export as CSV')}
+                            Exporter en CSV
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

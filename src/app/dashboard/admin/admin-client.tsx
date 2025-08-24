@@ -1,7 +1,7 @@
+
 "use client"
 
 import React, { useState } from "react"
-import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -26,7 +26,6 @@ type AdminClientProps = {
 };
 
 export const AdminClient = ({ initialRequests }: AdminClientProps) => {
-    const { t } = useLocalization();
     const { toast } = useToast();
     const [requests, setRequests] = useState(initialRequests);
 
@@ -41,12 +40,12 @@ export const AdminClient = ({ initialRequests }: AdminClientProps) => {
 
             setRequests(requests.filter(r => r.id !== id))
             toast({
-                title: action === "approve" ? "Request Approved" : "Request Rejected",
-                description: `The registration for ${request.name} has been ${action === "approve" ? 'approved' : 'rejected'}.`,
+                title: action === "approve" ? "Demande approuvée" : "Demande rejetée",
+                description: `L'inscription pour ${request.name} a été ${action === "approve" ? 'approuvée' : 'rejetée'}.`,
             })
         } catch (error) {
             console.error("Failed to update user status:", error);
-            toast({ title: "Error", description: "Failed to update user status.", variant: "destructive" });
+            toast({ title: "Erreur", description: "La mise à jour du statut de l'utilisateur a échoué.", variant: "destructive" });
         }
     }
 
@@ -54,9 +53,9 @@ export const AdminClient = ({ initialRequests }: AdminClientProps) => {
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>{t('dashboard.admin.overview.organizationName')}</TableHead>
-                    <TableHead>{t('common.type')}</TableHead>
-                    <TableHead className="text-right">{t('dashboard.admin.overview.actions')}</TableHead>
+                    <TableHead>Nom de l'organisation</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -77,7 +76,7 @@ export const AdminClient = ({ initialRequests }: AdminClientProps) => {
                 ))}
                 {requests.length === 0 && (
                     <TableRow>
-                        <TableCell colSpan={3} className="h-24 text-center">{t('dashboard.admin.overview.noPendingRequests')}</TableCell>
+                        <TableCell colSpan={3} className="h-24 text-center">Aucune demande en attente</TableCell>
                     </TableRow>
                 )}
             </TableBody>

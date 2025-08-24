@@ -3,7 +3,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useLocalization } from '@/context/localization-context';
 import { Search, User, Mail, Briefcase, Building, School, UserCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -30,7 +29,6 @@ const allUsers: UserAccount[] = [
 ];
 
 export default function UserLookup() {
-    const { t } = useLocalization();
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
     const [foundUser, setFoundUser] = useState<UserAccount | null>(null);
@@ -123,11 +121,11 @@ export default function UserLookup() {
                         <div className="flex gap-4">
                             <div>
                                 <h4 className="font-semibold">Type de compte</h4>
-                                <p className="capitalize">{t(foundUser.type)}</p>
+                                <p className="capitalize">{foundUser.type}</p>
                             </div>
                              <div>
                                 <h4 className="font-semibold">Statut</h4>
-                                <Badge variant={getStatusVariant(foundUser.status)}>{t(foundUser.status)}</Badge>
+                                <Badge variant={getStatusVariant(foundUser.status)}>{foundUser.status}</Badge>
                             </div>
                         </div>
                     </CardContent>

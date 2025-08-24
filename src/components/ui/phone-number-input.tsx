@@ -20,8 +20,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Input } from "@/components/ui/input"
-import { useLocalization } from "@/context/localization-context"
-import { useCountry } from "@/context/country-context"
 import { phoneCountryCodes, type PhoneCountryCode } from "@/lib/phone-country-codes"
 import { Flag } from "../flag"
 
@@ -31,11 +29,9 @@ export const PhoneNumberInput = React.forwardRef<
   HTMLInputElement,
   PhoneNumberInputProps
 >(({ className, ...props }, ref) => {
-  const { country } = useCountry();
-  const { language, t } = useLocalization();
   const [open, setOpen] = React.useState(false)
   
-  const initialCountry = phoneCountryCodes.find(c => c.code === country.code) || phoneCountryCodes.find(c => c.code === "CI")!;
+  const initialCountry = phoneCountryCodes.find(c => c.code === "CI")!;
   const [selectedCountry, setSelectedCountry] = React.useState<PhoneCountryCode>(initialCountry);
   const [number, setNumber] = React.useState("");
 
@@ -92,14 +88,14 @@ export const PhoneNumberInput = React.forwardRef<
         </PopoverTrigger>
         <PopoverContent className="w-[300px] p-0">
           <Command>
-            <CommandInput placeholder={t("Search country...")} />
+            <CommandInput placeholder={"Rechercher un pays..."} />
             <CommandList>
-                <CommandEmpty>{t("No country found.")}</CommandEmpty>
+                <CommandEmpty>Aucun pays trouvé.</CommandEmpty>
                 <CommandGroup>
                 {phoneCountryCodes.map((c) => (
                     <CommandItem
                         key={c.code}
-                        value={`${c.name[language as keyof typeof c.name]} ${c.dial_code}`}
+                        value={`${c.name.fr} ${c.dial_code}`}
                         onSelect={() => handleCountrySelect(c.code)}
                     >
                     <Check
@@ -110,7 +106,7 @@ export const PhoneNumberInput = React.forwardRef<
                     />
                     <div className="flex items-center gap-2">
                         <Flag countryCode={c.code} />
-                        <span>{c.name[language as keyof typeof c.name]}</span>
+                        <span>{c.name.fr}</span>
                         <span className="text-muted-foreground">{c.dial_code}</span>
                     </div>
                     </CommandItem>
@@ -127,10 +123,9 @@ export const PhoneNumberInput = React.forwardRef<
         value={number}
         onChange={handleNumberChange}
         className={cn("rounded-l-none", className)}
-        placeholder={t("Phone Number")}
+        placeholder={"Numéro de téléphone"}
       />
     </div>
   )
 });
 PhoneNumberInput.displayName = "PhoneNumberInput"
-

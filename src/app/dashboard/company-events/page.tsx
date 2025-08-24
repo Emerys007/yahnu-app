@@ -2,7 +2,6 @@
 "use client"
 
 import React, { useState } from "react"
-import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -53,11 +52,11 @@ const initialEvents: Event[] = [
 ];
 
 const eventSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters."),
-  description: z.string().min(10, "Description must be at least 10 characters."),
-  date: z.string().min(1, "Date is required."),
-  time: z.string().min(1, "Time is required."),
-  location: z.string().min(3, "Location or link is required."),
+  title: z.string().min(3, "Le titre doit comporter au moins 3 caractères."),
+  description: z.string().min(10, "La description doit comporter au moins 10 caractères."),
+  date: z.string().min(1, "La date est requise."),
+  time: z.string().min(1, "L'heure est requise."),
+  location: z.string().min(3, "Le lieu ou le lien est requis."),
   type: z.enum(["Career Fair", "Workshop", "Networking", "Webinar"]),
   targetAudience: z.enum(["all", "specific"]),
   targetLocation: z.string().optional(),
@@ -66,7 +65,6 @@ const eventSchema = z.object({
 });
 
 const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onSave: (values: z.infer<typeof eventSchema>) => void }) => {
-    const { t } = useLocalization();
     const form = useForm<z.infer<typeof eventSchema>>({
         resolver: zodResolver(eventSchema),
         defaultValues: event || {
@@ -93,31 +91,31 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField control={form.control} name="title" render={({ field }) => (
-                    <FormItem><FormLabel>{t('Event Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Titre de l'événement</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="description" render={({ field }) => (
-                    <FormItem><FormLabel>{t('Description')}</FormLabel><FormControl><Textarea rows={3} {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea rows={3} {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <div className="grid grid-cols-2 gap-4">
                     <FormField control={form.control} name="date" render={({ field }) => (
-                        <FormItem><FormLabel>{t('Date')}</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Date</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="time" render={({ field }) => (
-                        <FormItem><FormLabel>{t('Time')}</FormLabel><FormControl><Input type="time" {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Heure</FormLabel><FormControl><Input type="time" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                 </div>
                  <FormField control={form.control} name="location" render={({ field }) => (
-                    <FormItem><FormLabel>{t('Location / Link')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Lieu / Lien</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                  <FormField control={form.control} name="type" render={({ field }) => (
-                    <FormItem><FormLabel>{t('Event Type')}</FormLabel>
+                    <FormItem><FormLabel>Type d'événement</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
                             <SelectContent>
-                                <SelectItem value="Career Fair">{t('Career Fair')}</SelectItem>
-                                <SelectItem value="Workshop">{t('Workshop')}</SelectItem>
-                                <SelectItem value="Networking">{t('Networking')}</SelectItem>
-                                <SelectItem value="Webinar">{t('Webinar')}</SelectItem>
+                                <SelectItem value="Career Fair">Salon de l'emploi</SelectItem>
+                                <SelectItem value="Workshop">Atelier</SelectItem>
+                                <SelectItem value="Networking">Réseautage</SelectItem>
+                                <SelectItem value="Webinar">Webinaire</SelectItem>
                             </SelectContent>
                         </Select>
                     <FormMessage /></FormItem>
@@ -125,8 +123,8 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
 
                 <Card className="p-4 bg-muted/50">
                     <CardHeader className="p-2">
-                        <CardTitle className="text-base">{t('Target Audience')}</CardTitle>
-                        <CardDescription className="text-xs">{t('Choose who to invite to this event.')}</CardDescription>
+                        <CardTitle className="text-base">Public cible</CardTitle>
+                        <CardDescription className="text-xs">Choisissez qui inviter à cet événement.</CardDescription>
                     </CardHeader>
                     <CardContent className="p-2">
                          <FormField
@@ -142,11 +140,11 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
                                     >
                                     <FormItem className="flex items-center space-x-2 space-y-0">
                                         <FormControl><RadioGroupItem value="all" /></FormControl>
-                                        <FormLabel className="font-normal">{t('All Graduates')}</FormLabel>
+                                        <FormLabel className="font-normal">Tous les diplômés</FormLabel>
                                     </FormItem>
                                     <FormItem className="flex items-center space-x-2 space-y-0">
                                         <FormControl><RadioGroupItem value="specific" /></FormControl>
-                                        <FormLabel className="font-normal">{t('Specific Group')}</FormLabel>
+                                        <FormLabel className="font-normal">Groupe spécifique</FormLabel>
                                     </FormItem>
                                     </RadioGroup>
                                 </FormControl>
@@ -157,13 +155,13 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
                         {targetAudience === 'specific' && (
                             <div className="space-y-4 pt-4">
                                 <FormField control={form.control} name="targetLocation" render={({ field }) => (
-                                    <FormItem><FormLabel>{t('Location')}</FormLabel><FormControl><Input placeholder={t("e.g. Abidjan")} {...field} /></FormControl></FormItem>
+                                    <FormItem><FormLabel>Lieu</FormLabel><FormControl><Input placeholder={"Ex: Abidjan"} {...field} /></FormControl></FormItem>
                                 )}/>
                                  <FormField control={form.control} name="targetSkills" render={({ field }) => (
-                                    <FormItem><FormLabel>{t('Skills')}</FormLabel><FormControl><Input placeholder={t("e.g. React, TypeScript")} {...field} /></FormControl></FormItem>
+                                    <FormItem><FormLabel>Compétences</FormLabel><FormControl><Input placeholder={"Ex: React, TypeScript"} {...field} /></FormControl></FormItem>
                                 )}/>
                                  <FormField control={form.control} name="targetGradYear" render={({ field }) => (
-                                    <FormItem><FormLabel>{t('Graduation Year')}</FormLabel><FormControl><Input placeholder="e.g. 2024" type="number" {...field} /></FormControl></FormItem>
+                                    <FormItem><FormLabel>Année de diplôme</FormLabel><FormControl><Input placeholder="Ex: 2024" type="number" {...field} /></FormControl></FormItem>
                                 )}/>
                             </div>
                         )}
@@ -171,7 +169,7 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
                 </Card>
 
                 <DialogFooter>
-                    <Button type="submit">{t('Save Event')}</Button>
+                    <Button type="submit">Enregistrer l'événement</Button>
                 </DialogFooter>
             </form>
         </Form>
@@ -179,7 +177,6 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
 }
 
 export default function CompanyEventsPage() {
-  const { t } = useLocalization()
   const { toast } = useToast()
   const [events, setEvents] = useState<Event[]>(initialEvents)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -191,16 +188,16 @@ export default function CompanyEventsPage() {
       date: values.date,
       type: values.type,
       rsvps: 0,
-      target: values.targetAudience === 'all' ? t('All Graduates') : t('Specific Group')
+      target: values.targetAudience === 'all' ? 'Tous les diplômés' : 'Groupe spécifique'
     };
     setEvents(prev => [newEvent, ...prev]);
-    toast({ title: t("Event Created"), description: t("Notifications have been sent to the target audience.") });
+    toast({ title: "Événement créé", description: "Des notifications ont été envoyées au public cible." });
     setIsDialogOpen(false);
   }
 
   const handleDeleteEvent = (eventId: number) => {
     setEvents(events.filter(e => e.id !== eventId));
-    toast({ title: t("Event Deleted"), variant: "destructive" });
+    toast({ title: "Événement supprimé", variant: "destructive" });
   }
 
   return (
@@ -216,18 +213,18 @@ export default function CompanyEventsPage() {
             <Calendar className="h-6 w-6 text-primary" />
             </div>
             <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t('Event Management')}</h1>
-            <p className="text-muted-foreground mt-1">{t('Create and manage events to engage with potential candidates.')}</p>
+            <h1 className="text-3xl font-bold tracking-tight">Gestion des événements</h1>
+            <p className="text-muted-foreground mt-1">Créez et gérez des événements pour interagir avec des candidats potentiels.</p>
             </div>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-                <Button><PlusCircle className="mr-2 h-4 w-4" />{t('Create Event')}</Button>
+                <Button><PlusCircle className="mr-2 h-4 w-4" />Créer un événement</Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>{t('Create a New Event')}</DialogTitle>
-                    <DialogDescription>{t('Fill in the details below to schedule a new event.')}</DialogDescription>
+                    <DialogTitle>Créer un nouvel événement</DialogTitle>
+                    <DialogDescription>Remplissez les détails ci-dessous pour planifier un nouvel événement.</DialogDescription>
                 </DialogHeader>
                 <EventForm onSave={handleCreateEvent} />
             </DialogContent>
@@ -236,34 +233,32 @@ export default function CompanyEventsPage() {
 
        <Card>
             <CardHeader>
-                <CardTitle>{t('Your Events')}</CardTitle>
-                <CardDescription>{t('A list of all events you have scheduled.')}</CardDescription>
+                <CardTitle>Vos événements</CardTitle>
+                <CardDescription>Une liste de tous les événements que vous avez programmés.</CardDescription>
             </CardHeader>
             <CardContent>
                  <Table>
                     <TableHeader>
                     <TableRow>
-                        <TableHead>{t('Event Title')}</TableHead>
-                        <TableHead>{t('Date')}</TableHead>
-                        <TableHead>{t('Type')}</TableHead>
-                        <TableHead>{t('Target')}</TableHead>
-                        <TableHead>{t('RSVPs')}</TableHead>
-                        <TableHead className="text-right">{t('Actions')}</TableHead>
+                        <TableHead>Titre de l'événement</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Cible</TableHead>
+                        <TableHead>Inscriptions</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                     </TableHeader>
                     <TableBody>
                         {events.map(event => (
                         <TableRow key={event.id}>
-                            <TableCell className="font-medium">{t(event.title)}</TableCell>
+                            <TableCell className="font-medium">{event.title}</TableCell>
                             <TableCell>
-                                {language === 'fr' ?
-                                    new Date(event.date).toLocaleDateString('fr-FR', {
-                                        day: '2-digit', month: '2-digit', year: 'numeric'
-                                    }) :
-                                    new Date(event.date).toLocaleDateString()}
+                                {new Date(event.date).toLocaleDateString('fr-FR', {
+                                    day: '2-digit', month: 'long', year: 'numeric'
+                                })}
                             </TableCell>
-                            <TableCell>{t(event.type)}</TableCell>
-                            <TableCell><div className="flex items-center gap-1"><Target className="h-4 w-4 text-muted-foreground" /> {t(event.target)}</div></TableCell>
+                            <TableCell>{event.type}</TableCell>
+                            <TableCell><div className="flex items-center gap-1"><Target className="h-4 w-4 text-muted-foreground" /> {event.target}</div></TableCell>
                             <TableCell className="flex items-center gap-2"><Users className="h-4 w-4 text-muted-foreground" /> {event.rsvps}</TableCell>
                             <TableCell className="text-right space-x-2">
                                 <Button size="icon" variant="ghost"><Edit className="h-4 w-4" /></Button>
@@ -273,7 +268,7 @@ export default function CompanyEventsPage() {
                         ))}
                         {events.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={6} className="h-24 text-center">{t('No events created yet.')}</TableCell>
+                                <TableCell colSpan={6} className="h-24 text-center">Aucun événement créé pour le moment.</TableCell>
                             </TableRow>
                         )}
                     </TableBody>

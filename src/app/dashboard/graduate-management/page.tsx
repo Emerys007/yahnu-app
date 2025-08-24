@@ -2,7 +2,6 @@
 "use client"
 
 import React, { useState, useEffect, useMemo } from "react"
-import { useLocalization } from "@/context/localization-context"
 import { useAuth } from "@/context/auth-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -45,7 +44,6 @@ type Graduate = {
 }
 
 const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
-    const { t } = useLocalization();
     const { toast } = useToast();
     const [isOpen, setIsOpen] = useState(false);
     const [selectedRecipients, setSelectedRecipients] = useState<MultiSelectOption[]>([]);
@@ -55,10 +53,10 @@ const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
     [graduates]);
 
     const groupOptions: MultiSelectOption[] = useMemo(() => [
-        { value: 'all', label: t('All Graduates') },
-        { value: 'pending', label: t('Pending Graduates') },
-        { value: 'active', label: t('Active Graduates') }
-    ], [t]);
+        { value: 'all', label: 'Tous les diplômés' },
+        { value: 'pending', label: 'Diplômés en attente' },
+        { value: 'active', label: 'Diplômés actifs' }
+    ], []);
 
 
     const handleSendBroadcast = () => {
@@ -68,8 +66,8 @@ const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
         console.log("Sending broadcast to:", selectedRecipients.map(r => r.value));
         
         toast({
-            title: t("Broadcast Sent"),
-            description: t("Your message is being sent to the selected graduates."),
+            title: "Message diffusé envoyé",
+            description: "Votre message est en cours d'envoi aux diplômés sélectionnés.",
         });
         setIsOpen(false);
         setSelectedRecipients([]);
@@ -80,44 +78,44 @@ const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
             <DialogTrigger asChild>
                 <Button>
                     <Send className="mr-2 h-4 w-4" />
-                    {t('Broadcast Message')}
+                    Diffuser un message
                 </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>{t('Send a Broadcast Message')}</DialogTitle>
+                    <DialogTitle>Envoyer un message de diffusion</DialogTitle>
                     <DialogDescription>
-                        {t('Compose a message to send to multiple graduates at once. They will receive it as an individual message.')}
+                        Composez un message à envoyer à plusieurs diplômés à la fois. Ils le recevront comme un message individuel.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                     <div>
-                        <Label htmlFor="recipients">{t('Recipients')}</Label>
-                        <MultiSelectCombobox
-                            options={[
-                                { label: t('Groups'), options: groupOptions },
-                                { label: t('Individuals'), options: graduateOptions }
+                        <Label htmlFor="recipients">Destinataires</Label>
+                        <MultiSelect
+                            groups={[
+                                { label: 'Groupes', options: groupOptions },
+                                { label: 'Individus', options: graduateOptions }
                             ]}
                             selected={selectedRecipients}
                             onChange={setSelectedRecipients}
-                            placeholder={t("Select recipients...")}
-                            searchPlaceholder={t("Search graduates or groups...")}
-                            emptyPlaceholder={t("No results found.")}
+                            placeholder={"Sélectionnez des destinataires..."}
+                            searchPlaceholder={"Recherchez des diplômés ou des groupes..."}
+                            emptyPlaceholder={"Aucun résultat trouvé."}
                         />
                     </div>
                      <div>
-                        <Label htmlFor="subject">{t('Subject')}</Label>
-                        <Input id="subject" placeholder={t("e.g., Upcoming Career Fair")} />
+                        <Label htmlFor="subject">Sujet</Label>
+                        <Input id="subject" placeholder={"Ex: Prochain salon de l'emploi"} />
                     </div>
                      <div>
-                        <Label htmlFor="message-body">{t('Message')}</Label>
-                        <Textarea id="message-body" rows={8} placeholder={t("Type your message here...")} />
+                        <Label htmlFor="message-body">Message</Label>
+                        <Textarea id="message-body" rows={8} placeholder={"Tapez votre message ici..."} />
                     </div>
                 </div>
                 <DialogFooter>
                     <Button onClick={handleSendBroadcast} disabled={selectedRecipients.length === 0}>
                          <Send className="mr-2 h-4 w-4" />
-                        {t('Send Broadcast')}
+                        Envoyer la diffusion
                     </Button>
                 </DialogFooter>
             </DialogContent>
@@ -126,7 +124,6 @@ const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
 }
 
 export default function GraduateManagementPage() {
-  const { t } = useLocalization()
   const { toast } = useToast()
   const { user } = useAuth()
   const [graduates, setGraduates] = useState<Graduate[]>([])
@@ -158,7 +155,7 @@ export default function GraduateManagementPage() {
         setIsLoading(false);
     }, (error) => {
         console.error("Error fetching graduates:", error);
-        toast({ title: "Error", description: "Could not fetch graduate data.", variant: "destructive" });
+        toast({ title: "Erreur", description: "Impossible de récupérer les données des diplômés.", variant: "destructive" });
         setIsLoading(false);
     });
 
@@ -174,12 +171,12 @@ export default function GraduateManagementPage() {
         await updateDoc(userDocRef, { status: newStatus });
         
         toast({
-          title: t(newStatus === 'active' ? 'Account activated' : 'Account deactivated'),
-          description: `${graduate.name}'s ${t(newStatus === 'active' ? 'account has been activated.' : 'account has been deactivated.')}`,
+          title: newStatus === 'active' ? 'Compte activé' : 'Compte désactivé',
+          description: `Le compte de ${graduate.name} a été ${newStatus === 'active' ? 'activé.' : 'désactivé.'}`,
         })
     } catch (error) {
         console.error("Failed to update status:", error);
-        toast({ title: t('Error'), description: t('Failed to update status.'), variant: "destructive" });
+        toast({ title: 'Erreur', description: 'Échec de la mise à jour du statut.', variant: "destructive" });
     }
   }
 
@@ -193,10 +190,10 @@ export default function GraduateManagementPage() {
     try {
         const userDocRef = doc(db, "users", graduateId);
         await updateDoc(userDocRef, { education: updatedEducation });
-        toast({ title: t("Education Verified"), description: t("The degree has been marked as verified.") });
+        toast({ title: "Formation vérifiée", description: "Le diplôme a été marqué comme vérifié." });
     } catch (error) {
         console.error("Failed to verify education:", error);
-        toast({ title: t('Error'), description: t('Failed to verify education.'), variant: "destructive" });
+        toast({ title: 'Erreur', description: 'Échec de la vérification de la formation.', variant: "destructive" });
     }
   }
 
@@ -212,9 +209,9 @@ export default function GraduateManagementPage() {
      <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>{t('Name')}</TableHead>
-            <TableHead>{t('Education Details')}</TableHead>
-            <TableHead className="text-right">{t('Actions')}</TableHead>
+            <TableHead>Nom</TableHead>
+            <TableHead>Détails de la formation</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -230,28 +227,28 @@ export default function GraduateManagementPage() {
                         {grad.education.map((edu, index) => (
                             <li key={index} className="text-sm p-2 border rounded-md bg-muted/50 flex items-center justify-between">
                                 <div>
-                                    <p className="font-medium">{edu.degree} {t('in')} {edu.field}</p>
-                                    <p className="text-muted-foreground">{t('Graduated')}: {edu.gradYear}</p>
+                                    <p className="font-medium">{edu.degree} en {edu.field}</p>
+                                    <p className="text-muted-foreground">Diplômé : {edu.gradYear}</p>
                                 </div>
                                 {edu.verified ? (
-                                    <Badge variant="secondary" className="gap-1"><Check className="h-3 w-3"/>{t('Verified')}</Badge>
+                                    <Badge variant="secondary" className="gap-1"><Check className="h-3 w-3"/>Vérifié</Badge>
                                 ) : (
-                                    <Button size="xs" variant="outline" onClick={() => handleVerifyEducation(grad.id, index)}>{t('Verify')}</Button>
+                                    <Button size="xs" variant="outline" onClick={() => handleVerifyEducation(grad.id, index)}>Vérifier</Button>
                                 )}
                             </li>
                         ))}
                     </ul>
-                ) : <p className="text-sm text-muted-foreground">{t('No education details provided.')}</p>}
+                ) : <p className="text-sm text-muted-foreground">Aucun détail de formation fourni.</p>}
               </TableCell>
               <TableCell className="text-right space-x-2 align-top">
                 {grad.status === 'pending' && (
                     <Button size="sm" onClick={() => handleStatusChange(grad.id, 'active')}>
-                        <Check className="mr-2 h-4 w-4" /> {t('Activate')}
+                        <Check className="mr-2 h-4 w-4" /> Activer
                     </Button>
                 )}
                 {grad.status === 'active' && (
                     <Button size="sm" variant="destructive" onClick={() => handleStatusChange(grad.id, 'pending')}>
-                        <X className="mr-2 h-4 w-4" /> {t('Deactivate')}
+                        <X className="mr-2 h-4 w-4" /> Désactiver
                     </Button>
                 )}
               </TableCell>
@@ -259,7 +256,7 @@ export default function GraduateManagementPage() {
           ))}
           {data.length === 0 && !isLoading && (
             <TableRow>
-                <TableCell colSpan={3} className="h-24 text-center">{t('No graduates found.')}</TableCell>
+                <TableCell colSpan={3} className="h-24 text-center">Aucun diplômé trouvé.</TableCell>
             </TableRow>
           )}
         </TableBody>
@@ -274,8 +271,8 @@ export default function GraduateManagementPage() {
             <UserCheck className="h-6 w-6 text-primary" />
             </div>
             <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t('Graduate Management')}</h1>
-            <p className="text-muted-foreground mt-1">{t('Activate accounts and verify academic credentials.')}</p>
+            <h1 className="text-3xl font-bold tracking-tight">Gestion des diplômés</h1>
+            <p className="text-muted-foreground mt-1">Activez les comptes et vérifiez les diplômes.</p>
             </div>
         </div>
         <BroadcastDialog graduates={graduates} />
@@ -283,11 +280,11 @@ export default function GraduateManagementPage() {
 
        <Card>
             <CardHeader>
-                <CardTitle>{t('All Graduates')}</CardTitle>
-                <CardDescription>{t('Search and manage all graduates associated with your school.')}</CardDescription>
+                <CardTitle>Tous les diplômés</CardTitle>
+                <CardDescription>Recherchez et gérez tous les diplômés associés à votre école.</CardDescription>
                 <div className="relative pt-4">
                     <Search className="absolute left-2.5 top-6.5 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder={t("Search by name or email...")} className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                    <Input placeholder={"Rechercher par nom ou par e-mail..."} className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 </div>
             </CardHeader>
             <CardContent>
@@ -298,8 +295,8 @@ export default function GraduateManagementPage() {
                 ) : (
                     <Tabs defaultValue="pending">
                         <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="pending">{t('Pending Activation')} ({pendingGraduates.length})</TabsTrigger>
-                            <TabsTrigger value="active">{t('Active Accounts')} ({activeGraduates.length})</TabsTrigger>
+                            <TabsTrigger value="pending">Activation en attente ({pendingGraduates.length})</TabsTrigger>
+                            <TabsTrigger value="active">Comptes actifs ({activeGraduates.length})</TabsTrigger>
                         </TabsList>
                         <TabsContent value="pending" className="mt-4">
                             {renderTable(pendingGraduates)}

@@ -2,7 +2,6 @@
 "use client"
 
 import { useAuth } from "@/context/auth-context"
-import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
@@ -25,41 +24,48 @@ import { motion } from "framer-motion"
 
 // Mock Data
 const graduateApplications = [
-  { jobTitle: "Frontend Developer", company: "Innovate Inc.", status: "Under Review" },
-  { jobTitle: "Product Manager", company: "DataDriven Co.", status: "Application Sent" },
-  { jobTitle: "UX/UI Designer", company: "Creative Solutions", status: "Interview Scheduled" },
-  { jobTitle: "Data Scientist", company: "QuantumLeap", status: "Offer Made" },
-  { jobTitle: "DevOps Engineer", company: "CloudNine", status: "Rejected" },
+  { jobTitle: "Développeur Frontend", company: "Innovate Inc.", status: "En cours d'examen" },
+  { jobTitle: "Chef de Produit", company: "DataDriven Co.", status: "Candidature envoyée" },
+  { jobTitle: "Designer UX/UI", company: "Solutions Créatives", status: "Entretien prévu" },
+  { jobTitle: "Data Scientist", company: "QuantumLeap", status: "Offre faite" },
+  { jobTitle: "Ingénieur DevOps", company: "CloudNine", status: "Rejetée" },
 ];
 
 const companyApplicants = [
-    { applicantName: "Amina Diallo", jobTitle: "Frontend Developer", status: "New Applicant" },
-    { applicantName: "Ben Traoré", jobTitle: "Frontend Developer", status: "Under Review" },
-    { applicantName: "Chloe Dubois", jobTitle: "Product Manager", status: "Interview Scheduled" },
-    { applicantName: "David Garcia", jobTitle: "Product Manager", status: "Rejected" },
+    { applicantName: "Amina Diallo", jobTitle: "Développeur Frontend", status: "Nouveau candidat" },
+    { applicantName: "Ben Traoré", jobTitle: "Développeur Frontend", status: "En cours d'examen" },
+    { applicantName: "Chloe Dubois", jobTitle: "Chef de Produit", status: "Entretien prévu" },
+    { applicantName: "David Garcia", jobTitle: "Chef de Produit", status: "Rejeté" },
 ];
 
-const statusOptions = ["New Applicant", "Application Sent", "Under Review", "Interview Scheduled", "Offer Made", "Rejected"];
+const statusOptions = [
+    "Nouveau candidat", 
+    "Candidature envoyée", 
+    "En cours d'examen", 
+    "Entretien prévu", 
+    "Offre faite", 
+    "Rejeté"
+];
 
 const statusColors: { [key: string]: "default" | "secondary" | "destructive" | "outline" } = {
-    "New Applicant": "default",
-    "Application Sent": "default",
-    "Under Review": "secondary",
-    "Interview Scheduled": "outline",
-    "Offer Made": "default",
-    "Rejected": "destructive"
+    "Nouveau candidat": "default",
+    "Candidature envoyée": "default",
+    "En cours d'examen": "secondary",
+    "Entretien prévu": "outline",
+    "Offre faite": "default",
+    "Rejeté": "destructive",
+    "Rejetée": "destructive"
 };
 
 
 const GraduateApplications = () => {
-    const { t } = useLocalization();
     return (
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>{t('Job Title')}</TableHead>
-                    <TableHead>{t('Company')}</TableHead>
-                    <TableHead>{t('Status')}</TableHead>
+                    <TableHead>Titre du poste</TableHead>
+                    <TableHead>Entreprise</TableHead>
+                    <TableHead>Statut</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -68,7 +74,7 @@ const GraduateApplications = () => {
                         <TableCell className="font-medium">{app.jobTitle}</TableCell>
                         <TableCell>{app.company}</TableCell>
                         <TableCell>
-                             <Badge variant={statusColors[app.status] || "default"}>{t(app.status)}</Badge>
+                             <Badge variant={statusColors[app.status] || "default"}>{app.status}</Badge>
                         </TableCell>
                     </TableRow>
                 ))}
@@ -78,14 +84,13 @@ const GraduateApplications = () => {
 };
 
 const CompanyApplications = () => {
-    const { t } = useLocalization();
     return (
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>{t('Applicant Name')}</TableHead>
-                    <TableHead>{t('Position')}</TableHead>
-                    <TableHead className="text-right">{t('Status')}</TableHead>
+                    <TableHead>Nom du candidat</TableHead>
+                    <TableHead>Poste</TableHead>
+                    <TableHead className="text-right">Statut</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -100,7 +105,7 @@ const CompanyApplications = () => {
                                 </SelectTrigger>
                                 <SelectContent>
                                     {statusOptions.map(opt => (
-                                        <SelectItem key={opt} value={opt}>{t(opt)}</SelectItem>
+                                        <SelectItem key={opt} value={opt}>{opt}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -114,8 +119,6 @@ const CompanyApplications = () => {
 
 export default function ApplicantsPage() {
   const { role } = useAuth();
-  const { t } = useLocalization();
-
   const isCompany = role === 'company';
 
   return (
@@ -130,9 +133,9 @@ export default function ApplicantsPage() {
           <FileText className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('Application Tracking')}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Suivi des candidatures</h1>
           <p className="text-muted-foreground mt-1">
-              {isCompany ? t('Manage applicants for your job postings.') : t('Track the status of your job applications.')}
+              {isCompany ? 'Gérez les candidats pour vos offres d\'emploi.' : 'Suivez le statut de vos candidatures.'}
           </p>
         </div>
       </div>
@@ -140,10 +143,10 @@ export default function ApplicantsPage() {
        <Card>
         <CardHeader>
           <CardTitle>
-            {isCompany ? t('Applicant Pipeline') : t('My Applications')}
+            {isCompany ? 'Pipeline de candidats' : 'Mes candidatures'}
           </CardTitle>
           <CardDescription>
-            {isCompany ? t('Review and update the status of candidates who have applied to your roles.') : t('An overview of all the jobs you have applied for.')}
+            {isCompany ? 'Examinez et mettez à jour le statut des candidats qui ont postulé à vos offres.' : 'Un aperçu de toutes les offres auxquelles vous avez postulé.'}
           </CardDescription>
         </CardHeader>
         <CardContent>

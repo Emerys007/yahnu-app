@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, MessageSquare, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 type Ticket = {
     id: string;
@@ -27,7 +28,6 @@ const tickets: Ticket[] = [
     { id: 'TKT-003', subject: 'Question sur la vérification de diplôme', userName: 'Admin INP-HB', userEmail: 'admin@inphb.ci', submittedAt: 'Il y a 1 jour', status: 'open', convoId: 'admin-inphb' },
     { id: 'TKT-004', subject: 'Échec de la réinitialisation du mot de passe', userName: 'Alice Williams', userEmail: 'alice.w@example.com', submittedAt: 'Il y a 3 jours', status: 'resolved', convoId: 'alice-williams' },
 ];
-
 
 const TicketStatusBadge = ({ status }: { status: Ticket['status'] }) => {
     const statusMap = {
@@ -58,7 +58,11 @@ const TicketQueue = ({ tickets, title, onTicketSelect }: { tickets: Ticket[], ti
                     </TableHeader>
                     <TableBody>
                         {tickets.length > 0 ? tickets.map(ticket => (
-                            <TableRow key={ticket.id}>
+                            <TableRow 
+                                key={ticket.id}
+                                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+                                onClick={() => onTicketSelect(ticket)}
+                            >
                                 <TableCell>
                                     <div className="font-medium">{ticket.userName}</div>
                                     <div className="text-sm text-muted-foreground">{ticket.userEmail}</div>
@@ -67,7 +71,7 @@ const TicketQueue = ({ tickets, title, onTicketSelect }: { tickets: Ticket[], ti
                                 <TableCell><TicketStatusBadge status={ticket.status} /></TableCell>
                                 <TableCell>{ticket.submittedAt}</TableCell>
                                 <TableCell>
-                                    <Button variant="outline" size="sm" onClick={() => onTicketSelect(ticket)}>Voir le Ticket</Button>
+                                    <Button variant="outline" size="sm">Voir le Ticket</Button>
                                 </TableCell>
                             </TableRow>
                         )) : (
@@ -82,7 +86,6 @@ const TicketQueue = ({ tickets, title, onTicketSelect }: { tickets: Ticket[], ti
     );
 };
 
-
 export default function SupportCenterPage() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState("new");
@@ -94,6 +97,11 @@ export default function SupportCenterPage() {
     const newTickets = tickets.filter(t => t.status === 'new');
     const openTickets = tickets.filter(t => t.status === 'open');
     const resolvedTickets = tickets.filter(t => t.status === 'resolved');
+    
+    const cardVariants = {
+        hover: { y: -5, scale: 1.03 },
+        initial: { y: 0, scale: 1 },
+    };
 
     return (
         <div className="space-y-8">
@@ -110,33 +118,39 @@ export default function SupportCenterPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Nouveaux Tickets</CardTitle>
-                        <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{newTickets.length}</div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Tickets Ouverts</CardTitle>
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{openTickets.length}</div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Résolus Aujourd'hui</CardTitle>
-                        <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{resolvedTickets.length}</div>
-                    </CardContent>
-                </Card>
+                <motion.div variants={cardVariants} initial="initial" whileHover="hover">
+                    <Card className="cursor-pointer h-full">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Nouveaux Tickets</CardTitle>
+                            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{newTickets.length}</div>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+                <motion.div variants={cardVariants} initial="initial" whileHover="hover">
+                    <Card className="cursor-pointer h-full">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Tickets Ouverts</CardTitle>
+                            <Clock className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{openTickets.length}</div>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+                <motion.div variants={cardVariants} initial="initial" whileHover="hover">
+                    <Card className="cursor-pointer h-full">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Résolus Aujourd'hui</CardTitle>
+                            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{resolvedTickets.length}</div>
+                        </CardContent>
+                    </Card>
+                </motion.div>
             </div>
 
             <div>
@@ -162,5 +176,3 @@ export default function SupportCenterPage() {
         </div>
     )
 }
-
-    

@@ -2,7 +2,6 @@
 "use client"
 
 import React, { useState } from "react"
-import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -39,7 +38,6 @@ type AdminUser = {
 }
 
 export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[] }) {
-    const { t } = useLocalization();
     const { toast } = useToast();
     const [admins, setAdmins] = useState<AdminUser[]>(initialAdmins);
     const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
@@ -108,7 +106,7 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
             company: 'Entreprise',
             school: 'École'
         }
-        return t(roleMap[role] || role);
+        return roleMap[role] || role;
     }
 
     return (

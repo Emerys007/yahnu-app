@@ -3,7 +3,6 @@
 
 import { useState } from "react"
 import { useAuth } from "@/context/auth-context"
-import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Handshake, Building, Check, X, Clock, Search, University, ArrowRight } from "lucide-react"
@@ -56,14 +55,13 @@ const initialSchoolRequests: PartnershipRequest[] = [
 
 
 const CompanyPartnerships = () => {
-    const { t } = useLocalization();
     const { toast } = useToast();
     const [searchTerm, setSearchTerm] = useState("");
     const [requests, setRequests] = useState<PartnershipRequest[]>(initialCompanyPartnerships);
 
     const handleRequestPartnership = (school: School) => {
         if (requests.some(req => req.entityName === school.acronym)) {
-            toast({ title: t("Request Already Sent"), description: t("You have already sent a request to this school."), variant: "destructive"});
+            toast({ title: "Demande déjà envoyée", description: "Vous avez déjà envoyé une demande à cette école.", variant: "destructive"});
             return;
         }
 
@@ -74,7 +72,7 @@ const CompanyPartnerships = () => {
             status: "pending"
         };
         setRequests(prev => [newRequest, ...prev]);
-        toast({ title: t("Request Sent"), description: `${t("Your partnership request to")} ${school.acronym} ${t("has been sent.")}` });
+        toast({ title: "Demande envoyée", description: `Votre demande de partenariat à ${school.acronym} a été envoyée.` });
     };
     
     const requestedSchoolNames = requests.map(r => r.entityName);
@@ -84,15 +82,15 @@ const CompanyPartnerships = () => {
         <div className="grid lg:grid-cols-2 gap-8">
             <Card>
                 <CardHeader>
-                    <CardTitle>{t('Your Partnership Requests')}</CardTitle>
-                    <CardDescription>{t('Status of partnership requests you have sent to schools.')}</CardDescription>
+                    <CardTitle>Vos demandes de partenariat</CardTitle>
+                    <CardDescription>Statut des demandes de partenariat que vous avez envoyées aux écoles.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>{t('School')}</TableHead>
-                                <TableHead className="text-right">{t('Status')}</TableHead>
+                                <TableHead>École</TableHead>
+                                <TableHead className="text-right">Statut</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -104,7 +102,7 @@ const CompanyPartnerships = () => {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <Badge variant={req.status === 'accepted' ? 'secondary' : req.status === 'pending' ? 'outline' : 'destructive'}>
-                                            {t(req.status)}
+                                            {req.status}
                                         </Badge>
                                     </TableCell>
                                 </TableRow>
@@ -115,13 +113,13 @@ const CompanyPartnerships = () => {
             </Card>
             <Card>
                 <CardHeader>
-                    <CardTitle>{t('Discover Schools')}</CardTitle>
-                    <CardDescription>{t('Find and partner with top Ivorian institutions.')}</CardDescription>
+                    <CardTitle>Découvrir des écoles</CardTitle>
+                    <CardDescription>Trouvez et établissez des partenariats avec les meilleures institutions ivoiriennes.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="relative mb-4">
                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input placeholder={t("Search for schools...")} className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                        <Input placeholder={"Rechercher des écoles..."} className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                     </div>
                     <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
                         {availableSchools.map((school) => (
@@ -133,7 +131,7 @@ const CompanyPartnerships = () => {
                                         <p className="text-sm text-muted-foreground">{school.location}</p>
                                     </div>
                                 </div>
-                                <Button size="sm" onClick={() => handleRequestPartnership(school)}>{t('Request')}</Button>
+                                <Button size="sm" onClick={() => handleRequestPartnership(school)}>Demander</Button>
                             </div>
                         ))}
                     </div>
@@ -144,7 +142,6 @@ const CompanyPartnerships = () => {
 }
 
 const SchoolPartnerships = () => {
-    const { t } = useLocalization();
     const [requests, setRequests] = useState<PartnershipRequest[]>(initialSchoolRequests);
 
     const handleRequest = (id: number, newStatus: "accepted" | "declined") => {
@@ -158,8 +155,8 @@ const SchoolPartnerships = () => {
         <div className="grid lg:grid-cols-2 gap-8 items-start">
              <Card>
                 <CardHeader>
-                    <CardTitle>{t('Incoming Requests')}</CardTitle>
-                    <CardDescription>{t('Partnership requests from companies.')}</CardDescription>
+                    <CardTitle>Demandes entrantes</CardTitle>
+                    <CardDescription>Demandes de partenariat des entreprises.</CardDescription>
                 </CardHeader>
                 <CardContent>
                      {pendingRequests.length > 0 ? pendingRequests.map(req => (
@@ -174,14 +171,14 @@ const SchoolPartnerships = () => {
                             </div>
                         </div>
                      )) : (
-                        <p className="text-sm text-muted-foreground text-center py-4">{t('No pending requests.')}</p>
+                        <p className="text-sm text-muted-foreground text-center py-4">Aucune demande en attente.</p>
                      )}
                 </CardContent>
             </Card>
              <Card>
                 <CardHeader>
-                    <CardTitle>{t('Current Partners')}</CardTitle>
-                    <CardDescription>{t('Companies you are currently partnered with.')}</CardDescription>
+                    <CardTitle>Partenaires actuels</CardTitle>
+                    <CardDescription>Entreprises avec lesquelles vous êtes actuellement en partenariat.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     {currentPartners.length > 0 ? currentPartners.map(req => (
@@ -190,10 +187,10 @@ const SchoolPartnerships = () => {
                                 <Image src={req.entityLogo} alt={req.entityName} width={40} height={40} className="rounded-full object-contain" />
                                 <p className="font-semibold">{req.entityName}</p>
                             </div>
-                            <Button size="sm" variant="ghost">{t('View Details')}</Button>
+                            <Button size="sm" variant="ghost">Voir les détails</Button>
                         </div>
                     )) : (
-                        <p className="text-sm text-muted-foreground text-center py-4">{t('You have no active partners yet.')}</p>
+                        <p className="text-sm text-muted-foreground text-center py-4">Vous n'avez pas encore de partenaires actifs.</p>
                     )}
                 </CardContent>
             </Card>
@@ -206,14 +203,13 @@ const pageConfig: Record<string, {
     description: string;
     component: React.ComponentType;
 }> = {
-    company: { title: 'Partnership Management', description: 'Manage your academic partnerships and discover new schools to collaborate with.', component: CompanyPartnerships },
-    school: { title: 'Partnership Management', description: 'Manage incoming partnership requests from companies and view your current partners.', component: SchoolPartnerships },
+    company: { title: 'Gestion des partenariats', description: 'Gérez vos partenariats académiques et découvrez de nouvelles écoles avec lesquelles collaborer.', component: CompanyPartnerships },
+    school: { title: 'Gestion des partenariats', description: 'Gérez les demandes de partenariat entrantes des entreprises et consultez vos partenaires actuels.', component: SchoolPartnerships },
 }
 
 
 export default function PartnersPage() {
   const { role } = useAuth();
-  const { t } = useLocalization();
   
   const { title, description, component: ActiveComponent } = pageConfig[role as keyof typeof pageConfig] || pageConfig.company;
 
@@ -229,12 +225,12 @@ export default function PartnersPage() {
                 <Handshake className="h-6 w-6 text-primary" />
             </div>
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">{t(title)}</h1>
-                <p className="text-muted-foreground mt-1">{t(description)}</p>
+                <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+                <p className="text-muted-foreground mt-1">{description}</p>
             </div>
         </div>
         
-        {ActiveComponent ? <ActiveComponent /> : <p>{t("This page is not available for your account type.")}</p>}
+        {ActiveComponent ? <ActiveComponent /> : <p>Cette page n'est pas disponible pour votre type de compte.</p>}
     </motion.div>
   );
 }
