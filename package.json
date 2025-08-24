@@ -9,7 +9,7 @@
     "lint": "next lint",
     "status": "git status",
     "deploy": "firebase deploy --only apphosting",
-    "commit-and-deploy": "git add . && git commit -m \"chore: deploy changes\" && git push origin master && npm run deploy",
+    "commit-and-deploy": "git add . && git commit -m \"chore: deploy changes\" && git push origin main && npm run deploy",
     "lint:i18n": "node scripts/validate-locales.mjs",
     "seed": "ts-node -r tsconfig-paths/register src/lib/data/seed.ts"
   },

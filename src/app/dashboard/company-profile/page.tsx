@@ -84,21 +84,21 @@ export default function CompanyProfilePage() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
   const [jobs, setJobs] = useState<z.infer<typeof jobPostSchema>[]>([
     { title: "Ingénieur Logiciel, Frontend", location: "Télétravail", type: "Temps-plein", description: "Nous recherchons un ingénieur logiciel talentueux pour rejoindre notre équipe. Le candidat idéal aura une passion pour la création d'interfaces utilisateur belles et fonctionnelles." },
-    { title: "Chef de Produit", location: "New York, NY", type: "Temps-plein", description: "Nous recherchons un chef de produit expérimenté pour diriger le développement de notre nouvelle ligne de produits." },
+    { title: "Chef de Produit", location: "Lagos, Nigeria", type: "Temps-plein", description: "Nous recherchons un chef de produit expérimenté pour diriger le développement de notre nouvelle ligne de produits." },
   ])
   const [isJobDialogOpen, setIsJobDialogOpen] = useState(false)
 
   const profileForm = useForm<z.infer<typeof companyProfileSchema>>({
     resolver: zodResolver(companyProfileSchema),
     defaultValues: {
-      companyName: "Innovate Inc.",
-      website: "https://innovate.inc",
-      location: "New York, NY",
+      companyName: "Innovate Africa",
+      website: "https://innovateafrica.io",
+      location: "Lagos, Nigeria",
       industry: "Information Technology",
       phone: "",
       address: { street: "", city: "", state: "", zip: "", country: "" },
-      tagline: "Construire l'avenir de la technologie.",
-      description: "Innovate Inc. est une entreprise technologique de premier plan dédiée à la création de solutions de pointe qui résolvent des problèmes du monde réel. Nous sommes une équipe d'innovateurs, de designers et d'ingénieurs passionnés et engagés envers l'excellence.",
+      tagline: "Construire l'avenir de la technologie en Afrique.",
+      description: "Innovate Africa est une entreprise technologique de premier plan dédiée à la création de solutions de pointe qui résolvent des problèmes du monde réel sur le continent africain. Nous sommes une équipe d'innovateurs, de designers et d'ingénieurs passionnés et engagés envers l'excellence.",
     },
   })
 
@@ -106,7 +106,7 @@ export default function CompanyProfilePage() {
     resolver: zodResolver(jobPostSchema),
     defaultValues: {
       title: "",
-      location: "",
+      location: "Lagos, Nigeria",
       type: "",
       description: "",
     },
@@ -365,7 +365,7 @@ export default function CompanyProfilePage() {
                                         render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Lieu</FormLabel>
-                                            <FormControl><Input placeholder={"Ex: New York, NY"} {...field} /></FormControl>
+                                            <FormControl><Input placeholder={"Ex: Lagos, Nigeria"} {...field} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
                                         )}
