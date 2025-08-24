@@ -21,7 +21,7 @@ type UserAccount = {
     name: string;
     email: string;
     type: 'graduate' | 'company' | 'school' | 'admin';
-    status: 'active' | 'pending' | 'suspended';
+    status: 'active' | 'pending' | 'suspended' | string; // Allow for other statuses initially
     slug?: string;
     schoolName?: string;
     industry?: string;
@@ -35,10 +35,11 @@ const UserProfileDialog = ({ user }: { user: UserAccount }) => {
             case 'company': return <Building className="h-5 w-5 text-muted-foreground" />;
             case 'school': return <School className="h-5 w-5 text-muted-foreground" />;
             case 'admin': return <Briefcase className="h-5 w-5 text-muted-foreground" />;
+            default: return <User className="h-5 w-5 text-muted-foreground" />;
         }
     };
     
-    const statusIcons = {
+    const statusIcons: Record<string, JSX.Element> = {
         active: <CheckCircle className="h-4 w-4 text-green-500" />,
         pending: <Clock className="h-4 w-4 text-yellow-500" />,
         suspended: <XCircle className="h-4 w-4 text-red-500" />,
@@ -51,7 +52,7 @@ const UserProfileDialog = ({ user }: { user: UserAccount }) => {
         admin: "Admin",
     };
 
-    const statusTranslations: Record<UserAccount['status'], string> = {
+    const statusTranslations: Record<string, string> = {
         active: "Actif",
         pending: "En attente",
         suspended: "Suspendu",
@@ -68,7 +69,7 @@ const UserProfileDialog = ({ user }: { user: UserAccount }) => {
             <div className="space-y-4 py-4">
                 <div className="flex items-center gap-4">
                     <Avatar className="h-16 w-16">
-                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback>{user.name ? user.name.charAt(0) : 'U'}</AvatarFallback>
                     </Avatar>
                     <div>
                         <h3 className="text-xl font-semibold">{user.name}</h3>
@@ -81,14 +82,14 @@ const UserProfileDialog = ({ user }: { user: UserAccount }) => {
                         <p className="text-muted-foreground">Type de compte</p>
                         <div className="flex items-center gap-2">
                              {getAccountTypeIcon(user.type)}
-                            <p>{roleTranslations[user.type]}</p>
+                            <p>{roleTranslations[user.type] || user.type}</p>
                         </div>
                     </div>
                     <div className="space-y-1">
                         <p className="text-muted-foreground">Statut</p>
                         <div className="flex items-center gap-2">
-                            {statusIcons[user.status]}
-                            <p className="capitalize">{statusTranslations[user.status]}</p>
+                            {statusIcons[user.status] || <Clock className="h-4 w-4 text-gray-500" />}
+                            <p className="capitalize">{statusTranslations[user.status] || user.status}</p>
                         </div>
                     </div>
                     <div className="space-y-1">
@@ -125,16 +126,16 @@ export default function UserLookupPage() {
             setIsLoading(true);
             try {
                 const usersRef = collection(db, "users");
-                const q = query(usersRef, where("role", "in", ["graduate", "company", "school"]));
+                const q = query(usersRef, where("role", "in", ["graduate", "company", "school", "admin"]));
                 const querySnapshot = await getDocs(q);
                 const usersList = querySnapshot.docs.map(doc => {
                     const data = doc.data() as DocumentData;
                     return {
                         id: doc.id,
-                        name: data.name || data.email,
+                        name: data.name || data.firstName || data.companyName || data.schoolName || data.email,
                         email: data.email,
                         type: data.role,
-                        status: data.status,
+                        status: (data.status || 'pending').toLowerCase(),
                         slug: data.slug || doc.id,
                         schoolName: data.schoolName || '',
                         industry: data.industry || '',
@@ -172,6 +173,7 @@ export default function UserLookupPage() {
             case 'active': return 'default';
             case 'pending': return 'secondary';
             case 'suspended': return 'destructive';
+            default: return 'outline';
         }
     };
     
@@ -181,17 +183,18 @@ export default function UserLookupPage() {
             case 'company': return <Building className="h-4 w-4" />;
             case 'school': return <School className="h-4 w-4" />;
             case 'admin': return <Briefcase className="h-4 w-4" />;
+            default: return <User className="h-4 w-4" />;
         }
     }
 
-    const roleTranslations: Record<UserAccount['type'], string> = {
+    const roleTranslations: Record<string, string> = {
         graduate: "Diplômé",
         company: "Entreprise",
         school: "École",
         admin: "Admin",
     };
 
-    const statusTranslations: Record<UserAccount['status'], string> = {
+    const statusTranslations: Record<string, string> = {
         active: "Actif",
         pending: "En attente",
         suspended: "Suspendu",
@@ -256,11 +259,11 @@ export default function UserLookupPage() {
                                     <TableCell>
                                         <div className="flex items-center gap-2">
                                             {getAccountTypeIcon(user.type)}
-                                            <span>{roleTranslations[user.type]}</span>
+                                            <span>{roleTranslations[user.type] || user.type}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant={getStatusVariant(user.status)}>{statusTranslations[user.status]}</Badge>
+                                        <Badge variant={getStatusVariant(user.status)}>{statusTranslations[user.status] || user.status}</Badge>
                                     </TableCell>
                                     <TableCell className="text-right space-x-2">
                                         <Dialog>

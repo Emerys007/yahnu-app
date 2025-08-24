@@ -64,7 +64,7 @@ const eventSchema = z.object({
   targetGradYear: z.string().optional(),
 });
 
-const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onSave: (values: z.infer<typeof eventSchema>) => void }) => {
+const EventForm = ({ event, onSave, onCancel }: { event?: z.infer<typeof eventSchema>; onSave: (values: z.infer<typeof eventSchema>) => void; onCancel: () => void; }) => {
     const form = useForm<z.infer<typeof eventSchema>>({
         resolver: zodResolver(eventSchema),
         defaultValues: event || {
@@ -80,6 +80,18 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
           targetGradYear: "",
         },
     });
+    
+    React.useEffect(() => {
+        form.reset(event || {
+          title: "",
+          description: "",
+          date: "",
+          time: "",
+          location: "",
+          type: "Career Fair",
+          targetAudience: "all",
+        });
+    }, [event, form]);
 
     const onSubmit = (values: z.infer<typeof eventSchema>) => {
         onSave(values);
@@ -169,6 +181,7 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
                 </Card>
 
                 <DialogFooter>
+                    <Button type="button" variant="ghost" onClick={onCancel}>Annuler</Button>
                     <Button type="submit">Enregistrer l'événement</Button>
                 </DialogFooter>
             </form>
@@ -180,25 +193,70 @@ export default function CompanyEventsPage() {
   const { toast } = useToast()
   const [events, setEvents] = useState<Event[]>(initialEvents)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
-  const handleCreateEvent = (values: z.infer<typeof eventSchema>) => {
-    const newEvent: Event = {
-      id: Date.now(),
-      title: values.title,
-      date: values.date,
-      type: values.type,
-      rsvps: 0,
-      target: values.targetAudience === 'all' ? 'Tous les diplômés' : 'Groupe spécifique'
-    };
-    setEvents(prev => [newEvent, ...prev]);
-    toast({ title: "Événement créé", description: "Des notifications ont été envoyées au public cible." });
+  const handleSaveEvent = (values: z.infer<typeof eventSchema>) => {
+    if (editingEvent) {
+        // Update existing event
+        const updatedEvent: Event = {
+            ...editingEvent,
+            title: values.title,
+            date: values.date,
+            type: values.type,
+            target: values.targetAudience === 'all' ? 'Tous les diplômés' : 'Groupe spécifique',
+        };
+        setEvents(prev => prev.map(e => e.id === editingEvent.id ? updatedEvent : e));
+        toast({ title: "Événement mis à jour", description: `"${values.title}" a été mis à jour.` });
+    } else {
+        // Create new event
+        const newEvent: Event = {
+            id: Date.now(),
+            title: values.title,
+            date: values.date,
+            type: values.type,
+            rsvps: 0,
+            target: values.targetAudience === 'all' ? 'Tous les diplômés' : 'Groupe spécifique'
+        };
+        setEvents(prev => [newEvent, ...prev]);
+        toast({ title: "Événement créé", description: "Des notifications ont été envoyées au public cible." });
+    }
+    
     setIsDialogOpen(false);
+    setEditingEvent(null);
+  }
+
+  const handleEditClick = (event: Event) => {
+    setEditingEvent(event);
+    setIsDialogOpen(true);
+  }
+  
+  const handleCreateClick = () => {
+    setEditingEvent(null);
+    setIsDialogOpen(true);
   }
 
   const handleDeleteEvent = (eventId: number) => {
     setEvents(events.filter(e => e.id !== eventId));
     toast({ title: "Événement supprimé", variant: "destructive" });
   }
+
+  const getFormValuesFromEvent = (event: Event | null): z.infer<typeof eventSchema> => {
+      if (!event) {
+          return {
+            title: "", description: "", date: "", time: "", location: "", type: "Career Fair", targetAudience: "all",
+          };
+      }
+      // This is a simplified mapping. A real implementation might need more details.
+      return {
+          title: event.title,
+          description: `Description pour ${event.title}`,
+          date: event.date,
+          time: "10:00",
+          location: "Défini dans la description",
+          type: event.type,
+          targetAudience: event.target === "Tous les diplômés" ? "all" : "specific",
+      };
+  };
 
   return (
     <motion.div 
@@ -219,14 +277,18 @@ export default function CompanyEventsPage() {
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-                <Button><PlusCircle className="mr-2 h-4 w-4" />Créer un événement</Button>
+                <Button onClick={handleCreateClick}><PlusCircle className="mr-2 h-4 w-4" />Créer un événement</Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Créer un nouvel événement</DialogTitle>
+                    <DialogTitle>{editingEvent ? "Modifier l'événement" : "Créer un nouvel événement"}</DialogTitle>
                     <DialogDescription>Remplissez les détails ci-dessous pour planifier un nouvel événement.</DialogDescription>
                 </DialogHeader>
-                <EventForm onSave={handleCreateEvent} />
+                <EventForm 
+                    event={getFormValuesFromEvent(editingEvent)} 
+                    onSave={handleSaveEvent} 
+                    onCancel={() => setIsDialogOpen(false)}
+                />
             </DialogContent>
         </Dialog>
       </div>
@@ -261,7 +323,7 @@ export default function CompanyEventsPage() {
                             <TableCell><div className="flex items-center gap-1"><Target className="h-4 w-4 text-muted-foreground" /> {event.target}</div></TableCell>
                             <TableCell className="flex items-center gap-2"><Users className="h-4 w-4 text-muted-foreground" /> {event.rsvps}</TableCell>
                             <TableCell className="text-right space-x-2">
-                                <Button size="icon" variant="ghost"><Edit className="h-4 w-4" /></Button>
+                                <Button size="icon" variant="ghost" onClick={() => handleEditClick(event)}><Edit className="h-4 w-4" /></Button>
                                 <Button size="icon" variant="ghost" onClick={() => handleDeleteEvent(event.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                             </TableCell>
                         </TableRow>
