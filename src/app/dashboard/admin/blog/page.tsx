@@ -21,6 +21,7 @@ import { db, storage } from '@/lib/firebase';
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy, DocumentData } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Image from 'next/image';
+import { Textarea } from '@/components/ui/textarea';
 
 const postSchema = z.object({
   id: z.string().optional(),
@@ -30,7 +31,7 @@ const postSchema = z.object({
   status: z.enum(['draft', 'published']),
   imageUrl: z.string().url({ message: "Veuillez entrer une URL valide." }).optional().or(z.literal('')),
   content: z.string().min(100, "Le contenu doit comporter au moins 100 caractères."),
-  excerpt: z.string().max(200, "L'extrait ne doit pas dépasser 200 caractères.").optional(),
+  excerpt: z.string().min(1, "L'extrait est requis.").max(200, "L'extrait ne doit pas dépasser 200 caractères."),
 });
 
 type Post = z.infer<typeof postSchema>;
@@ -190,6 +191,13 @@ export default function BlogManagementPage() {
                                                 </div>
                                             </div>
                                         </div>
+                                         <FormField control={form.control} name="excerpt" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Extrait</FormLabel>
+                                                <FormControl><Textarea {...field} placeholder="Un bref résumé de l'article..." className="h-24" /></FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )} />
                                         <FormField control={form.control} name="content" render={({ field }) => (<FormItem><FormLabel>Contenu Principal</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
                                         <div className="flex justify-between items-center">
                                             <FormField control={form.control} name="status" render={({ field }) => (<FormItem className="flex items-center gap-2"><FormLabel>Statut:</FormLabel><FormControl><Select onValueChange={field.onChange} defaultValue={field.value}><SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="draft">Brouillon</SelectItem><SelectItem value="published">Publié</SelectItem></SelectContent></Select></FormControl><FormMessage /></FormItem>)} />
