@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -75,12 +74,12 @@ const getFeaturesData = () => ({
 function FeatureCard({ feature }: { feature: { title: string; description: string } }) {
     const ref = React.useRef(null);
     const isInView = useInView(ref, { once: true, amount: 0.5 });
-  
+
     const variants = {
       hidden: { opacity: 0, y: 20 },
       visible: { opacity: 1, y: 0 },
     };
-  
+
     return (
       <motion.div
         ref={ref}
@@ -234,7 +233,7 @@ export function FeaturesSection() {
             Que vous soyez un jeune diplômé, une entreprise en croissance ou une institution académique de premier plan, Yahnu est conçu pour vous.
           </p>
         </motion.div>
-        
+
         <AnimatedTabs />
 
       </div>

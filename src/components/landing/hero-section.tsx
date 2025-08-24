@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -65,10 +64,10 @@ export function HeroSection() {
     if (!api) {
       return
     }
- 
+
     setCurrent(api.selectedScrollSnap())
     setActiveSlide(slides[api.selectedScrollSnap()])
- 
+
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap())
       setActiveSlide(slides[api.selectedScrollSnap()])
