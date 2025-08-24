@@ -164,8 +164,8 @@ export function HeroSection() {
             </div>
         </div>
 
-        <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex h-12 w-12" />
-        <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex h-12 w-12" />
+        <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex h-12 w-12 bg-white/10 hover:bg-white/20 border-white/20 text-white transition-transform duration-300 ease-in-out hover:scale-110 active:scale-95" />
+        <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex h-12 w-12 bg-white/10 hover:bg-white/20 border-white/20 text-white transition-transform duration-300 ease-in-out hover:scale-110 active:scale-95" />
 
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex space-x-2">
             {slides.map((_, index) => (
