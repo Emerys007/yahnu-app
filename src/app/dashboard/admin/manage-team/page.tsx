@@ -5,7 +5,7 @@ import { ManageTeamClient } from "./manage-team-client";
 import { db } from "@/lib/firebase";
 import { collection, query, where, getDocs, DocumentData } from "firebase/firestore";
 import { type Role } from "@/context/auth-context";
-//import { getSession } from "@/lib/auth"; // Assuming you have a session utility
+import { getSession } from "@/lib/auth"; // Assuming you have a session utility
 
 type AdminUser = {
   id: string
