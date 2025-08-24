@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuth, type Role } from "@/context/auth-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LifeBuoy, Mail, Send, University, Search } from "lucide-react";
@@ -29,16 +29,35 @@ const contactFormSchema = z.object({
   message: z.string().min(20, { message: "Le message doit comporter au moins 20 caractères." }),
 });
 
-const FAQSection = ({ faqs }: { faqs: FaqItem[] }) => (
-    <Accordion type="single" collapsible className="w-full">
-      {faqs.map((faq, index) => (
-        <AccordionItem value={`item-${index}`} key={index}>
-          <AccordionTrigger>{faq.question}</AccordionTrigger>
-          <AccordionContent>{faq.answer}</AccordionContent>
-        </AccordionItem>
-      ))}
-    </Accordion>
-);
+const FAQSection = ({ faqs, searchTerm }: { faqs: FaqItem[], searchTerm: string }) => {
+    const filteredFaqs = useMemo(() => {
+        if (!searchTerm) return faqs;
+        return faqs.filter(faq => 
+            faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [faqs, searchTerm]);
+
+    if (filteredFaqs.length === 0) {
+        return (
+            <div className="text-center py-8 text-muted-foreground">
+                <p className="font-semibold">Aucun article ne correspond à votre recherche.</p>
+                <p className="text-sm">Essayez d'autres mots-clés ou contactez le support directement.</p>
+            </div>
+        )
+    }
+
+    return (
+        <Accordion type="single" collapsible className="w-full">
+        {filteredFaqs.map((faq, index) => (
+            <AccordionItem value={`item-${index}`} key={index}>
+            <AccordionTrigger>{faq.question}</AccordionTrigger>
+            <AccordionContent>{faq.answer}</AccordionContent>
+            </AccordionItem>
+        ))}
+        </Accordion>
+    );
+}
 
 const ContactSupportForm = () => {
     const { toast } = useToast();
@@ -123,6 +142,7 @@ const ContactSupportForm = () => {
 export default function SupportPage() {
   const { user, role } = useAuth();
   const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleContactSchool = () => {
     if (user?.schoolId) {
@@ -200,9 +220,14 @@ export default function SupportPage() {
                     <CardContent>
                         <div className="relative mb-6">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input placeholder="Rechercher des articles..." className="pl-10" />
+                            <Input 
+                                placeholder="Rechercher des articles..." 
+                                className="pl-10"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
                         </div>
-                        <FAQSection faqs={allFaqs} />
+                        <FAQSection faqs={allFaqs} searchTerm={searchTerm} />
                     </CardContent>
                 </Card>
             </div>
@@ -227,5 +252,3 @@ export default function SupportPage() {
     </motion.div>
   );
 }
-
-    
