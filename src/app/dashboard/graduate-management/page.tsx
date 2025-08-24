@@ -7,24 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { UserCheck, Check, X, Search, Loader2, Send } from "lucide-react"
+import { UserCheck, Check, X, Search, Loader2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Input } from "@/components/ui/input"
 import { collection, query, where, getDocs, doc, updateDoc, onSnapshot, DocumentData } from "firebase/firestore"
 import { db } from "@/lib/firebase"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
 
 
 type GraduateStatus = "pending" | "active"
@@ -41,83 +29,6 @@ type Graduate = {
   email: string
   status: GraduateStatus
   education?: EducationEntry[]
-}
-
-const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
-    const { toast } = useToast();
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedRecipients, setSelectedRecipients] = useState<string[]>([]);
-    
-    const recipientOptions: MultiSelectOption[] = useMemo(() => {
-        const groupOptions: MultiSelectOption[] = [
-            { value: 'group-all', label: 'Tous les diplômés' },
-            { value: 'group-pending', label: 'Diplômés en attente' },
-            { value: 'group-active', label: 'Diplômés actifs' }
-        ];
-        const individualOptions: MultiSelectOption[] = graduates.map(g => ({ value: g.id, label: g.name }));
-        return [...groupOptions, ...individualOptions];
-    }, [graduates]);
-
-
-    const handleSendBroadcast = () => {
-        // In a real app, this would trigger a backend process
-        // You would resolve the selected recipients (groups and individuals) into a list of UIDs
-        // and send the message via a server-side function.
-        console.log("Sending broadcast to:", selectedRecipients);
-        
-        toast({
-            title: "Message diffusé envoyé",
-            description: "Votre message est en cours d'envoi aux diplômés sélectionnés.",
-        });
-        setIsOpen(false);
-        setSelectedRecipients([]);
-    }
-
-    return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
-                <Button>
-                    <Send className="mr-2 h-4 w-4" />
-                    Diffuser un message
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                    <DialogTitle>Envoyer un message de diffusion</DialogTitle>
-                    <DialogDescription>
-                        Composez un message à envoyer à plusieurs diplômés à la fois. Ils le recevront comme un message individuel.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                    <div>
-                        <Label htmlFor="recipients">Destinataires</Label>
-                        <MultiSelect
-                            options={recipientOptions}
-                            selected={selectedRecipients}
-                            onChange={setSelectedRecipients}
-                            placeholder={"Sélectionnez des destinataires..."}
-                            searchPlaceholder={"Recherchez des diplômés ou des groupes..."}
-                            emptyPlaceholder={"Aucun résultat trouvé."}
-                        />
-                    </div>
-                     <div>
-                        <Label htmlFor="subject">Sujet</Label>
-                        <Input id="subject" placeholder={"Ex: Prochain salon de l'emploi"} />
-                    </div>
-                     <div>
-                        <Label htmlFor="message-body">Message</Label>
-                        <Textarea id="message-body" rows={8} placeholder={"Tapez votre message ici..."} />
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button onClick={handleSendBroadcast} disabled={selectedRecipients.length === 0}>
-                         <Send className="mr-2 h-4 w-4" />
-                        Envoyer la diffusion
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-    )
 }
 
 export default function GraduateManagementPage() {
@@ -272,7 +183,6 @@ export default function GraduateManagementPage() {
             <p className="text-muted-foreground mt-1">Activez les comptes et vérifiez les diplômes.</p>
             </div>
         </div>
-        <BroadcastDialog graduates={graduates} />
       </div>
 
        <Card>
@@ -308,5 +218,3 @@ export default function GraduateManagementPage() {
     </div>
   )
 }
-
-    

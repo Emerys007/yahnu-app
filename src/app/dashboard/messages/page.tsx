@@ -1,20 +1,24 @@
 
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { MessageSquare, Send, Search, ArrowLeft, Loader2 } from "lucide-react"
+import { MessageSquare, Send, Search, ArrowLeft, Loader2, type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useAuth, type Role } from "@/context/auth-context"
 import { db } from "@/lib/firebase"
-import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, updateDoc, getDoc, writeBatch, setDoc, getDocs } from "firebase/firestore"
+import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, updateDoc, getDoc, writeBatch, setDoc, getDocs, DocumentData } from "firebase/firestore"
 import { useToast } from "@/hooks/use-toast"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
 
 type Message = {
     id: string
@@ -34,10 +38,91 @@ type Conversation = {
     messages: Message[]
 }
 
+type Graduate = {
+    id: string
+    name: string
+    email: string
+    status: 'pending' | 'active'
+}
+
 const getNewConvoName = (id: string, name?: string | null) => {
     if (name) return name;
     if (id === 'admin-inphb') return 'Admin INP-HB';
     return id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
+    const { toast } = useToast();
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedRecipients, setSelectedRecipients] = useState<string[]>([]);
+    
+    const recipientOptions: MultiSelectOption[] = useMemo(() => {
+        const groupOptions: MultiSelectOption[] = [
+            { value: 'group-all', label: 'Tous les diplômés' },
+            { value: 'group-pending', label: 'Diplômés en attente' },
+            { value: 'group-active', label: 'Diplômés actifs' }
+        ];
+        const individualOptions: MultiSelectOption[] = graduates.map(g => ({ value: g.id, label: g.name }));
+        return [...groupOptions, ...individualOptions];
+    }, [graduates]);
+
+
+    const handleSendBroadcast = () => {
+        console.log("Sending broadcast to:", selectedRecipients);
+        
+        toast({
+            title: "Message diffusé envoyé",
+            description: "Votre message est en cours d'envoi aux diplômés sélectionnés.",
+        });
+        setIsOpen(false);
+        setSelectedRecipients([]);
+    }
+
+    return (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+                <Button>
+                    <Send className="mr-2 h-4 w-4" />
+                    Diffuser un message
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle>Envoyer un message de diffusion</DialogTitle>
+                    <DialogDescription>
+                        Composez un message à envoyer à plusieurs diplômés à la fois. Ils le recevront comme un message individuel.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                    <div>
+                        <Label htmlFor="recipients">Destinataires</Label>
+                        <MultiSelect
+                            options={recipientOptions}
+                            selected={selectedRecipients}
+                            onChange={setSelectedRecipients}
+                            placeholder={"Sélectionnez des destinataires..."}
+                            searchPlaceholder={"Recherchez des diplômés ou des groupes..."}
+                            emptyPlaceholder={"Aucun résultat trouvé."}
+                        />
+                    </div>
+                     <div>
+                        <Label htmlFor="subject">Sujet</Label>
+                        <Input id="subject" placeholder={"Ex: Prochain salon de l'emploi"} />
+                    </div>
+                     <div>
+                        <Label htmlFor="message-body">Message</Label>
+                        <Textarea id="message-body" rows={8} placeholder={"Tapez votre message ici..."} />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button onClick={handleSendBroadcast} disabled={selectedRecipients.length === 0}>
+                         <Send className="mr-2 h-4 w-4" />
+                        Envoyer la diffusion
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
 }
 
 const MessageView = ({ 
@@ -130,6 +215,18 @@ export default function MessagesPage() {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [graduates, setGraduates] = useState<Graduate[]>([]);
+
+    useEffect(() => {
+        if (role === 'school' && user) {
+            const graduatesQuery = query(collection(db, "users"), where("role", "==", "graduate"), where("schoolId", "==", user.uid));
+            const unsubscribe = onSnapshot(graduatesQuery, (querySnapshot) => {
+                const grads = querySnapshot.docs.map(doc => doc.data() as Graduate);
+                setGraduates(grads);
+            });
+            return () => unsubscribe();
+        }
+    }, [role, user]);
 
     const formatTime = (date: Date) => {
         if (!date) return "";
@@ -146,73 +243,57 @@ export default function MessagesPage() {
         const handleUrlParams = async () => {
             const convoId = searchParams.get('convoId');
             if (!convoId) {
-                // If there's no convoId, default to selecting the first conversation on desktop
                 if (!isMobile && conversations.length > 0 && !selectedConversation) {
                     setSelectedConversation(conversations[0]);
                 }
                 return;
             }
 
-            // Clean the URL immediately
             router.replace('/dashboard/messages', { scroll: false });
 
-            // Check if conversation already exists locally
             const existingConvo = conversations.find(c => c.id === convoId);
             if (existingConvo) {
                 setSelectedConversation(existingConvo);
                 return;
             }
 
-            // If not, check Firestore
             const convoRef = doc(db, "conversations", convoId);
             const convoDoc = await getDoc(convoRef);
 
             if (convoDoc.exists()) {
-                // Conversation exists in DB but not in local state yet (can happen on initial load)
-                // The main onSnapshot listener will eventually pick it up and set it.
-                // We can optimistically set it here or wait. Let's wait to avoid duplicate state.
-            } else {
-                // This is a new conversation from a support ticket. We need to create it.
-                // The convoId should be `support-${userId}`
-                const userId = convoId.replace('support-', '');
-                if (!userId) return;
-
-                // Fetch the original ticket to get the first message
-                const ticketsQuery = query(collection(db, "tickets"), where("userId", "==", userId));
-                const ticketsSnapshot = await getDocs(ticketsQuery);
+                // This will be handled by the main listener
+            } else if (convoId.startsWith('support-')) {
+                const ticketId = searchParams.get('ticketId');
+                if (!ticketId) return;
                 
-                if (!ticketsSnapshot.empty) {
-                    const ticket = ticketsSnapshot.docs[0].data(); // Assuming one open ticket per user
+                const ticketRef = doc(db, "tickets", ticketId);
+                const ticketSnap = await getDoc(ticketRef);
+
+                if (ticketSnap.exists()) {
+                    const ticket = ticketSnap.data();
                     const newConversation: Conversation = {
                         id: convoId,
                         name: ticket.userName,
                         avatar: "https://placehold.co/100x100.png",
-                        participants: [user!.uid, userId],
+                        participants: [user!.uid, ticket.userId],
                         lastMessage: ticket.message,
                         lastMessageTimestamp: ticket.submittedAt.toDate(),
-                        unread: 0,
+                        unread: 1,
                         messages: [{
-                            id: ticketsSnapshot.docs[0].id,
-                            senderId: userId,
+                            id: ticketSnap.id,
+                            senderId: ticket.userId,
                             text: ticket.message,
                             timestamp: ticket.submittedAt.toDate(),
                         }],
                     };
-                    // Optimistically add to local state and select it
-                    setConversations(prev => [newConversation, ...prev]);
-                    setSelectedConversation(newConversation);
-
-                    // Save to Firestore
+                    
                     await setDoc(convoRef, {
                         ...newConversation,
                         lastMessageTimestamp: ticket.submittedAt,
-                         messages: [{
-                            id: ticketsSnapshot.docs[0].id,
-                            senderId: userId,
-                            text: ticket.message,
-                            timestamp: ticket.submittedAt,
-                        }],
+                        messages: [{ ...newConversation.messages[0], timestamp: ticket.submittedAt }],
                     });
+
+                    // The main listener will now pick this up.
                 }
             }
         };
@@ -247,18 +328,14 @@ export default function MessagesPage() {
             
             setConversations(convos);
 
-            // Logic to preserve or set the selected conversation
             if (selectedConversation) {
-                // If a conversation is already selected, update it with fresh data
                 const updatedSelectedConvo = convos.find(c => c.id === selectedConversation.id);
                 if (updatedSelectedConvo) {
                     setSelectedConversation(updatedSelectedConvo);
                 } else {
-                    // The selected conversation was deleted, so deselect it
                     setSelectedConversation(null);
                 }
             } else if (!isMobile && convos.length > 0) {
-                 // If no conversation is selected and on desktop, select the first one
                  setSelectedConversation(convos[0]);
             }
             
@@ -286,7 +363,6 @@ export default function MessagesPage() {
         const updatedMessages = [...selectedConversation.messages, newMessage];
         const otherParticipantId = selectedConversation.participants.find(p => p !== user.uid);
 
-        // Optimistic update
         const updatedConversation = { 
             ...selectedConversation, 
             messages: updatedMessages, 
@@ -305,8 +381,9 @@ export default function MessagesPage() {
             const messagePayload = { ...newMessage, timestamp: serverTimestamp() };
 
             if (convoDoc.exists()) {
+                const currentMessages = convoDoc.data().messages || [];
                 await updateDoc(convoRef, {
-                    messages: [...convoDoc.data().messages, messagePayload],
+                    messages: [...currentMessages, messagePayload],
                     lastMessage: text,
                     lastMessageTimestamp: serverTimestamp()
                 });
@@ -319,7 +396,6 @@ export default function MessagesPage() {
                 });
             }
             
-            // Send a notification to the other participant
             if (otherParticipantId) {
                 await addDoc(collection(db, "notifications"), {
                     userId: otherParticipantId,
@@ -332,7 +408,6 @@ export default function MessagesPage() {
         } catch (error) {
             console.error("Failed to send message:", error);
             toast({ title: "Erreur", description: "Votre message n'a pas pu être envoyé.", variant: "destructive" });
-            // Revert optimistic update on error
             setSelectedConversation(selectedConversation);
             setConversations(prev => prev.map(c => c.id === selectedConversation.id ? selectedConversation : c));
         }
@@ -386,14 +461,17 @@ export default function MessagesPage() {
 
     return (
         <div className="h-[calc(100vh-10rem)] flex flex-col">
-            <div className="flex items-start gap-4 mb-8 shrink-0">
-                <div className="bg-primary/10 p-3 rounded-lg">
-                    <MessageSquare className="h-6 w-6 text-primary" />
+            <div className="flex items-start justify-between mb-8 shrink-0">
+                <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-3 rounded-lg">
+                        <MessageSquare className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">Messagerie</h1>
+                        <p className="text-muted-foreground mt-1">Communiquez avec les entreprises, les écoles et les candidats.</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Messagerie</h1>
-                    <p className="text-muted-foreground mt-1">Communiquez avec les entreprises, les écoles et les candidats.</p>
-                </div>
+                 {role === 'school' && <BroadcastDialog graduates={graduates} />}
             </div>
 
             <Card className="flex-1 overflow-hidden">
