@@ -26,9 +26,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" suppressHydrationWarning className={cn(inter.variable)}>
+    <html lang="fr" className={cn(inter.variable)}>
       <head />
-      <body>
+      <body suppressHydrationWarning>
         <AuthProvider>
           <LocalizationProvider>
             <ConfettiProvider>

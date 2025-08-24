@@ -113,42 +113,37 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
         <>
             <Card>
                 <CardHeader>
-                    <CardTitle>Administrateurs de la Plateforme</CardTitle>
-                    <CardDescription>Gérer les utilisateurs avec des privilèges administratifs.</CardDescription>
+                    <CardTitle>Gérer l'équipe</CardTitle>
+                    <CardDescription>Gérez les utilisateurs avec des privilèges administratifs.</CardDescription>
                 </CardHeader>
                 <CardContent>
                      <div className="mb-6 p-4 border rounded-lg">
-                        <h4 className="font-semibold mb-2">Inviter un Nouvel Administrateur</h4>
-                        <div className="flex flex-col sm:flex-row items-end gap-2">
-                            <div className="grid gap-2 flex-grow w-full">
-                                <Label htmlFor="invite-email">E-mail du nouvel administrateur</Label>
-                                <Input 
-                                    id="invite-email" 
-                                    placeholder="E-mail du nouvel administrateur" 
-                                    type="email" 
-                                    value={inviteDetails.email}
-                                    onChange={(e) => setInviteDetails(prev => ({...prev, email: e.target.value}))}
-                                    disabled={isInviting}
-                                />
-                            </div>
-                             <div className="grid gap-2 w-full sm:w-auto shrink-0">
-                                 <Label htmlFor="invite-role">Sélectionner un rôle</Label>
-                                <Select 
-                                    defaultValue={inviteDetails.role} 
-                                    onValueChange={(value) => setInviteDetails(prev => ({...prev, role: value as Role}))}
-                                    disabled={isInviting}
-                                >
-                                    <SelectTrigger id="invite-role" className="w-full sm:w-[180px]">
-                                        <SelectValue placeholder="Sélectionner un rôle" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="admin">Administrateur</SelectItem>
-                                        <SelectItem value="content_manager">Gestionnaire de Contenu</SelectItem>
-                                        <SelectItem value="support_staff">Personnel de Support</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <Button onClick={handleInviteAdmin} className="w-full sm:w-auto px-4" disabled={isInviting}>
+                        <h4 className="font-semibold mb-2">Inviter un nouveau membre</h4>
+                        <div className="flex flex-col sm:flex-row items-center gap-2">
+                            <Input 
+                                id="invite-email" 
+                                placeholder="E-mail du nouvel administrateur" 
+                                type="email" 
+                                value={inviteDetails.email}
+                                onChange={(e) => setInviteDetails(prev => ({...prev, email: e.target.value}))}
+                                disabled={isInviting}
+                                className="flex-grow"
+                            />
+                            <Select 
+                                defaultValue={inviteDetails.role} 
+                                onValueChange={(value) => setInviteDetails(prev => ({...prev, role: value as Role}))}
+                                disabled={isInviting}
+                            >
+                                <SelectTrigger className="w-full sm:w-[200px]">
+                                    <SelectValue placeholder="Sélectionner un rôle" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="admin">Administrateur</SelectItem>
+                                    <SelectItem value="content_manager">Gestionnaire de Contenu</SelectItem>
+                                    <SelectItem value="support_staff">Personnel de Support</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Button onClick={handleInviteAdmin} className="w-full sm:w-auto" disabled={isInviting}>
                                 {isInviting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
                                 {isInviting ? "Envoi en cours..." : "Envoyer l'Invitation"}
                             </Button>

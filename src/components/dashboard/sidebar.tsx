@@ -45,11 +45,11 @@ import { useToast } from "@/hooks/use-toast";
 
 const getNavItems = (role: Role) => {
   const baseNav = [
-    { href: "/dashboard", icon: LayoutDashboard, label: 'Tableau de bord' },
+    { href: "/dashboard/admin/overview", icon: LayoutDashboard, label: 'Tableau de bord' },
   ];
 
   const graduateNav = [
-    ...baseNav,
+    { href: "/dashboard", icon: LayoutDashboard, label: 'Tableau de bord' },
     { href: "/dashboard/messages", icon: MessageSquare, label: 'Messagerie' },
     { href: "/dashboard/profile", icon: User, label: 'Profil' },
     { href: "/dashboard/jobs", icon: Briefcase, label: "Recherche d'emploi" },
@@ -61,7 +61,7 @@ const getNavItems = (role: Role) => {
   ];
 
   const companyNav = [
-    ...baseNav,
+    { href: "/dashboard", icon: LayoutDashboard, label: 'Tableau de bord' },
     { href: "/dashboard/messages", icon: MessageSquare, label: 'Messagerie' },
     { href: "/dashboard/company-profile", icon: Building, label: "Profil de l'entreprise" },
     { href: "/dashboard/job-postings", icon: Briefcase, label: "Offres d'emploi"},
@@ -75,7 +75,7 @@ const getNavItems = (role: Role) => {
   ];
   
   const schoolNav = [
-    ...baseNav,
+    { href: "/dashboard", icon: LayoutDashboard, label: 'Tableau de bord' },
     { href: "/dashboard/messages", icon: MessageSquare, label: 'Messagerie' },
     { href: "/dashboard/school-profile", icon: School, label: "Profil de l'école"},
     { href: "/dashboard/graduate-management", icon: UserCheck, label: 'Gestion des diplômés'},
@@ -87,7 +87,7 @@ const getNavItems = (role: Role) => {
   ];
 
   const superAdminNav = [
-    { href: "/dashboard/admin/overview", icon: Shield, label: 'Aperçu' },
+    ...baseNav,
     { href: "/dashboard/admin/user-management", icon: UserCog, label: 'Gestion des utilisateurs' },
     { href: "/dashboard/admin/manage-team", icon: Users2, label: "Gérer l'équipe" },
     { href: "/dashboard/admin/analytics", icon: BarChart3, label: 'Analytique' },
@@ -103,7 +103,7 @@ const getNavItems = (role: Role) => {
   ];
 
   const adminNav = [
-    { href: "/dashboard/admin/overview", icon: Shield, label: 'Aperçu' },
+    ...baseNav,
     { href: "/dashboard/admin/user-management", icon: UserCog, label: 'Gestion des utilisateurs' },
     { href: "/dashboard/admin/analytics", icon: BarChart3, label: 'Analytique' },
     { type: "divider", label: "Contenu & Support" },
@@ -118,9 +118,11 @@ const getNavItems = (role: Role) => {
   ];
   
   const contentManagerNav = [
+    { href: "/dashboard/admin/overview", icon: LayoutDashboard, label: 'Tableau de bord' },
     { href: "/dashboard/content/static-pages", icon: FileText, label: 'Pages statiques' },
     { href: "/dashboard/content/blog", icon: Newspaper, label: 'Gestion du blog' },
     { href: "/dashboard/support/announcements", icon: Megaphone, label: 'Annonces' },
+    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: 'Base de connaissances' },
   ];
   
   const supportStaffNav = [
@@ -161,7 +163,7 @@ const getNavItems = (role: Role) => {
     case 'support_staff':
         return { main: supportStaffNav, footer: adminFooterNav };
     default:
-      return { main: baseNav, footer: bottomNav };
+      return { main: [], footer: bottomNav };
   }
 }
 
@@ -242,7 +244,7 @@ export function DashboardSidebar() {
         )
     }
 
-    const isActive = item.href && pathname.startsWith(item.href);
+    const isActive = item.href && pathname.startsWith(item.href) && (item.href === '/dashboard' || item.href === '/dashboard/admin/overview' ? pathname === item.href : true);
 
     const buttonContent = (
       <>
