@@ -7,11 +7,9 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    loader: 'custom',
-    loaderFile: './loader.js',
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    unoptimized: process.env.NODE_ENV === 'development',
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
