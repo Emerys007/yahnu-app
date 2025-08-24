@@ -17,7 +17,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from "@/components/ui/button"
 import { exportToCsv } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
-import React from 'react'
+import React from "react"
+import { motion } from "framer-motion"
 
 type AppVolumeDetail = {
     jobTitle: string;
@@ -97,96 +98,102 @@ const CustomVolumeTooltip = ({ active, payload, label }: TooltipProps<number, st
     return null;
 };
 
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 10,
+      },
+    },
+};
+
+
 export default function CompanyAnalyticsPage() {
   const [funnelData, setFunnelData] = React.useState(analyticsData.applicantFunnel);
 
   return (
-    <div className="space-y-8">
-      <div>
+    <motion.div 
+        className="space-y-8"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+    >
+      <motion.div variants={itemVariants}>
         <h1 className="text-3xl font-bold tracking-tight">Analyses de recrutement</h1>
         <p className="text-muted-foreground mt-1">Aperçu de votre entonnoir de recrutement et des données sur les candidats.</p>
-      </div>
+      </motion.div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total des candidats</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold"><CountUp end={analyticsData.totalApplicants} /></div>
-                <p className="text-xs text-muted-foreground">+20% par rapport au mois dernier</p>
-            </CardContent>
-        </Card>
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Délai moyen d'embauche</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold"><CountUp end={analyticsData.avgTimeToHire} suffix=" jours" /></div>
-                <p className="text-xs text-muted-foreground">-5 jours par rapport au dernier trimestre</p>
-            </CardContent>
-        </Card>
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Taux d'entretien</CardTitle>
-                <Percent className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold"><CountUp end={analyticsData.interviewRate} suffix="%" /></div>
-                <p className="text-xs text-muted-foreground">Ratio présélectionnés/entretien</p>
-            </CardContent>
-        </Card>
-      </div>
+      <motion.div 
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        variants={containerVariants}
+      >
+        <motion.div variants={itemVariants} whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }} transition={{ type: "spring", stiffness: 300 }}>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total des candidats</CardTitle>
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold"><CountUp end={analyticsData.totalApplicants} /></div>
+                    <p className="text-xs text-muted-foreground">+20% par rapport au mois dernier</p>
+                </CardContent>
+            </Card>
+        </motion.div>
+        <motion.div variants={itemVariants} whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }} transition={{ type: "spring", stiffness: 300 }}>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Délai moyen d'embauche</CardTitle>
+                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold"><CountUp end={analyticsData.avgTimeToHire} suffix=" jours" /></div>
+                    <p className="text-xs text-muted-foreground">-5 jours par rapport au dernier trimestre</p>
+                </CardContent>
+            </Card>
+        </motion.div>
+        <motion.div variants={itemVariants} whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }} transition={{ type: "spring", stiffness: 300 }}>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Taux d'entretien</CardTitle>
+                    <Percent className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold"><CountUp end={analyticsData.interviewRate} suffix="%" /></div>
+                    <p className="text-xs text-muted-foreground">Ratio présélectionnés/entretien</p>
+                </CardContent>
+            </Card>
+        </motion.div>
+      </motion.div>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center">
-            <div className="grid gap-2">
-                <CardTitle>Entonnoir de candidats</CardTitle>
-                <CardDescription>Progression des candidats à travers les étapes de recrutement.</CardDescription>
-            </div>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="ml-auto shrink-0">
-                        <MoreVertical className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => exportToCsv(funnelData.map(({fill, ...rest}) => rest), "applicant_funnel.csv")}>
-                        <Download className="mr-2 h-4 w-4" />
-                        Exporter en CSV
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </CardHeader>
-        <CardContent>
-            <ChartContainer config={funnelChartConfig} className="mx-auto aspect-video max-h-[300px]">
-                <FunnelChart layout="horizontal" data={funnelData}>
-                    <Tooltip content={<ChartTooltipContent indicator="line" />} />
-                    <Funnel dataKey="value" nameKey="name" isAnimationActive>
-                        <LabelList position="center" fill="#fff" stroke="none" dataKey="name" />
-                    </Funnel>
-                </FunnelChart>
-            </ChartContainer>
-        </CardContent>
-      </Card>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <Card className="lg:col-span-3">
+      <motion.div variants={itemVariants} whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }} transition={{ type: "spring", stiffness: 300 }}>
+        <Card>
             <CardHeader className="flex flex-row items-center">
                 <div className="grid gap-2">
-                    <CardTitle>Volume de candidatures</CardTitle>
-                    <CardDescription>Nombre de candidatures reçues au fil du temps.</CardDescription>
+                    <CardTitle>Entonnoir de candidats</CardTitle>
+                    <CardDescription>Progression des candidats à travers les étapes de recrutement.</CardDescription>
                 </div>
-                 <DropdownMenu>
+                <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="ml-auto shrink-0">
                             <MoreVertical className="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => exportToCsv(analyticsData.applicationVolume.map(d => ({ date: d.date, count: d.count })), "application_volume.csv")}>
+                        <DropdownMenuItem onClick={() => exportToCsv(funnelData.map(({fill, ...rest}) => rest), "applicant_funnel.csv")}>
                             <Download className="mr-2 h-4 w-4" />
                             Exporter en CSV
                         </DropdownMenuItem>
@@ -194,49 +201,87 @@ export default function CompanyAnalyticsPage() {
                 </DropdownMenu>
             </CardHeader>
             <CardContent>
-                 <ChartContainer config={lineChartConfig} className="min-h-[300px] w-full">
-                    <LineChart accessibilityLayer data={analyticsData.applicationVolume}>
-                        <CartesianGrid vertical={false} />
-                        <XAxis dataKey="date" tickFormatter={(val) => new Date(val).toLocaleDateString('fr-FR', { month: 'short' })} />
-                        <YAxis />
-                        <ChartTooltip cursor={false} content={<CustomVolumeTooltip />} />
-                        <Line type="monotone" dataKey="count" stroke="hsl(var(--primary))" strokeWidth={2} dot={{r: 4, fill: "hsl(var(--primary))" }} />
-                    </LineChart>
+                <ChartContainer config={funnelChartConfig} className="mx-auto aspect-video max-h-[300px]">
+                    <FunnelChart layout="horizontal" data={funnelData}>
+                        <Tooltip content={<ChartTooltipContent indicator="line" />} />
+                        <Funnel dataKey="value" nameKey="name" isAnimationActive>
+                            <LabelList position="center" fill="#fff" stroke="none" dataKey="name" />
+                        </Funnel>
+                    </FunnelChart>
                 </ChartContainer>
             </CardContent>
         </Card>
-        <Card className="lg:col-span-2">
-            <CardHeader className="flex flex-row items-center">
-                <div className="grid gap-2">
-                    <CardTitle>Candidats par école</CardTitle>
-                    <CardDescription>Source des candidats par établissement académique.</CardDescription>
-                </div>
-                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="ml-auto shrink-0">
-                            <MoreVertical className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => exportToCsv(analyticsData.applicantsBySchool.map(({fill, ...rest}) => rest), "applicants_by_school.csv")}>
-                            <Download className="mr-2 h-4 w-4" />
-                            Exporter en CSV
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </CardHeader>
-            <CardContent className="flex justify-center h-[300px]">
-                 <ChartContainer config={pieChartConfig} className="w-full">
-                    <PieChart>
-                        <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-                        <Pie data={analyticsData.applicantsBySchool} dataKey="value" nameKey="name" innerRadius={50} paddingAngle={2}/>
-                        <ChartLegend content={<ChartLegendContent nameKey="name" />} />
-                    </PieChart>
-                </ChartContainer>
-            </CardContent>
-        </Card>
-      </div>
+      </motion.div>
+      
+      <motion.div className="grid grid-cols-1 lg:grid-cols-5 gap-6" variants={containerVariants}>
+        <motion.div className="lg:col-span-3" variants={itemVariants} whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }} transition={{ type: "spring", stiffness: 300 }}>
+            <Card>
+                <CardHeader className="flex flex-row items-center">
+                    <div className="grid gap-2">
+                        <CardTitle>Volume de candidatures</CardTitle>
+                        <CardDescription>Nombre de candidatures reçues au fil du temps.</CardDescription>
+                    </div>
+                     <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="ml-auto shrink-0">
+                                <MoreVertical className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => exportToCsv(analyticsData.applicationVolume.map(d => ({ date: d.date, count: d.count })), "application_volume.csv")}>
+                                <Download className="mr-2 h-4 w-4" />
+                                Exporter en CSV
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </CardHeader>
+                <CardContent>
+                     <ChartContainer config={lineChartConfig} className="min-h-[300px] w-full">
+                        <LineChart accessibilityLayer data={analyticsData.applicationVolume}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis dataKey="date" tickFormatter={(val) => new Date(val).toLocaleDateString('fr-FR', { month: 'short' })} />
+                            <YAxis />
+                            <ChartTooltip cursor={false} content={<CustomVolumeTooltip />} />
+                            <Line type="monotone" dataKey="count" stroke="hsl(var(--primary))" strokeWidth={2} dot={{r: 4, fill: "hsl(var(--primary))" }} />
+                        </LineChart>
+                    </ChartContainer>
+                </CardContent>
+            </Card>
+        </motion.div>
+        <motion.div className="lg:col-span-2" variants={itemVariants} whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }} transition={{ type: "spring", stiffness: 300 }}>
+            <Card>
+                <CardHeader className="flex flex-row items-center">
+                    <div className="grid gap-2">
+                        <CardTitle>Candidats par école</CardTitle>
+                        <CardDescription>Source des candidats par établissement académique.</CardDescription>
+                    </div>
+                     <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="ml-auto shrink-0">
+                                <MoreVertical className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => exportToCsv(analyticsData.applicantsBySchool.map(({fill, ...rest}) => rest), "applicants_by_school.csv")}>
+                                <Download className="mr-2 h-4 w-4" />
+                                Exporter en CSV
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </CardHeader>
+                <CardContent className="flex justify-center h-[300px]">
+                     <ChartContainer config={pieChartConfig} className="w-full">
+                        <PieChart>
+                            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                            <Pie data={analyticsData.applicantsBySchool} dataKey="value" nameKey="name" innerRadius={50} paddingAngle={2}/>
+                            <ChartLegend content={<ChartLegendContent nameKey="name" />} />
+                        </PieChart>
+                    </ChartContainer>
+                </CardContent>
+            </Card>
+        </motion.div>
+      </motion.div>
 
-    </div>
+    </motion.div>
   )
 }

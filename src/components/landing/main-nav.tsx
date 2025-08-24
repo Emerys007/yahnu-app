@@ -86,74 +86,74 @@ export function MainNav() {
             </div>
             
             <div className="md:hidden flex items-center gap-1">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <Menu className="h-5 w-5" />
-                    <span className="sr-only">Ouvrir le menu</span>
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-[80%]">
-                  <SheetHeader className="text-left">
-                    <SheetTitle>
-                      <SheetClose asChild>
-                        <Link href="/">
-                          <div className="flex items-center gap-3">
-                            <Logo className="h-10 w-10" />
-                            <div>
-                                <p className="font-bold text-lg">Yahnu</p>
-                                <p className="text-xs text-muted-foreground">Votre avenir commence ici</p>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <MoreVertical className="h-5 w-5" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setTheme("light")}>
+                        <Sun className="mr-2 h-4 w-4" />
+                        <span>Clair</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setTheme("dark")}>
+                        <Moon className="mr-2 h-4 w-4" />
+                        <span>Sombre</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                <Sheet>
+                    <SheetTrigger asChild>
+                    <Button variant="outline" size="icon">
+                        <Menu className="h-5 w-5" />
+                        <span className="sr-only">Ouvrir le menu</span>
+                    </Button>
+                    </SheetTrigger>
+                    <SheetContent side="right" className="w-[80%]">
+                    <SheetHeader className="text-left">
+                        <SheetTitle>
+                        <SheetClose asChild>
+                            <Link href="/">
+                            <div className="flex items-center gap-3">
+                                <Logo className="h-10 w-10" />
+                                <div>
+                                    <p className="font-bold text-lg">Yahnu</p>
+                                    <p className="text-xs text-muted-foreground">Votre avenir commence ici</p>
+                                </div>
                             </div>
-                          </div>
-                        </Link>
-                      </SheetClose>
-                    </SheetTitle>
-                  </SheetHeader>
-                  <Separator className="my-4" />
-                  <div className="flex flex-col gap-4">
-                    {navLinks.map((link) => (
-                      <SheetClose asChild key={link.href}>
-                        <Link
-                          href={link.href}
-                          className="text-lg font-medium text-foreground hover:text-muted-foreground"
-                        >
-                          {link.label}
-                        </Link>
-                      </SheetClose>
-                    ))}
+                            </Link>
+                        </SheetClose>
+                        </SheetTitle>
+                    </SheetHeader>
                     <Separator className="my-4" />
-                    <div className="flex flex-col items-center gap-4">
-                      <SheetClose asChild>
-                        <Button variant="outline" className="w-full text-lg" asChild>
-                            <Link href="/login">Connexion</Link>
-                        </Button>
-                      </SheetClose>
-                      <SheetClose asChild>
-                        <Button className="w-full text-lg" asChild>
-                          <Link href="/signup">S'inscrire</Link>
-                        </Button>
-                      </SheetClose>
-                       <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" className="w-full text-lg">
-                                    Thème
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => setTheme("light")}>
-                                <Sun className="mr-2 h-4 w-4" />
-                                <span>Clair</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                                <Moon className="mr-2 h-4 w-4" />
-                                <span>Sombre</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                    <div className="flex flex-col gap-4">
+                        {navLinks.map((link) => (
+                        <SheetClose asChild key={link.href}>
+                            <Link
+                            href={link.href}
+                            className="text-lg font-medium text-foreground hover:text-muted-foreground"
+                            >
+                            {link.label}
+                            </Link>
+                        </SheetClose>
+                        ))}
+                        <Separator className="my-4" />
+                        <div className="flex flex-col items-center gap-4">
+                        <SheetClose asChild>
+                            <Button variant="outline" className="w-full text-lg" asChild>
+                                <Link href="/login">Connexion</Link>
+                            </Button>
+                        </SheetClose>
+                        <SheetClose asChild>
+                            <Button className="w-full text-lg" asChild>
+                            <Link href="/signup">S'inscrire</Link>
+                            </Button>
+                        </SheetClose>
+                        </div>
                     </div>
-                  </div>
-                </SheetContent>
-              </Sheet>
+                    </SheetContent>
+                </Sheet>
             </div>
         </div>
       </div>
