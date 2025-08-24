@@ -16,12 +16,12 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, PlusCircle, Trash2 } from "lucide-react"
 import { PhoneNumberInput } from "@/components/ui/phone-number-input"
 import { AddressAutocomplete } from "@/components/ui/address-autocomplete"
+import { RichTextEditor } from "@/components/ui/rich-text-editor"
 
 const schoolProfileSchema = z.object({
   schoolName: z.string().min(2, { message: "Le nom de l'école doit comporter au moins 2 caractères." }),
@@ -146,7 +146,7 @@ export default function SchoolProfilePage() {
                     <FormItem className="md:col-span-2">
                       <FormLabel>À propos de votre école</FormLabel>
                       <FormControl>
-                        <Textarea placeholder={"Décrivez l'histoire, la mission et les points forts de votre école..."} rows={8} {...field} />
+                        <RichTextEditor placeholder={"Décrivez l'histoire, la mission et les points forts de votre école..."} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

@@ -25,7 +25,6 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -34,6 +33,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { motion } from "framer-motion"
+import { RichTextEditor } from "@/components/ui/rich-text-editor"
 
 type EventType = "Career Fair" | "Workshop" | "Networking" | "Webinar";
 
@@ -106,7 +106,7 @@ const EventForm = ({ event, onSave, onCancel }: { event?: z.infer<typeof eventSc
                     <FormItem><FormLabel>Titre de l'événement</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="description" render={({ field }) => (
-                    <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea rows={3} {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Description</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <div className="grid grid-cols-2 gap-4">
                     <FormField control={form.control} name="date" render={({ field }) => (
@@ -275,7 +275,12 @@ export default function CompanyEventsPage() {
             <p className="text-muted-foreground mt-1">Créez et gérez des événements pour interagir avec des candidats potentiels.</p>
             </div>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
+            setIsDialogOpen(isOpen);
+            if (!isOpen) {
+                setEditingEvent(null);
+            }
+        }}>
             <DialogTrigger asChild>
                 <Button onClick={handleCreateClick}><PlusCircle className="mr-2 h-4 w-4" />Créer un événement</Button>
             </DialogTrigger>

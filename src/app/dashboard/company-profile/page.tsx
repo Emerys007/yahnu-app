@@ -17,7 +17,6 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, PlusCircle, Trash2 } from "lucide-react"
@@ -39,6 +38,7 @@ import {
 } from "@/components/ui/select"
 import { PhoneNumberInput } from "@/components/ui/phone-number-input"
 import { AddressAutocomplete } from "@/components/ui/address-autocomplete"
+import { RichTextEditor } from "@/components/ui/rich-text-editor"
 
 const companyProfileSchema = z.object({
   companyName: z.string().min(2, { message: "Le nom de l'entreprise doit comporter au moins 2 caractères." }),
@@ -258,7 +258,7 @@ export default function CompanyProfilePage() {
                     <FormItem className="md:col-span-2">
                       <FormLabel>À propos de votre entreprise</FormLabel>
                       <FormControl>
-                        <Textarea placeholder={"Décrivez la mission, la vision et la culture de votre entreprise..."} rows={8} {...field} />
+                        <RichTextEditor placeholder={"Décrivez la mission, la vision et la culture de votre entreprise..."} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -399,7 +399,7 @@ export default function CompanyProfilePage() {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Description du poste</FormLabel>
-                                                <FormControl><Textarea rows={8} {...field} /></FormControl>
+                                                <FormControl><RichTextEditor {...field} /></FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -436,5 +436,3 @@ export default function CompanyProfilePage() {
     </div>
   )
 }
-
-    

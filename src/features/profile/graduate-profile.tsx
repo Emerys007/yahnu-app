@@ -20,12 +20,13 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, Loader2, PlusCircle, Trash2, Award, Eye, EyeOff, User as UserIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
+import { RichTextEditor } from "@/components/ui/rich-text-editor"
+import { Textarea } from "@/components/ui/textarea"
 
 const educationSchema = z.object({
   degree: z.string().min(2, "Le diplôme est requis."),
@@ -340,7 +341,7 @@ export function GraduateProfile() {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Textarea placeholder="Décrivez vos rôles, responsabilités et réalisations..." rows={10} {...field} />
+                          <RichTextEditor placeholder="Décrivez vos rôles, responsabilités et réalisations..." {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
