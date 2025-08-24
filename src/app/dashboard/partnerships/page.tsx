@@ -39,18 +39,55 @@ type PartnershipRequest = {
 }
 
 const allSchools: School[] = [
-  { id: 1, name: "Institut National Polytechnique Félix Houphouët-Boigny", acronym: "INP-HB", logoUrl: "/images/University.png", location: "Yamoussoukro", slug: "inp-hb" },
-  { id: 2, name: "Université Félix Houphouët-Boigny", acronym: "UFHB", logoUrl: "/images/LogoYahnu.png", location: "Abidjan", slug: "ufhb" },
-  { id: 3, name: "Groupe CSI Pôle Polytechnique", acronym: "CSI", logoUrl: "/images/Logo.png", location: "Abidjan", slug: "csi" },
+    { 
+        id: 1, 
+        name: "Institut National Polytechnique Félix Houphouët-Boigny", 
+        acronym: "INP-HB", 
+        logoUrl: "https://www.adminsite.inphb.app/Imagessiteprincipal/Icon.png", 
+        location: "Yamoussoukro", 
+        slug: "inp-hb" 
+    },
+    { 
+        id: 2, 
+        name: "Université Félix Houphouët-Boigny", 
+        acronym: "UFHB", 
+        logoUrl: "https://w.univ-fhb.edu.ci/wp-content/uploads/2023/11/logo-UFHB-e1699536639348-1024x747.png", 
+        location: "Abidjan", 
+        slug: "ufhb" 
+    },
+    { 
+        id: 3, 
+        name: "Groupe CSI Pôle Polytechnique", 
+        acronym: "CSI", 
+        logoUrl: "https://groupecsi-pp.com/wp-content/uploads/2023/05/nouveau-logo.jpeg", 
+        location: "Abidjan", 
+        slug: "csi" 
+    },
+    { 
+        id: 4, 
+        name: "École Supérieure Africaine des TIC", 
+        acronym: "ESATIC", 
+        logoUrl: "https://esatic.ci/wp-content/uploads/2024/07/esatic_logo.jpg", 
+        location: "Abidjan", 
+        slug: "esatic" 
+    },
+    { 
+        id: 5, 
+        name: "École Nationale Supérieure de Statistique et d'Économie Appliquée", 
+        acronym: "ENSEA", 
+        logoUrl: "https://media.licdn.com/dms/image/C4D0BAQG3X2b1q7X0ZA/company-logo_200_200/0/163065company-logo_638_359/ensea_abidjan_logo?e=2147483647&v=beta&t=O_2X9Z8c_3b9b3e3j3e3j3e3j3e3j3e3j3e3j3e", 
+        location: "Abidjan", 
+        slug: "ensea" 
+    }
 ];
 
 const initialCompanyPartnerships: PartnershipRequest[] = [
-  { id: 1, entityName: "INP-HB", entityLogo: "/images/University.png", status: "pending" },
+  { id: 1, entityName: "INP-HB", entityLogo: "https://www.adminsite.inphb.app/Imagessiteprincipal/Icon.png", status: "pending" },
 ];
 
 const initialSchoolRequests: PartnershipRequest[] = [
-  { id: 1, entityName: "Tech Solutions Abidjan", entityLogo: "/images/Logo.png", status: "pending" },
-  { id: 2, entityName: "Finance & Forte", entityLogo: "/images/LogoYahnu.png", status: "accepted" },
+  { id: 1, entityName: "Tech Solutions Abidjan", entityLogo: "https://placehold.co/100x100.png?text=TSA", status: "pending" },
+  { id: 2, entityName: "Finance & Forte", entityLogo: "https://placehold.co/100x100.png?text=F&F", status: "accepted" },
 ];
 
 
