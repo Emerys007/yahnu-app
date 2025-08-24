@@ -141,7 +141,7 @@ export default function CompanyAnalyticsPage() {
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         variants={containerVariants}
       >
-        <motion.div variants={itemVariants} whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }} transition={{ type: "spring", stiffness: 300 }}>
+        <motion.div variants={itemVariants}>
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Total des candidats</CardTitle>
@@ -153,7 +153,7 @@ export default function CompanyAnalyticsPage() {
                 </CardContent>
             </Card>
         </motion.div>
-        <motion.div variants={itemVariants} whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }} transition={{ type: "spring", stiffness: 300 }}>
+        <motion.div variants={itemVariants}>
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Délai moyen d'embauche</CardTitle>
@@ -165,7 +165,7 @@ export default function CompanyAnalyticsPage() {
                 </CardContent>
             </Card>
         </motion.div>
-        <motion.div variants={itemVariants} whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }} transition={{ type: "spring", stiffness: 300 }}>
+        <motion.div variants={itemVariants}>
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Taux d'entretien</CardTitle>
@@ -179,7 +179,7 @@ export default function CompanyAnalyticsPage() {
         </motion.div>
       </motion.div>
 
-      <motion.div variants={itemVariants} whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }} transition={{ type: "spring", stiffness: 300 }}>
+      <motion.div variants={itemVariants}>
         <Card>
             <CardHeader className="flex flex-row items-center">
                 <div className="grid gap-2">
@@ -214,7 +214,7 @@ export default function CompanyAnalyticsPage() {
       </motion.div>
       
       <motion.div className="grid grid-cols-1 lg:grid-cols-5 gap-6" variants={containerVariants}>
-        <motion.div className="lg:col-span-3" variants={itemVariants} whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }} transition={{ type: "spring", stiffness: 300 }}>
+        <motion.div className="lg:col-span-3" variants={itemVariants}>
             <Card>
                 <CardHeader className="flex flex-row items-center">
                     <div className="grid gap-2">
@@ -248,7 +248,7 @@ export default function CompanyAnalyticsPage() {
                 </CardContent>
             </Card>
         </motion.div>
-        <motion.div className="lg:col-span-2" variants={itemVariants} whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }} transition={{ type: "spring", stiffness: 300 }}>
+        <motion.div className="lg:col-span-2" variants={itemVariants}>
             <Card>
                 <CardHeader className="flex flex-row items-center">
                     <div className="grid gap-2">
