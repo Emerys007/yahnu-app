@@ -141,54 +141,20 @@ export default function MessagesPage() {
         return date.toLocaleDateString();
     }
 
-    // Effect for handling new conversation from query params (e.g., from support tickets)
+    // Effect for handling opening a conversation from a link/ticket
     useEffect(() => {
-        if (!user) return;
+        const convoId = searchParams.get('convoId');
+        if (!convoId || conversations.length === 0) return;
 
-        const newConvoId = searchParams.get('new');
-        if (!newConvoId) return;
-
-        // Check if a conversation with this ID already exists
-        const existingConvo = conversations.find(c => c.id === newConvoId);
-        if (existingConvo) {
-            setSelectedConversation(existingConvo);
+        const convoToSelect = conversations.find(c => c.id === convoId);
+        if (convoToSelect) {
+            setSelectedConversation(convoToSelect);
+            // Clean URL
             router.replace('/dashboard/messages', { scroll: false });
-            return;
         }
-
-        const newConvoName = searchParams.get('name');
-        const initialMessageText = searchParams.get('initialMessage');
-        const initialSenderId = searchParams.get('senderId');
-        
-        // This is a new conversation from a ticket, create it locally first
-        if (initialMessageText && initialSenderId) {
-             const newConvo: Conversation = {
-                id: newConvoId,
-                name: getNewConvoName(newConvoId, newConvoName),
-                avatar: newConvoId.includes('school') ? "/images/University.png" : "https://placehold.co/100x100.png",
-                lastMessage: initialMessageText,
-                lastMessageTimestamp: new Date(),
-                unread: 1,
-                participants: [user.uid, initialSenderId],
-                messages: [{
-                    id: Date.now().toString(),
-                    senderId: initialSenderId,
-                    text: initialMessageText,
-                    timestamp: new Date(),
-                }],
-            };
-
-            // Add to local state and select it
-            setConversations(prev => [newConvo, ...prev.filter(c => c.id !== newConvoId)]);
-            setSelectedConversation(newConvo);
-        }
-        
-        // Clear query params
-        router.replace('/dashboard/messages', { scroll: false });
-
-    // This effect should only run when the user is available and query params change
+    // This effect runs when conversations are loaded or query params change
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams, user, conversations]);
+    }, [searchParams, conversations]);
 
     // Effect for fetching conversations from Firestore
     useEffect(() => {
@@ -214,9 +180,12 @@ export default function MessagesPage() {
             
             setConversations(convos);
 
-            // If no conversation is selected and we are not on mobile, select the first one
+            // If a conversation was selected via URL, keep it, otherwise select the first one on desktop.
             if (!selectedConversation && convos.length > 0 && !isMobile) {
-                setSelectedConversation(convos[0]);
+                 const convoIdFromUrl = searchParams.get('convoId');
+                 if (!convoIdFromUrl) {
+                    setSelectedConversation(convos[0]);
+                 }
             }
             
             setIsLoading(false);
@@ -250,7 +219,6 @@ export default function MessagesPage() {
             messages: updatedMessages, 
             lastMessage: text, 
             lastMessageTimestamp: newMessage.timestamp,
-            // If the other user was a new addition, ensure they are in participants
             participants: otherParticipantId ? [user.uid, otherParticipantId] : [user.uid]
         };
         setSelectedConversation(updatedConversation);
@@ -278,8 +246,7 @@ export default function MessagesPage() {
                 });
             }
             
-            // If support staff or admin sends a message, create a notification for the other participant
-             if (role === 'support_staff' || role === 'admin' || role === 'super_admin') {
+            if (role === 'support_staff' || role === 'admin' || role === 'super_admin') {
                 if (otherParticipantId) {
                     await addDoc(collection(db, "notifications"), {
                         userId: otherParticipantId,
@@ -293,7 +260,7 @@ export default function MessagesPage() {
         } catch (error) {
             console.error("Failed to send message:", error);
             toast({ title: "Erreur", description: "Votre message n'a pas pu être envoyé.", variant: "destructive" });
-            // Revert optimistic update on error by re-fetching (or manually reverting)
+            // Revert optimistic update on error
             setSelectedConversation(selectedConversation);
             setConversations(prev => prev.map(c => c.id === selectedConversation.id ? selectedConversation : c));
         }
