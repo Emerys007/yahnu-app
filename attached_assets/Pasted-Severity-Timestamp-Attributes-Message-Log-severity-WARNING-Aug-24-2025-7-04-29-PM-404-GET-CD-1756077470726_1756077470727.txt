@@ -1,0 +1,251 @@
+Severity	Timestamp	Attributes	Message
+Log severity: WARNING	Aug 24, 2025, 7:04:29 PM	
+404
+GET
+CDN
+https://yahnu.org/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Funi-partnership.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 7:04:29 PM	
+404
+GET
+CDN
+https://yahnu.org/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Fhero%2Findustry-partnership.webp%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 7:04:29 PM	
+404
+GET
+CDN
+https://yahnu.org/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Fhero%2Fbuild-a-team.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 7:04:29 PM	
+404
+GET
+CDN
+https://yahnu.org/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Fhero%2Fdream-job.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:52:05 PM	
+404
+GET
+CDN
+https://yahnu.org/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Funi-partnership.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A640%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:52:05 PM	
+404
+GET
+CDN
+https://yahnu.org/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Fhero%2Findustry-partnership.webp%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:52:05 PM	
+404
+GET
+CDN
+https://yahnu.org/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Fhero%2Fbuild-a-team.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:52:05 PM	
+404
+GET
+CDN
+https://yahnu.org/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Fhero%2Fdream-job.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:30:43 PM	
+404
+GET
+CDN
+https://yahnu.org/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2FCommunity.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:26:12 PM	
+404
+GET
+CDN
+https://yahnu.org/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2FCommunity.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:26:08 PM	
+404
+GET
+CDN
+https://yahnu.org/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2F8886743.fs1.hubspotusercontent-na1.net%2Fhubfs%2F8886743%2FYahnu%2Fremote-work.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A640%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:26:08 PM	
+404
+GET
+CDN
+https://yahnu.org/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2F8886743.fs1.hubspotusercontent-na1.net%2Fhubfs%2F8886743%2FYahnu%2FYahnu-Connects-Graduates-with-Industry.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A640%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:26:08 PM	
+404
+GET
+CDN
+https://yahnu.org/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2F8886743.fs1.hubspotusercontent-na1.net%2Fhubfs%2F8886743%2FYahnu%2FOIP.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A640%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:53 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fmedia.licdn.com%2Fdms%2Fimage%2FC4D0BAQG3X2b1q7X0ZA%2Fcompany-logo_200_200%2F0%2F163065company-logo_638_359%2Fensea_abidjan_logo%3Fe%3D2147483647%26v%3Dbeta%26t%3DO_2X9Z8c_3b9b3e3j3e3j3e3j3e3j3e3j3e3j3e%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:53 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fesatic.ci%2Fwp-content%2Fuploads%2F2024%2F07%2Fesatic_logo.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:53 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fgroupecsi-pp.com%2Fwp-content%2Fuploads%2F2023%2F05%2Fnouveau-logo.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:53 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fw.univ-fhb.edu.ci%2Fwp-content%2Fuploads%2F2023%2F11%2Flogo-UFHB-e1699536639348-1024x747.png%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:53 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fwww.adminsite.inphb.app%2FImagessiteprincipal%2FIcon.png%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:44 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fmedia.licdn.com%2Fdms%2Fimage%2FC4D0BAQG3X2b1q7X0ZA%2Fcompany-logo_200_200%2F0%2F163065company-logo_638_359%2Fensea_abidjan_logo%3Fe%3D2147483647%26v%3Dbeta%26t%3DO_2X9Z8c_3b9b3e3j3e3j3e3j3e3j3e3j3e3j3e%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:44 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fesatic.ci%2Fwp-content%2Fuploads%2F2024%2F07%2Fesatic_logo.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:44 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fgroupecsi-pp.com%2Fwp-content%2Fuploads%2F2023%2F05%2Fnouveau-logo.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:44 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fw.univ-fhb.edu.ci%2Fwp-content%2Fuploads%2F2023%2F11%2Flogo-UFHB-e1699536639348-1024x747.png%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:44 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fwww.adminsite.inphb.app%2FImagessiteprincipal%2FIcon.png%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:41 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Funi-partnership.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A640%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:40 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Fhero%2Findustry-partnership.webp%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:40 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Fhero%2Fbuild-a-team.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:40 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Fhero%2Fdream-job.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:29 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2FBethel_Touman.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A256%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:29 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2FJoel%20K.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A256%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:29 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2FColombe%20Koffi.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A256%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:26 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2FBethel_Touman.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A256%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:26 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2FJoel%20K.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A256%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:26 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2FColombe%20Koffi.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A256%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:24 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2F8886743.fs1.hubspotusercontent-na1.net%2Fhubfs%2F8886743%2FYahnu%2Fremote-work.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A640%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:24 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2F8886743.fs1.hubspotusercontent-na1.net%2Fhubfs%2F8886743%2FYahnu%2FYahnu-Connects-Graduates-with-Industry.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A640%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:24 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2F8886743.fs1.hubspotusercontent-na1.net%2Fhubfs%2F8886743%2FYahnu%2FOIP.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A640%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:23 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fmedia.licdn.com%2Fdms%2Fimage%2FC4D0BAQG3X2b1q7X0ZA%2Fcompany-logo_200_200%2F0%2F163065company-logo_638_359%2Fensea_abidjan_logo%3Fe%3D2147483647%26v%3Dbeta%26t%3DO_2X9Z8c_3b9b3e3j3e3j3e3j3e3j3e3j3e3j3e%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:23 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fesatic.ci%2Fwp-content%2Fuploads%2F2024%2F07%2Fesatic_logo.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:23 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fgroupecsi-pp.com%2Fwp-content%2Fuploads%2F2023%2F05%2Fnouveau-logo.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:23 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fw.univ-fhb.edu.ci%2Fwp-content%2Fuploads%2F2023%2F11%2Flogo-UFHB-e1699536639348-1024x747.png%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:23 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fwww.adminsite.inphb.app%2FImagessiteprincipal%2FIcon.png%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A384%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:21 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F6%2F62%2FCEVA_Logistics_New_Logo.png%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A256%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:21 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fwww.bridgebankgroup.com%2Fimages%2Finterface%2Flogo-white.svg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A256%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:21 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fgroupesifca.com%2Fwp-content%2Fuploads%2F2021%2F04%2FLogotype_Sifca-1.png%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A256%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:21 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc8%2FOrange_logo.svg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A256%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:12 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Funi-partnership.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A640%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:12 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Fhero%2Findustry-partnership.webp%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:12 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Fhero%2Fbuild-a-team.jpeg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:12 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Fhero%2Fdream-job.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A1920%7D%2C%7B%22operation%22%3A%22output%22%2C%22format%22%3A%22webp%22%2C%22quality%22%3A75%7D%5D
+Log severity: WARNING	Aug 24, 2025, 6:25:08 PM	
+404
+GET
+CDN
+https://yahnu-app--yahnu-50c61.europe-west4.hosted.app/_fah/image/process?operations=%5B%7B%22operation%22%3A%22input%22%2C%22type%22%3A%22url%22%2C%22url%22%3A%22%2Fimages%2Funi-partnership.jpg%22%7D%2C%7B%22operation%22%3A%22resize%22%2C%22width%22%3A640%7D%2C%7B%22operation%22%3
