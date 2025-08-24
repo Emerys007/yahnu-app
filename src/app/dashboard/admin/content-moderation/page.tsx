@@ -1,8 +1,15 @@
 
-import { redirect } from 'next/navigation'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// This route is obsolete. Content creation is now handled by the Content Manager role
-// at /dashboard/content
 export default function ContentModerationPage() {
-  redirect('/dashboard/content')
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Modération de contenu</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p>Cette page sera bientôt disponible.</p>
+            </CardContent>
+        </Card>
+    )
 }

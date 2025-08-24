@@ -238,71 +238,74 @@ export default function MessagesPage() {
         return date.toLocaleDateString();
     }
 
-    // Effect for handling opening a conversation from a link/ticket
+    // Effect for handling opening a conversation from a URL param
     useEffect(() => {
         const handleUrlParams = async () => {
             const convoId = searchParams.get('convoId');
-            if (!convoId) {
-                if (!isMobile && conversations.length > 0 && !selectedConversation) {
-                    setSelectedConversation(conversations[0]);
-                }
+            if (!convoId || !user) {
                 return;
             }
-
+    
             router.replace('/dashboard/messages', { scroll: false });
-
+    
             const existingConvo = conversations.find(c => c.id === convoId);
             if (existingConvo) {
                 setSelectedConversation(existingConvo);
                 return;
             }
-
+    
+            // If convo doesn't exist locally, check Firestore or create it
             const convoRef = doc(db, "conversations", convoId);
             const convoDoc = await getDoc(convoRef);
-
+    
             if (convoDoc.exists()) {
-                // This will be handled by the main listener
-            } else if (convoId.startsWith('support-')) {
+                // Let the main listener handle adding it to the state
+            } else {
+                // Conversation needs to be created, likely from a support ticket
                 const ticketId = searchParams.get('ticketId');
                 if (!ticketId) return;
-                
+
                 const ticketRef = doc(db, "tickets", ticketId);
                 const ticketSnap = await getDoc(ticketRef);
-
+                
                 if (ticketSnap.exists()) {
                     const ticket = ticketSnap.data();
-                    const newConversation: Conversation = {
+                    const newConversationData = {
                         id: convoId,
                         name: ticket.userName,
-                        avatar: "https://placehold.co/100x100.png",
-                        participants: [user!.uid, ticket.userId],
+                        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(ticket.userName)}&background=random`,
+                        participants: [user.uid, ticket.userId],
                         lastMessage: ticket.message,
-                        lastMessageTimestamp: ticket.submittedAt.toDate(),
-                        unread: 1,
+                        lastMessageTimestamp: ticket.submittedAt,
+                        unread: 0,
                         messages: [{
                             id: ticketSnap.id,
                             senderId: ticket.userId,
                             text: ticket.message,
-                            timestamp: ticket.submittedAt.toDate(),
+                            timestamp: ticket.submittedAt,
                         }],
                     };
-                    
-                    await setDoc(convoRef, {
-                        ...newConversation,
-                        lastMessageTimestamp: ticket.submittedAt,
-                        messages: [{ ...newConversation.messages[0], timestamp: ticket.submittedAt }],
-                    });
 
-                    // The main listener will now pick this up.
+                    // Immediately create the conversation in state to display it
+                    const newConvoForState = {
+                        ...newConversationData,
+                        lastMessageTimestamp: ticket.submittedAt.toDate(),
+                        messages: [{ ...newConversationData.messages[0], timestamp: ticket.submittedAt.toDate() }],
+                    };
+                    setSelectedConversation(newConvoForState);
+                    setConversations(prev => [newConvoForState, ...prev]);
+
+                    // Then, save it to Firestore
+                    await setDoc(convoRef, newConversationData);
                 }
             }
         };
-
-        if (user) {
-            handleUrlParams();
+    
+        if (user && conversations) {
+             handleUrlParams();
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams, conversations, user]);
+    }, [searchParams, user]); // Removed `conversations` to prevent loop
 
     // Effect for fetching conversations from Firestore
     useEffect(() => {
@@ -396,13 +399,14 @@ export default function MessagesPage() {
                 });
             }
             
-            if (otherParticipantId) {
+            if (role === 'support_staff' && otherParticipantId) {
                 await addDoc(collection(db, "notifications"), {
                     userId: otherParticipantId,
-                    text: `Nouveau message de ${user.name}: "${text.substring(0, 30)}..."`,
+                    text: `Réponse du support : "${text.substring(0, 30)}..."`,
                     read: false,
                     createdAt: serverTimestamp(),
-                    type: 'message'
+                    type: 'message',
+                    link: `/dashboard/messages?convoId=${selectedConversation.id}`
                 });
             }
         } catch (error) {
@@ -518,3 +522,5 @@ export default function MessagesPage() {
         </div>
     )
 }
+
+    

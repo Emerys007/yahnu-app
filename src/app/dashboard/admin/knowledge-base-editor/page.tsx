@@ -1,9 +1,15 @@
 
-import KnowledgeBaseEditor from '@/components/dashboard/support/knowledge-base-editor';
-import { FC } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const KnowledgeBaseEditorPage: FC = () => {
-  return <KnowledgeBaseEditor />;
-};
-
-export default KnowledgeBaseEditorPage;
+export default function KnowledgeBaseEditorPage() {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Éditeur de la base de connaissances</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p>Cette page sera bientôt disponible.</p>
+            </CardContent>
+        </Card>
+    )
+}

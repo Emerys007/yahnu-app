@@ -34,6 +34,7 @@ import {
   Megaphone,
   HeartPulse,
   BookOpen,
+  Eye,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -118,11 +119,11 @@ const getNavItems = (role: Role) => {
   ];
   
   const contentManagerNav = [
-    { href: "/dashboard/admin/overview", icon: LayoutDashboard, label: 'Tableau de bord' },
-    { href: "/dashboard/content/static-pages", icon: FileText, label: 'Pages statiques' },
-    { href: "/dashboard/content/blog", icon: Newspaper, label: 'Gestion du blog' },
-    { href: "/dashboard/support/announcements", icon: Megaphone, label: 'Annonces' },
-    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: 'Base de connaissances' },
+    { href: "/dashboard", icon: LayoutDashboard, label: 'Tableau de bord' },
+    { type: "divider", label: 'Gestion de Contenu' },
+    { href: "/dashboard/admin/content-moderation", icon: Eye, label: 'Modération de contenu' },
+    { href: "/dashboard/admin/announcements", icon: Megaphone, label: 'Annonces' },
+    { href: "/dashboard/admin/knowledge-base-editor", icon: BookOpen, label: 'Base de connaissances' },
   ];
   
   const supportStaffNav = [

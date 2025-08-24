@@ -32,10 +32,11 @@ import {
 import { useSidebar } from "./sidebar"
 import { useAuth, type Role } from "@/context/auth-context"
 import { cn } from "@/lib/utils"
-import { collection, query, where, onSnapshot, limit, DocumentData } from "firebase/firestore";
+import { collection, query, where, onSnapshot, limit, DocumentData, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { SearchCommand } from "../search-command"
 import { useTheme } from "next-themes"
+import { useRouter } from "next/navigation"
 
 type NotificationItem = {
     id: string;
@@ -43,6 +44,7 @@ type NotificationItem = {
     text: string;
     time: string;
     read: boolean;
+    link?: string;
 };
 
 const formatDistanceToNow = (date: Date): string => {
@@ -78,6 +80,7 @@ export function DashboardHeader() {
   const { toggleSidebar } = useSidebar();
   const { user, role } = useAuth();
   const { setTheme } = useTheme();
+  const router = useRouter();
 
   const [notifications, setNotifications] = React.useState<NotificationItem[]>([]);
 
@@ -115,6 +118,7 @@ export function DashboardHeader() {
             time: formatDistanceToNow(createdAt),
             icon: icon,
             read: getReadNotificationIds().includes(doc.id),
+            link: '/dashboard/admin/user-management'
         };
       };
     } else if (role === 'school') {
@@ -134,6 +138,7 @@ export function DashboardHeader() {
                 time: formatDistanceToNow(createdAt),
                 icon: Building, // TODO: Change to a more appropriate icon for a graduate
                 read: getReadNotificationIds().includes(doc.id),
+                link: '/dashboard/graduates'
             };
         };
     } else if (role === 'support_staff') {
@@ -145,12 +150,14 @@ export function DashboardHeader() {
         notificationParser = (doc: DocumentData): NotificationItem => {
             const data = doc.data() as DocumentData;
             const createdAt = data.submittedAt?.toDate ? data.submittedAt.toDate() : new Date();
+            const convoId = `support-${data.userId}`;
             return {
                 id: doc.id,
                 text: `Nouveau ticket de ${data.userName}: "${data.subject}"`,
                 time: formatDistanceToNow(createdAt),
                 icon: Ticket,
                 read: getReadNotificationIds().includes(doc.id),
+                link: `/dashboard/messages?convoId=${convoId}&ticketId=${doc.id}`
             }
         }
     } else {
@@ -173,6 +180,7 @@ export function DashboardHeader() {
                 time: formatDistanceToNow(createdAt),
                 icon: icon,
                 read: getReadNotificationIds().includes(doc.id),
+                link: data.link || '/dashboard/messages'
              }
         }
     }
@@ -198,13 +206,26 @@ export function DashboardHeader() {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const handleRead = (id: string) => {
-    const updatedNotifications = notifications.map(n => n.id === id ? { ...n, read: true } : n);
+  const handleRead = async (notification: NotificationItem) => {
+    const updatedNotifications = notifications.map(n => n.id === notification.id ? { ...n, read: true } : n);
     setNotifications(updatedNotifications);
 
     const readIds = getReadNotificationIds();
-    if (!readIds.includes(id)) {
-        setReadNotificationIds([...readIds, id]);
+    if (!readIds.includes(notification.id)) {
+        setReadNotificationIds([...readIds, notification.id]);
+    }
+
+    if (notification.link) {
+      router.push(notification.link);
+    }
+    
+    // Also mark as read in the DB if it's a notification from the `notifications` collection
+    if (user && !adminRoles.includes(role) && role !== 'school' && role !== 'support_staff') {
+        const notifDocRef = doc(db, 'notifications', notification.id);
+        const docSnap = await getDoc(notifDocRef);
+        if (docSnap.exists()) {
+             await updateDoc(notifDocRef, { read: true });
+        }
     }
   };
 
@@ -249,7 +270,7 @@ export function DashboardHeader() {
                 <DropdownMenuSeparator />
                 {notifications.length > 0 ? (
                     notifications.map((item) => (
-                         <DropdownMenuItem key={item.id} className="flex items-start gap-3" onSelect={(e) => {e.preventDefault(); handleRead(item.id)}}>
+                         <DropdownMenuItem key={item.id} className="flex items-start gap-3" onSelect={(e) => {e.preventDefault(); handleRead(item)}}>
                             {!item.read && <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />}
                             <item.icon className={cn("h-4 w-4 mt-1 text-muted-foreground", item.read && "ml-[14px]")} />
                             <div className="flex-1">
@@ -294,3 +315,5 @@ export function DashboardHeader() {
     </header>
   )
 }
+
+    

@@ -140,10 +140,10 @@ export default function SupportCenterPage() {
             await updateDoc(ticketRef, { status: 'open' });
         }
         
-        // Always redirect to the messages page with a stable conversation ID.
+        // Redirect to the messages page with a stable conversation ID and ticket ID.
         // The messages page will be responsible for creating the conversation if it doesn't exist.
         const convoId = `support-${ticket.userId}`;
-        router.push(`/dashboard/messages?convoId=${convoId}`);
+        router.push(`/dashboard/messages?convoId=${convoId}&ticketId=${ticket.id}`);
     };
 
     const newTickets = tickets.filter(t => t.status === 'new');
@@ -232,3 +232,5 @@ export default function SupportCenterPage() {
         </div>
     )
 }
+
+    
