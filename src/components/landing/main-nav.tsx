@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { Menu, MoreVertical, Sun, Moon } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,13 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu"
+import { useTheme } from "next-themes";
 
 const navLinks = [
   { href: "/jobs", label: "Emplois" },
@@ -24,6 +31,8 @@ const navLinks = [
 ];
 
 export function MainNav() {
+  const { setTheme } = useTheme()
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center">
@@ -57,6 +66,23 @@ export function MainNav() {
                 <Button asChild>
                   <Link href="/signup">S'inscrire</Link>
                 </Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <MoreVertical className="h-5 w-5" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setTheme("light")}>
+                        <Sun className="mr-2 h-4 w-4" />
+                        <span>Clair</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setTheme("dark")}>
+                        <Moon className="mr-2 h-4 w-4" />
+                        <span>Sombre</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
             
             <div className="md:hidden flex items-center gap-1">
@@ -107,6 +133,23 @@ export function MainNav() {
                           <Link href="/signup">S'inscrire</Link>
                         </Button>
                       </SheetClose>
+                       <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" className="w-full text-lg">
+                                    Thème
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => setTheme("light")}>
+                                <Sun className="mr-2 h-4 w-4" />
+                                <span>Clair</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                                <Moon className="mr-2 h-4 w-4" />
+                                <span>Sombre</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                   </div>
                 </SheetContent>

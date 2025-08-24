@@ -9,6 +9,9 @@ import {
   Check,
   School,
   Building,
+  Sun,
+  Moon,
+  MoreVertical,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -28,6 +31,7 @@ import { cn } from "@/lib/utils"
 import { collection, query, where, onSnapshot, limit, DocumentData } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { SearchCommand } from "../search-command"
+import { useTheme } from "next-themes"
 
 type NotificationItem = {
     id: string;
@@ -67,6 +71,7 @@ const setReadNotificationIds = (ids: string[]) => {
 export function DashboardHeader() {
   const { toggleSidebar } = useSidebar();
   const { user, role } = useAuth();
+  const { setTheme } = useTheme();
 
   const [notifications, setNotifications] = React.useState<NotificationItem[]>([]);
 
@@ -74,7 +79,7 @@ export function DashboardHeader() {
     if (!user) return;
 
     let q;
-    if (role === 'admin') {
+    if (role === 'admin' || role === 'super_admin') {
       q = query(
         collection(db, "users"), 
         where('status', '==', 'pending'),
@@ -204,6 +209,25 @@ export function DashboardHeader() {
         </DropdownMenu>
 
         <UserNav />
+
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                    <MoreVertical className="h-5 w-5" />
+                    <span className="sr-only">More options</span>
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setTheme("light")}>
+                <Sun className="mr-2 h-4 w-4" />
+                <span>Clair</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                <Moon className="mr-2 h-4 w-4" />
+                <span>Sombre</span>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   )
