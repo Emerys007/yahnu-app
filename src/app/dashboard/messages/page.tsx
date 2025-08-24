@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { MessageSquare, Send, Search, ArrowLeft, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { useAuth } from "@/context/auth-context"
+import { useAuth, type Role } from "@/context/auth-context"
 import { db } from "@/lib/firebase"
 import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, updateDoc, getDoc, writeBatch, setDoc } from "firebase/firestore"
 import { useToast } from "@/hooks/use-toast"
@@ -57,7 +57,7 @@ const MessageView = ({
 
     useEffect(() => {
         if (scrollAreaRef.current) {
-            scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
+            scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'auto' });
         }
     }, [conversation.messages]);
 
@@ -156,32 +156,32 @@ export default function MessagesPage() {
             return;
         }
 
-        // If it doesn't exist, create it locally
         const newConvoName = searchParams.get('name');
         const initialMessageText = searchParams.get('initialMessage');
         const initialSenderId = searchParams.get('senderId');
+        
+        // This is a new conversation from a ticket, create it locally first
+        if (initialMessageText && initialSenderId) {
+             const newConvo: Conversation = {
+                id: newConvoId,
+                name: getNewConvoName(newConvoId, newConvoName),
+                avatar: newConvoId.includes('school') ? "/images/University.png" : "https://placehold.co/100x100.png",
+                lastMessage: initialMessageText,
+                lastMessageTimestamp: new Date(),
+                unread: 1,
+                participants: [user.uid, initialSenderId],
+                messages: [{
+                    id: Date.now().toString(),
+                    senderId: initialSenderId,
+                    text: initialMessageText,
+                    timestamp: new Date(),
+                }],
+            };
 
-        if (!initialMessageText || !initialSenderId) return;
-
-        const newConvo: Conversation = {
-            id: newConvoId,
-            name: getNewConvoName(newConvoId, newConvoName),
-            avatar: newConvoId.includes('school') ? "/images/University.png" : "https://placehold.co/100x100.png",
-            lastMessage: initialMessageText,
-            lastMessageTimestamp: new Date(),
-            unread: 1,
-            participants: [user.uid, initialSenderId],
-            messages: [{
-                id: Date.now().toString(),
-                senderId: initialSenderId,
-                text: initialMessageText,
-                timestamp: new Date(),
-            }],
-        };
-
-        // Add to local state and select it
-        setConversations(prev => [newConvo, ...prev.filter(c => c.id !== newConvoId)]);
-        setSelectedConversation(newConvo);
+            // Add to local state and select it
+            setConversations(prev => [newConvo, ...prev.filter(c => c.id !== newConvoId)]);
+            setSelectedConversation(newConvo);
+        }
         
         // Clear query params
         router.replace('/dashboard/messages', { scroll: false });
@@ -261,16 +261,18 @@ export default function MessagesPage() {
             const convoRef = doc(db, "conversations", selectedConversation.id);
             const convoDoc = await getDoc(convoRef);
 
+            const messagePayload = { ...newMessage, timestamp: serverTimestamp() };
+
             if (convoDoc.exists()) {
                 await updateDoc(convoRef, {
-                    messages: [...convoDoc.data().messages, { ...newMessage, timestamp: serverTimestamp() }],
+                    messages: [...convoDoc.data().messages, messagePayload],
                     lastMessage: text,
                     lastMessageTimestamp: serverTimestamp()
                 });
             } else {
                  await setDoc(convoRef, {
                     ...updatedConversation,
-                    messages: [{ ...newMessage, timestamp: serverTimestamp() }],
+                    messages: [messagePayload],
                     lastMessage: text,
                     lastMessageTimestamp: serverTimestamp()
                 });

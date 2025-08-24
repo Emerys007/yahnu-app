@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, MessageSquare, CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { collection, query, onSnapshot, orderBy, DocumentData } from "firebase/firestore";
+import { collection, query, onSnapshot, orderBy, DocumentData, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 type Ticket = {
@@ -130,7 +130,13 @@ export default function SupportCenterPage() {
         return () => unsubscribe();
     }, []);
 
-    const handleTicketSelect = (ticket: Ticket) => {
+    const handleTicketSelect = async (ticket: Ticket) => {
+        // Mark the ticket as 'open' when it's viewed for the first time
+        if (ticket.status === 'new') {
+            const ticketRef = doc(db, "tickets", ticket.id);
+            await updateDoc(ticketRef, { status: 'open' });
+        }
+
         // Create a unique but predictable conversation ID between the user and support
         const convoId = `support-${ticket.userId}`;
         const queryParams = new URLSearchParams({
