@@ -47,21 +47,21 @@ export function UserNav() {
   }
   
   const getRoleInfo = (role: Role) => {
-    const roleMap: Record<Role, { label: string; icon: React.ElementType, profileLabel: string }> = {
-      graduate: { label: 'Diplômé', icon: User, profileLabel: 'Mon Profil' },
-      company: { label: 'Entreprise', icon: Building, profileLabel: 'Profil Entreprise' },
-      school: { label: 'École', icon: School, profileLabel: 'Profil École' },
-      admin: { label: 'Admin', icon: Shield, profileLabel: 'Profil' },
-      super_admin: { label: 'Super Admin', icon: Shield, profileLabel: 'Profil' },
-      content_manager: { label: 'Gestionnaire de contenu', icon: Shield, profileLabel: 'Profil' },
-      support_staff: { label: 'Support', icon: Shield, profileLabel: 'Profil' },
+    const roleMap: Record<Role, { label: string; icon: React.ElementType, profileLabel: string, profileLink: string }> = {
+      graduate: { label: 'Diplômé', icon: User, profileLabel: 'Mon Profil', profileLink: '/dashboard/profile' },
+      company: { label: 'Entreprise', icon: Building, profileLabel: 'Profil Entreprise', profileLink: '/dashboard/organization-profile' },
+      school: { label: 'École', icon: School, profileLabel: 'Profil École', profileLink: '/dashboard/organization-profile' },
+      admin: { label: 'Admin', icon: Shield, profileLabel: 'Profil', profileLink: '/dashboard/settings' },
+      super_admin: { label: 'Super Admin', icon: Shield, profileLabel: 'Profil', profileLink: '/dashboard/settings' },
+      content_manager: { label: 'Gestionnaire de contenu', icon: Shield, profileLabel: 'Profil', profileLink: '/dashboard/settings' },
+      support_staff: { label: 'Support', icon: Shield, profileLabel: 'Profil', profileLink: '/dashboard/settings' },
     };
-    return roleMap[role] || { label: role, icon: User, profileLabel: 'Profil' };
+    return roleMap[role] || { label: role, icon: User, profileLabel: 'Profil', profileLink: '/dashboard/settings' };
   };
 
   const hasDistinctProfilePage = role === 'graduate' || role === 'company' || role === 'school';
   const canReceiveMessages = role === 'graduate' || role === 'company' || role === 'school' || role === 'support_staff';
-  const { label: roleLabel, icon: RoleIcon, profileLabel } = getRoleInfo(role);
+  const { label: roleLabel, icon: RoleIcon, profileLabel, profileLink } = getRoleInfo(role);
 
   return (
     <DropdownMenu>
@@ -91,7 +91,7 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {hasDistinctProfilePage && (
-            <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
+            <DropdownMenuItem onClick={() => router.push(profileLink)}>
               <User className="mr-2 h-4 w-4" />
               <span>{profileLabel}</span>
             </DropdownMenuItem>
