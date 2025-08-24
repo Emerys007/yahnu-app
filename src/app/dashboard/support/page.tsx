@@ -126,7 +126,9 @@ export default function SupportPage() {
 
   const handleContactSchool = () => {
     if (user?.schoolId) {
-        router.push(`/dashboard/messages?new=${user.schoolId}`);
+        // Construct a unique but predictable conversation ID for the school
+        const schoolConvoId = `school-admin-${user.schoolId}`;
+        router.push(`/dashboard/messages?new=${schoolConvoId}&name=${encodeURIComponent(user.schoolName || 'Admin École')}`);
     }
   }
 
@@ -213,7 +215,7 @@ export default function SupportPage() {
                             <CardDescription>Besoin de contacter votre école au sujet de votre compte ?</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Button className="w-full justify-start" onClick={handleContactSchool}>
+                            <Button className="w-full justify-start" onClick={handleContactSchool} disabled={!user?.schoolId}>
                                 <University className="mr-2 h-4 w-4" />
                                 Contacter votre école
                             </Button>
@@ -225,3 +227,5 @@ export default function SupportPage() {
     </motion.div>
   );
 }
+
+    
