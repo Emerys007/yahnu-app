@@ -1,0 +1,28 @@
+Why are none of my images loading? what's the issue?
+Gemini said
+Okay, let's tackle why your images aren't loading, based on those 404 warning messages.
+The logs like this: https://yahnu.org/_fah/image/process?operations=[{"operation":"input","type":"url","url":"%2Fimages%2FBlog%2Fremote-work.jpg"},{"operation":"resize","width":640},{"operation":"output","format":"webp","quality":75}]
+tell us a few key things:
+_fah/image/process : This is Firebase App Hosting's built-in image optimization service at work! It's trying to process your images (resize them to 640px, convert to webp, etc.) to deliver them efficiently to users.
+404 status code : This is the crucial part. It means "Not Found."
+"url":"%2Fimages%2FBlog%2Fremote-work.jpg" : This is the source URL that the image processor is trying to find and use.
+The issue is not with the image processing itself, but that the image processor cannot find the original image file at the specified source URL.
+Think of it like this: You asked a chef (the image processor) to make a specific dish using an ingredient (your image file) from a certain pantry shelf (the URL path). The chef is ready to cook, but when they go to the shelf, the ingredient isn't there! So, they give you a "404 Not Found" error.
+Common reasons why your images aren't loading (404 Not Found):
+Incorrect Path in Your Code: The most frequent reason. The path you're using in your HTML <img> tags or Next.js Image components ( /images/Blog/remote-work.jpg , /images/uni-partnership.jpg , etc.) does not match the actual location of the image files in your deployed application.
+For Next.js applications (which you have): Static assets like images typically reside in the public directory at the root of your project. If you have an image at your-project/public/images/Blog/remote-work.jpg , you should reference it in your code as /images/Blog/remote-work.jpg (without /public ). Double-check that your image files are indeed in the public directory and the paths match.
+Files Not Deployed: The image files might exist locally in your development environment, but they were not included in the build output that gets deployed to Firebase App Hosting. This usually happens if they are not placed in the correct public directory or if there's a problem with your build configuration.
+Case Sensitivity: Firebase App Hosting's servers run on Linux, which is case-sensitive . If your file is named remote-Work.jpg but your code refers to remote-work.jpg , it will result in a 404. Ensure the capitalization of your image filenames and directory names perfectly matches what's in your code.
+Typo in Filename: A simple typo in the image filename within your code or the actual file on disk.
+How to fix it:
+Verify Image Locations in Your Project:
+Open your local project directory.
+Navigate to your public folder.
+Inside public , ensure you have an images folder, and then a Blog folder (or whatever subdirectories are indicated in your URLs).
+Confirm that the specific image files ( remote-work.jpg , Yahnu-Connects-Graduates-with-Industry.jpg , uni-partnership.jpg , Build-A-Team.jpeg , dream-job.jpg , Industry.webp ) exist in their respective correct locations within the public directory.
+Check Image Paths in Your Code:
+Go to the components or pages where you are displaying these images (e.g., blog post pages, home page).
+Examine the src attribute of your <img> tags or the src prop of your Next.js <Image> components.
+Ensure the path used (e.g., /images/Blog/remote-work.jpg ) precisely matches the structure you found in your public directory, including capitalization.
+Re-deploy After Correction: Once you've made sure the image files are in the correct public directory and your code uses the accurate, case-sensitive paths, commit these changes to your GitHub repository. This will trigger a new build on Firebase App Hosting, which should then successfully include and locate your images.
+In summary, your images aren't loading because your deployed application can't find them at the paths specified in your code. It's a pathing or deployment issue with your static assets.
