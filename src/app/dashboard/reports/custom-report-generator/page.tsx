@@ -7,16 +7,18 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { FileText, Download, Eye, Calendar, BarChart3, PieChart, TrendingUp, Loader2 } from "lucide-react"
+import { FileText, Download, Eye, Calendar, BarChart3, PieChart as PieChartIcon, TrendingUp, Loader2 } from "lucide-react"
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { useToast } from "@/hooks/use-toast"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { exportToCsv } from "@/lib/utils"
+import { BarChart, PieChart, ResponsiveContainer, Bar, Pie, XAxis, YAxis, Tooltip, Legend, Cell } from "recharts"
 
 type ReportStatus = 'ready' | 'generating';
 type ReportFormat = 'PDF' | 'Excel' | 'CSV';
 type ReportType = "Analyses d'utilisateurs" | "Analyses d'emploi" | "Analyses d'entreprise" | "Analyses d'engagement" | "Analyses financières" | "";
+type VisualizationType = 'bar' | 'pie' | 'count';
 
 interface SavedReport {
     id: number;
@@ -25,13 +27,62 @@ interface SavedReport {
     dateGenerated: string;
     status: ReportStatus;
     format: ReportFormat;
+    visualization: VisualizationType;
+    dataSource: string;
 }
 
-const mockReportData = [
-    { metric: "Inscriptions", value: 1250 },
-    { metric: "Profils complétés", value: 980 },
-    { metric: "Candidatures", value: 3420 },
-];
+const MOCK_DATA_SOURCE: { [key: string]: any[] } = {
+    user_registrations: [
+        { name: "Jan", value: 120 }, { name: "Fév", value: 150 }, { name: "Mar", value: 210 }
+    ],
+    job_applications: [
+        { name: "Tech", value: 500 }, { name: "Finance", value: 320 }, { name: "Agro", value: 150 }
+    ],
+    company_signups: [
+        { name: "Q1", value: 15 }, { name: "Q2", value: 25 }, { name: "Q3", value: 22 }
+    ],
+    profile_completions: [
+        { name: 'Complété', value: 980 }, { name: 'Incomplet', value: 270 }
+    ],
+};
+const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))'];
+
+const ReportVisualizer = ({ report }: { report: SavedReport | null }) => {
+    if (!report) return null;
+    const data = MOCK_DATA_SOURCE[report.dataSource] || [];
+
+    switch(report.visualization) {
+        case 'bar':
+            return (
+                <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={data}>
+                        <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+                        <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+                        <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}/>
+                        <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                </ResponsiveContainer>
+            );
+        case 'pie':
+            return (
+                <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                        <Pie data={data} cx="50%" cy="50%" labelLine={false} outerRadius={80} dataKey="value" nameKey="name">
+                            {data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
+                        </Pie>
+                        <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}/>
+                        <Legend />
+                    </PieChart>
+                </ResponsiveContainer>
+            );
+        case 'count':
+             const total = data.reduce((sum, item) => sum + item.value, 0);
+             return <div className="flex h-[300px] items-center justify-center text-6xl font-bold">{total}</div>;
+        default:
+            return <div>Type de visualisation non pris en charge.</div>
+    }
+}
+
 
 export default function CustomReportGeneratorPage() {
     const { toast } = useToast();
@@ -41,11 +92,10 @@ export default function CustomReportGeneratorPage() {
     const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
     const [isGenerating, setIsGenerating] = useState(false);
     const [savedReports, setSavedReports] = useState<SavedReport[]>([
-        { id: 1, name: "Analyses mensuelles des utilisateurs", type: "Analyses d'utilisateurs", dateGenerated: "2024-01-15", status: "ready", format: "PDF" },
-        { id: 2, name: "Rapport du marché de l'emploi Q4 2023", type: "Analyses d'emploi", dateGenerated: "2024-01-01", status: "ready", format: "CSV" },
+        { id: 1, name: "Analyses mensuelles des utilisateurs", type: "Analyses d'utilisateurs", dateGenerated: "2024-01-15", status: "ready", format: "PDF", visualization: 'bar', dataSource: 'user_registrations' },
+        { id: 2, name: "Rapport du marché de l'emploi Q4 2023", type: "Analyses d'emploi", dateGenerated: "2024-01-01", status: "ready", format: "CSV", visualization: 'pie', dataSource: 'job_applications' },
     ]);
     const [viewingReport, setViewingReport] = useState<SavedReport | null>(null);
-
 
     const availableMetrics = [
         { id: "user_registrations", label: "Inscriptions d'utilisateurs", category: "Utilisateurs" },
@@ -77,13 +127,19 @@ export default function CustomReportGeneratorPage() {
         }
 
         setIsGenerating(true);
+        // Determine visualization based on the first selected metric (simple logic for demo)
+        const firstMetric = selectedMetrics[0];
+        const visualization: VisualizationType = firstMetric.includes('registrations') ? 'bar' : firstMetric.includes('applications') ? 'pie' : 'count';
+        
         const newReport: SavedReport = {
             id: Date.now(),
             name: reportName,
             type: reportType,
             dateGenerated: new Date().toISOString().split('T')[0],
             status: 'generating',
-            format: "CSV"
+            format: "CSV",
+            visualization: visualization,
+            dataSource: firstMetric,
         };
         setSavedReports(prev => [newReport, ...prev]);
 
@@ -102,15 +158,13 @@ export default function CustomReportGeneratorPage() {
         }, 3000);
     }
     
-    const handlePreview = () => {
-        toast({
-            title: "Aperçu non disponible",
-            description: "Cette fonctionnalité est en cours de développement."
-        })
+    const handlePreview = (report: SavedReport) => {
+        setViewingReport(report);
     }
     
     const handleDownload = (report: SavedReport) => {
-        exportToCsv(mockReportData, `${report.name.replace(/\s+/g, '_').toLowerCase()}.csv`);
+        const data = MOCK_DATA_SOURCE[report.dataSource] || [];
+        exportToCsv(data, `${report.name.replace(/\s+/g, '_').toLowerCase()}.csv`);
         toast({
             title: "Téléchargement lancé",
             description: `Le rapport "${report.name}" est en cours de téléchargement.`
@@ -145,7 +199,6 @@ export default function CustomReportGeneratorPage() {
                                     {isGenerating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <BarChart3 className="h-4 w-4 mr-2" />}
                                     {isGenerating ? 'Génération...' : 'Générer le rapport'}
                                 </Button>
-                                <Button variant="outline" onClick={handlePreview}><Eye className="h-4 w-4 mr-1" />Aperçu</Button>
                             </div>
                         </CardContent>
                     </Card>
@@ -153,7 +206,7 @@ export default function CustomReportGeneratorPage() {
                         <CardHeader><CardTitle>Rapports sauvegardés</CardTitle><CardDescription>Accédez aux rapports générés précédemment et téléchargez-les dans divers formats.</CardDescription></CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {savedReports.map((report) => (<div key={report.id} className="border rounded-lg p-4"><div className="flex items-start justify-between mb-3"><div><h4 className="font-medium">{report.name}</h4><p className="text-sm text-muted-foreground">{report.type}</p></div><Badge variant={report.status === 'ready' ? 'default' : 'secondary'} className={report.status === 'ready' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : ''}>{report.status === 'ready' ? 'Prêt' : 'En génération'}</Badge></div><div className="flex items-center justify-between text-sm text-muted-foreground mb-3"><div className="flex items-center gap-2"><Calendar className="h-4 w-4" /><span>Généré: {report.dateGenerated}</span></div><span>Format: {report.format}</span></div>{report.status === 'ready' && (<div className="flex gap-2"><Button variant="outline" size="sm" className="flex-1" onClick={() => setViewingReport(report)}><Eye className="h-4 w-4 mr-1" />Voir</Button><Button variant="outline" size="sm" className="flex-1" onClick={() => handleDownload(report)}><Download className="h-4 w-4 mr-1" />Télécharger en {report.format}</Button></div>)}</div>))}
+                                {savedReports.map((report) => (<div key={report.id} className="border rounded-lg p-4"><div className="flex items-start justify-between mb-3"><div><h4 className="font-medium">{report.name}</h4><p className="text-sm text-muted-foreground">{report.type}</p></div><Badge variant={report.status === 'ready' ? 'default' : 'secondary'} className={report.status === 'ready' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : ''}>{report.status === 'ready' ? 'Prêt' : 'En génération'}</Badge></div><div className="flex items-center justify-between text-sm text-muted-foreground mb-3"><div className="flex items-center gap-2"><Calendar className="h-4 w-4" /><span>Généré: {report.dateGenerated}</span></div><span>Format: {report.format}</span></div>{report.status === 'ready' && (<div className="flex gap-2"><Button variant="outline" size="sm" className="flex-1" onClick={() => handlePreview(report)}><Eye className="h-4 w-4 mr-1" />Voir</Button><Button variant="outline" size="sm" className="flex-1" onClick={() => handleDownload(report)}><Download className="h-4 w-4 mr-1" />Télécharger en {report.format}</Button></div>)}</div>))}
                             </div>
                         </CardContent>
                     </Card>
@@ -169,15 +222,11 @@ export default function CustomReportGeneratorPage() {
                         </DialogDescription>
                     </DialogHeader>
                     <div className="py-4">
-                        <h4 className="font-semibold mb-2">Données du Rapport (Exemple)</h4>
-                        <div className="border rounded-lg">
-                             <pre className="p-4 bg-muted text-sm rounded-lg overflow-x-auto">
-                                {JSON.stringify(mockReportData, null, 2)}
-                            </pre>
-                        </div>
+                       <ReportVisualizer report={viewingReport} />
                     </div>
                 </DialogContent>
             </Dialog>
         </>
     );
 }
+
