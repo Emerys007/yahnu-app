@@ -1,7 +1,8 @@
 
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -25,7 +26,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { type Role } from "@/context/auth-context"
+import { useAuth, type Role } from "@/context/auth-context"
 import { collection, addDoc, serverTimestamp } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
@@ -39,11 +40,25 @@ type AdminUser = {
 
 export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[] }) {
     const { toast } = useToast();
+    const { role } = useAuth();
+    const router = useRouter();
     const [admins, setAdmins] = useState<AdminUser[]>(initialAdmins);
     const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
     const [inviteLink, setInviteLink] = useState("");
     const [isInviting, setIsInviting] = useState(false);
     const [inviteDetails, setInviteDetails] = useState({ email: "", role: "admin" as Role });
+
+    useEffect(() => {
+        // Protect this page and only allow super_admins
+        if (role && role !== 'super_admin') {
+            toast({
+                title: "Accès non autorisé",
+                description: "Vous n'avez pas la permission de voir cette page.",
+                variant: "destructive",
+            });
+            router.push('/dashboard');
+        }
+    }, [role, router, toast]);
 
     const handleDeleteAdmin = (id: string) => {
         const adminToDelete = admins.find(a => a.id === id);
@@ -107,6 +122,11 @@ export function ManageTeamClient({ initialAdmins }: { initialAdmins: AdminUser[]
             school: 'École'
         }
         return roleMap[role] || role;
+    }
+
+    // Render nothing or a loading state while redirecting
+    if (role && role !== 'super_admin') {
+        return null;
     }
 
     return (

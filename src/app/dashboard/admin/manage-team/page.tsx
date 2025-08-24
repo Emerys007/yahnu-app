@@ -1,11 +1,11 @@
 
-export const dynamic = 'force-dynamic';
-
+import { redirect } from 'next/navigation';
 import { Users } from "lucide-react";
 import { ManageTeamClient } from "./manage-team-client";
 import { db } from "@/lib/firebase";
 import { collection, query, where, getDocs, DocumentData } from "firebase/firestore";
 import { type Role } from "@/context/auth-context";
+import { getSession } from "@/lib/auth"; // Assuming you have a session utility
 
 type AdminUser = {
   id: string
@@ -31,7 +31,6 @@ async function getAdmins(): Promise<AdminUser[]> {
         });
     });
     
-    // Ensure Super Admins are listed first
     admins.sort((a, b) => {
         if (a.accountType === 'super_admin') return -1;
         if (b.accountType === 'super_admin') return 1;
@@ -42,6 +41,11 @@ async function getAdmins(): Promise<AdminUser[]> {
 }
 
 export default async function ManageTeamPage() {
+    const session = await getSession(); // Implement or use your session logic here
+    if (session?.role !== 'super_admin') {
+        redirect('/dashboard');
+    }
+
     const admins = await getAdmins();
 
     return (
@@ -59,5 +63,3 @@ export default async function ManageTeamPage() {
         </div>
     );
 }
-
-    

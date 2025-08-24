@@ -13,6 +13,8 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { collection, query, onSnapshot, orderBy, DocumentData, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { formatDistanceToNow } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 type Ticket = {
     id: string;
@@ -24,23 +26,6 @@ type Ticket = {
     status: 'new' | 'open' | 'resolved';
     userId: string;
 };
-
-const formatDistanceToNow = (date: Date): string => {
-    if (!date) return "";
-    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    if (seconds < 60) return `Il y a quelques secondes`;
-    let interval = seconds / 31536000;
-    if (interval > 1) return `Il y a ${Math.floor(interval)} ans`;
-    interval = seconds / 2592000;
-    if (interval > 1) return `Il y a ${Math.floor(interval)} mois`;
-    interval = seconds / 86400;
-    if (interval > 1) return `Il y a ${Math.floor(interval)} jours`;
-    interval = seconds / 3600;
-    if (interval > 1) return `Il y a ${Math.floor(interval)} heures`;
-    interval = seconds / 60;
-    return `Il y a ${Math.floor(interval)} minutes`;
-};
-
 
 const TicketStatusBadge = ({ status }: { status: Ticket['status'] }) => {
     const statusMap = {
@@ -82,7 +67,7 @@ const TicketQueue = ({ tickets, title, onTicketSelect }: { tickets: Ticket[], ti
                                 </TableCell>
                                 <TableCell>{ticket.subject}</TableCell>
                                 <TableCell><TicketStatusBadge status={ticket.status} /></TableCell>
-                                <TableCell>{formatDistanceToNow(ticket.submittedAt)}</TableCell>
+                                <TableCell>{ticket.submittedAt ? formatDistanceToNow(ticket.submittedAt, { addSuffix: true, locale: fr }) : ''}</TableCell>
                                 <TableCell>
                                     <Button variant="outline" size="sm">Voir le Ticket</Button>
                                 </TableCell>
@@ -134,14 +119,11 @@ export default function SupportCenterPage() {
     }, []);
 
     const handleTicketSelect = async (ticket: Ticket) => {
-        // Mark ticket as 'open' if it's 'new'
         if (ticket.status === 'new') {
             const ticketRef = doc(db, "tickets", ticket.id);
             await updateDoc(ticketRef, { status: 'open' });
         }
         
-        // Redirect to the messages page with a stable conversation ID and ticket ID.
-        // The messages page will be responsible for creating the conversation if it doesn't exist.
         const convoId = `support-${ticket.userId}`;
         router.push(`/dashboard/messages?convoId=${convoId}&ticketId=${ticket.id}`);
     };
@@ -232,5 +214,3 @@ export default function SupportCenterPage() {
         </div>
     )
 }
-
-    

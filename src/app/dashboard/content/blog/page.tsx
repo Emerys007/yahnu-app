@@ -16,6 +16,9 @@ import { motion } from "framer-motion"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { Textarea } from "@/components/ui/textarea"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"
+import { db } from "@/lib/firebase"
+import { useAuth } from "@/context/auth-context"
 
 const postSchema = z.object({
   title: z.string().min(3, "Le titre doit comporter au moins 3 caractères."),
@@ -117,6 +120,7 @@ const PostForm = ({ post, onSave, onCancel }: { post?: Post, onSave: (data: Post
 
 export default function BlogManagementPage() {
     const { toast } = useToast();
+    const { user } = useAuth();
     const [searchTerm, setSearchTerm] = useState("");
     const [posts, setPosts] = useState<Post[]>(initialPosts);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -141,7 +145,7 @@ export default function BlogManagementPage() {
         toast({ title: "Article supprimé", variant: "destructive" });
     }
 
-    const handleSave = (data: Post) => {
+    const handleSave = async (data: Post) => {
         if (editingPost) {
             setPosts(posts.map(p => p.slug === editingPost.slug ? data : p));
             toast({ title: "Article mis à jour", description: `L'article "${data.title}" a été mis à jour.` });
@@ -149,6 +153,20 @@ export default function BlogManagementPage() {
             setPosts([data, ...posts]);
             toast({ title: "Article créé", description: `L'article "${data.title}" a été publié.` });
         }
+
+        try {
+            await addDoc(collection(db, "notifications"), {
+                recipientRole: 'content_manager',
+                text: `Un article de blog a été ${editingPost ? 'mis à jour' : 'créé'}: "${data.title}"`,
+                link: `/dashboard/content/blog`,
+                type: 'blog',
+                createdAt: serverTimestamp(),
+                createdBy: user?.uid,
+            });
+        } catch (e) {
+            console.error("Error creating notification for blog post:", e);
+        }
+
         setIsDialogOpen(false);
     };
 

@@ -12,11 +12,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Loader2, PlusCircle, Trash2 } from "lucide-react"
-import { doc, getDoc, setDoc } from "firebase/firestore"
+import { doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { Separator } from "@/components/ui/separator"
+import { useAuth } from "@/context/auth-context"
 
 // --- Schemas and Default Values (Defined at the top level) ---
 
@@ -80,8 +81,9 @@ export const defaultTerms: z.infer<typeof legalPageSchema> = {
 
 // --- Helper Component ---
 
-const PageFormWrapper = ({ pageId, schema, defaultValues, children }: { pageId: string, schema: any, defaultValues: any, children: (form: any, isSaving: boolean) => React.ReactNode }) => {
+const PageFormWrapper = ({ pageId, schema, defaultValues, pageName, children }: { pageId: string, schema: any, defaultValues: any, pageName: string, children: (form: any, isSaving: boolean) => React.ReactNode }) => {
     const { toast } = useToast();
+    const { user } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -120,6 +122,17 @@ const PageFormWrapper = ({ pageId, schema, defaultValues, children }: { pageId: 
          try {
             const docRef = doc(db, "pages", pageId);
             await setDoc(docRef, values, { merge: true });
+            
+            // Create notification
+            await addDoc(collection(db, "notifications"), {
+                recipientRole: 'content_manager',
+                text: `La page "${pageName}" a été mise à jour par ${user?.name || 'un administrateur'}.`,
+                link: '/dashboard/content/static-pages',
+                type: 'static_page',
+                createdAt: serverTimestamp(),
+                createdBy: user?.uid,
+            });
+
             toast({
                 title: "Contenu mis à jour",
                 description: "Le contenu de la page a été enregistré.",
@@ -251,17 +264,17 @@ export function ContentPagesEditor() {
                         <TabsTrigger value="terms-of-service">Conditions d'utilisation</TabsTrigger>
                     </TabsList>
                     <TabsContent value="about-us" className="pt-6">
-                        <PageFormWrapper pageId="about-us" schema={aboutPageSchema} defaultValues={defaultAboutValues}>
+                        <PageFormWrapper pageId="about-us" schema={aboutPageSchema} defaultValues={defaultAboutValues} pageName="À Propos">
                              {(form, isSaving) => <AboutUsForm form={form} isSaving={isSaving} />}
                         </PageFormWrapper>
                     </TabsContent>
                     <TabsContent value="privacy-policy" className="pt-6">
-                        <PageFormWrapper pageId="privacy-policy" schema={legalPageSchema} defaultValues={defaultPrivacyPolicy}>
+                        <PageFormWrapper pageId="privacy-policy" schema={legalPageSchema} defaultValues={defaultPrivacyPolicy} pageName="Politique de Confidentialité">
                             {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName="la politique de confidentialité" />}
                         </PageFormWrapper>
                     </TabsContent>
                     <TabsContent value="terms-of-service" className="pt-6">
-                        <PageFormWrapper pageId="terms-of-service" schema={legalPageSchema} defaultValues={defaultTerms}>
+                        <PageFormWrapper pageId="terms-of-service" schema={legalPageSchema} defaultValues={defaultTerms} pageName="Conditions d'Utilisation">
                              {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName="les conditions d'utilisation" />}
                         </PageFormWrapper>
                     </TabsContent>

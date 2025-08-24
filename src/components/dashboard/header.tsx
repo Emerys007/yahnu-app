@@ -16,6 +16,9 @@ import {
   MessageSquare,
   Briefcase,
   Calendar,
+  FileText,
+  Newspaper,
+  BookOpen,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -159,6 +162,29 @@ export function DashboardHeader() {
                 read: getReadNotificationIds().includes(doc.id),
                 link: `/dashboard/messages?convoId=${convoId}&ticketId=${doc.id}`
             }
+        }
+    } else if (role === 'content_manager') {
+        q = query(
+            collection(db, "notifications"),
+            where('recipientRole', '==', 'content_manager'),
+            limit(10)
+        );
+        notificationParser = (doc: DocumentData): NotificationItem => {
+             const data = doc.data() as DocumentData;
+             const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+             let icon = FileText;
+             if(data.type === 'blog') icon = Newspaper;
+             if(data.type === 'announcement') icon = MessageSquare;
+             if(data.type === 'knowledge_base') icon = BookOpen;
+
+             return {
+                id: doc.id,
+                text: data.text,
+                time: formatDistanceToNow(createdAt),
+                icon: icon,
+                read: getReadNotificationIds().includes(doc.id),
+                link: data.link || '#'
+             }
         }
     } else {
         // General notifications for graduates, companies
