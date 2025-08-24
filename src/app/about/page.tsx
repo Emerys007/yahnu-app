@@ -7,7 +7,7 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Users, Lightbulb } from "lucide-react";
 import { motion } from "framer-motion";
-import React from 'react';
+import React, { useMemo } from 'react';
 import { cn } from "@/lib/utils";
 import { BullseyeAnimation } from "@/components/ui/bullseye-animation";
 import { SparklingLightbulb } from "@/components/ui/sparkling-lightbulb";
@@ -38,38 +38,76 @@ const AnimatedStoryGraphic = ({ text }: { text: string }) => {
         },
     };
 
+    const numNodes = 20;
+    const nodes = useMemo(() => Array.from({ length: numNodes }).map(() => ({
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+    })), []);
+
+    const findClosestNodes = (node: {x: number, y: number}, allNodes: {x: number, y: number}[], count: number) => {
+        return allNodes
+            .map(other => ({
+                ...other,
+                distance: Math.sqrt(Math.pow(other.x - node.x, 2) + Math.pow(other.y - node.y, 2))
+            }))
+            .sort((a, b) => a.distance - b.distance)
+            .slice(1, count + 1);
+    };
+
     return (
-        <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-lg bg-primary/10 flex items-center justify-center p-8">
+        <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-lg bg-green-500/10 flex items-center justify-center p-8">
             <div className="absolute inset-0 z-0">
-                {Array.from({ length: 50 }).map((_, i) => (
+                <svg width="100%" height="100%" className="absolute inset-0">
+                    {nodes.map((node, i) => {
+                        const closest = findClosestNodes(node, nodes, 2); // Connect to 2 closest nodes
+                        return closest.map((neighbor, j) => (
+                            <motion.line
+                                key={`${i}-${j}`}
+                                x1={`${node.x}%`}
+                                y1={`${node.y}%`}
+                                x2={`${neighbor.x}%`}
+                                y2={`${neighbor.y}%`}
+                                stroke="currentColor"
+                                className="text-green-500/30"
+                                initial={{ pathLength: 0, opacity: 0 }}
+                                animate={{ pathLength: 1, opacity: 1 }}
+                                transition={{
+                                    duration: 3,
+                                    repeat: Infinity,
+                                    repeatType: 'reverse',
+                                    delay: Math.random() * 5,
+                                    ease: 'easeInOut'
+                                }}
+                            />
+                        ));
+                    })}
+                </svg>
+                {nodes.map((node, i) => (
                     <motion.div
                         key={i}
-                        className="absolute rounded-full bg-primary/30"
-                        initial={{
-                            x: Math.random() * 100 + '%',
-                            y: Math.random() * 100 + '%',
-                            scale: 0,
-                            opacity: 0,
+                        className="absolute rounded-full bg-green-500/80"
+                        style={{
+                            left: `${node.x}%`,
+                            top: `${node.y}%`,
+                            width: '6px',
+                            height: '6px',
+                            translateX: '-50%',
+                            translateY: '-50%',
                         }}
                         animate={{
-                            scale: [0, Math.random() * 1.2, 0],
-                            opacity: [0, 1, 0],
+                            scale: [1, 1.5, 1],
                         }}
                         transition={{
-                            duration: Math.random() * 3 + 2,
+                            duration: 3,
                             repeat: Infinity,
-                            delay: Math.random() * 4,
+                            delay: Math.random() * 3,
                             ease: 'easeInOut'
-                        }}
-                        style={{
-                            width: `${Math.random() * 3 + 1}px`,
-                            height: `${Math.random() * 3 + 1}px`,
                         }}
                     />
                 ))}
             </div>
             <motion.h2
-                className="relative z-10 text-5xl md:text-6xl font-bold text-center text-primary-foreground select-none"
+                className="relative z-10 text-5xl md:text-6xl font-bold text-center text-green-900 dark:text-green-100 select-none"
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -79,19 +117,8 @@ const AnimatedStoryGraphic = ({ text }: { text: string }) => {
                     <motion.span
                         key={`${char}-${index}`}
                         variants={letterVariants}
-                        className="inline-block relative"
+                        className="inline-block"
                     >
-                         <motion.span
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: [0, 1, 0] }}
-                            transition={{
-                                duration: 1,
-                                repeat: Infinity,
-                                repeatType: 'mirror',
-                                delay: index * 0.1 + 1,
-                            }}
-                            className="absolute -inset-1 bg-primary/50 rounded-full blur-sm"
-                         />
                         {char === ' ' ? ' ' : char}
                     </motion.span>
                 ))}

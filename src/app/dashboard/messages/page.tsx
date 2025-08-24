@@ -228,7 +228,7 @@ export default function MessagesPage() {
             <div className="p-4 border-b shrink-0">
                 <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder={"Rechercher des conversations"} className="pl-8" />
+                    <Input placeholder={"Rechercher dans la messagerie"} className="pl-8" />
                 </div>
             </div>
             <ScrollArea className="flex-1">
@@ -302,7 +302,7 @@ export default function MessagesPage() {
                                 ) : (
                                     <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
                                         <MessageSquare className="h-16 w-16 text-muted-foreground/50" />
-                                        <p className="mt-4 text-muted-foreground">Sélectionnez une conversation pour commencer à discuter.</p>
+                                        <p className="mt-4 text-muted-foreground">Sélectionnez une conversation pour commencer.</p>
                                     </div>
                                 )}
                            
@@ -313,5 +313,3 @@ export default function MessagesPage() {
         </div>
     )
 }
-
-    

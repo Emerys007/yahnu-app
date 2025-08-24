@@ -119,7 +119,7 @@ const getNavItems = (role: Role) => {
   
   const supportStaffNav = [
     { href: "/dashboard/support/center", icon: LifeBuoy, label: 'Centre de support' },
-    { href: "/dashboard/messages", icon: MessageSquare, label: 'Conversation' },
+    { href: "/dashboard/messages", icon: MessageSquare, label: 'Messagerie' },
     { type: "divider", label: 'Outils' },
     { href: "/dashboard/support/user-lookup", icon: Search, label: 'Recherche d\'utilisateur' },
     { href: "/dashboard/support/announcements", icon: Megaphone, label: 'Annonces' },
@@ -145,7 +145,7 @@ const getNavItems = (role: Role) => {
     case 'company':
       return { main: companyNav, footer: bottomNav };
     case 'school':
-      return { main: schoolNav, footer: bottomNav };
+      return { main: schoolNav, footer: adminFooterNav };
     case 'super_admin':
       return { main: superAdminNav, footer: adminFooterNav };
     case 'admin':

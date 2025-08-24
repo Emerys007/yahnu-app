@@ -47,21 +47,21 @@ export function UserNav() {
   }
   
   const getRoleInfo = (role: Role) => {
-    const roleMap: Record<Role, { label: string; icon: React.ElementType }> = {
-      graduate: { label: 'Diplômé', icon: User },
-      company: { label: 'Entreprise', icon: Building },
-      school: { label: 'École', icon: School },
-      admin: { label: 'Admin', icon: Shield },
-      super_admin: { label: 'Super Admin', icon: Shield },
-      content_manager: { label: 'Gestionnaire de contenu', icon: Shield },
-      support_staff: { label: 'Support', icon: Shield },
+    const roleMap: Record<Role, { label: string; icon: React.ElementType, profileLabel: string }> = {
+      graduate: { label: 'Diplômé', icon: User, profileLabel: 'Mon Profil' },
+      company: { label: 'Entreprise', icon: Building, profileLabel: 'Profil Entreprise' },
+      school: { label: 'École', icon: School, profileLabel: 'Profil École' },
+      admin: { label: 'Admin', icon: Shield, profileLabel: 'Profil' },
+      super_admin: { label: 'Super Admin', icon: Shield, profileLabel: 'Profil' },
+      content_manager: { label: 'Gestionnaire de contenu', icon: Shield, profileLabel: 'Profil' },
+      support_staff: { label: 'Support', icon: Shield, profileLabel: 'Profil' },
     };
-    return roleMap[role] || { label: role, icon: User };
+    return roleMap[role] || { label: role, icon: User, profileLabel: 'Profil' };
   };
 
   const hasDistinctProfilePage = role === 'graduate' || role === 'company' || role === 'school';
   const canReceiveMessages = role === 'graduate' || role === 'company' || role === 'school' || role === 'support_staff';
-  const { label: roleLabel, icon: RoleIcon } = getRoleInfo(role);
+  const { label: roleLabel, icon: RoleIcon, profileLabel } = getRoleInfo(role);
 
   return (
     <DropdownMenu>
@@ -93,13 +93,13 @@ export function UserNav() {
           {hasDistinctProfilePage && (
             <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
               <User className="mr-2 h-4 w-4" />
-              <span>Profil</span>
+              <span>{profileLabel}</span>
             </DropdownMenuItem>
           )}
            {canReceiveMessages && (
              <DropdownMenuItem onClick={() => router.push('/dashboard/messages')}>
                 <MessageSquare className="mr-2 h-4 w-4" />
-                <span>Messages</span>
+                <span>Messagerie</span>
             </DropdownMenuItem>
            )}
           <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>
