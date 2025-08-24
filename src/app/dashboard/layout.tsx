@@ -9,7 +9,6 @@ import { GraduateDashboard } from '@/components/dashboard/graduate-dashboard';
 import { CompanyDashboard } from '@/components/dashboard/company-dashboard';
 import { SchoolDashboard } from '@/components/dashboard/school-dashboard';
 import { type Role } from '@/context/auth-context';
-import { LocalizationProvider } from '@/context/localization-context';
 
 // The layout no longer needs to decide which dashboard to show.
 // It will simply render the child page, which will be determined by the URL.
@@ -20,7 +19,6 @@ export default function DashboardLayout({
 }) {
   return (
       <SidebarProvider>
-        <LocalizationProvider>
             <div className="relative min-h-screen lg:grid lg:grid-cols-[auto_1fr]">
                 <DashboardSidebar />
                 <div className="flex flex-col">
@@ -33,7 +31,6 @@ export default function DashboardLayout({
                 </div>
             </div>
             <ScrollToTop />
-        </LocalizationProvider>
       </SidebarProvider>
   )
 }
