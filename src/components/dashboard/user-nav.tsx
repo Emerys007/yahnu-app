@@ -49,8 +49,8 @@ export function UserNav() {
   const getRoleInfo = (role: Role) => {
     const roleMap: Record<Role, { label: string; icon: React.ElementType, profileLabel: string, profileLink: string }> = {
       graduate: { label: 'Diplômé', icon: User, profileLabel: 'Mon Profil', profileLink: '/dashboard/profile' },
-      company: { label: 'Entreprise', icon: Building, profileLabel: 'Profil Entreprise', profileLink: '/dashboard/organization-profile' },
-      school: { label: 'École', icon: School, profileLabel: 'Profil École', profileLink: '/dashboard/organization-profile' },
+      company: { label: 'Entreprise', icon: Building, profileLabel: 'Profil Entreprise', profileLink: '/dashboard/company-profile' },
+      school: { label: 'École', icon: School, profileLabel: 'Profil École', profileLink: '/dashboard/school-profile' },
       admin: { label: 'Admin', icon: Shield, profileLabel: 'Profil', profileLink: '/dashboard/settings' },
       super_admin: { label: 'Super Admin', icon: Shield, profileLabel: 'Profil', profileLink: '/dashboard/settings' },
       content_manager: { label: 'Gestionnaire de contenu', icon: Shield, profileLabel: 'Profil', profileLink: '/dashboard/settings' },

@@ -24,11 +24,15 @@ export default function ProfilePage() {
       // For roles like admin, support, etc., that don't have a specific profile page,
       // redirect them to a more appropriate page like settings.
       router.replace('/dashboard/settings');
+    } else if (role === 'company') {
+        router.replace('/dashboard/company-profile');
+    } else if (role === 'school') {
+        router.replace('/dashboard/school-profile');
     }
   }, [role, loading, router]);
 
 
-  if (loading || !profileComponents[role]) {
+  if (loading || !profileComponents[role] || role === 'company' || role === 'school') {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
