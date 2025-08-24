@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { AuthProvider } from '@/context/auth-context';
 import { ConfettiProvider } from '@/context/confetti-context';
 import { LocalizationProvider } from '@/context/localization-context';
+import { CountryProvider } from '@/context/country-context';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -30,8 +31,9 @@ export default function RootLayout({
       <head />
       <body suppressHydrationWarning>
         <AuthProvider>
-          <LocalizationProvider>
-            <ConfettiProvider>
+          <CountryProvider>
+            <LocalizationProvider>
+              <ConfettiProvider>
               <ThemeProvider
                 attribute="class"
                 defaultTheme="system"
@@ -46,7 +48,8 @@ export default function RootLayout({
                 <Toaster />
               </ThemeProvider>
             </ConfettiProvider>
-          </LocalizationProvider>
+            </LocalizationProvider>
+          </CountryProvider>
         </AuthProvider>
         <Script
           id="hs-script-loader"
