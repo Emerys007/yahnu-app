@@ -12,7 +12,7 @@ const getFeaturesData = () => ({
   graduates: {
     title: "Pour les Diplômés",
     icon: <GraduationCap className="h-8 w-8 mb-4 text-primary" />,
-    image: "/images/uni-partnership.jpg",
+    image: "/images/hero/uni-partnership.jpg",
     imageHint: "african graduate students",
     items: [
       {

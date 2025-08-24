@@ -63,7 +63,7 @@ export const defaultAboutValues: z.infer<typeof aboutPageSchema> = {
     teamMembers: [
         { name: "Colombe Koffi", role: "Fondatrice & CEO", imageUrl: "/images/Colombe Koffi.jpeg" },
         { name: "Joël K", role: "Chef de Produit", imageUrl: "/images/Joel K.jpeg" },
-        { name: "Bethel Touman", role: "Ingénieur de Données", imageUrl: "/images/Bethel_Touman.jpeg" },
+        { name: "Bethel Touman", role: "Ingénieur de Données", imageUrl: "/images/Bethel_Touman.jpeg" }rl: "/images/Bethel_Touman.jpeg" },
     ]
 }
 
