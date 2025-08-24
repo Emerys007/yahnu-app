@@ -19,6 +19,7 @@ type Ticket = {
     subject: string;
     userName: string;
     userEmail: string;
+    message: string;
     submittedAt: Date;
     status: 'new' | 'open' | 'resolved';
     convoId: string;
@@ -116,6 +117,7 @@ export default function SupportCenterPage() {
                     subject: data.subject,
                     userName: data.userName,
                     userEmail: data.userEmail,
+                    message: data.message, // Ensure message is fetched
                     submittedAt: data.submittedAt?.toDate(),
                     status: data.status,
                     convoId: data.userEmail.split('@')[0].replace(/[^a-z0-9]/gi, '-') // Generate a predictable ID
@@ -129,7 +131,12 @@ export default function SupportCenterPage() {
     }, []);
 
     const handleTicketSelect = (ticket: Ticket) => {
-        router.push(`/dashboard/messages?new=${ticket.convoId}&name=${encodeURIComponent(ticket.userName)}`);
+        const queryParams = new URLSearchParams({
+            new: ticket.convoId,
+            name: ticket.userName,
+            initialMessage: ticket.message
+        });
+        router.push(`/dashboard/messages?${queryParams.toString()}`);
     };
 
     const newTickets = tickets.filter(t => t.status === 'new');

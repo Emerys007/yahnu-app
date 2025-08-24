@@ -176,20 +176,29 @@ export default function MessagesPage() {
     useEffect(() => {
         const newConvoId = searchParams.get('new');
         const newConvoName = searchParams.get('name');
+        const initialMessage = searchParams.get('initialMessage');
         
         if (newConvoId) {
-            const existingConvo = conversations.find(c => c.id === newConvoId);
-            if (existingConvo) {
-                setSelectedConversation(existingConvo);
+            const existingConvoIndex = conversations.findIndex(c => c.id === newConvoId);
+            
+            if (existingConvoIndex !== -1) {
+                // Conversation exists, select it
+                setSelectedConversation(conversations[existingConvoIndex]);
             } else {
+                 // Conversation doesn't exist, create it
                  const newConvo: Conversation = {
                     id: newConvoId,
                     name: getNewConvoName(newConvoId, newConvoName),
                     avatar: newConvoId.includes('admin') ? "/images/University.png" : "https://placehold.co/100x100.png",
-                    lastMessage: "",
+                    lastMessage: initialMessage || "",
                     time: "Maintenant",
-                    unread: 0,
-                    messages: [],
+                    unread: initialMessage ? 1 : 0,
+                    messages: initialMessage ? [{
+                        id: Date.now(),
+                        sender: "them",
+                        text: initialMessage,
+                        time: "Maintenant"
+                    }] : [],
                 };
                 setConversations(prev => [newConvo, ...prev]);
                 setSelectedConversation(newConvo);
