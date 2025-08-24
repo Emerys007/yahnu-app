@@ -252,12 +252,10 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
 
   return (
     <div className="space-y-8">
-       <Button asChild variant="ghost" className="mb-4 px-0">
-          <Link href="/dashboard/talent-pool">
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Retour au vivier de talents
-          </Link>
-      </Button>
+      <Link href="/dashboard/talent-pool" className="inline-flex items-center text-sm text-primary hover:underline">
+          <ChevronLeft className="mr-1 h-4 w-4" />
+          Retour au vivier de talents
+      </Link>
       <Card>
         <CardHeader className="bg-muted/30">
           <div className="flex flex-col md:flex-row items-start gap-6">
@@ -359,5 +357,7 @@ export default function GraduateProfilePage({ params }: { params: { slug: string
     </div>
   );
 }
+
+    
 
     
