@@ -70,8 +70,13 @@ export function CompanyDashboard() {
         animate="visible"
       >
         {stats.map((stat, index) => (
-            <motion.div key={index} variants={itemVariants}>
-                 <Card className="transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+            <motion.div 
+                key={index} 
+                variants={itemVariants}
+                whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }}
+                transition={{ type: "spring", stiffness: 300 }}
+            >
+                 <Card className="h-full">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">
                         {stat.title}

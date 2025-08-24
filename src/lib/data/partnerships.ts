@@ -1,14 +1,24 @@
-export const seedPartnerships = [
-    {
-        companyId: "company_orange_ci",
-        schoolId: "school_inp_hb",
-        status: "accepted",
-        requestedAt: new Date("2024-06-01T10:00:00Z"),
-    },
-    {
-        companyId: "company_sifca",
-        schoolId: "school_inp_hb",
-        status: "pending",
-        requestedAt: new Date("2024-07-15T11:30:00Z"),
-    },
+
+export const partnerships = [
+  {
+    id: 'part1',
+    schoolId: 'school1',
+    companyId: 'comp1',
+    status: 'accepted',
+    initiatedBy: 'school',
+  },
+  {
+    id: 'part2',
+    schoolId: 'school2',
+    companyId: 'comp1',
+    status: 'pending',
+    initiatedBy: 'company',
+  },
+  {
+    id: 'part3',
+    schoolId: 'school2',
+    companyId: 'comp2',
+    status: 'rejected',
+    initiatedBy: 'school',
+  },
 ];

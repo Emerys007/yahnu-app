@@ -1,24 +1,21 @@
-export const seedJobs = [
-    {
-        companyId: "company_orange_ci",
-        companyName: "Orange Côte d'Ivoire",
-        title: "Lead Technique - Orange Money",
-        description: "En tant que Lead Technique, vous serez responsable de la conception, du développement et de la maintenance de la plateforme Orange Money...",
-        location: "Abidjan, Côte d'Ivoire",
-        type: "Temps plein",
-        workplace: "hybrid",
-        tags: ["Fintech", "Mobile", "Gestion", "API", "Java", "Kotlin"],
-        createdAt: new Date("2024-07-20T09:00:00Z"),
-    },
-    {
-        companyId: "company_sifca",
-        companyName: "SIFCA",
-        title: "Ingénieur Agronome",
-        description: "Rejoignez notre équipe en tant qu'ingénieur agronome pour superviser les opérations sur le terrain, améliorer les rendements des cultures et mettre en œuvre des pratiques agricoles durables.",
-        location: "Yamoussoukro, Côte d'Ivoire",
-        type: "Temps plein",
-        workplace: "on-site",
-        tags: ["Agriculture", "Agronomie", "Terrain", "Recherche"],
-        createdAt: new Date("2024-07-18T14:00:00Z"),
-    },
+
+export const jobs = [
+  {
+    id: 'job1',
+    companyId: 'comp1',
+    title: 'Frontend Developer',
+    description: 'We are looking for a skilled Frontend Developer to join our team.',
+    requirements: ['React', 'TypeScript', 'CSS'],
+    location: 'Remote',
+    salary: 'Competitive',
+  },
+  {
+    id: 'job2',
+    companyId: 'comp2',
+    title: 'Marketing Specialist',
+    description: 'We are seeking a Marketing Specialist to help grow our brand.',
+    requirements: ['SEO', 'Content Marketing', 'Social Media'],
+    location: 'New York, NY',
+    salary: 'Experience Dependent',
+  },
 ];

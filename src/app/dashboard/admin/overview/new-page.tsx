@@ -1,3 +1,4 @@
+
 "use client"
 
 import {
@@ -293,7 +294,7 @@ import {
                     whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                      <Card>
+                      <Card className="h-full">
                           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                               <CardTitle className="text-sm font-medium">Utilisateurs Totaux</CardTitle>
                               <Users className="h-4 w-4 text-muted-foreground" />
@@ -309,7 +310,7 @@ import {
                     whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                      <Card>
+                      <Card className="h-full">
                           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                               <CardTitle className="text-sm font-medium">Entreprises Actives</CardTitle>
                               <Building className="h-4 w-4 text-muted-foreground" />
@@ -325,7 +326,7 @@ import {
                     whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }}
                     transition={{ type: "spring", stiffness: 300 }}
                     >
-                      <Card>
+                      <Card className="h-full">
                           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                               <CardTitle className="text-sm font-medium">Diplômés</CardTitle>
                               <GraduationCap className="h-4 w-4 text-muted-foreground" />
@@ -341,7 +342,7 @@ import {
                     whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)" }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                      <Card>
+                      <Card className="h-full">
                           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                               <CardTitle className="text-sm font-medium">Taux d'Approbation</CardTitle>
                               <CheckCircle className="h-4 w-4 text-muted-foreground" />

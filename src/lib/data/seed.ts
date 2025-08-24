@@ -1,61 +1,61 @@
-/**
- * NOTE: This is a sample seed script.
- * In a real-world scenario, you would run this from a secure environment
- * (like a Node.js script) with admin privileges to populate your database.
- * You would also need to handle user creation in Firebase Authentication
- * separately and use the resulting UIDs.
- * 
- * To use this, you would typically have a script like this:
- * 
- * import { initializeApp } from "firebase-admin/app";
- * import { getFirestore } from "firebase-admin/firestore";
- * import { getAuth } from "firebase-admin/auth";
- * import { seedUsers } from './users';
- * // ... import other seed data
- * 
- * const app = initializeApp();
- * const db = getFirestore(app);
- * const auth = getAuth(app);
- * 
- * async function seedDatabase() {
- *   for (const userData of seedUsers) {
- *      try {
- *          const userRecord = await auth.createUser({
- *              email: userData.email,
- *              password: "defaultPassword123", // Set a secure temporary password
- *              displayName: userData.name,
- *          });
- *          const uid = userRecord.uid;
- *          const userDocRef = db.collection('users').doc(uid);
- *          await userDocRef.set({ ...userData, uid });
- *          console.log(`Created user: ${userData.name}`);
- *      } catch (error) {
- *          console.error(`Error creating user ${userData.email}:`, error);
- *      }
- *   }
- *   // ... logic to seed other collections, replacing placeholder IDs
- *   console.log("Database seeding complete.");
- * }
- * 
- * seedDatabase();
- * 
- */
 
-import { seedUsers } from './users';
-import { seedJobs } from './jobs';
-import { seedApplications } from './applications';
-import { seedPartnerships } from './partnerships';
+import { db } from '@/lib/firebase'; // Assuming you have a firebase config file
+import { collection, doc, setDoc } from 'firebase/firestore';
+import { users } from './users';
+import { jobs } from './jobs';
+import { applications } from './applications';
+import { partnerships } from './partnerships';
 
+async function seedDatabase() {
+  console.log('Starting to seed the database...');
 
-// This function is for demonstration and would need to be adapted
-// to a proper admin script.
-export function getSeedData() {
-    console.log("--- SEED DATA ---");
-    console.log("Users:", seedUsers);
-    console.log("Jobs:", seedJobs);
-    console.log("Applications:", seedApplications);
-    console.log("Partnerships:", seedPartnerships);
-    console.log("--- END SEED DATA ---");
+  // Seed users
+  for (const user of users) {
+    try {
+      await setDoc(doc(db, 'users', user.id), user);
+      console.log(`Added user: ${user.firstName || user.companyName || user.schoolName}`);
+    } catch (e) {
+      console.error('Error adding user: ', e);
+    }
+  }
 
-    alert("Seed data has been logged to the console. See the notes in /src/lib/data/seed.ts for instructions on how to build a proper seeding script.");
+  // Seed jobs
+  for (const job of jobs) {
+    try {
+      await setDoc(doc(db, 'jobs', job.id), job);
+      console.log(`Added job: ${job.title}`);
+    } catch (e) {
+      console.error('Error adding job: ', e);
+    }
+  }
+
+  // Seed applications
+  for (const application of applications) {
+    try {
+      await setDoc(doc(db, 'applications', application.id), application);
+      console.log(`Added application: ${application.id}`);
+    } catch (e) {
+      console.error('Error adding application: ', e);
+    }
+  }
+
+    // Seed partnerships
+  for (const partnership of partnerships) {
+    try {
+      await setDoc(doc(db, 'partnerships', partnership.id), partnership);
+      console.log(`Added partnership: ${partnership.id}`);
+    } catch (e) {
+      console.error('Error adding partnership: ', e);
+    }
+  }
+
+  console.log('Database seeding completed.');
 }
+
+// You can run this function from a script or a secure API endpoint
+// For example, you could create a script in your package.json:
+// "scripts": {
+//   "seed": "node -r ts-node/register src/lib/data/seed.ts"
+// }
+// and then run `npm run seed` or `yarn seed`
+seedDatabase();
