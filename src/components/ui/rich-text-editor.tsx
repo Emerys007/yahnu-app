@@ -1,13 +1,12 @@
 
 "use client"
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, forwardRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
 import { Textarea } from './textarea';
 import { Code } from 'lucide-react';
-import { Button } from './button';
 
 const ReactQuill = dynamic(
     () => import('react-quill'), 
@@ -55,8 +54,8 @@ const CustomToolbar = ({ onToggleHtml, isHtmlView }: { onToggleHtml: () => void,
   </div>
 );
 
-
-export const RichTextEditor = ({ value, onChange, className, placeholder }: RichTextEditorProps) => {
+export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
+  ({ value, onChange, className, placeholder }, ref) => {
     const [showHtml, setShowHtml] = useState(false);
     
     const modules = {
@@ -72,27 +71,30 @@ export const RichTextEditor = ({ value, onChange, className, placeholder }: Rich
       'link', 'code-block'
     ];
     
-  return (
-    <div className={cn("bg-background rounded-md border border-input", className)}>
-        <CustomToolbar onToggleHtml={() => setShowHtml(p => !p)} isHtmlView={showHtml} />
-        {showHtml ? (
-            <Textarea
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                className="min-h-[268px] rounded-t-none border-0 font-mono text-sm focus-visible:ring-0"
-                placeholder="<!-- Écrivez votre HTML ici -->"
-            />
-        ) : (
-            <ReactQuill 
-                theme="snow" 
-                value={value} 
-                onChange={onChange}
-                modules={modules}
-                formats={formats}
-                placeholder={placeholder}
-                className="[&_.ql-container]:min-h-[268px] [&_.ql-container]:border-0 [&_.ql-toolbar]:hidden [&_.ql-editor]:resize-y"
-            />
-        )}
-    </div>
-  );
-};
+    return (
+      <div ref={ref} className={cn("bg-background rounded-md border border-input", className)}>
+          <CustomToolbar onToggleHtml={() => setShowHtml(p => !p)} isHtmlView={showHtml} />
+          {showHtml ? (
+              <Textarea
+                  value={value}
+                  onChange={(e) => onChange(e.target.value)}
+                  className="min-h-[268px] rounded-t-none border-0 font-mono text-sm focus-visible:ring-0"
+                  placeholder="<!-- Écrivez votre HTML ici -->"
+              />
+          ) : (
+              <ReactQuill 
+                  theme="snow" 
+                  value={value} 
+                  onChange={onChange}
+                  modules={modules}
+                  formats={formats}
+                  placeholder={placeholder}
+                  className="[&_.ql-container]:min-h-[268px] [&_.ql-container]:border-0 [&_.ql-toolbar]:hidden [&_.ql-editor]:resize-y"
+              />
+          )}
+      </div>
+    );
+  }
+);
+
+RichTextEditor.displayName = 'RichTextEditor';

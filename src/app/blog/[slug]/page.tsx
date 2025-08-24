@@ -1,29 +1,52 @@
 
-"use client"
-
 import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
-import { notFound, useParams } from "next/navigation";
+import { notFound } from "next/navigation";
 import Image from "next/image";
-import { allPosts } from "@/lib/demo-data";
 import Link from "next/link";
+import { db } from "@/lib/firebase";
+import { collection, query, where, getDocs, DocumentData } from "firebase/firestore";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
-export default function BlogPostPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-  // This component will now only display in French.
-  const post = allPosts.find((p) => p.slug === slug);
+export const dynamic = 'force-dynamic';
+
+type Post = {
+    id: string;
+    title: string;
+    slug: string;
+    author: string;
+    content: string;
+    excerpt?: string;
+    imageUrl?: string;
+    createdAt: any;
+};
+
+async function getPostBySlug(slug: string): Promise<Post | null> {
+    const postsCollection = collection(db, "blogPosts");
+    const q = query(postsCollection, where("slug", "==", slug), where("status", "==", "published"));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+        return null;
+    }
+
+    const doc = querySnapshot.docs[0];
+    const data = doc.data() as DocumentData;
+    
+    return {
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate(),
+    } as Post;
+}
+
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     notFound();
-  }
-
-  const localizedPost = {
-    title: post.title.fr,
-    content: post.content.fr,
-    author: post.author,
-    date: post.date,
-    image: post.image,
   }
 
   return (
@@ -36,19 +59,19 @@ export default function BlogPostPage() {
         <article className="prose lg:prose-xl max-w-4xl mx-auto">
           <div className="relative w-full h-96 mb-8 rounded-lg overflow-hidden">
             <Image
-              src={localizedPost.image}
-              alt={localizedPost.title}
+              src={post.imageUrl || `https://source.unsplash.com/random/800x600?sig=${post.id}`}
+              alt={post.title}
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               priority
             />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight">{localizedPost.title}</h1>
+          <h1 className="text-4xl font-bold tracking-tight">{post.title}</h1>
           <p className="text-muted-foreground mb-6">
-            Par Auteur du blog • {new Date(localizedPost.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+            Par {post.author} • {post.createdAt ? format(post.createdAt, "d MMMM yyyy", { locale: fr }) : ''}
           </p>
-          <div className="mt-8" dangerouslySetInnerHTML={{ __html: localizedPost.content }} />
+          <div className="mt-8" dangerouslySetInnerHTML={{ __html: post.content }} />
         </article>
       </main>
       <Footer />
