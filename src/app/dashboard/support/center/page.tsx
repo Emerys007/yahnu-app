@@ -1,33 +1,45 @@
 
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, MessageSquare, CheckCircle } from "lucide-react";
+import { Clock, MessageSquare, CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { collection, query, onSnapshot, orderBy, DocumentData } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 type Ticket = {
     id: string;
     subject: string;
     userName: string;
     userEmail: string;
-    submittedAt: string;
+    submittedAt: Date;
     status: 'new' | 'open' | 'resolved';
     convoId: string;
 };
 
-const tickets: Ticket[] = [
-    { id: 'TKT-001', subject: 'Problème de visibilité du profil', userName: 'Amina Diallo', userEmail: 'amina.diallo@example.com', submittedAt: 'Il y a 2 heures', status: 'new', convoId: 'amina-diallo' },
-    { id: 'TKT-002', subject: 'Impossible de postuler à un emploi', userName: 'Tech Solutions', userEmail: 'contact@techsolutions.com', submittedAt: 'Il y a 8 heures', status: 'open', convoId: 'contact-techsolutions' },
-    { id: 'TKT-003', subject: 'Question sur la vérification de diplôme', userName: 'Admin INP-HB', userEmail: 'admin@inphb.ci', submittedAt: 'Il y a 1 jour', status: 'open', convoId: 'admin-inphb' },
-    { id: 'TKT-004', subject: 'Échec de la réinitialisation du mot de passe', userName: 'Alice Williams', userEmail: 'alice.w@example.com', submittedAt: 'Il y a 3 jours', status: 'resolved', convoId: 'alice-williams' },
-];
+const formatDistanceToNow = (date: Date): string => {
+    if (!date) return "";
+    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    if (seconds < 60) return `Il y a quelques secondes`;
+    let interval = seconds / 31536000;
+    if (interval > 1) return `Il y a ${Math.floor(interval)} ans`;
+    interval = seconds / 2592000;
+    if (interval > 1) return `Il y a ${Math.floor(interval)} mois`;
+    interval = seconds / 86400;
+    if (interval > 1) return `Il y a ${Math.floor(interval)} jours`;
+    interval = seconds / 3600;
+    if (interval > 1) return `Il y a ${Math.floor(interval)} heures`;
+    interval = seconds / 60;
+    return `Il y a ${Math.floor(interval)} minutes`;
+};
+
 
 const TicketStatusBadge = ({ status }: { status: Ticket['status'] }) => {
     const statusMap = {
@@ -69,7 +81,7 @@ const TicketQueue = ({ tickets, title, onTicketSelect }: { tickets: Ticket[], ti
                                 </TableCell>
                                 <TableCell>{ticket.subject}</TableCell>
                                 <TableCell><TicketStatusBadge status={ticket.status} /></TableCell>
-                                <TableCell>{ticket.submittedAt}</TableCell>
+                                <TableCell>{formatDistanceToNow(ticket.submittedAt)}</TableCell>
                                 <TableCell>
                                     <Button variant="outline" size="sm">Voir le Ticket</Button>
                                 </TableCell>
@@ -89,6 +101,32 @@ const TicketQueue = ({ tickets, title, onTicketSelect }: { tickets: Ticket[], ti
 export default function SupportCenterPage() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState("new");
+    const [tickets, setTickets] = useState<Ticket[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const ticketsRef = collection(db, "tickets");
+        const q = query(ticketsRef, orderBy("submittedAt", "desc"));
+
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const fetchedTickets = querySnapshot.docs.map(doc => {
+                const data = doc.data() as DocumentData;
+                return {
+                    id: doc.id,
+                    subject: data.subject,
+                    userName: data.userName,
+                    userEmail: data.userEmail,
+                    submittedAt: data.submittedAt?.toDate(),
+                    status: data.status,
+                    convoId: data.userEmail.split('@')[0].replace(/[^a-z0-9]/gi, '-') // Generate a predictable ID
+                } as Ticket;
+            });
+            setTickets(fetchedTickets);
+            setIsLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const handleTicketSelect = (ticket: Ticket) => {
         router.push(`/dashboard/messages?new=${ticket.convoId}&name=${encodeURIComponent(ticket.userName)}`);
@@ -102,6 +140,10 @@ export default function SupportCenterPage() {
         hover: { y: -5, scale: 1.03 },
         initial: { y: 0, scale: 1 },
     };
+    
+    if (isLoading) {
+        return <div className="flex justify-center items-center h-64"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
+    }
 
     return (
         <div className="space-y-8">

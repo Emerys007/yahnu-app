@@ -12,6 +12,7 @@ import {
   Sun,
   Moon,
   MoreVertical,
+  Ticket,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -42,6 +43,7 @@ type NotificationItem = {
 };
 
 const formatDistanceToNow = (date: Date): string => {
+    if (!date) return "";
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
     let interval = seconds / 31536000;
     if (interval > 1) return `Il y a ${Math.floor(interval)} ans`;
@@ -79,6 +81,32 @@ export function DashboardHeader() {
     if (!user) return;
 
     let q;
+    let notificationParser = (doc: DocumentData): NotificationItem | null => {
+        const data = doc.data() as DocumentData;
+        const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+
+        let notificationText = '';
+        let icon = Building;
+        if (data.role === 'company') {
+            notificationText = `Nouvelle entreprise "${data.name}" en attente d'approbation.`;
+            icon = Building;
+        } else if (data.role === 'school') {
+            notificationText = `Nouvelle école "${data.name}" en attente d'approbation.`;
+            icon = School;
+        } else if (data.role === 'graduate') {
+            notificationText = `Nouveau diplômé "${data.name}" en attente d'activation.`;
+            icon = Building; // TODO: Change to a more appropriate icon for a graduate
+        }
+        
+        return {
+            id: doc.id,
+            text: notificationText,
+            time: formatDistanceToNow(createdAt),
+            icon: icon,
+            read: getReadNotificationIds().includes(doc.id),
+        };
+    };
+
     if (role === 'admin' || role === 'super_admin') {
       q = query(
         collection(db, "users"), 
@@ -91,40 +119,38 @@ export function DashboardHeader() {
             collection(db, "users"),
             where('status', '==', 'pending'),
             where('role', '==', 'graduate'),
-            where('schoolId', '==', user.uid), // Use user's UID as the schoolId
+            where('schoolId', '==', user.uid),
             limit(5)
         );
+    } else if (role === 'support_staff') {
+        q = query(
+            collection(db, "tickets"),
+            where('status', '==', 'new'),
+            limit(5)
+        );
+        notificationParser = (doc: DocumentData): NotificationItem => {
+            const data = doc.data() as DocumentData;
+            const createdAt = data.submittedAt?.toDate ? data.submittedAt.toDate() : new Date();
+            return {
+                id: doc.id,
+                text: `Nouveau ticket de ${data.userName}: "${data.subject}"`,
+                time: formatDistanceToNow(createdAt),
+                icon: Ticket,
+                read: getReadNotificationIds().includes(doc.id),
+            }
+        }
     }
+
 
     if (!q) return;
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const readIds = getReadNotificationIds();
         const fetchedNotifications: NotificationItem[] = [];
         querySnapshot.forEach((doc) => {
-            const data = doc.data() as DocumentData;
-            const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
-
-            let notificationText = '';
-            let icon = Building;
-            if (data.role === 'company') {
-                notificationText = `Nouvelle entreprise "${data.name}" en attente d'approbation.`;
-                icon = Building;
-            } else if (data.role === 'school') {
-                notificationText = `Nouvelle école "${data.name}" en attente d'approbation.`;
-                icon = School;
-            } else if (data.role === 'graduate') {
-                notificationText = `Nouveau diplômé "${data.name}" en attente d'activation.`;
-                icon = Building; // TODO: Change to a more appropriate icon for a graduate
+            const notification = notificationParser(doc);
+            if (notification) {
+                fetchedNotifications.push(notification);
             }
-
-            fetchedNotifications.push({
-                id: doc.id,
-                text: notificationText,
-                time: formatDistanceToNow(createdAt),
-                icon: icon,
-                read: readIds.includes(doc.id),
-            });
         });
         setNotifications(fetchedNotifications);
     }, (error) => {
