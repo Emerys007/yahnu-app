@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useAuth } from "@/context/auth-context"
 import { db } from "@/lib/firebase"
-import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, updateDoc, getDocs, DocumentData } from "firebase/firestore"
+import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, updateDoc, getDoc, writeBatch, setDoc } from "firebase/firestore"
 import { useToast } from "@/hooks/use-toast"
 
 type Message = {
@@ -121,7 +121,7 @@ const MessageView = ({
 };
 
 export default function MessagesPage() {
-    const { user } = useAuth();
+    const { user, role } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
     const { toast } = useToast();
@@ -141,18 +141,66 @@ export default function MessagesPage() {
         return date.toLocaleDateString();
     }
 
-    // Effect for fetching conversations
+    // Effect for handling new conversation from query params (e.g., from support tickets)
+    useEffect(() => {
+        if (!user) return;
+
+        const newConvoId = searchParams.get('new');
+        if (!newConvoId) return;
+
+        // Check if a conversation with this ID already exists
+        const existingConvo = conversations.find(c => c.id === newConvoId);
+        if (existingConvo) {
+            setSelectedConversation(existingConvo);
+            router.replace('/dashboard/messages', { scroll: false });
+            return;
+        }
+
+        // If it doesn't exist, create it locally
+        const newConvoName = searchParams.get('name');
+        const initialMessageText = searchParams.get('initialMessage');
+        const initialSenderId = searchParams.get('senderId');
+
+        if (!initialMessageText || !initialSenderId) return;
+
+        const newConvo: Conversation = {
+            id: newConvoId,
+            name: getNewConvoName(newConvoId, newConvoName),
+            avatar: newConvoId.includes('school') ? "/images/University.png" : "https://placehold.co/100x100.png",
+            lastMessage: initialMessageText,
+            lastMessageTimestamp: new Date(),
+            unread: 1,
+            participants: [user.uid, initialSenderId],
+            messages: [{
+                id: Date.now().toString(),
+                senderId: initialSenderId,
+                text: initialMessageText,
+                timestamp: new Date(),
+            }],
+        };
+
+        // Add to local state and select it
+        setConversations(prev => [newConvo, ...prev.filter(c => c.id !== newConvoId)]);
+        setSelectedConversation(newConvo);
+        
+        // Clear query params
+        router.replace('/dashboard/messages', { scroll: false });
+
+    // This effect should only run when the user is available and query params change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams, user, conversations]);
+
+    // Effect for fetching conversations from Firestore
     useEffect(() => {
         if (!user) return;
         setIsLoading(true);
 
-        const q = query(collection(db, "conversations"), where("participants", "array-contains", user.uid));
+        const q = query(collection(db, "conversations"), where("participants", "array-contains", user.uid), orderBy("lastMessageTimestamp", "desc"));
         
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const convos: Conversation[] = [];
-            querySnapshot.forEach(doc => {
-                const data = doc.data() as DocumentData;
-                convos.push({
+            const convos = querySnapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
                     id: doc.id,
                     name: data.name,
                     avatar: data.avatar,
@@ -161,65 +209,27 @@ export default function MessagesPage() {
                     unread: data.unread,
                     participants: data.participants,
                     messages: (data.messages || []).map((m: any) => ({ ...m, timestamp: m.timestamp?.toDate() }))
-                });
+                } as Conversation;
             });
             
-            convos.sort((a,b) => b.lastMessageTimestamp.getTime() - a.lastMessageTimestamp.getTime());
             setConversations(convos);
+
+            // If no conversation is selected and we are not on mobile, select the first one
+            if (!selectedConversation && convos.length > 0 && !isMobile) {
+                setSelectedConversation(convos[0]);
+            }
+            
+            setIsLoading(false);
+        }, (error) => {
+            console.error("Firestore snapshot error:", error);
             setIsLoading(false);
         });
 
         return () => unsubscribe();
+    // Re-run this effect only if the user changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
-    // Effect for handling new conversation from query params
-    useEffect(() => {
-        const handleNewConversation = async () => {
-            if (!user || conversations.length === 0) return; // Wait for user and convos to load
-
-            const newConvoId = searchParams.get('new');
-            if (!newConvoId) {
-                 if (!selectedConversation && conversations.length > 0 && !isMobile) {
-                    setSelectedConversation(conversations[0]);
-                }
-                return
-            };
-
-            const existingConvo = conversations.find(c => c.id === newConvoId);
-
-            if (existingConvo) {
-                setSelectedConversation(existingConvo);
-            } else {
-                const newConvoName = searchParams.get('name');
-                const initialMessage = searchParams.get('initialMessage');
-                
-                const newConvo: Conversation = {
-                    id: newConvoId,
-                    name: getNewConvoName(newConvoId, newConvoName),
-                    avatar: newConvoId.includes('school') ? "/images/University.png" : "https://placehold.co/100x100.png",
-                    lastMessage: initialMessage || "Nouvelle conversation",
-                    lastMessageTimestamp: new Date(),
-                    unread: initialMessage ? 1 : 0,
-                    participants: [user.uid, newConvoId],
-                    messages: initialMessage ? [{
-                        id: Date.now().toString(),
-                        senderId: newConvoId, // The "other" person
-                        text: initialMessage,
-                        timestamp: new Date(),
-                    }] : [],
-                };
-                
-                // This state update is temporary, it will be replaced by the snapshot listener
-                setConversations(prev => [newConvo, ...prev]);
-                setSelectedConversation(newConvo);
-            }
-            router.replace('/dashboard/messages', { scroll: false });
-        }
-        
-        handleNewConversation();
-    // We only want this to run when the query params change, or when initial data loads
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams, user, conversations.length > 0]);
 
     const handleSendMessage = async (text: string) => {
         if (!selectedConversation || !user) return;
@@ -232,9 +242,20 @@ export default function MessagesPage() {
         };
         
         const updatedMessages = [...selectedConversation.messages, newMessage];
+        const otherParticipantId = selectedConversation.participants.find(p => p !== user.uid);
 
         // Optimistic update
-        setSelectedConversation({ ...selectedConversation, messages: updatedMessages, lastMessage: text, lastMessageTimestamp: newMessage.timestamp });
+        const updatedConversation = { 
+            ...selectedConversation, 
+            messages: updatedMessages, 
+            lastMessage: text, 
+            lastMessageTimestamp: newMessage.timestamp,
+            // If the other user was a new addition, ensure they are in participants
+            participants: otherParticipantId ? [user.uid, otherParticipantId] : [user.uid]
+        };
+        setSelectedConversation(updatedConversation);
+        setConversations(prev => prev.map(c => c.id === updatedConversation.id ? updatedConversation : c));
+
 
         try {
             const convoRef = doc(db, "conversations", selectedConversation.id);
@@ -248,16 +269,15 @@ export default function MessagesPage() {
                 });
             } else {
                  await setDoc(convoRef, {
-                    ...selectedConversation,
+                    ...updatedConversation,
                     messages: [{ ...newMessage, timestamp: serverTimestamp() }],
                     lastMessage: text,
                     lastMessageTimestamp: serverTimestamp()
                 });
             }
             
-            // If support staff sends a message, create a notification for the other participant
-             if (user.role === 'support_staff') {
-                const otherParticipantId = selectedConversation.participants.find(p => p !== user.uid);
+            // If support staff or admin sends a message, create a notification for the other participant
+             if (role === 'support_staff' || role === 'admin' || role === 'super_admin') {
                 if (otherParticipantId) {
                     await addDoc(collection(db, "notifications"), {
                         userId: otherParticipantId,
@@ -268,13 +288,12 @@ export default function MessagesPage() {
                     });
                 }
             }
-
-
         } catch (error) {
             console.error("Failed to send message:", error);
             toast({ title: "Erreur", description: "Votre message n'a pas pu être envoyé.", variant: "destructive" });
-            // Revert optimistic update on error
-            setSelectedConversation({ ...selectedConversation, messages: selectedConversation.messages });
+            // Revert optimistic update on error by re-fetching (or manually reverting)
+            setSelectedConversation(selectedConversation);
+            setConversations(prev => prev.map(c => c.id === selectedConversation.id ? selectedConversation : c));
         }
     };
     

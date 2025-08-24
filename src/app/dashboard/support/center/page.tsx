@@ -22,7 +22,7 @@ type Ticket = {
     message: string;
     submittedAt: Date;
     status: 'new' | 'open' | 'resolved';
-    convoId: string;
+    userId: string;
 };
 
 const formatDistanceToNow = (date: Date): string => {
@@ -117,10 +117,10 @@ export default function SupportCenterPage() {
                     subject: data.subject,
                     userName: data.userName,
                     userEmail: data.userEmail,
-                    message: data.message, // Ensure message is fetched
+                    message: data.message,
                     submittedAt: data.submittedAt?.toDate(),
                     status: data.status,
-                    convoId: data.userEmail.split('@')[0].replace(/[^a-z0-9]/gi, '-') // Generate a predictable ID
+                    userId: data.userId,
                 } as Ticket;
             });
             setTickets(fetchedTickets);
@@ -131,10 +131,13 @@ export default function SupportCenterPage() {
     }, []);
 
     const handleTicketSelect = (ticket: Ticket) => {
+        // Create a unique but predictable conversation ID between the user and support
+        const convoId = `support-${ticket.userId}`;
         const queryParams = new URLSearchParams({
-            new: ticket.convoId,
+            new: convoId,
             name: ticket.userName,
-            initialMessage: ticket.message
+            initialMessage: ticket.message,
+            senderId: ticket.userId, // The user who created the ticket is the initial sender
         });
         router.push(`/dashboard/messages?${queryParams.toString()}`);
     };
