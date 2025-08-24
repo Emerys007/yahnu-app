@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, MessageSquare, CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { collection, query, onSnapshot, orderBy, DocumentData, doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
+import { collection, query, onSnapshot, orderBy, DocumentData, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 type Ticket = {
@@ -125,44 +125,24 @@ export default function SupportCenterPage() {
             });
             setTickets(fetchedTickets);
             setIsLoading(false);
+        }, (error) => {
+            console.error("Error fetching tickets:", error);
+            setIsLoading(false);
         });
 
         return () => unsubscribe();
     }, []);
 
     const handleTicketSelect = async (ticket: Ticket) => {
-        // Create a unique, predictable conversation ID
-        const convoId = `support-${ticket.userId}`;
-        const convoRef = doc(db, "conversations", convoId);
-        
-        const convoDoc = await getDoc(convoRef);
-
-        // If the conversation doesn't exist, create it with the ticket's first message
-        if (!convoDoc.exists()) {
-             await setDoc(convoRef, {
-                id: convoId,
-                name: ticket.userName,
-                avatar: "https://placehold.co/100x100.png",
-                participants: ['support_staff_id', ticket.userId], // Replace with actual support staff ID logic if needed
-                lastMessage: ticket.message,
-                lastMessageTimestamp: ticket.submittedAt,
-                unread: 1,
-                messages: [{
-                    id: ticket.id, // Use ticket ID for the first message ID
-                    senderId: ticket.userId,
-                    text: ticket.message,
-                    timestamp: ticket.submittedAt,
-                }],
-            });
-        }
-
-        // Mark the ticket as 'open' when it's viewed for the first time
+        // Mark ticket as 'open' if it's 'new'
         if (ticket.status === 'new') {
             const ticketRef = doc(db, "tickets", ticket.id);
             await updateDoc(ticketRef, { status: 'open' });
         }
         
-        // Navigate to the conversation
+        // Always redirect to the messages page with a stable conversation ID.
+        // The messages page will be responsible for creating the conversation if it doesn't exist.
+        const convoId = `support-${ticket.userId}`;
         router.push(`/dashboard/messages?convoId=${convoId}`);
     };
 

@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useAuth, type Role } from "@/context/auth-context"
 import { db } from "@/lib/firebase"
-import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, updateDoc, getDoc, writeBatch, setDoc } from "firebase/firestore"
+import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, doc, updateDoc, getDoc, writeBatch, setDoc, getDocs } from "firebase/firestore"
 import { useToast } from "@/hooks/use-toast"
 
 type Message = {
@@ -143,18 +143,85 @@ export default function MessagesPage() {
 
     // Effect for handling opening a conversation from a link/ticket
     useEffect(() => {
-        const convoId = searchParams.get('convoId');
-        if (!convoId || conversations.length === 0) return;
+        const handleUrlParams = async () => {
+            const convoId = searchParams.get('convoId');
+            if (!convoId) {
+                // If there's no convoId, default to selecting the first conversation on desktop
+                if (!isMobile && conversations.length > 0 && !selectedConversation) {
+                    setSelectedConversation(conversations[0]);
+                }
+                return;
+            }
 
-        const convoToSelect = conversations.find(c => c.id === convoId);
-        if (convoToSelect) {
-            setSelectedConversation(convoToSelect);
-            // Clean URL
+            // Clean the URL immediately
             router.replace('/dashboard/messages', { scroll: false });
+
+            // Check if conversation already exists locally
+            const existingConvo = conversations.find(c => c.id === convoId);
+            if (existingConvo) {
+                setSelectedConversation(existingConvo);
+                return;
+            }
+
+            // If not, check Firestore
+            const convoRef = doc(db, "conversations", convoId);
+            const convoDoc = await getDoc(convoRef);
+
+            if (convoDoc.exists()) {
+                // Conversation exists in DB but not in local state yet (can happen on initial load)
+                // The main onSnapshot listener will eventually pick it up and set it.
+                // We can optimistically set it here or wait. Let's wait to avoid duplicate state.
+            } else {
+                // This is a new conversation from a support ticket. We need to create it.
+                // The convoId should be `support-${userId}`
+                const userId = convoId.replace('support-', '');
+                if (!userId) return;
+
+                // Fetch the original ticket to get the first message
+                const ticketsQuery = query(collection(db, "tickets"), where("userId", "==", userId));
+                const ticketsSnapshot = await getDocs(ticketsQuery);
+                
+                if (!ticketsSnapshot.empty) {
+                    const ticket = ticketsSnapshot.docs[0].data(); // Assuming one open ticket per user
+                    const newConversation: Conversation = {
+                        id: convoId,
+                        name: ticket.userName,
+                        avatar: "https://placehold.co/100x100.png",
+                        participants: [user!.uid, userId],
+                        lastMessage: ticket.message,
+                        lastMessageTimestamp: ticket.submittedAt.toDate(),
+                        unread: 0,
+                        messages: [{
+                            id: ticketsSnapshot.docs[0].id,
+                            senderId: userId,
+                            text: ticket.message,
+                            timestamp: ticket.submittedAt.toDate(),
+                        }],
+                    };
+                    // Optimistically add to local state and select it
+                    setConversations(prev => [newConversation, ...prev]);
+                    setSelectedConversation(newConversation);
+
+                    // Save to Firestore
+                    await setDoc(convoRef, {
+                        ...newConversation,
+                        lastMessageTimestamp: ticket.submittedAt,
+                         messages: [{
+                            id: ticketsSnapshot.docs[0].id,
+                            senderId: userId,
+                            text: ticket.message,
+                            timestamp: ticket.submittedAt,
+                        }],
+                    });
+                }
+            }
+        };
+
+        if (user) {
+            handleUrlParams();
         }
-    // This effect runs when conversations are loaded or query params change
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams, conversations]);
+    }, [searchParams, conversations, user]);
 
     // Effect for fetching conversations from Firestore
     useEffect(() => {
@@ -180,12 +247,19 @@ export default function MessagesPage() {
             
             setConversations(convos);
 
-            // If a conversation was selected via URL, keep it, otherwise select the first one on desktop.
-            if (!selectedConversation && convos.length > 0 && !isMobile) {
-                 const convoIdFromUrl = searchParams.get('convoId');
-                 if (!convoIdFromUrl) {
-                    setSelectedConversation(convos[0]);
-                 }
+            // Logic to preserve or set the selected conversation
+            if (selectedConversation) {
+                // If a conversation is already selected, update it with fresh data
+                const updatedSelectedConvo = convos.find(c => c.id === selectedConversation.id);
+                if (updatedSelectedConvo) {
+                    setSelectedConversation(updatedSelectedConvo);
+                } else {
+                    // The selected conversation was deleted, so deselect it
+                    setSelectedConversation(null);
+                }
+            } else if (!isMobile && convos.length > 0) {
+                 // If no conversation is selected and on desktop, select the first one
+                 setSelectedConversation(convos[0]);
             }
             
             setIsLoading(false);
@@ -195,9 +269,8 @@ export default function MessagesPage() {
         });
 
         return () => unsubscribe();
-    // Re-run this effect only if the user changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
+    }, [user, isMobile]);
 
 
     const handleSendMessage = async (text: string) => {
@@ -222,7 +295,7 @@ export default function MessagesPage() {
             participants: otherParticipantId ? [user.uid, otherParticipantId] : [user.uid]
         };
         setSelectedConversation(updatedConversation);
-        setConversations(prev => prev.map(c => c.id === updatedConversation.id ? updatedConversation : c));
+        setConversations(prev => prev.map(c => c.id === updatedConversation.id ? updatedConversation : c).sort((a,b) => b.lastMessageTimestamp.getTime() - a.lastMessageTimestamp.getTime()));
 
 
         try {
@@ -246,16 +319,15 @@ export default function MessagesPage() {
                 });
             }
             
-            if (role === 'support_staff' || role === 'admin' || role === 'super_admin') {
-                if (otherParticipantId) {
-                    await addDoc(collection(db, "notifications"), {
-                        userId: otherParticipantId,
-                        text: `Nouvelle réponse du support : "${text.substring(0, 30)}..."`,
-                        read: false,
-                        createdAt: serverTimestamp(),
-                        type: 'message'
-                    });
-                }
+            // Send a notification to the other participant
+            if (otherParticipantId) {
+                await addDoc(collection(db, "notifications"), {
+                    userId: otherParticipantId,
+                    text: `Nouveau message de ${user.name}: "${text.substring(0, 30)}..."`,
+                    read: false,
+                    createdAt: serverTimestamp(),
+                    type: 'message'
+                });
             }
         } catch (error) {
             console.error("Failed to send message:", error);
@@ -350,8 +422,14 @@ export default function MessagesPage() {
                                     />
                                 ) : (
                                     <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
-                                        <MessageSquare className="h-16 w-16 text-muted-foreground/50" />
-                                        <p className="mt-4 text-muted-foreground">Sélectionnez une conversation pour commencer.</p>
+                                        {isLoading ? (
+                                            <Loader2 className="h-8 w-8 animate-spin" />
+                                        ) : (
+                                            <>
+                                                <MessageSquare className="h-16 w-16 text-muted-foreground/50" />
+                                                <p className="mt-4 text-muted-foreground">Sélectionnez une conversation pour commencer.</p>
+                                            </>
+                                        )}
                                     </div>
                                 )}
                            

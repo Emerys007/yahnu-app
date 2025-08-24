@@ -14,6 +14,8 @@ import {
   MoreVertical,
   Ticket,
   MessageSquare,
+  Briefcase,
+  Calendar,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -46,6 +48,7 @@ type NotificationItem = {
 const formatDistanceToNow = (date: Date): string => {
     if (!date) return "";
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    if (seconds < 60) return `Il y a quelques secondes`;
     let interval = seconds / 31536000;
     if (interval > 1) return `Il y a ${Math.floor(interval)} ans`;
     interval = seconds / 2592000;
@@ -84,7 +87,8 @@ export function DashboardHeader() {
     let q;
     let notificationParser: (doc: DocumentData) => NotificationItem | null;
 
-    if (role === 'admin' || role === 'super_admin') {
+    const adminRoles: Role[] = ['admin', 'super_admin'];
+    if (adminRoles.includes(role)) {
       q = query(
         collection(db, "users"), 
         where('status', '==', 'pending'),
