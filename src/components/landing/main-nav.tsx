@@ -159,5 +159,3 @@ export function MainNav() {
     </header>
   );
 }
-
-export { MainNav };
