@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { GraduationCap, Building, School } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { AnimatedGradientBackground } from "../ui/animated-gradient-background"
-import { Button } from "@/components/ui/button"
 
 const getFeaturesData = () => ({
   graduates: {
@@ -19,17 +18,14 @@ const getFeaturesData = () => ({
       {
         title: "Créateur de Profil IA",
         description: "Générez un profil professionnel et un CV qui se démarquent en quelques minutes.",
-        action: "Commencer",
       },
       {
         title: "Correspondance d'Emploi Intelligente",
         description: "Recevez des recommandations d'emploi personnalisées en fonction de vos compétences et de vos aspirations.",
-        action: "Trouver un Emploi",
       },
       {
         title: "Développement des Compétences",
         description: "Accédez à des évaluations pour valider vos compétences et gagner des badges pour votre profil.",
-        action: "Explorer les Compétences",
       },
     ],
   },
@@ -42,17 +38,14 @@ const getFeaturesData = () => ({
       {
         title: "Sourcing de Talents Efficace",
         description: "Accédez à un vivier de diplômés qualifiés issus des meilleures universités.",
-        action: "Trouver des Talents",
       },
       {
         title: "Recrutement Simplifié",
         description: "Utilisez des outils IA pour filtrer les candidats et gérer votre pipeline de recrutement.",
-        action: "Recruter Facilement",
       },
       {
         title: "Aperçus Basés sur les Données",
         description: "Suivez vos métriques de recrutement et comprenez les tendances du marché des talents.",
-        action: "Obtenir des Aperçus",
       },
     ],
   },
@@ -65,23 +58,20 @@ const getFeaturesData = () => ({
       {
         title: "Liens avec l'Industrie",
         description: "Établissez des partenariats avec des entreprises de premier plan pour des stages et des opportunités d'emploi.",
-        action: "Se Connecter",
       },
       {
         title: "Améliorez l'Employabilité des Diplômés",
         description: "Suivez le succès de vos anciens élèves et obtenez des informations pour améliorer vos programmes.",
-        action: "Améliorer les Programmes",
       },
       {
         title: "Mettez en Valeur Votre Institution",
         description: "Présentez vos programmes et vos réussites à un public plus large.",
-        action: "Mettre en Avant",
       },
     ],
   },
 });
 
-function FeatureCard({ feature }: { feature: { title: string; description: string; action: string } }) {
+function FeatureCard({ feature }: { feature: { title: string; description: string } }) {
     const ref = React.useRef(null);
     const isInView = useInView(ref, { once: true, amount: 0.5 });
 
@@ -98,27 +88,12 @@ function FeatureCard({ feature }: { feature: { title: string; description: strin
         variants={variants}
         transition={{ duration: 0.5 }}
       >
-        <Card className="h-full border-none shadow-premium hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-card/80 backdrop-blur-sm">
-          <CardContent className="p-8">
-            <div className="flex flex-col items-center text-center space-y-6">
-              <div className="h-56 w-full relative overflow-hidden rounded-xl mb-6 group">
-                <Image
-                  src={feature.image}
-                  alt={feature.title}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent group-hover:from-black/30 transition-all duration-300"></div>
-              </div>
-              <h3 className="text-2xl font-display font-bold mb-3 text-foreground">{feature.title}</h3>
-              <p className="text-muted-foreground text-base leading-relaxed max-w-sm">
-                {feature.description}
-              </p>
-              <Button className="mt-6 font-semibold" variant="outline" size="lg">
-                {feature.action}
-              </Button>
-            </div>
+        <Card className="h-full bg-background/80 backdrop-blur-sm border-border/50 shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <CardHeader>
+            <CardTitle>{feature.title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">{feature.description}</p>
           </CardContent>
         </Card>
       </motion.div>
@@ -244,19 +219,17 @@ export function FeaturesSection() {
     const isInView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
-    <section className="py-20 lg:py-32 bg-gradient-to-b from-background via-muted/20 to-background relative overflow-hidden">
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-      <div className="container px-4 md:px-6 relative">
+    <section ref={ref} className="py-24 relative overflow-hidden" id="features">
+      <AnimatedGradientBackground />
+      <div className="container mx-auto relative z-10">
         <motion.div
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
             variants={{ hidden: { opacity: 0, y: -20 }, visible: { opacity: 1, y: 0 } }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-12"
         >
-          <h2 className="text-4xl font-display font-bold tracking-tight sm:text-5xl md:text-6xl mb-6 bg-gradient-to-r from-primary via-primary/80 to-primary bg-clip-text text-transparent">
-            {localize('Votre passerelle vers l\'emploi en Afrique')}
-          </h2>
+          <h2 className="text-4xl font-bold tracking-tight">Une Plateforme, Trois Solutions</h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
             Que vous soyez un jeune diplômé, une entreprise en croissance ou une institution académique de premier plan, Yahnu est conçu pour vous.
           </p>

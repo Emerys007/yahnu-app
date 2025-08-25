@@ -13,21 +13,20 @@ export function Footer() {
   const { t } = useLocalization();
 
   return (
-    <footer className="bg-gradient-to-t from-muted/50 to-background border-t border-border/40 relative overflow-hidden">
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-      <div className="container px-6 py-12 md:py-16 relative">
+    <footer className="bg-background border-t">
+      <div className="w-full py-16 px-4 sm:px-6 lg:px-8">
         {!isDashboard && (
           <>
             <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-12">
                 {/* Brand Section */}
                 <div className="lg:col-span-2 space-y-6">
                   <div className="flex items-center gap-3">
-                    <Logo className="h-10 w-auto mb-2" />
+                    <Logo className="h-10 w-10 text-primary" />
                     <span className="text-2xl font-bold text-foreground">Yahnu</span>
                   </div>
-                  <p className="text-base text-muted-foreground max-w-xs leading-relaxed font-medium">
-                    Connecter les talents africains aux opportunités mondiales. Construisons ensemble l'avenir du travail en Afrique.
+                  <p className="text-muted-foreground max-w-md leading-relaxed text-sm">
+                    Connecter les talents, les entreprises et les écoles en Côte d'Ivoire pour un avenir professionnel brillant.
                   </p>
                 </div>
 
