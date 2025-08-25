@@ -6,6 +6,12 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  experimental: {
+    optimizeCss: true,
+  },
+  swcMinify: true,
+  poweredByHeader: false,
+  compress: true,
   images: {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",

@@ -17,8 +17,18 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Yahnu',
-  description: 'Une plateforme pour les diplômés, les entreprises et les écoles pour se connecter et trouver des opportunités d\'emploi.',
+  title: 'Yahnu - Connecter les talents en Afrique',
+  description: 'Une plateforme pour les diplômés, les entreprises et les écoles pour se connecter et trouver des opportunités d\'emploi en Afrique francophone.',
+  keywords: 'emploi, carrière, entreprises, écoles, diplômés, Afrique, Côte d\'Ivoire',
+  authors: [{ name: 'Look Time Life' }],
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=5',
+  robots: 'index, follow',
+  openGraph: {
+    title: 'Yahnu - Connecter les talents en Afrique',
+    description: 'Une plateforme pour les diplômés, les entreprises et les écoles pour se connecter et trouver des opportunités d\'emploi en Afrique francophone.',
+    type: 'website',
+    locale: 'fr_FR',
+  },
 };
 
 export default function RootLayout({

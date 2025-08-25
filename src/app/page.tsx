@@ -1,16 +1,22 @@
 
 "use client";
 
-import { FeaturesSection } from "@/components/landing/features-section";
-import { HeroSection } from "@/components/landing/hero-section";
+import dynamic from "next/dynamic";
 import { MainNav } from "@/components/landing/main-nav";
+import { HeroSection } from "@/components/landing/hero-section";
+import { FeaturesSection } from "@/components/landing/features-section";
+import { Footer } from "@/components/landing/footer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Footer } from "@/components/landing/footer";
 import { ShieldCheck, Wand2, Handshake, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { AnimatedGradientBackground } from "@/components/ui/animated-gradient-background";
+
+// Dynamically import heavy components to improve initial load
+const AnimatedGradientBackground = dynamic(
+  () => import("@/components/ui/animated-gradient-background").then(mod => ({ default: mod.AnimatedGradientBackground })),
+  { ssr: false }
+);
 
 const WhyChooseYahnu = () => {
   const benefits = [
