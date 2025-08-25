@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -83,7 +84,7 @@ export function MainNav() {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-
+            
             <div className="md:hidden flex items-center gap-1">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -159,5 +160,3 @@ export function MainNav() {
     </header>
   );
 }
-
-export default MainNav;

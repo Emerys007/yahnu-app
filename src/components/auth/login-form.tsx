@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -21,7 +22,6 @@ import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
 import { PasswordInput } from "@/components/ui/password-input"
 import { Separator } from "../ui/separator"
-import { ReCaptcha } from "@/components/ui/recaptcha"
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Veuillez saisir une adresse e-mail valide." }),
@@ -33,7 +33,6 @@ export function LoginForm() {
     const { toast } = useToast();
     const router = useRouter();
     const [isLoading, setIsLoading] = React.useState(false);
-    const [recaptchaToken, setRecaptchaToken] = React.useState<string>("")
 
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -45,15 +44,6 @@ export function LoginForm() {
   })
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    if (!recaptchaToken) {
-      toast({
-        title: "Erreur",
-        description: "Veuillez compléter la vérification reCAPTCHA.",
-        variant: "destructive"
-      })
-      return
-    }
-
     setIsLoading(true);
     try {
         await signIn(values.email, values.password);
@@ -155,15 +145,6 @@ export function LoginForm() {
                 </FormItem>
             )}
             />
-            <div className="space-y-2">
-                <ReCaptcha
-                  siteKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6LdQBLErAAAAABmcV5sIlt1SZ3nT5IF9-NHq1Txc"}
-                  onVerify={setRecaptchaToken}
-                  onExpire={() => setRecaptchaToken("")}
-                  action="LOGIN"
-                />
-            </div>
-
             <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Connexion en cours..." : "Connexion"}
             </Button>
