@@ -3,7 +3,7 @@
 
 import { FeaturesSection } from "@/components/landing/features-section";
 import { HeroSection } from "@/components/landing/hero-section";
-import { MainNav } from "@/components/landing/main-nav";
+import MainNav from "@/components/landing/main-nav";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Footer } from "@/components/landing/footer";
