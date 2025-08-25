@@ -16,7 +16,7 @@ export function Footer() {
         {!isDashboard && (
           <>
             <div className="max-w-6xl mx-auto">
-              <div className="flex flex-col lg:flex-row justify-center items-center lg:items-center gap-8 lg:gap-16 text-center">
+              <div className="flex flex-col lg:flex-row justify-center items-center gap-8 lg:gap-16 text-center">
                 {/* Brand Section */}
                 <div className="flex flex-col items-center">
                   <div className="flex items-center gap-3">
