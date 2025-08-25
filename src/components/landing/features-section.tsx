@@ -194,6 +194,7 @@ const AnimatedTabs = () => {
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover"
                       data-ai-hint={data.imageHint}
+                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   </motion.div>
@@ -221,7 +222,7 @@ export function FeaturesSection() {
     <section ref={ref} className="py-24 relative overflow-hidden" id="features">
       <AnimatedGradientBackground />
       <div className="container mx-auto relative z-10">
-        <motion.div 
+        <motion.div
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
             variants={{ hidden: { opacity: 0, y: -20 }, visible: { opacity: 1, y: 0 } }}

@@ -6,6 +6,12 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion'],
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
   images: {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
@@ -52,8 +58,7 @@ const nextConfig = {
         hostname: 'www.bridgebankgroup.com',
       },
       {
-        protocol: 'https'
-        ,
+        protocol: 'https',
         hostname: 'www.cevalogistics.com',
       },
       {
