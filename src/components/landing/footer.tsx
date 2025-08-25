@@ -19,7 +19,7 @@ export function Footer() {
         {!isDashboard && (
           <>
             <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-8">
                 {/* Brand Section */}
                 <div className="lg:col-span-2 space-y-4">
                   <div className="flex items-center gap-3">
@@ -29,23 +29,6 @@ export function Footer() {
                   <p className="text-muted-foreground max-w-md leading-relaxed">
                     Connecter les talents, les entreprises et les écoles en Côte d'Ivoire pour un avenir professionnel brillant.
                   </p>
-                  <div className="flex gap-4 pt-2">
-                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" 
-                       className="text-muted-foreground hover:text-primary transition-colors p-2 rounded-full hover:bg-accent">
-                      <span className="sr-only">Twitter</span>
-                      <Twitter className="h-5 w-5" />
-                    </a>
-                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" 
-                       className="text-muted-foreground hover:text-primary transition-colors p-2 rounded-full hover:bg-accent">
-                      <span className="sr-only">LinkedIn</span>
-                      <Linkedin className="h-5 w-5" />
-                    </a>
-                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
-                       className="text-muted-foreground hover:text-primary transition-colors p-2 rounded-full hover:bg-accent">
-                      <span className="sr-only">Facebook</span>
-                      <Facebook className="h-5 w-5" />
-                    </a>
-                  </div>
                 </div>
 
                 {/* Platform Links */}
@@ -85,6 +68,28 @@ export function Footer() {
                       </a>
                     </li>
                   </ul>
+                </div>
+
+                {/* Social Media Section */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Suivez-nous</h3>
+                  <div className="flex flex-col gap-3">
+                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" 
+                       className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors group">
+                      <Twitter className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                      <span>Twitter</span>
+                    </a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" 
+                       className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors group">
+                      <Linkedin className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                      <span>LinkedIn</span>
+                    </a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
+                       className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors group">
+                      <Facebook className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                      <span>Facebook</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
