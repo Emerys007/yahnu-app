@@ -19,7 +19,7 @@ export function Footer() {
         {!isDashboard && (
           <>
             <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
                 {/* Brand Section */}
                 <div className="lg:col-span-2 space-y-4">
                   <div className="flex items-center gap-3">
