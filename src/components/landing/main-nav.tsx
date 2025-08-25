@@ -29,8 +29,33 @@ const navLinks = [
   { href: "/about", label: "À propos" },
 ];
 
+// Simple localization function
+const localize = (key: string) => {
+  const translations: Record<string, string> = {
+    'Home': 'Accueil',
+    'About': 'À propos',
+    'Schools': 'Écoles',
+    'Companies': 'Entreprises',
+    'Jobs': 'Emplois',
+    'Blog': 'Blog',
+    'Login': 'Connexion',
+    'Get Started': 'Commencer'
+  }
+  return translations[key] || key
+}
+
 export function MainNav() {
   const { setTheme } = useTheme()
+
+  const [selectedCountry, setSelectedCountry] = React.useState("ivory-coast")
+  const [isOpen, setIsOpen] = React.useState(false)
+  const [expandedItems, setExpandedItems] = React.useState<string[]>([])
+
+  // Fix: Move localStorage access to useEffect to avoid setState during render
+  React.useEffect(() => {
+    const savedCountry = localStorage.getItem('selectedCountry') || 'ivory-coast'
+    setSelectedCountry(savedCountry)
+  }, [])
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 glass backdrop-blur-xl">
@@ -98,12 +123,12 @@ export function MainNav() {
             <div className="flex items-center gap-2 md:ml-6">
                 <Link href="/login">
                   <Button variant="ghost" size="sm" className="font-semibold hover:bg-primary/10 transition-colors">
-                    {localize('Se connecter')}
+                    {localize('Login')}
                   </Button>
                 </Link>
                 <Link href="/signup">
                   <Button size="sm" className="font-semibold bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                    {localize('S\'inscrire')}
+                    {localize('Get Started')}
                   </Button>
                 </Link>
             </div>
@@ -165,12 +190,12 @@ export function MainNav() {
                         <div className="flex flex-col items-center gap-4">
                         <SheetClose asChild>
                             <Button variant="outline" className="w-full text-lg" asChild>
-                                <Link href="/login">Connexion</Link>
+                                <Link href="/login">{localize('Login')}</Link>
                             </Button>
                         </SheetClose>
                         <SheetClose asChild>
                             <Button className="w-full text-lg" asChild>
-                            <Link href="/signup">S'inscrire</Link>
+                            <Link href="/signup">{localize('Get Started')}</Link>
                             </Button>
                         </SheetClose>
                         </div>
