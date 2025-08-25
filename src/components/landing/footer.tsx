@@ -1,4 +1,3 @@
-
 "use client"
 
 import Link from "next/link"
@@ -39,7 +38,7 @@ export function Footer() {
                     <li><Link href="/blog" className="text-muted-foreground hover:text-primary transition-colors">Blog</Link></li>
                   </ul>
                 </div>
-                
+
                 {/* Legal Links */}
                 <div className="flex flex-col items-center">
                   <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Légal</h3>
@@ -97,8 +96,8 @@ export function Footer() {
           </>
         )}
         {isDashboard && (
-             <div className="text-center text-sm text-muted-foreground">
-                <p>&copy; {new Date().getFullYear()} Yahnu. Tous droits réservés.</p>
+             <div className="text-center text-sm text-muted-foreground max-w-6xl mx-auto">
+                <p>&copy; {new Date().getFullYear()} Yahnu. {t('footer.rights_reserved')}</p>
             </div>
         )}
       </div>

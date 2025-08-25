@@ -1,4 +1,3 @@
-
 {
   "common": {
     "slogan": "Connecter. Grandir. Réussir.",
@@ -140,7 +139,16 @@
         "system_health": "Santé du système"
     },
     "nav": {
-        "graduates": "Diplômés"
+        "home": "Accueil",
+        "about": "À propos",
+        "features": "Fonctionnalités",
+        "blog": "Blog",
+        "login": "Connexion",
+        "signup": "S'inscrire",
+        "jobs": "Emplois",
+        "companies": "Entreprises",
+        "schools": "Écoles",
+        "dashboard": "Tableau de bord"
     },
     "graduate": {
         "welcome_message_personalized": "Bienvenue, {name} !",
@@ -262,5 +270,55 @@
     "no_jobs_found_title": "Aucune offre d'emploi ne correspond à votre recherche",
     "no_jobs_found_desc": "Essayez d'ajuster vos filtres ou d'élargir vos termes de recherche.",
     "clear_filters_button": "Réinitialiser les filtres"
+  },
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "features": "Fonctionnalités",
+    "blog": "Blog",
+    "login": "Connexion",
+    "signup": "S'inscrire",
+    "jobs": "Emplois",
+    "companies": "Entreprises",
+    "schools": "Écoles",
+    "dashboard": "Tableau de bord"
+  },
+  "hero": {
+    "title": "Connecter les Diplômés aux Opportunités",
+    "subtitle": "La plateforme de référence pour que les diplômés, entreprises et écoles se connectent et trouvent des opportunités d'emploi.",
+    "cta": "Commencer",
+    "get_started": "Commencer",
+    "learn_more": "En savoir plus"
+  },
+  "features": {
+    "title": "Nos Fonctionnalités",
+    "subtitle": "Découvrez comment Yahnu transforme la recherche d'emploi et le recrutement",
+    "graduates": {
+      "title": "Pour les Diplômés",
+      "description": "Trouvez l'emploi de vos rêves grâce à notre système de correspondance alimenté par l'IA",
+      "cta": "Rechercher des emplois"
+    },
+    "companies": {
+      "title": "Pour les Entreprises", 
+      "description": "Constituez votre équipe avec des diplômés qualifiés des meilleures écoles",
+      "cta": "Publier une offre"
+    },
+    "schools": {
+      "title": "Pour les Écoles",
+      "description": "Partenariat avec l'industrie pour améliorer les opportunités de vos diplômés",
+      "cta": "Devenir partenaire"
+    }
+  },
+  "footer": {
+    "about": "À propos de Yahnu",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "contact": "Contact",
+    "platform": "Plateforme",
+    "legal": "Légal",
+    "follow_us": "Suivez-nous",
+    "contact_us": "Nous contacter",
+    "description": "Connecter les talents, les entreprises et les écoles en Côte d'Ivoire.",
+    "rights_reserved": "Tous droits réservés."
   }
 }

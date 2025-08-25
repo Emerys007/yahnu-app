@@ -2,8 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-// Adjust these paths to point to your actual locale files
-const enPath = path.join(process.cwd(), 'src/locales/en.json');
+// Only validate French locale file
 const frPath = path.join(process.cwd(), 'src/locales/fr.json');
 
 function readJSON(file) {
@@ -23,28 +22,10 @@ function flatten(obj, prefix = '') {
   return result;
 }
 
-const en = flatten(readJSON(enPath));
-const fr = flatten(readJSON(frPath));
-
-const missingInEn = [];
-const missingInFr = [];
-
-for (const key of Object.keys(en)) {
-  if (!(key in fr)) missingInFr.push(key);
-}
-for (const key of Object.keys(fr)) {
-  if (!(key in en)) missingInEn.push(key);
-}
-
-if (missingInEn.length || missingInFr.length) {
-  console.log('Missing keys detected:');
-  if (missingInEn.length) {
-    console.log(`  In English only (${missingInEn.length}):`, missingInEn.join(', '));
-  }
-  if (missingInFr.length) {
-    console.log(`  In French only (${missingInFr.length}):`, missingInFr.join(', '));
-  }
-  process.exit(1); // non‑zero exit code to make CI fail
-} else {
-  console.log('All keys match between en.json and fr.json');
+try {
+  const fr = flatten(readJSON(frPath));
+  console.log(`French locale validation successful. Found ${Object.keys(fr).length} translation keys.`);
+} catch (error) {
+  console.error('French locale validation failed:', error.message);
+  process.exit(1);
 }

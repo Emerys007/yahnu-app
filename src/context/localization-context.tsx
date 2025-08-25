@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 import { useRouter, usePathname } from 'next/navigation';
 import fr from '@/locales/fr.json';
 
-type Locale = 'en' | 'fr';
+type Locale = 'fr';
 
 const translations: Record<string, any> = { fr };
 
@@ -31,8 +31,12 @@ export const LocalizationProvider = ({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     const savedLanguage = Cookies.get('language') as Locale;
-    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'fr')) {
+    if (savedLanguage && savedLanguage === 'fr') {
       setLanguageState(savedLanguage);
+    } else {
+      // Always default to French
+      setLanguageState('fr');
+      Cookies.set('language', 'fr', { expires: 365, path: '/' });
     }
   }, []);
 
@@ -42,16 +46,6 @@ export const LocalizationProvider = ({ children }: { children: React.ReactNode }
   };
   
   const t = useCallback((key: string, params?: { [key: string]: string | number }) => {
-      if (language === 'en') {
-          let text = key.split('.').pop() || key;
-          if (params) {
-            Object.keys(params).forEach(pKey => {
-                text = text.replace(`{${pKey}}`, String(params[pKey]));
-            })
-          }
-          return text.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-      }
-      
       const keys = key.split('.');
       let result = translations[language];
       for (const k of keys) {
