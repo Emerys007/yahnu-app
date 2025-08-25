@@ -19,7 +19,7 @@ export function Footer() {
         {!isDashboard && (
           <>
             <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-12">
                 {/* Brand Section */}
                 <div className="lg:col-span-2 space-y-6">
                   <div className="flex items-center gap-3">
@@ -29,27 +29,27 @@ export function Footer() {
                   <p className="text-muted-foreground max-w-md leading-relaxed text-sm">
                     Connecter les talents, les entreprises et les écoles en Côte d'Ivoire pour un avenir professionnel brillant.
                   </p>
-                  
-                  {/* Social Media */}
-                  <div className="space-y-4">
-                    <h4 className="text-sm font-semibold tracking-wider uppercase text-foreground">Suivez-nous</h4>
-                    <div className="flex gap-4">
-                      <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" 
-                         className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
-                        <Twitter className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                        <span className="sr-only">Twitter</span>
-                      </a>
-                      <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" 
-                         className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
-                        <Linkedin className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                        <span className="sr-only">LinkedIn</span>
-                      </a>
-                      <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
-                         className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
-                        <Facebook className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                        <span className="sr-only">Facebook</span>
-                      </a>
-                    </div>
+                </div>
+
+                {/* Social Media */}
+                <div className="space-y-6">
+                  <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Suivez-nous</h3>
+                  <div className="flex gap-4">
+                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" 
+                       className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
+                      <Twitter className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                      <span className="sr-only">Twitter</span>
+                    </a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" 
+                       className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
+                      <Linkedin className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                      <span className="sr-only">LinkedIn</span>
+                    </a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
+                       className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
+                      <Facebook className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                      <span className="sr-only">Facebook</span>
+                    </a>
                   </div>
                 </div>
 
