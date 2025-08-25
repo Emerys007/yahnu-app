@@ -31,28 +31,6 @@ export function Footer() {
                   </p>
                 </div>
 
-                {/* Social Media */}
-                <div className="space-y-6">
-                  <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Suivez-nous</h3>
-                  <div className="flex gap-4">
-                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" 
-                       className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
-                      <Twitter className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                      <span className="sr-only">Twitter</span>
-                    </a>
-                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" 
-                       className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
-                      <Linkedin className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                      <span className="sr-only">LinkedIn</span>
-                    </a>
-                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
-                       className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
-                      <Facebook className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                      <span className="sr-only">Facebook</span>
-                    </a>
-                  </div>
-                </div>
-
                 {/* Platform Links */}
                 <div className="space-y-6">
                   <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Plateforme</h3>
@@ -119,18 +97,40 @@ export function Footer() {
                     </li>
                   </ul>
                 </div>
+
+                {/* Social Media */}
+                <div className="space-y-6">
+                  <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Suivez-nous</h3>
+                  <div className="flex gap-4">
+                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" 
+                       className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
+                      <Twitter className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                      <span className="sr-only">Twitter</span>
+                    </a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" 
+                       className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
+                      <Linkedin className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                      <span className="sr-only">LinkedIn</span>
+                    </a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
+                       className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
+                      <Facebook className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                      <span className="sr-only">Facebook</span>
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Bottom Section */}
             <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-border/60">
-              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="text-center space-y-2">
                 <p className="text-sm text-muted-foreground font-medium">
                   &copy; {new Date().getFullYear()} Yahnu. Tous droits réservés.
                 </p>
-                <div className="flex items-center gap-6 text-xs text-muted-foreground">
-                  <span>Fait avec ❤️ en Côte d'Ivoire</span>
-                </div>
+                <p className="text-xs text-muted-foreground">
+                  Fait avec ❤️ par Look Time Life
+                </p>
               </div>
             </div>
           </>
