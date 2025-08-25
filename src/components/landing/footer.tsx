@@ -13,11 +13,12 @@ export function Footer() {
 
   return (
     <footer className="bg-background border-t">
-      <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="w-full py-8 px-4 sm:px-6 lg:px-8">
         {!isDashboard && (
           <>
-            <div className="max-w-6xl mx-auto">
-              <div className="flex flex-col lg:flex-row justify-center items-center gap-8 lg:gap-16 text-center">
+            <div className="flex justify-center">
+              <div className="flex flex-col lg:flex-row justify-center items-center gap-8 lg:gap-16 text-center"></div>
+            </div>
                 {/* Brand Section */}
                 <div className="flex flex-col items-center">
                   <div className="flex items-center gap-3">
@@ -87,9 +88,8 @@ export function Footer() {
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mt-12 pt-8 border-t max-w-6xl mx-auto">
+            <div className="mt-12 pt-8 border-t flex justify-center">
                 <div className="text-center text-sm text-muted-foreground">
                     <p>&copy; {new Date().getFullYear()} Yahnu. Tous droits réservés.</p>
                 </div>
