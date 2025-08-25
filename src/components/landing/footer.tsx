@@ -91,7 +91,7 @@ export function Footer() {
 
             {/* Bottom Section */}
             <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-border">
-              <div className="text-center">
+              <div className="text-right">
                 <p className="text-sm text-muted-foreground">
                   &copy; {new Date().getFullYear()} Yahnu. Tous droits réservés.
                 </p>
