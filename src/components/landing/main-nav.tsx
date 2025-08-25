@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { Menu, MoreVertical, Sun, Moon, Languages } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
@@ -46,15 +47,16 @@ const localize = (key: string) => {
 
 export function MainNav() {
   const { setTheme } = useTheme()
-
   const [selectedCountry, setSelectedCountry] = React.useState("ivory-coast")
   const [isOpen, setIsOpen] = React.useState(false)
   const [expandedItems, setExpandedItems] = React.useState<string[]>([])
 
   // Fix: Move localStorage access to useEffect to avoid setState during render
   React.useEffect(() => {
-    const savedCountry = localStorage.getItem('selectedCountry') || 'ivory-coast'
-    setSelectedCountry(savedCountry)
+    if (typeof window !== 'undefined') {
+      const savedCountry = localStorage.getItem('selectedCountry') || 'ivory-coast'
+      setSelectedCountry(savedCountry)
+    }
   }, [])
 
   return (

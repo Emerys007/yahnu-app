@@ -108,16 +108,18 @@ export function HeroSection() {
         <CarouselContent>
           {slides.map((slide, index) => (
             <CarouselItem key={index}>
-              <div className="relative w-full h-[70vh] md:h-[90vh]">
-                <Image
-                  src={slide.imageUrl}
-                  alt={slide.headline}
-                  fill
-                  sizes="100vw"
-                  className="object-cover"
-                  data-ai-hint={slide.imageHint}
-                  priority={current === index}
-                />
+              <div className="relative w-full h-[70vh] md:h-[90vh] overflow-hidden">
+                <div className="absolute inset-0">
+                  <Image
+                    src={slide.imageUrl}
+                    alt={slide.headline}
+                    fill
+                    sizes="100vw"
+                    className="object-cover"
+                    data-ai-hint={slide.imageHint}
+                    priority={current === index}
+                  />
+                </div>
               </div>
             </CarouselItem>
           ))}
