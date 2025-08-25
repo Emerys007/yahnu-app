@@ -3,29 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    font-feature-settings: "rlig" 1, "calt" 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  /* Improve focus visibility for accessibility */
-  *:focus-visible {
-    outline: 2px solid hsl(var(--ring));
-    outline-offset: 2px;
-  }
-  
-  /* Optimize image loading */
-  img {
-    content-visibility: auto;
-  }
-}
-
-@layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 224 71.4% 4.1%;
