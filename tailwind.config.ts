@@ -18,8 +18,9 @@ export default {
     extend: {
       fontFamily: {
         body: ['var(--font-inter)', 'sans-serif'],
-        headline: ['var(--font-space-grotesk)', 'sans-serif'],
-        code: ['monospace'],
+        headline: ['var(--font-playfair)', 'serif'],
+        display: ['var(--font-playfair)', 'serif'],
+        code: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
       },
       colors: {
         background: 'hsl(var(--background))',

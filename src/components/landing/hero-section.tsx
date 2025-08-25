@@ -88,9 +88,9 @@ export function HeroSection() {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut", delay: 0.2 } },
   };
 
-  const buttonVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut", delay: 0.4 } },
+  const ctaVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut", delay: 0.4 } },
   };
 
   return (
@@ -116,17 +116,17 @@ export function HeroSection() {
                   sizes="100vw"
                   className="object-cover"
                   data-ai-hint={slide.imageHint}
-                  priority
+                  priority={current === index}
                 />
               </div>
             </CarouselItem>
           ))}
         </CarouselContent>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
-
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
-            <div className="max-w-4xl space-y-8">
+            <div className="max-w-5xl mx-auto">
                 <AnimatePresence mode="wait">
                     {activeSlide && (
                         <motion.div
@@ -137,7 +137,10 @@ export function HeroSection() {
                         >
                             <motion.h1
                                 variants={titleVariants}
-                                className="text-4xl md:text-7xl font-bold tracking-tight drop-shadow-2xl leading-tight"
+                                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-6 tracking-tight leading-tight"
+                                style={{
+                                  textShadow: '0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.6)'
+                                }}
                             >
                                 {activeSlide.headline}
                             </motion.h1>
@@ -147,15 +150,28 @@ export function HeroSection() {
                             >
                                 {activeSlide.subtitle}
                             </motion.p>
-                            <motion.div variants={buttonVariants} className="mt-8">
-                                <Button size="lg" asChild className="text-base px-8 py-6">
-                                    <Link href={activeSlide.href}>
-                                        <div className="flex items-center gap-2">
-                                            {activeSlide.buttonIcon}
-                                            {activeSlide.buttonText}
-                                        </div>
+                            <motion.div
+                                key={`cta-${activeSlide.headline}`}
+                                variants={ctaVariants}
+                                initial="hidden"
+                                animate="visible"
+                                className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center"
+                            >
+                                <Button size="lg" className="text-lg px-10 py-4 bg-primary hover:bg-primary/90 shadow-premium hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold">
+                                    <Link href={activeSlide.href} className="flex items-center gap-2">
+                                        {activeSlide.buttonIcon}
+                                        {activeSlide.buttonText}
                                     </Link>
                                 </Button>
+                                {activeSlide.secondaryCTA && (
+                                    <Button 
+                                      variant="outline" 
+                                      size="lg" 
+                                      className="text-lg px-10 py-4 border-2 border-white text-white hover:bg-white hover:text-black shadow-premium hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold glass"
+                                    >
+                                      {activeSlide.secondaryCTA}
+                                    </Button>
+                                )}
                             </motion.div>
                         </motion.div>
                     )}

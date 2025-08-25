@@ -1,6 +1,6 @@
 
 import type {Metadata} from 'next';
-import { Inter } from 'next/font/google'
+import { Inter, Playfair_Display } from 'next/font/google'
 import Script from 'next/script';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
@@ -14,6 +14,15 @@ import { CountryProvider } from '@/context/country-context';
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
+  preload: true,
+})
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
 })
 
 export const metadata: Metadata = {
@@ -27,9 +36,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={cn(inter.variable)}>
-      <head />
-      <body suppressHydrationWarning>
+    <html lang="fr" className={cn(inter.variable, playfair.variable)}>
+      <head>
+        <link rel="dns-prefetch" href="//js.hs-scripts.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
+      <body suppressHydrationWarning className="font-body antialiased">
         <AuthProvider>
           <CountryProvider>
             <LocalizationProvider>

@@ -1,8 +1,7 @@
-
 "use client";
 
 import Link from "next/link";
-import { Menu, MoreVertical, Sun, Moon } from "lucide-react";
+import { Menu, MoreVertical, Sun, Moon, Languages } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,11 +33,11 @@ export function MainNav() {
   const { setTheme } = useTheme()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-20 items-center">
-        <div className="mr-6 flex-1 md:flex-initial">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 glass backdrop-blur-xl">
+      <div className="container flex h-18 items-center justify-between px-6">
+        <div className="flex items-center space-x-4">
           <Link href="/" className="flex items-center gap-3">
-              <Logo className="h-12 w-12" />
+              <Logo className="h-9 w-auto transform hover:scale-105 transition-transform duration-300" />
               <div>
                 <p className="font-bold text-xl">Yahnu</p>
                 <p className="text-xs text-muted-foreground">Votre avenir commence ici</p>
@@ -47,25 +46,37 @@ export function MainNav() {
         </div>
 
         <div className="flex items-center gap-2 ml-auto">
-            <nav className="hidden md:flex items-center gap-6 text-sm">
+            <nav className="hidden md:flex items-center space-x-8 text-sm font-medium">
                 {navLinks.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="group relative font-medium text-muted-foreground transition-colors hover:text-foreground"
+                      className="relative py-2 transition-all duration-300 hover:text-primary text-foreground/70 hover:text-foreground font-semibold group"
                     >
                       {link.label}
-                      <span className="absolute bottom-[-2px] left-0 h-0.5 w-0 rounded-full bg-primary transition-all duration-300 group-hover:w-full" />
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
                     </Link>
                 ))}
             </nav>
-            <div className="hidden items-center gap-2 md:flex md:ml-6">
-                <Button variant="outline" asChild>
-                  <Link href="/login">Connexion</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/signup">S'inscrire</Link>
-                </Button>
+            <div className="hidden md:flex items-center space-x-3">
+                {/* Language Selector */}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-9 w-9 px-0 hover:bg-primary/10 transition-colors">
+                            <Languages className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setTheme("light")}>
+                        <Sun className="mr-2 h-4 w-4" />
+                        <span>Clair</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setTheme("dark")}>
+                        <Moon className="mr-2 h-4 w-4" />
+                        <span>Sombre</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon">
@@ -84,7 +95,19 @@ export function MainNav() {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            
+            <div className="flex items-center gap-2 md:ml-6">
+                <Link href="/login">
+                  <Button variant="ghost" size="sm" className="font-semibold hover:bg-primary/10 transition-colors">
+                    {localize('Se connecter')}
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button size="sm" className="font-semibold bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                    {localize('S\'inscrire')}
+                  </Button>
+                </Link>
+            </div>
+
             <div className="md:hidden flex items-center gap-1">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
