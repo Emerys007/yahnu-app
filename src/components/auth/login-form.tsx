@@ -145,8 +145,6 @@ export function LoginForm() {
                 </FormItem>
             )}
             />
-            {/* Temporarily disabled reCAPTCHA until environment variables are configured */}
-            {/* <ReCaptcha onVerify={() => {}} /> */}
             <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Connexion en cours..." : "Connexion"}
             </Button>
