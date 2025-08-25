@@ -16,9 +16,9 @@ export function Footer() {
         {!isDashboard && (
           <>
             <div className="max-w-6xl mx-auto">
-              <div className="flex flex-col lg:flex-row justify-center items-start gap-8 lg:gap-16">
+              <div className="flex flex-col lg:flex-row justify-center items-center lg:items-center gap-8 lg:gap-16 text-center">
                 {/* Brand Section */}
-                <div className="flex flex-col items-center lg:items-start">
+                <div className="flex flex-col items-center">
                   <div className="flex items-center gap-3">
                     <Logo className="h-8 w-8 text-primary" />
                     <span className="text-xl font-bold">Yahnu</span>
@@ -29,7 +29,7 @@ export function Footer() {
                 </div>
 
                 {/* Platform Links */}
-                <div className="flex flex-col items-center lg:items-start">
+                <div className="flex flex-col items-center">
                   <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Plateforme</h3>
                   <ul className="mt-4 space-y-2 text-sm">
                     <li><Link href="/jobs" className="text-muted-foreground hover:text-primary transition-colors">Emplois</Link></li>
@@ -40,7 +40,7 @@ export function Footer() {
                 </div>
 
                 {/* Legal Links */}
-                <div className="flex flex-col items-center lg:items-start">
+                <div className="flex flex-col items-center">
                   <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Légal</h3>
                   <ul className="mt-4 space-y-2 text-sm">
                     <li><Link href="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">Politique de confidentialité</Link></li>
@@ -49,7 +49,7 @@ export function Footer() {
                 </div>
 
                 {/* Contact Section */}
-                <div className="flex flex-col items-center lg:items-start">
+                <div className="flex flex-col items-center">
                   <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Nous contacter</h3>
                   <ul className="mt-4 space-y-2 text-sm">
                       <li>
@@ -68,7 +68,7 @@ export function Footer() {
                 </div>
 
                 {/* Socials Section */}
-                <div className="flex flex-col items-center lg:items-start">
+                <div className="flex flex-col items-center">
                   <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Suivez-nous</h3>
                   <div className="mt-4 flex gap-4">
                     <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
