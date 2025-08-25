@@ -73,21 +73,21 @@ export function Footer() {
                 {/* Social Media Section */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Suivez-nous</h3>
-                  <div className="flex flex-col gap-3">
+                  <div className="flex flex-row gap-4">
                     <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" 
-                       className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors group">
+                       className="text-muted-foreground hover:text-primary transition-colors group">
                       <Twitter className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                      <span>Twitter</span>
+                      <span className="sr-only">Twitter</span>
                     </a>
                     <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" 
-                       className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors group">
+                       className="text-muted-foreground hover:text-primary transition-colors group">
                       <Linkedin className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                      <span>LinkedIn</span>
+                      <span className="sr-only">LinkedIn</span>
                     </a>
                     <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
-                       className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors group">
+                       className="text-muted-foreground hover:text-primary transition-colors group">
                       <Facebook className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                      <span>Facebook</span>
+                      <span className="sr-only">Facebook</span>
                     </a>
                   </div>
                 </div>
