@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -84,7 +83,7 @@ export function MainNav() {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            
+
             <div className="md:hidden flex items-center gap-1">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -160,3 +159,45 @@ export function MainNav() {
     </header>
   );
 }
+
+function Footer() {
+  const currentYear = new Date().getFullYear();
+  const { setTheme } = useTheme();
+
+  return (
+    <footer className="mt-20 border-t border-border/40 bg-background/95 py-6 sm:py-8">
+      <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center gap-4 sm:flex-row">
+          <Link href="/" className="flex items-center gap-2">
+            <Logo className="h-10 w-10" />
+            <div>
+              <p className="font-bold text-xl">Yahnu</p>
+              <p className="text-xs text-muted-foreground">Votre avenir commence ici</p>
+            </div>
+          </Link>
+          <p className="text-sm text-muted-foreground">
+            © {currentYear} Yahnu. Tous droits réservés.
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => setTheme("light")}>
+            <Sun className="h-5 w-5" />
+            <span className="sr-only">Mode clair</span>
+          </Button>
+          <Button variant="ghost" size="icon" onClick={() => setTheme("dark")}>
+            <Moon className="h-5 w-5" />
+            <span className="sr-only">Mode sombre</span>
+          </Button>
+          <Button variant="ghost" className="text-sm text-muted-foreground hover:text-foreground">
+            <Link href="/privacy">Politique de confidentialité</Link>
+          </Button>
+          <Button variant="ghost" className="text-sm text-muted-foreground hover:text-foreground">
+            <Link href="/terms">Conditions d'utilisation</Link>
+          </Button>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export { MainNav, Footer };

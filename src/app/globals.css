@@ -186,4 +186,31 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Improve mobile touch targets */
+  button, a {
+    min-height: 44px;
+  }
+  
+  /* Better mobile scrolling */
+  html {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Prevent horizontal overflow on mobile */
+  body {
+    overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  /* Mobile-first responsive utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* Improved mobile spacing */
+  .container {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
 }
