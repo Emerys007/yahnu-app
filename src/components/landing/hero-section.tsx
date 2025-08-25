@@ -59,6 +59,8 @@ export function HeroSection() {
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)
   const [activeSlide, setActiveSlide] = React.useState(slides[0])
+  const [touchStart, setTouchStart] = React.useState<number | null>(null)
+  const [touchEnd, setTouchEnd] = React.useState<number | null>(null)
 
   React.useEffect(() => {
     if (!api) {
@@ -78,6 +80,39 @@ export function HeroSection() {
     (index: number) => api && api.scrollTo(index),
     [api]
   );
+
+  // Touch handlers for swipe functionality
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+    plugin.current.stop();
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) {
+      plugin.current.reset();
+      return;
+    }
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && api) {
+      api.scrollNext();
+    }
+    if (isRightSwipe && api) {
+      api.scrollPrev();
+    }
+    
+    plugin.current.reset();
+  };
   const titleVariants = {
     hidden: { opacity: 0, y: -30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
@@ -101,8 +136,13 @@ export function HeroSection() {
         className="w-full h-full"
         onMouseEnter={plugin.current.stop}
         onMouseLeave={plugin.current.reset}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
         opts={{
           loop: true,
+          dragFree: false,
+          containScroll: "trimSnaps",
         }}
       >
         <CarouselContent>
