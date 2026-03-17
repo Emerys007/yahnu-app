@@ -4,12 +4,12 @@ import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import Link from "next/link";
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Briefcase, MapPin, Building, ArrowRight, Loader2, PlusCircle } from "lucide-react";
+import { Briefcase, MapPin, Building, PlusCircle } from "lucide-react";
 import { useLocalization } from "@/context/localization-context";
 import { useCountry } from "@/context/country-context";
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 interface Company {
     id: string;
@@ -88,12 +88,12 @@ export default function CompaniesPage() {
         {isLaunchCountry ? (
             <div className="space-y-8">
                 {companiesData.map((company) => (
-                    <Link href={`/companies/${company.slug}`} key={company.id} className="group block">
-                        <Card className="flex flex-col md:flex-row items-center p-6 gap-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <div key={company.id}>
+                        <Card className="flex flex-col md:flex-row items-center p-6 gap-6">
                             <Image src={company.logoUrl} alt={`${company.name} Logo`} width={96} height={96} className="h-24 w-24 shrink-0 object-contain" />
                             <div className="flex-grow text-center md:text-left">
                                 <h2 className="text-2xl font-bold">{company.name}</h2>
-                                <p className="text-muted-foreground italic">"{t(company.tagline)}"</p>
+                                <p className="text-muted-foreground italic">&quot;{t(company.tagline)}&quot;</p>
                                 <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 mt-2 text-sm text-muted-foreground">
                                     <span className="flex items-center gap-1"><Building className="h-4 w-4"/> {t(company.industry)}</span>
                                     <span className="flex items-center gap-1"><MapPin className="h-4 w-4"/> {company.location}</span>
@@ -110,16 +110,12 @@ export default function CompaniesPage() {
                                     ))}
                                 </ul>
                             </div>
-                            <div className="self-center mt-4 md:mt-0">
-                                <Button asChild>
-                                    <div className="flex items-center">
-                                        {t('common.view_profile')} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"/>
-                                    </div>
-                                </Button>
-                            </div>
                         </Card>
-                    </Link>
+                    </div>
                 ))}
+                 <p className="text-center text-sm text-muted-foreground italic mt-4">
+                    *Illustrations non contractuelles – phase de démonstration
+                 </p>
                  <Card className="bg-primary/5 border-2 border-dashed border-primary/20">
                     <CardContent className="p-8 text-center flex flex-col items-center justify-center">
                         <PlusCircle className="h-12 w-12 text-primary mb-4" />

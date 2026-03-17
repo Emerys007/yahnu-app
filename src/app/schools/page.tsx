@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, ArrowRight, Loader2, PlusCircle } from "lucide-react";
+import { MapPin, PlusCircle } from "lucide-react";
 import { useLocalization } from "@/context/localization-context";
 import React from "react";
 import { useCountry } from "@/context/country-context";
@@ -110,8 +110,8 @@ export default function SchoolsPage() {
                         }
 
                         return (
-                            <Link href={`/schools/${school.slug}`} key={school.id} className={cn(classNames)}>
-                                <Card className="group flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full w-full max-w-sm text-center md:text-left">
+                            <div key={school.id} className={cn(classNames)}>
+                                <Card className="flex flex-col overflow-hidden h-full w-full max-w-sm text-center md:text-left">
                                     <CardHeader className="p-0">
                                         <div className="relative w-full h-48 bg-muted flex items-center justify-center">
                                             <Image
@@ -130,19 +130,15 @@ export default function SchoolsPage() {
                                         <div className="flex items-center justify-center md:justify-start gap-2 mt-4 text-sm text-muted-foreground">
                                             <MapPin className="h-4 w-4"/> {school.location}
                                         </div>
-                                        <div className="mt-6 flex-grow flex items-end">
-                                            <Button asChild className="w-full">
-                                                <span className="flex items-center justify-center">
-                                                    {t('pages.schools.explore_programs')} <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                                </span>
-                                            </Button>
-                                        </div>
                                     </CardContent>
                                 </Card>
-                            </Link>
+                            </div>
                         )
                     })}
                 </div>
+                 <p className="text-center text-sm text-muted-foreground italic mt-4">
+                    *Illustrations non contractuelles – phase de démonstration
+                 </p>
                  <Card className="bg-primary/5 border-2 border-dashed border-primary/20">
                     <CardContent className="p-8 text-center flex flex-col items-center justify-center">
                         <PlusCircle className="h-12 w-12 text-primary mb-4" />

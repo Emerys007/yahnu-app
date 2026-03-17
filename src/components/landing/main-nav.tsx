@@ -38,11 +38,15 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 const getNavLinks = (t: (key: string) => string) => [
-  { href: "/jobs", label: t("common.jobs") },
-  { href: "/companies", label: t("common.companies") },
-  { href: "/schools", label: t("common.schools") },
-  { href: "/blog", label: t("common.blog") },
-  { href: "/about", label: t("common.about") },
+  { href: "/", label: "Accueil" },
+  { href: "/be-the-change", label: "BE THE CHANGE" },
+  { href: "/ecoles", label: "Écoles" },
+  { href: "/entreprises", label: "Entreprises" },
+  { href: "/etudiants", label: "Étudiants" },
+  { href: "/institutions", label: "Institutions" },
+  { href: "/impact", label: "Impact" },
+  { href: "/actualites", label: "Actualités" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export function MainNav() {
@@ -117,19 +121,19 @@ export function MainNav() {
         </div>
 
         <div className="flex items-center gap-2 ml-auto">
-            <nav className="hidden md:flex items-center gap-6 text-sm">
+            <nav className="hidden lg:flex items-center gap-4 text-sm">
                 {navLinks.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="group relative font-medium text-muted-foreground transition-colors hover:text-foreground"
+                      className="group relative font-medium text-muted-foreground transition-colors hover:text-foreground whitespace-nowrap"
                     >
                       {link.label}
                       <span className="absolute bottom-[-2px] left-0 h-0.5 w-0 rounded-full bg-primary transition-all duration-300 group-hover:w-full" />
                     </Link>
                 ))}
             </nav>
-            <div className="hidden items-center gap-2 md:flex md:ml-6">
+            <div className="hidden items-center gap-2 lg:flex lg:ml-4">
                 <Button variant="outline" asChild>
                   <Link href="/login">{t('common.login')}</Link>
                 </Button>
@@ -138,7 +142,7 @@ export function MainNav() {
                 </Button>
             </div>
 
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden lg:flex items-center gap-2">
               <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
@@ -171,7 +175,7 @@ export function MainNav() {
               </DropdownMenu>
             </div>
 
-            <div className="md:hidden flex items-center gap-1">
+            <div className="lg:hidden flex items-center gap-1">
               <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                      <Button variant="outline" size="icon">

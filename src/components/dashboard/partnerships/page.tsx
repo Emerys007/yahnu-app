@@ -229,6 +229,9 @@ export default function PartnershipsPage() {
         </div>
         
         {ActiveComponent ? <ActiveComponent /> : <p>{t("This page is not available for your account type.")}</p>}
+        <p className="text-center text-sm text-muted-foreground italic mt-4">
+          *Illustrations non contractuelles – phase de démonstration
+        </p>
     </div>
   );
 }
