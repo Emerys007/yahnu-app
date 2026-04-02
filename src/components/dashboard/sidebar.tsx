@@ -23,6 +23,7 @@ import {
   UserCheck,
   UserCog,
   BrainCircuit,
+  Compass,
   MessageSquare,
   Award,
   Calendar,
@@ -57,6 +58,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
     { href: "/dashboard/applications", icon: FileText, label: t('Applications') },
     { href: "/dashboard/events", icon: Calendar, label: t('Events') },
     { type: "divider", label: t('AI & Assessments') },
+    { href: "/dashboard/career-intelligence", icon: Compass, label: t('Career Intelligence') },
     { href: "/dashboard/assessments", icon: Award, label: t('Skill Certifications') },
     { href: "/dashboard/interview-prep", icon: BrainCircuit, label: t('Interview Prep') },
   ];
