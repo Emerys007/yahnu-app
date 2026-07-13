@@ -1,4 +1,5 @@
+import { redirect } from "next/navigation"
 
-"use client"
-// This file is obsolete and will be removed.
-// The new route is /dashboard/reports/custom-report-generator
+export default function CustomReportBuilderPage() {
+  redirect("/dashboard/reports/custom-report-generator")
+}

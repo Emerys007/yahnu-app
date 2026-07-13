@@ -7,6 +7,7 @@ import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -18,35 +19,48 @@ import { motion } from "framer-motion"
 // #region Shared Settings
 const UserAccountSettings = () => {
     const { t } = useLocalization();
-    const { user, createPassword, isGoogleProvider, updateProfile } = useAuth();
+    const { user, createPassword, updateProfile } = useAuth();
     const { toast } = useToast();
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
+    const [currentPassword, setCurrentPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const emailChanged = Boolean(user && email.trim().toLowerCase() !== (user.email ?? '').toLowerCase());
 
     const handleSaveChanges = async () => {
         if (!user) return;
         setIsSubmitting(true);
         try {
-            const updates: { name?: string; email?: string } = {};
+            const updates: { name?: string; email?: string; currentPassword?: string } = {};
             if (name !== user.name) {
                 updates.name = name;
             }
-            if (email !== user.email) {
-                updates.email = email;
+            if (emailChanged) {
+                updates.email = email.trim().toLowerCase();
+                updates.currentPassword = currentPassword;
             }
 
             if (Object.keys(updates).length > 0) {
-                await updateProfile(updates);
+                const result = await updateProfile(updates);
                 toast({
                     title: t('Profile Updated'),
                     description: t('Your changes have been saved successfully.'),
                 });
-                 if(updates.email) {
+                if (updates.email && result.emailChangeDelivery === 'failed') {
+                    toast({
+                        title: t('Verification email could not be sent'),
+                        description: t('Your email change is pending. Try again later or contact support.'),
+                        variant: 'destructive',
+                    });
+                } else if (updates.email && result.emailChangeDelivery) {
                     toast({
                         title: t('Verification email sent'),
                         description: t('Please check your new email address to verify the change.'),
                     });
+                }
+                if (updates.email) {
+                    setCurrentPassword('');
+                    setEmail(user.email ?? '');
                 }
             } else {
                  toast({
@@ -54,10 +68,10 @@ const UserAccountSettings = () => {
                     description: t("You haven't made any changes."),
                 });
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast({
                 title: t('Error'),
-                description: error.message || t('Failed to update profile.'),
+                description: error instanceof Error ? error.message : t('Failed to update profile.'),
                 variant: 'destructive',
             });
         } finally {
@@ -68,11 +82,12 @@ const UserAccountSettings = () => {
     const handleCreatePassword = async () => {
         if (!user || !user.email) return;
         try {
-            await createPassword();
+            const reset = await createPassword();
             toast({
                 title: t('Password reset email sent'),
                 description: t('Check your inbox to create a new password.'),
             });
+            if (reset.debugUrl) window.location.assign(reset.debugUrl);
         } catch (error) {
             toast({
                 title: t('Error'),
@@ -96,16 +111,35 @@ const UserAccountSettings = () => {
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="email">{t('Email Address')}</Label>
-                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
                 </div>
               </div>
+              {emailChanged && (user?.hasPassword ? (
+                <div className="max-w-md space-y-1">
+                  <Label htmlFor="current-password">{t('Current Password')}</Label>
+                  <PasswordInput
+                    id="current-password"
+                    value={currentPassword}
+                    onChange={(event) => setCurrentPassword(event.target.value)}
+                    autoComplete="current-password"
+                    hideSuggestions
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    {t('Re-enter your password to authorize this email change. You will be signed out after the new address is verified.')}
+                  </p>
+                </div>
+              ) : (
+                <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100">
+                  {t('Create a password before changing your email address. Use the button below, then return here after setting it.')}
+                </div>
+              ))}
               <div className="flex flex-wrap gap-2">
-                <Button onClick={handleSaveChanges} disabled={isSubmitting}>
+                <Button onClick={handleSaveChanges} disabled={isSubmitting || (emailChanged && (!user?.hasPassword || !currentPassword))}>
                     {isSubmitting ? t('Saving...') : t('Save Changes')}
                 </Button>
                 <Button variant="outline" onClick={handleCreatePassword}>
                     <KeyRound className="mr-2 h-4 w-4" />
-                    {isGoogleProvider() ? t('Create Password') : t('Change Password')}
+                    {user?.hasPassword ? t('Change Password') : t('Create Password')}
                 </Button>
               </div>
             </CardContent>
@@ -287,6 +321,7 @@ const settingsComponents: Record<Role, React.ComponentType> = {
   school: SchoolSettings,
   admin: UserAccountSettings,
   super_admin: UserAccountSettings,
+  content_manager: UserAccountSettings,
   content_moderator: UserAccountSettings,
   support_staff: UserAccountSettings,
 };
@@ -297,6 +332,7 @@ const pageConfig: Record<string, { icon: React.ElementType; title: string; descr
     school: { icon: SchoolIcon, title: 'School Settings', description: 'Manage your personal account and institution contacts.' },
     admin: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
     super_admin: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
+    content_manager: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
     content_moderator: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
     support_staff: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
 }

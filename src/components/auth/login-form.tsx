@@ -4,7 +4,7 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -22,17 +22,20 @@ import Link from "next/link"
 import { useLocalization } from "@/context/localization-context"
 import { PasswordInput } from "@/components/ui/password-input"
 import { Separator } from "../ui/separator"
+import { ApiClientError } from "@/lib/api-client"
 
-const loginSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  password: z.string().min(1, { message: "Password is required." }),
+const createLoginSchema = (t: (key: string) => string) => z.object({
+  email: z.string().email({ message: t("auth.validation.valid_email") }),
+  password: z.string().min(1, { message: t("auth.validation.password_required") }),
 })
 
 export function LoginForm() {
     const { t } = useLocalization();
-    const { signIn, signInWithGoogle } = useAuth();
+    const loginSchema = createLoginSchema(t);
+    const { signIn, signInWithGoogle, googleEnabled } = useAuth();
     const { toast } = useToast();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = React.useState(false);
 
 
@@ -44,6 +47,25 @@ export function LoginForm() {
     },
   })
 
+  React.useEffect(() => {
+    const authError = searchParams.get('auth');
+    if (!authError) return;
+    const messages: Record<string, string> = {
+      pending_graduate: "Your account is pending approval. Please contact your school's administrator.",
+      pending_org: "Your account is pending approval. Please contact a Yahnu administrator.",
+      suspended: "Your account has been suspended. Please contact support.",
+      declined: "This registration was not approved. Please contact support if you believe this is a mistake.",
+      google_auth_disabled: "Google sign-in is not configured.",
+      google_registration_required: "Create your Yahnu account first, then use Google to sign in with the same email address.",
+    };
+    toast({
+      title: t("Google sign-in was not completed"),
+      description: t(messages[authError] ?? "Please try Google sign-in again."),
+      variant: "destructive",
+    });
+    router.replace('/login');
+  }, [router, searchParams, t, toast]);
+
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     setIsLoading(true);
     try {
@@ -52,19 +74,25 @@ export function LoginForm() {
             title: t("Logged In Successfully!"),
             description: t("Welcome back to Yahnu."),
         });
-        router.push('/dashboard');
-    } catch (error: any) {
+        const requestedPath = searchParams.get('next');
+        router.push(requestedPath?.startsWith('/') && !requestedPath.startsWith('//') ? requestedPath : '/dashboard');
+    } catch (error: unknown) {
+        const code = error instanceof ApiClientError ? error.code : undefined;
         let errorMessage = t("Invalid credentials. Please try again.");
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+        if (code === 'invalid_credentials') {
             errorMessage = t("Invalid email or password. Please check your credentials.");
-        } else if (error.code === 'auth/too-many-requests') {
+        } else if (code === 'rate_limited') {
             errorMessage = t("Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.")
-        } else if (error.message === 'pending_graduate') {
+        } else if (code === 'pending_graduate') {
             errorMessage = t("Your account is pending approval. Please contact your school's administrator.");
-        } else if (error.message === 'pending_org') {
+        } else if (code === 'pending_org') {
              errorMessage = t("Your account is pending approval. Please contact a Yahnu administrator.");
-        } else if (error.message === "suspended") {
+        } else if (code === "suspended") {
             errorMessage = t("Your account has been suspended. Please contact support.");
+        } else if (code === "declined") {
+            errorMessage = t("This registration was not approved. Please contact support if you believe this is a mistake.");
+        } else if (code === "email_unverified") {
+            errorMessage = t("Please verify your email address before signing in. Check your inbox for the Yahnu verification link.");
         }
 
         toast({
@@ -80,12 +108,8 @@ export function LoginForm() {
   async function handleGoogleSignIn() {
     setIsLoading(true);
     try {
-      await signInWithGoogle();
-      toast({
-        title: t("Signed In Successfully!"),
-        description: t("Welcome to Yahnu."),
-      });
-      router.push('/dashboard');
+      const requestedPath = searchParams.get('next');
+      await signInWithGoogle(requestedPath?.startsWith('/') && !requestedPath.startsWith('//') ? requestedPath : '/dashboard');
     } catch (error: any) {
       let errorMessage = error.message || t("Could not sign in with Google.");
        if (error.message === "pending_graduate") {
@@ -94,13 +118,14 @@ export function LoginForm() {
              errorMessage = t("Your account is pending approval. Please contact a Yahnu administrator.");
         } else if (error.message === "suspended") {
             errorMessage = t("Your account has been suspended. Please contact support.");
+        } else if (error.message === "email_unverified") {
+            errorMessage = t("Please verify your email address before signing in. Check your inbox for the Yahnu verification link.");
         }
       toast({
         title: t("Uh oh! Something went wrong."),
         description: errorMessage,
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   }
@@ -149,18 +174,18 @@ export function LoginForm() {
             <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? t("auth.logging_in") : t("common.login")}
             </Button>
-             <div className="relative">
+            {googleEnabled && <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                     <span className="bg-background px-2 text-muted-foreground">{t('auth.or_continue_with')}</span>
                 </div>
-            </div>
-            <Button variant="outline" type="button" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
+            </div>}
+            {googleEnabled && <Button variant="outline" type="button" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
                  <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 21.2 177 60.4L373 124.9c-32.5-30.3-74.2-48.7-125-48.7-93.1 0-170 73.1-170 180s76.9 180 170 180c101.4 0 148.2-73.3 152.8-112.3H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg>
                  {t('common.login_with_google')}
-            </Button>
+            </Button>}
         </form>
         </Form>
         <div className="mt-4 text-center text-sm">
@@ -168,6 +193,11 @@ export function LoginForm() {
             <Link href="/signup" className="underline ml-1">
                 {t('common.sign_up')}
             </Link>
+            <div className="mt-2">
+              <Link href="/resend-verification" className="text-muted-foreground underline hover:text-foreground">
+                {t("Didn't receive a verification email?")}
+              </Link>
+            </div>
         </div>
     </>
   )

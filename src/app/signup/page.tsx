@@ -1,6 +1,7 @@
 
 "use client"
 
+import { Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { RegisterForm } from '@/components/auth/register-form';
@@ -26,7 +27,11 @@ export default function SignupPage() {
               <h1 className="text-3xl font-bold text-primary">Yahnu</h1>
               <p className="text-muted-foreground">{t('auth.your_future_starts_here')}</p>
             </div>
-           {isLaunchCountry ? <RegisterForm /> : <WaitlistForm />}
+           {isLaunchCountry ? (
+             <Suspense fallback={<div className="h-[36rem] animate-pulse rounded-xl bg-muted" aria-label="Loading registration form" />}>
+               <RegisterForm />
+             </Suspense>
+           ) : <WaitlistForm />}
        </div>
      </div>
       <div className="hidden bg-primary/10 lg:flex flex-col items-center justify-center p-12 order-1 lg:order-2">

@@ -37,7 +37,7 @@ const testTitles: Record<string, Record<string, string>> = {
     }
 }
 
-export default function AssessmentResultPage() {
+function AssessmentResultContent() {
     const params = useParams();
     const testId = params.testId as string;
     const router = useRouter();
@@ -109,6 +109,14 @@ export default function AssessmentResultPage() {
                 </CardFooter>
             </Card>
         </div>
+    )
+}
+
+export default function AssessmentResultPage() {
+    return (
+        <React.Suspense fallback={<div className="mx-auto h-96 max-w-lg animate-pulse rounded-xl bg-muted" aria-label="Loading assessment result" />}>
+            <AssessmentResultContent />
+        </React.Suspense>
     )
 }
 

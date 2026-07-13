@@ -77,7 +77,7 @@ const rsvpOptions: { status: RsvpStatus, label: string, icon: React.ElementType 
 ];
 
 export default function GraduateEventsPage() {
-  const { t } = useLocalization();
+  const { t, language } = useLocalization();
   const { toast } = useToast();
   const [events, setEvents] = useState<Event[]>(initialEvents);
 

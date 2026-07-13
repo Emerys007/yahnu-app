@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useLocalization } from "@/context/localization-context";
 import { allPosts } from "@/lib/demo-data";
 import Link from "next/link";
+import { SafeRichText } from "@/components/ui/safe-rich-text";
 
 export default function BlogPostPage() {
   const params = useParams();
@@ -48,7 +49,7 @@ export default function BlogPostPage() {
           <p className="text-muted-foreground mb-6">
             {t('common.by')} {t('blog.author_name')} • {language === 'fr' ? new Date(localizedPost.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date(localizedPost.date).toLocaleDateString()}
  </p>
-          <div className="mt-8" dangerouslySetInnerHTML={{ __html: localizedPost.content }} />
+          <SafeRichText html={localizedPost.content} className="mt-8" />
         </article>
       </main>
       <Footer />

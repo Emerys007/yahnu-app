@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { LoginForm } from '@/components/auth/login-form';
@@ -46,7 +47,11 @@ export default function LoginPage() {
               <h1 className="text-3xl font-bold text-primary">Yahnu</h1>
               <p className="text-muted-foreground">{t('auth.your_future_starts_here')}</p>
             </div>
-            {isLaunchCountry ? <LoginForm /> : <WaitlistForm />}
+            {isLaunchCountry ? (
+              <Suspense fallback={<div className="h-96 animate-pulse rounded-xl bg-muted" aria-label="Loading sign-in form" />}>
+                <LoginForm />
+              </Suspense>
+            ) : <WaitlistForm />}
         </div>
       </div>
     </div>

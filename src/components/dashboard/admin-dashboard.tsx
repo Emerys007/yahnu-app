@@ -13,7 +13,7 @@ export function AdminDashboard() {
 
     if (role === 'support_staff') {
       router.push('/dashboard/support/center');
-    } else if (role === 'content_manager') {
+    } else if (role === 'content_manager' || role === 'content_moderator') {
       router.push('/dashboard/content');
     } else {
       // Default for 'admin' and 'super_admin'

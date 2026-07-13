@@ -1,12 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Activity, Server, Database, Cpu, HardDrive, RefreshCw, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
-import { useTranslations } from '@/context/localization-context';
+import { useLocalization } from '@/context/localization-context';
 
 type SystemStatus = 'operational' | 'degraded' | 'major_outage';
 
@@ -27,7 +27,7 @@ type Incident = {
 };
 
 export default function SystemHealth() {
-  const { t } = useTranslations();
+  const { t } = useLocalization();
   const [systemStatus, setSystemStatus] = useState<SystemStatus>('operational');
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [metrics, setMetrics] = useState<Metric[]>([

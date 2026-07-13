@@ -13,6 +13,7 @@ const dashboardComponents: Record<string, React.ComponentType> = {
   school: SchoolDashboard,
   admin: AdminDashboard,
   super_admin: AdminDashboard,
+  content_manager: AdminDashboard,
   content_moderator: AdminDashboard,
   support_staff: AdminDashboard,
 };

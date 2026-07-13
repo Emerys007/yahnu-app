@@ -7,10 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { PlusCircle, FileText, Globe, Users, Calendar, Edit, Trash2, Eye, Search } from 'lucide-react'
 import { useLocalization } from '@/context/localization-context'
+import { ContentPagesEditor } from '@/features/content/ContentPagesEditor'
 
 export default function ContentManagementPage() {
   const { t } = useLocalization()
@@ -84,7 +83,7 @@ export default function ContentManagementPage() {
                   <div className="flex items-center mt-4 space-x-4 text-sm text-muted-foreground">
                     <div className="flex items-center">
                       <Users className="mr-1 h-3 w-3" />
-                      {Math.floor(Math.random() * 1000)} {t('dashboard.content.views')}
+                      {post * 317} {t('dashboard.content.views')}
                     </div>
                     <div className="flex items-center">
                       <Calendar className="mr-1 h-3 w-3" />
@@ -98,6 +97,10 @@ export default function ContentManagementPage() {
         </TabsContent>
 
         <TabsContent value="pages" className="space-y-6">
+          <ContentPagesEditor />
+        </TabsContent>
+
+        <TabsContent value="legacy-pages" className="hidden" aria-hidden="true">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Search className="h-4 w-4 text-muted-foreground" />
@@ -117,7 +120,7 @@ export default function ContentManagementPage() {
                     <div className="space-y-2">
                       <CardTitle className="text-xl">{page}</CardTitle>
                       <CardDescription>
-                        {t('dashboard.content.static')} • {t('dashboard.content.last_updated')} {Math.floor(Math.random() * 30)} {t('dashboard.content.days_ago')}
+                        {t('dashboard.content.static')} • {t('dashboard.content.last_updated')} 7 {t('dashboard.content.days_ago')}
                       </CardDescription>
                     </div>
                     <div className="flex items-center space-x-2">

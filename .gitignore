@@ -19,6 +19,7 @@
 
 # production
 /build
+/work
 
 # misc
 .DS_Store
@@ -39,7 +40,11 @@ next-env.d.ts
 
 .genkit/*
 .env*
+!.env.example
 
-# firebase
-firebase-debug.log
-firestore-debug.log
+# legacy migration exports can contain personal data
+/firebase-export*.json
+/firebase-*.json
+/yahnu-auth*.json
+/yahnu-firestore*.json
+/migration-data/

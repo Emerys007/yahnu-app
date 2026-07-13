@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChevronLeft } from "lucide-react";
 import { useLocalization } from "@/context/localization-context";
+import { SafeRichText } from "@/components/ui/safe-rich-text";
 
 interface LegalPageLayoutProps {
   titleKey: string;
@@ -35,10 +36,7 @@ export function LegalPageLayout({ titleKey, lastUpdatedKey, contentKey }: LegalP
               <CardDescription>{t(lastUpdatedKey)}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div
-                className="prose prose-lg max-w-none prose-h2:font-bold prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:font-semibold prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3 prose-p:leading-relaxed prose-ul:list-disc prose-ul:pl-6 prose-li:mb-2 prose-strong:font-semibold"
-                dangerouslySetInnerHTML={{ __html: t(contentKey) }}
-              />
+              <SafeRichText html={t(contentKey)} className="prose-lg prose-h2:font-bold prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:font-semibold prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3 prose-p:leading-relaxed prose-ul:list-disc prose-ul:pl-6 prose-li:mb-2 prose-strong:font-semibold" />
             </CardContent>
           </Card>
         </div>

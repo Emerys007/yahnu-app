@@ -4,6 +4,8 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
+const CanvasConfetti = ReactCanvasConfetti as any;
+
 // A more stable implementation of the confetti hook to prevent DOM errors.
 export function useConfetti() {
   const [isFiring, setIsFiring] = useState(false);
@@ -46,7 +48,7 @@ export function useConfetti() {
   }, [isFiring, makeShot]);
 
   const Confetti = (
-    <ReactCanvasConfetti
+      <CanvasConfetti
       refConfetti={getInstance}
       style={{
         position: 'fixed',

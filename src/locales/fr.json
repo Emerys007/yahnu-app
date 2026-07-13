@@ -259,6 +259,7 @@
     "": "Détaillez votre parcours professionnel."
   },
   "Disabled": "Désactivé",
+  "Didn't receive a verification email?": "Vous n'avez pas reçu l'e-mail de vérification ?",
   "Discover Schools": "Découvrir les écoles",
   "Discover companies hiring on the Yahnu platform": {
     "": "Découvrez les entreprises qui recrutent sur la plateforme Yahnu."
@@ -1097,6 +1098,20 @@
     "or_continue_with": "Ou continuer avec",
     "school_administrator": "Administrateur d'école",
     "search_placeholder": "Tapez une commande ou recherchez...",
+    "resend_verification": {
+      "title": "Renvoyer l'e-mail de vérification",
+      "description": "Saisissez l'adresse utilisée pour votre compte Yahnu.",
+      "generic_error": "La demande n'a pas pu être traitée.",
+      "success": "Si un compte non vérifié existe pour cette adresse, un nouveau lien vient d'être envoyé.",
+      "debug_link": "Ouvrir le lien de vérification local",
+      "email_address": "Adresse e-mail",
+      "send": "Envoyer un nouveau lien",
+      "sending": "Envoi…"
+    },
+    "validation": {
+      "valid_email": "Saisissez une adresse e-mail valide.",
+      "password_required": "Le mot de passe est requis."
+    },
     "select_account_type": "Sélectionnez votre type de compte",
     "send_reset_link": "Envoyer le lien de réinitialisation",
     "welcome_back": "Bon retour",
@@ -2041,5 +2056,14 @@
   "{count} minutes": "{count} minutes",
   "{count} questions": "{count} questions",
   "{count} total applications": "{count} candidatures au total",
-  "|": "|"
+  "|": "|",
+  "Back to sign in": "Retour à la connexion",
+  "Email address": "Adresse e-mail",
+  "Enter the address used for your Yahnu account.": "Saisissez l'adresse utilisée pour votre compte Yahnu.",
+  "If an unverified account exists for that address, a new link is on its way.": "Si un compte non vérifié existe pour cette adresse, un nouveau lien vient d'être envoyé.",
+  "Open local verification link": "Ouvrir le lien de vérification local",
+  "Resend verification email": "Renvoyer l'e-mail de vérification",
+  "Send a new link": "Envoyer un nouveau lien",
+  "Sending…": "Envoi…",
+  "The request could not be completed.": "La demande n'a pas pu être traitée."
 }

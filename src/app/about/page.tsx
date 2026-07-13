@@ -12,12 +12,16 @@ import React from 'react';
 import { cn } from "@/lib/utils";
 import { BullseyeAnimation } from "@/components/ui/bullseye-animation";
 import { SparklingLightbulb } from "@/components/ui/sparkling-lightbulb";
+import { SafeRichText } from "@/components/ui/safe-rich-text";
+import { apiFetch } from "@/lib/api-client";
 
 interface TeamMember {
     name: string;
     role: string;
     imageUrl: string;
 }
+
+const seededValue = (index: number, salt: number) => ((index * 9_301 + salt * 49_297) % 233_280) / 233_280;
 
 const AnimatedStoryGraphic = ({ text }: { text: string }) => {
     const containerVariants = {
@@ -47,24 +51,24 @@ const AnimatedStoryGraphic = ({ text }: { text: string }) => {
                         key={i}
                         className="absolute rounded-full bg-primary/30"
                         initial={{
-                            x: Math.random() * 100 + '%',
-                            y: Math.random() * 100 + '%',
+                            x: seededValue(i, 1) * 100 + '%',
+                            y: seededValue(i, 2) * 100 + '%',
                             scale: 0,
                             opacity: 0,
                         }}
                         animate={{
-                            scale: [0, Math.random() * 1.2, 0],
+                            scale: [0, seededValue(i, 3) * 1.2, 0],
                             opacity: [0, 1, 0],
                         }}
                         transition={{
-                            duration: Math.random() * 3 + 2,
+                            duration: seededValue(i, 4) * 3 + 2,
                             repeat: Infinity,
-                            delay: Math.random() * 4,
+                            delay: seededValue(i, 5) * 4,
                             ease: 'easeInOut'
                         }}
                         style={{
-                            width: `${Math.random() * 3 + 1}px`,
-                            height: `${Math.random() * 3 + 1}px`,
+                            width: `${seededValue(i, 6) * 3 + 1}px`,
+                            height: `${seededValue(i, 7) * 3 + 1}px`,
                         }}
                     />
                 ))}
@@ -149,9 +153,24 @@ const cardItemVariants = {
 };
 
 export default function AboutPage() {
-    const { t } = useLocalization();
+    const { t, countryName } = useLocalization();
+    const [managedContent, setManagedContent] = React.useState<Record<string, unknown> | null>(null);
 
-    const teamMembers: TeamMember[] = [
+    React.useEffect(() => {
+        const controller = new AbortController();
+        apiFetch<{ data: { page: { data: Record<string, unknown> } | null } }>('/api/pages/about-us', { signal: controller.signal })
+            .then((response) => setManagedContent(response.data.page?.data ?? null))
+            .catch((error) => {
+                if (!controller.signal.aborted) console.error('Unable to load managed About page content.', error);
+            });
+        return () => controller.abort();
+    }, []);
+
+    const managedText = (key: string, fallback: string) => typeof managedContent?.[key] === 'string'
+        ? (managedContent[key] as string).replaceAll('{country}', countryName)
+        : fallback;
+
+    const defaultTeamMembers: TeamMember[] = [
         {
             name: "Colombe Koffi",
             role: "about.team.roles.founder_ceo",
@@ -168,6 +187,9 @@ export default function AboutPage() {
             imageUrl: "/images/Bethel_Touman.jpeg"
         }
     ];
+    const teamMembers = Array.isArray(managedContent?.teamMembers)
+        ? (managedContent.teamMembers as TeamMember[]).filter((member) => member && typeof member.name === 'string' && typeof member.role === 'string')
+        : defaultTeamMembers;
 
     const iconVariants = {
         hidden: { scale: 0.5, opacity: 0, y: 20 },
@@ -190,21 +212,21 @@ export default function AboutPage() {
       <main className="flex-1">
         <section className="relative py-20 md:py-32 bg-primary/5">
            <div className="container mx-auto text-center">
-            <AnimatedHeading text={t('about.title')} />
+            <AnimatedHeading text={managedText('aboutTitle', t('about.title'))} />
             <motion.p 
                 className="mt-4 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8, duration: 0.5 }}
             >
-                {t('about.mission_statement')}
+                {managedText('aboutSubtitle', t('about.mission_statement'))}
             </motion.p>
            </div>
         </section>
 
         <section className="py-20 bg-background">
             <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center">
-                <AnimatedStoryGraphic text={t('about.story_title')} />
+                <AnimatedStoryGraphic text={managedText('storyTitle', t('about.story_title'))} />
                 <div className="text-center md:text-left">
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -212,8 +234,8 @@ export default function AboutPage() {
                         viewport={{ once: true, amount: 0.5 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <p className="prose max-w-none text-muted-foreground">{t('about.story_content_1')}</p>
-                        <p className="prose max-w-none text-muted-foreground mt-4">{t('about.story_content_2')}</p>
+                        <SafeRichText html={managedText('storyContent1', t('about.story_content_1'))} className="prose max-w-none text-muted-foreground" />
+                        <SafeRichText html={managedText('storyContent2', t('about.story_content_2'))} className="prose mt-4 max-w-none text-muted-foreground" />
                     </motion.div>
                 </div>
             </div>
@@ -231,15 +253,15 @@ export default function AboutPage() {
                     <motion.div variants={cardItemVariants} whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.08)" }} transition={{ type: 'spring', stiffness: 300 }}>
                         <Card className="p-6 h-full">
                             <BullseyeAnimation />
-                            <h3 className="text-2xl font-bold mb-2">{t('about.our_mission_title')}</h3>
-                            <p className="text-muted-foreground">{t('about.our_mission_content')}</p>
+                            <h3 className="text-2xl font-bold mb-2">{managedText('missionTitle', t('about.our_mission_title'))}</h3>
+                            <SafeRichText html={managedText('missionContent', t('about.our_mission_content'))} className="text-muted-foreground" />
                         </Card>
                     </motion.div>
                      <motion.div variants={cardItemVariants} whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.08)" }} transition={{ type: 'spring', stiffness: 300 }}>
                         <Card className="p-6 h-full">
                             <SparklingLightbulb />
-                            <h3 className="text-2xl font-bold mb-2">{t('about.our_vision_title')}</h3>
-                            <p className="text-muted-foreground">{t('about.our_vision_content')}</p>
+                            <h3 className="text-2xl font-bold mb-2">{managedText('visionTitle', t('about.our_vision_title'))}</h3>
+                            <SafeRichText html={managedText('visionContent', t('about.our_vision_content'))} className="text-muted-foreground" />
                         </Card>
                      </motion.div>
                      <motion.div variants={cardItemVariants} whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.08)" }} transition={{ type: 'spring', stiffness: 300 }}>
@@ -247,8 +269,8 @@ export default function AboutPage() {
                             <motion.div variants={iconVariants} initial="hidden" animate="visible" whileHover="hover">
                                 <Users className="h-12 w-12 text-primary mx-auto mb-4" />
                             </motion.div>
-                            <h3 className="text-2xl font-bold mb-2">{t('about.our_values_title')}</h3>
-                            <p className="text-muted-foreground">{t('about.our_values_content')}</p>
+                            <h3 className="text-2xl font-bold mb-2">{managedText('valuesTitle', t('about.our_values_title'))}</h3>
+                            <SafeRichText html={managedText('valuesContent', t('about.our_values_content'))} className="text-muted-foreground" />
                         </Card>
                     </motion.div>
                  </div>
@@ -269,7 +291,7 @@ export default function AboutPage() {
                                 whileHover={{ scale: 1.05, boxShadow: "0px 10px 20px rgba(0,0,0,0.1)"}}
                                 transition={{ type: "spring", stiffness: 300 }}
                             >
-                                 <Image src={member.imageUrl || 'https://placehold.co/160x160.png'} alt={member.name} fill sizes="160px" className="object-cover" />
+                                 <Image src={member.imageUrl?.startsWith('/') ? member.imageUrl : 'https://placehold.co/160x160.png'} alt={member.name} fill sizes="160px" className="object-cover" />
                             </motion.div>
                             <h4 className="font-semibold text-lg">{member.name}</h4>
                             <p className="text-primary">{t(member.role)}</p>

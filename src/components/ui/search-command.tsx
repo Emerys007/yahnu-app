@@ -152,7 +152,8 @@ export function SearchCommand() {
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder={t ? t('common.search_placeholder') : 'Type a command or search...'} />
-        <CommandEmpty>{t ? t('common.no_results_found') : 'No results found.'}</CommandEmpty>
+        <CommandList>
+          <CommandEmpty>{t ? t('common.no_results_found') : 'No results found.'}</CommandEmpty>
 
           {mainItems.map((group) => (
             <CommandGroup key={group.group} heading={group.group}>

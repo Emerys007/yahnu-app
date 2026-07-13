@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useEffect } from "react"
+import { Suspense, useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useLocalization } from "@/context/localization-context"
 import { Card } from "@/components/ui/card"
@@ -74,10 +74,10 @@ const getInitialConversations = (t: any): Conversation[] => [
 const getNewConvoName = (id: string, name?: string | null) => {
     if (name) return name;
     if (id === 'inp-hb-admin') return 'INP-HB Admin';
-    return id.replace(/-/g, ' ').replace(/\w/g, l => l.toUpperCase());
+    return id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
 
-export default function MessagesPage() {
+function MessagesContent() {
     const { t } = useLocalization()
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -277,5 +277,13 @@ export default function MessagesPage() {
                 )}
             </Card>
         </div>
+    )
+}
+
+export default function MessagesPage() {
+    return (
+        <Suspense fallback={<div className="h-[calc(100vh-10rem)] animate-pulse rounded-xl bg-muted" aria-label="Loading messages" />}>
+            <MessagesContent />
+        </Suspense>
     )
 }

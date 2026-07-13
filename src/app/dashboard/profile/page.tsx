@@ -6,8 +6,6 @@ import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useFieldArray } from "react-hook-form"
 import { z } from "zod"
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import { useAuth, type EducationEntry } from "@/context/auth-context";
 import { parseResume, type ParseResumeOutput } from "@/ai/flows/resume-parser"
 import { Button } from "@/components/ui/button"
@@ -50,10 +48,12 @@ const earnedBadges = [
     { id: 'financial-analysis', name: "Financial Analysis", visible: false },
 ]
 
+const MAX_RESUME_SIZE_BYTES = 4 * 1024 * 1024
+
 export default function ProfilePage() {
   const { t } = useLocalization();
   const { toast } = useToast()
-  const { user, loading } = useAuth();
+  const { user, loading, updateProfile } = useAuth();
   const [isParsing, setIsParsing] = useState(false)
   const [isSaving, setIsSaving] = useState(false);
   const [badges, setBadges] = useState(earnedBadges);
@@ -100,6 +100,26 @@ export default function ProfilePage() {
   const handleResumeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
+
+    if (file.type !== "application/pdf") {
+      toast({
+        title: "PDF required",
+        description: "Please upload your resume as a PDF file.",
+        variant: "destructive",
+      })
+      event.target.value = ""
+      return
+    }
+
+    if (file.size > MAX_RESUME_SIZE_BYTES) {
+      toast({
+        title: "Resume is too large",
+        description: "Please upload a PDF smaller than 4 MB.",
+        variant: "destructive",
+      })
+      event.target.value = ""
+      return
+    }
 
     setIsParsing(true)
     toast({
@@ -152,13 +172,12 @@ export default function ProfilePage() {
     }
     setIsSaving(true);
     try {
-        const userDocRef = doc(db, "users", user.uid);
-        const { email, name, ...updateData } = values; 
+        const { name, ...updateData } = values;
         
-        const [firstName, ...lastNameParts] = name.split(' ');
+        const [firstName, ...lastNameParts] = name.trim().split(/\s+/);
         const lastName = lastNameParts.join(' ');
         
-        await updateDoc(userDocRef, {
+        await updateProfile({
             ...updateData,
             name,
             firstName,
@@ -205,7 +224,7 @@ export default function ProfilePage() {
                 type="file"
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 onChange={handleResumeUpload}
-                accept=".pdf,.doc,.docx"
+                accept="application/pdf,.pdf"
                 disabled={isParsing}
             />
         </div>

@@ -73,7 +73,7 @@ const pieChartConfig = {
 }
 
 const CustomVolumeTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
-    const { t } = useLocalization();
+    const { t, language } = useLocalization();
     if (active && payload && payload.length) {
       const data: ApplicationVolumePoint = payload[0].payload;
       return (
@@ -99,7 +99,7 @@ const CustomVolumeTooltip = ({ active, payload, label }: TooltipProps<number, st
 };
 
 export default function CompanyAnalyticsPage() {
-  const { t } = useLocalization();
+  const { t, language } = useLocalization();
 
   return (
     <div className="space-y-8">

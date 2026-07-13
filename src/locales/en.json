@@ -569,7 +569,21 @@
     "or_continue_with": "Or continue with",
     "get_started_now": "Get Started Now",
     "logout": "Log out",
-    "search_placeholder": "Type a command or search..."
+    "search_placeholder": "Type a command or search...",
+    "resend_verification": {
+      "title": "Resend verification email",
+      "description": "Enter the address used for your Yahnu account.",
+      "generic_error": "The request could not be completed.",
+      "success": "If an unverified account exists for that address, a new link is on its way.",
+      "debug_link": "Open local verification link",
+      "email_address": "Email address",
+      "send": "Send a new link",
+      "sending": "Sending…"
+    },
+    "validation": {
+      "valid_email": "Please enter a valid email address.",
+      "password_required": "Password is required."
+    }
   },
   "blog": {
     "author_name": "Yahnu Staff"
@@ -2005,5 +2019,43 @@
   "Finance & Forte": "Finance & Forte",
   "Google": "Google",
   "INP-HB": "INP-HB",
-  "Tech Solutions Abidjan": "Tech Solutions Abidjan"
+  "Tech Solutions Abidjan": "Tech Solutions Abidjan",
+  "10:00 AM - 4:00 PM": "10:00 AM - 4:00 PM",
+  "1:00 PM - 5:00 PM": "1:00 PM - 5:00 PM",
+  "7:00 PM onwards": "7:00 PM onwards",
+  "A hands-on workshop covering the fundamentals of AI and Machine Learning. Led by industry experts from Google.": "A hands-on workshop covering the fundamentals of AI and Machine Learning. Led by industry experts from Google.",
+  "AI & Machine Learning Workshop": "AI & Machine Learning Workshop",
+  "Alumni Networking Night": "Alumni Networking Night",
+  "Annual Tech Career Fair": "Annual Tech Career Fair",
+  "Connect with fellow alumni and expand your professional network. An evening of great conversations and opportunities.": "Connect with fellow alumni and expand your professional network. An evening of great conversations and opportunities.",
+  "Didn't receive a verification email?": "Didn't receive a verification email?",
+  "Finance Graduates": "Finance Graduates",
+  "Fintech Webinar": "Fintech Webinar",
+  "Going": "Going",
+  "Grand Auditorium, INP-HB": "Grand Auditorium, INP-HB",
+  "Interested": "Interested",
+  "Meet with top tech companies hiring for various roles. Bring your resume and be prepared for on-the-spot interviews.": "Meet with top tech companies hiring for various roles. Bring your resume and be prepared for on-the-spot interviews.",
+  "Not Going": "Not Going",
+  "Online (Zoom Link will be shared)": "Online (Zoom Link will be shared)",
+  "Recruitment Day": "Recruitment Day",
+  "Tech Recruitment Day": "Tech Recruitment Day",
+  "University Social Hall": "University Social Hall",
+  "tag_access": "Access",
+  "tag_admin": "Administration",
+  "tag_beginner": "Beginner",
+  "tag_dashboard": "Dashboard",
+  "tag_internal": "Internal",
+  "tag_login": "Login",
+  "tag_password": "Password",
+  "tag_profile": "Profile",
+  "tag_setup": "Setup",
+  "Back to sign in": "Back to sign in",
+  "Email address": "Email address",
+  "Enter the address used for your Yahnu account.": "Enter the address used for your Yahnu account.",
+  "If an unverified account exists for that address, a new link is on its way.": "If an unverified account exists for that address, a new link is on its way.",
+  "Open local verification link": "Open local verification link",
+  "Resend verification email": "Resend verification email",
+  "Send a new link": "Send a new link",
+  "Sending…": "Sending…",
+  "The request could not be completed.": "The request could not be completed."
 }

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Globe } from "lucide-react";
 import { useLocalization } from "@/context/localization-context";
+import { SafeRichText } from "@/components/ui/safe-rich-text";
 
 interface School {
     id: string;
@@ -49,7 +50,7 @@ export function SchoolProfileClient({ school }: { school: School }) {
                 <div className="grid md:grid-cols-3 gap-8 mt-8">
                     <div className="md:col-span-2">
                         <h2 className="text-2xl font-bold mb-4">{t('common.about')} {school.acronym}</h2>
-                        <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: t(school.description) }} />
+                        <SafeRichText html={t(school.description)} />
                     </div>
                     <div>
                         <Card>

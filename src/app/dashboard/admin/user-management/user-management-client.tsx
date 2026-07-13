@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -38,11 +38,10 @@ import {
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { type Role, type UserStatus } from "@/context/auth-context"
-import { doc, updateDoc, deleteDoc } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { apiFetch } from "@/lib/api-client"
 
 
-type User = {
+export type User = {
   id: string
   name: string
   email: string
@@ -56,32 +55,37 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
     const { toast } = useToast();
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
     const [isManageOpen, setIsManageOpen] = useState(false)
+    const [isSaving, setIsSaving] = useState(false)
 
     const handleStatusChange = async (newStatus: UserStatus) => {
+        if (isSaving) return
+        setIsSaving(true)
         try {
-            const userDocRef = doc(db, "users", user.id);
-            await updateDoc(userDocRef, { status: newStatus });
-            onUserUpdate({ ...user, status: newStatus });
+            const response = await apiFetch<{ data: { user: User } }>(`/api/admin/users/${encodeURIComponent(user.id)}`, {
+                method: "PATCH",
+                body: JSON.stringify({ status: newStatus }),
+            })
+            onUserUpdate(response.data.user);
             toast({ title: t('dashboard.user_management.status_updated'), description: `${user.name} ${t('dashboard.user_management.status_now')} ${t(`dashboard.user_management.${newStatus}`)}.` });
             setIsManageOpen(false);
         } catch (error) {
-            console.error("Failed to update status:", error);
-            toast({ title: t('common.error'), description: t('dashboard.user_management.failed_update_status'), variant: "destructive" });
+            toast({ title: t('common.error'), description: error instanceof Error ? error.message : t('dashboard.user_management.failed_update_status'), variant: "destructive" });
+        } finally {
+            setIsSaving(false)
         }
     }
 
     const handleDelete = async () => {
+        if (isSaving) return
+        setIsSaving(true)
         try {
-            const userDocRef = doc(db, "users", user.id);
-            await deleteDoc(userDocRef); // This will delete the user document from Firestore.
-                                         // Note: This does not delete the user from Firebase Authentication.
-                                         // A server-side function (e.g., Firebase Function) would be needed for that.
+            await apiFetch(`/api/admin/users/${encodeURIComponent(user.id)}`, { method: "DELETE" })
             onUserDelete(user.id);
             toast({ title: t('dashboard.user_management.user_deleted'), description: `${user.name} ${t('dashboard.user_management.removed_from_platform')}`, variant: "destructive" });
         } catch (error) {
-            console.error("Failed to delete user:", error);
-            toast({ title: t('common.error'), description: t('dashboard.user_management.failed_delete_user'), variant: "destructive" });
+            toast({ title: t('common.error'), description: error instanceof Error ? error.message : t('dashboard.user_management.failed_delete_user'), variant: "destructive" });
         } finally {
+            setIsSaving(false)
             setIsDeleteDialogOpen(false);
             setIsManageOpen(false);
         }
@@ -106,15 +110,15 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
                      <div className="space-y-2">
                          <Label>{t('dashboard.user_management.change_status')}</Label>
                          <div className="flex gap-2">
-                            {user.status !== 'active' && <Button onClick={() => handleStatusChange('active')}>{t('dashboard.user_management.activate')}</Button>}
-                            {user.status !== 'suspended' && <Button variant="secondary" onClick={() => handleStatusChange('suspended')}>{t('dashboard.user_management.suspend')}</Button>}
+                            {user.status !== 'active' && <Button disabled={isSaving} onClick={() => handleStatusChange('active')}>{t('dashboard.user_management.activate')}</Button>}
+                            {user.status !== 'suspended' && <Button disabled={isSaving} variant="secondary" onClick={() => handleStatusChange('suspended')}>{t('dashboard.user_management.suspend')}</Button>}
                          </div>
                     </div>
                 </div>
                 <DialogFooter>
                     <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                         <AlertDialogTrigger asChild>
-                            <Button variant="destructive" disabled={user.accountType === "admin" || user.accountType === "super_admin"}>
+                            <Button variant="destructive" disabled={isSaving || user.accountType === "admin" || user.accountType === "super_admin"}>
                                 <Trash2 className="mr-2 h-4 w-4" />{t('dashboard.user_management.delete_user')}
                             </Button>
                         </AlertDialogTrigger>
@@ -127,7 +131,7 @@ const ManageUserDialog = ({ user, onUserUpdate, onUserDelete }: { user: User; on
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-                                <AlertDialogAction onClick={handleDelete}>{t('dashboard.user_management.yes_delete')}</AlertDialogAction>
+                                <AlertDialogAction disabled={isSaving} onClick={handleDelete}>{t('dashboard.user_management.yes_delete')}</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
@@ -142,6 +146,8 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
     const [users, setUsers] = useState<User[]>(initialUsers);
     const [searchTerm, setSearchTerm] = useState("");
     const [filters, setFilters] = useState({ accountType: "all", status: "all" });
+
+    useEffect(() => setUsers(initialUsers), [initialUsers])
 
     const handleFilterChange = (key: string, value: string) => {
         setFilters(prev => ({ ...prev, [key]: value }));
@@ -160,17 +166,16 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
             case 'pending': return 'outline';
             case 'suspended': return 'destructive';
             case 'declined': return 'destructive';
-            case 'rejected': return 'destructive';
             default: return 'default';
         }
     }
 
     const handleUserUpdate = (updatedUser: User) => {
-        setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
+        setUsers((current) => current.map(u => u.id === updatedUser.id ? updatedUser : u));
     };
 
     const handleUserDelete = (userId: string) => {
-        setUsers(users.filter(u => u.id !== userId));
+        setUsers((current) => current.filter(u => u.id !== userId));
     };
 
     return (
@@ -207,7 +212,7 @@ export function UserManagementClient({ initialUsers }: { initialUsers: User[] })
                         <SelectItem value="all">{t('dashboard.user_management.all_statuses')}</SelectItem>
                         <SelectItem value="active">{t('dashboard.user_management.active')}</SelectItem>
                         <SelectItem value="pending">{t('dashboard.user_management.pending')}</SelectItem>
-                        <SelectItem value="rejected">{t('dashboard.user_management.rejected')}</SelectItem>
+                        <SelectItem value="declined">{t('dashboard.user_management.rejected')}</SelectItem>
                         <SelectItem value="suspended">{t('dashboard.user_management.suspended')}</SelectItem>
                     </SelectContent>
                 </Select>

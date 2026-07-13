@@ -27,14 +27,18 @@ import { useAuth, type UserProfile } from "@/context/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { useLocalization } from "@/context/localization-context"
 import { PasswordInput } from "@/components/ui/password-input"
-import { Separator } from "../ui/separator"
 import Link from "next/link"
-import { db } from "@/lib/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { apiFetch } from "@/lib/api-client"
 
 type SchoolOption = {
     id: string;
     name: string;
+}
+
+type SchoolsResponse = {
+    data: {
+        schools: SchoolOption[];
+    };
 }
 
 const industrySectors = [
@@ -45,9 +49,13 @@ const industrySectors = [
 ];
 
 const baseSchema = z.object({
-    role: z.enum(['graduate', 'company', 'school', 'admin']),
+    role: z.enum(['graduate', 'company', 'school']),
     email: z.string().email({ message: "Please enter a valid email address." }),
-    password: z.string().min(8, { message: "Password must be at least 8 characters." }),
+    password: z.string()
+        .min(10, { message: "Password must be at least 10 characters." })
+        .max(128, { message: "Password must be 128 characters or fewer." })
+        .regex(/[A-Za-z]/, { message: "Password must include at least one letter and one number." })
+        .regex(/\d/, { message: "Password must include at least one letter and one number." }),
     confirmPassword: z.string()
 });
 
@@ -81,21 +89,10 @@ const schoolSchema = baseSchema.extend({
     industry: z.string().optional(),
 })
 
-const adminSchema = baseSchema.extend({
-    firstName: z.string().min(2, { message: "First name is required." }),
-    lastName: z.string().min(2, { message: "Last name is required." }),
-    companyName: z.string().optional(),
-    schoolName: z.string().optional(),
-    contactName: z.string().optional(),
-    industry: z.string().optional(),
-    schoolId: z.string().optional(),
-})
-
 const registerSchema = z.discriminatedUnion("role", [
     graduateSchema.extend({ role: z.literal("graduate") }),
     companySchema.extend({ role: z.literal("company") }),
     schoolSchema.extend({ role: z.literal("school") }),
-    adminSchema.extend({ role: z.literal("admin") }),
 ]).refine(data => data.password === data.confirmPassword, {
     message: "Passwords do not match.",
     path: ["confirmPassword"],
@@ -103,7 +100,7 @@ const registerSchema = z.discriminatedUnion("role", [
 
 export function RegisterForm() {
     const { t } = useLocalization();
-    const { signUp, signInWithGoogle } = useAuth();
+    const { signUp } = useAuth();
     const { toast } = useToast();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -111,16 +108,13 @@ export function RegisterForm() {
     const [schools, setSchools] = React.useState<SchoolOption[]>([]);
 
     React.useEffect(() => {
+        const controller = new AbortController();
         const fetchSchools = async () => {
             try {
-                const schoolsQuery = query(collection(db, "users"), where("role", "==", "school"), where("status", "==", "active"));
-                const querySnapshot = await getDocs(schoolsQuery);
-                const schoolList = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    name: doc.data().name as string
-                }));
-                setSchools(schoolList);
+                const response = await apiFetch<SchoolsResponse>('/api/schools', { signal: controller.signal });
+                setSchools(response.data.schools);
             } catch (error) {
+                if (controller.signal.aborted) return;
                 console.error("Failed to fetch schools:", error);
                 toast({
                     title: "Could not load schools",
@@ -130,7 +124,8 @@ export function RegisterForm() {
             }
         };
 
-        fetchSchools();
+        void fetchSchools();
+        return () => controller.abort();
     }, [toast]);
 
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -164,7 +159,7 @@ export function RegisterForm() {
         let name: string | undefined;
         let profileData: Omit<UserProfile, 'uid' | 'status'>;
 
-        if (values.role === 'graduate' || values.role === 'admin') {
+        if (values.role === 'graduate') {
             name = `${values.firstName} ${values.lastName}`;
             profileData = { ...values, name, email: values.email, role: values.role };
         } else if (values.role === 'company') {
@@ -175,7 +170,7 @@ export function RegisterForm() {
             profileData = { ...values, name, email: values.email, role: values.role };
         }
 
-        await signUp(profileData, values.password);
+        const registration = await signUp(profileData, values.password);
 
         let toastDescription = "";
         switch(role) {
@@ -186,16 +181,19 @@ export function RegisterForm() {
             case 'school':
                  toastDescription = t("Your registration is pending approval from a Yahnu administrator. We'll notify you once it's active.");
                  break;
-            case 'admin':
-                toastDescription = t("Admin account created. You can now log in.");
-                break;
         }
 
         toast({
             title: t("Account Created!"),
-            description: toastDescription,
+            description: registration.emailDelivery === 'failed'
+                ? t("Your account was created, but the verification email could not be delivered. Please use the resend-verification page or contact support.")
+                : toastDescription,
           });
 
+        if (registration.debugUrl) {
+            window.location.assign(registration.debugUrl);
+            return;
+        }
         router.push('/login');
     } catch (error: any) {
         toast({
@@ -205,26 +203,6 @@ export function RegisterForm() {
           });
     } finally {
         setIsLoading(false);
-    }
-  }
-
-  async function handleGoogleSignIn() {
-    setIsLoading(true);
-    try {
-      await signInWithGoogle();
-      toast({
-        title: t("Signed In Successfully!"),
-        description: t("Welcome to Yahnu."),
-      });
-      router.push('/dashboard');
-    } catch (error: any) {
-      toast({
-        title: t("Uh oh! Something went wrong."),
-        description: error.message || t("Could not sign in with Google."),
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -260,7 +238,7 @@ export function RegisterForm() {
           )}
         />
 
-        {(role === 'graduate' || role === 'admin') && (
+        {role === 'graduate' && (
             <div className="grid grid-cols-2 gap-4">
                 <FormField
                     control={form.control} name="firstName"
@@ -417,23 +395,6 @@ export function RegisterForm() {
         <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? t('auth.creating_account') : t('auth.create_account')}
         </Button>
-
-        {role === 'graduate' && (
-          <>
-            <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                    <Separator />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">{t('auth.or_continue_with')}</span>
-                </div>
-            </div>
-            <Button variant="outline" type="button" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
-                <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 21.2 177 60.4L373 124.9c-32.5-30.3-74.2-48.7-125-48.7-93.1 0-170 73.1-170 180s76.9 180 170 180c101.4 0 148.2-73.3 152.8-112.3H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg>
-                {t('common.sign_up_with_google')}
-            </Button>
-          </>
-        )}
 
         <div className="mt-4 text-center text-sm">
             {t('common.already_have_an_account')}

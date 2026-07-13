@@ -1,118 +1,81 @@
-
-
 "use client"
 
-import React, { useState, useEffect, useRef } from 'react';
-import 'react-quill/dist/quill.snow.css';
-import { cn } from '@/lib/utils';
-import dynamic from 'next/dynamic';
-import { Textarea } from './textarea';
-import { useLocalization } from '@/context/localization-context';
+import * as React from "react"
+import { Bold, Code2, Heading2, Italic, Link2, List, ListOrdered, Quote, RemoveFormatting, Underline } from "lucide-react"
 
-const ReactQuill = dynamic(
-    () => import('react-quill'), 
-    { ssr: false }
-);
+import { sanitizeRichText } from "@/components/ui/safe-rich-text"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 interface RichTextEditorProps {
-  value: string;
-  onChange: (value: string) => void;
-  className?: string;
-  placeholder?: string;
+  value: string
+  onChange: (value: string) => void
+  className?: string
+  placeholder?: string
 }
 
-export const RichTextEditor = ({ value, onChange, className, placeholder }: RichTextEditorProps) => {
-    const [showHtml, setShowHtml] = useState(false);
-    const { t } = useLocalization();
-    const quillRef = useRef<any>(null);
+export function RichTextEditor({ value, onChange, className, placeholder = "Write content…" }: RichTextEditorProps) {
+  const editorRef = React.useRef<HTMLDivElement>(null)
 
-    const modules = {
-      toolbar: {
-        container: [
-          [{ 'header': [1, 2, 3, false] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          [{'list': 'ordered'}, {'list': 'bullet'}],
-          ['link'],
-          ['code-block'],
-          ['clean']
-        ],
-        handlers: {
-          'code-block': () => {
-            setShowHtml(prev => !prev);
-          }
-        }
-      },
-    };
+  React.useEffect(() => {
+    const editor = editorRef.current
+    if (!editor || document.activeElement === editor) return
 
-    const formats = [
-      'header',
-      'bold', 'italic', 'underline', 'strike',
-      'list', 'bullet',
-      'link', 'code-block'
-    ];
+    const nextHtml = sanitizeRichText(value || "")
+    if (editor.innerHTML !== nextHtml) editor.innerHTML = nextHtml
+  }, [value])
 
-    useEffect(() => {
-        const toolbar = quillRef.current?.getEditor().getModule('toolbar').container;
-        if (toolbar) {
-            const buttonMap: Record<string, string> = {
-                'bold': t('Bold'),
-                'italic': t('Italic'),
-                'underline': t('Underline'),
-                'strike': t('Strikethrough'),
-                'list': t('List'),
-                'link': t('Insert Link'),
-                'code-block': t('Code View'),
-                'clean': t('Clear Formatting')
-            };
+  const commit = React.useCallback(() => {
+    const editor = editorRef.current
+    if (!editor) return
 
-            Object.entries(buttonMap).forEach(([className, tooltipText]) => {
-                const buttons = toolbar.querySelectorAll(`.ql-${className}`);
-                buttons.forEach((button: HTMLElement) => {
-                    button.setAttribute('title', tooltipText);
-                });
-            });
-            const headerButton = toolbar.querySelector('.ql-header');
-            if (headerButton) headerButton.setAttribute('title', t('Header Style'));
-        }
-    }, [t, showHtml, value]); // Re-run when view or value changes to reapply tooltips
+    const cleanHtml = sanitizeRichText(editor.innerHTML)
+    if (editor.innerHTML !== cleanHtml) editor.innerHTML = cleanHtml
+    onChange(cleanHtml)
+  }, [onChange])
+
+  const runCommand = (command: string, commandValue?: string) => {
+    editorRef.current?.focus()
+    document.execCommand(command, false, commandValue)
+    commit()
+  }
+
+  const addLink = () => {
+    const href = window.prompt("Enter a secure URL (https, http, mailto, /, or #)")?.trim()
+    if (!href || !/^(?:(?:https?|mailto):|\/|#)/i.test(href)) return
+    runCommand("createLink", href)
+  }
 
   return (
-    <div className={cn("bg-background", className)}>
-        {showHtml ? (
-            <div className="relative">
-                <div id="toolbar-html" className="ql-toolbar ql-snow rounded-t-md border-input border">
-                    <span className="ql-formats">
-                        <button 
-                            title={t('Rich Text View')}
-                            type="button" 
-                            className="ql-active ql-code-block"
-                            onClick={() => setShowHtml(false)}
-                        >
-                            <svg viewBox="0 0 18 18">
-                                <path className="ql-stroke" d="M.469,5.023,2.484,3.375,4.5,5.023a.473.473,0,0,0,.7,0L6.9,3.375l2.016,1.648a.473.473,0,0,0,.7,0L11.313,3.375l2.016,1.648a.473.473,0,0,0,.7,0L15.727,3.375l2.016,1.648a.46.46,0,0,0,.7,0L18.9,4.2a.473.473,0,0,0,0-.7L14.43,0,9.961,3.328a.473.473,0,0,0,0,.7L11.664,5.2a.473.473,0,0,0,.7,0L13.91,3.879l1.422,1.164-4.57,3.75L9.281,7.625a.473.473,0,0,0-.7,0L6.8,8.79l-1.4-1.141,4.594-3.75L5.422.523a.473.473,0,0,0-.7,0L3,1.687,1.4,2.828,5.969,6.578a.473.473,0,0,0,0,.7L7.68,8.445a.473.473,0,0,0,.7,0l1.547-1.266,1.422,1.164-4.57,3.75-1.484-1.219a.473.473,0,0,0-.7,0l-1.7,1.391-4.547-3.75,1.4-1.141Z"></path>
-                            </svg>
-                        </button>
-                    </span>
-                </div>
-                <Textarea
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    className="min-h-64 rounded-t-none font-mono text-sm"
-                    placeholder="<!-- Write your HTML here -->"
-                />
-            </div>
-        ) : (
-            <ReactQuill 
-                ref={quillRef}
-                theme="snow" 
-                value={value} 
-                onChange={onChange}
-                modules={modules}
-                formats={formats}
-                placeholder={placeholder}
-                className="[&_.ql-container]:min-h-64 [&_.ql-container]:rounded-b-md [&_.ql-toolbar]:rounded-t-md [&_.ql-container]:border-input [&_.ql-toolbar]:border-input [&_.ql-container]:relative [&_.ql-editor]:resize-y"
-            />
-        )}
+    <div className={cn("overflow-hidden rounded-md border border-input bg-background", className)}>
+      <div className="flex flex-wrap gap-1 border-b border-input bg-muted/30 p-1.5" role="toolbar" aria-label="Text formatting">
+        <Button type="button" variant="ghost" size="xs" aria-label="Heading" title="Heading" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("formatBlock", "h2")}><Heading2 /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Bold" title="Bold" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("bold")}><Bold /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Italic" title="Italic" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("italic")}><Italic /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Underline" title="Underline" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("underline")}><Underline /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Bulleted list" title="Bulleted list" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("insertUnorderedList")}><List /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Numbered list" title="Numbered list" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("insertOrderedList")}><ListOrdered /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Quote" title="Quote" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("formatBlock", "blockquote")}><Quote /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Code block" title="Code block" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("formatBlock", "pre")}><Code2 /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Add link" title="Add link" onMouseDown={(event) => event.preventDefault()} onClick={addLink}><Link2 /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Clear formatting" title="Clear formatting" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("removeFormat")}><RemoveFormatting /></Button>
+      </div>
+      <div
+        ref={editorRef}
+        contentEditable
+        role="textbox"
+        aria-multiline="true"
+        suppressContentEditableWarning
+        data-placeholder={placeholder}
+        className="min-h-64 px-3 py-2 text-sm leading-6 outline-none empty:before:pointer-events-none empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground focus:ring-2 focus:ring-inset focus:ring-ring"
+        onInput={commit}
+        onBlur={commit}
+        onPaste={(event) => {
+          event.preventDefault()
+          document.execCommand("insertText", false, event.clipboardData.getData("text/plain"))
+          commit()
+        }}
+      />
     </div>
-  );
-};
+  )
+}

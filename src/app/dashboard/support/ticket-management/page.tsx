@@ -1,9 +1,6 @@
 
-import TicketManagement from '@/components/dashboard/support/ticket-management';
-import { FC } from 'react';
+import { redirect } from 'next/navigation';
 
-const TicketManagementPage: FC = () => {
-  return <TicketManagement />;
-};
-
-export default TicketManagementPage;
+export default function TicketManagementPage() {
+  redirect('/dashboard/support/center');
+}

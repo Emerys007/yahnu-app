@@ -1,266 +1,181 @@
 "use client"
 
-import { Shield, Users, Building, GraduationCap, TrendingUp, AlertCircle, CheckCircle, UserPlus, Briefcase } from "lucide-react";
-import { AdminClient } from "../admin-client";
-import { type UserStatus } from "@/context/auth-context";
-import { db } from "@/lib/firebase";
-import { collection, query, where, getDocs, DocumentData, orderBy, limit } from "firebase/firestore";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CountUp } from "@/components/ui/count-up";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { useLocalization } from "@/context/localization-context";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button"
-import { Clock, XCircle, Eye } from "lucide-react"
+import { useCallback, useEffect, useState } from "react"
+import { Building, CheckCircle, GraduationCap, Loader2, Shield, UserPlus, Users } from "lucide-react"
 
-type User = {
-  id: string
-  name: string
-  email: string
-  accountType: "Company" | "School" | "Graduate" | "Admin"
-  status: UserStatus
-  date: string
+import { AdminClient, type AdminRequest } from "../admin-client"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { CountUp } from "@/components/ui/count-up"
+import { useLocalization } from "@/context/localization-context"
+import { apiFetch } from "@/lib/api-client"
+import type { Role } from "@/context/auth-context"
+
+type DashboardData = {
+  stats: { totalUsers: number; activeCompanies: number; activeSchools: number }
+  pendingRequests: AdminRequest[]
+  recentActivity: Array<{
+    id: string
+    type: "new_user"
+    name: string
+    role: Role
+    occurredAt: string
+  }>
+  serviceStatus: "operational"
 }
 
-type Activity = {
-    id: string;
-    type: 'new_user' | 'new_job';
-    text: string;
-    icon: React.ElementType;
-    time: string;
+type DashboardResponse = { data: DashboardData }
+
+const emptyDashboard: DashboardData = {
+  stats: { totalUsers: 0, activeCompanies: 0, activeSchools: 0 },
+  pendingRequests: [],
+  recentActivity: [],
+  serviceStatus: "operational",
 }
 
-// In a real-world scenario, this data would come from a more complex query or pre-aggregated data.
-async function getAdminDashboardData() {
-    const usersRef = collection(db, "users");
-
-    // Fetch counts
-    const graduateQuery = query(usersRef, where("role", "==", "graduate"), where("status", "==", "active"));
-    const companyQuery = query(usersRef, where("role", "==", "company"), where("status", "==", "active"));
-    const schoolQuery = query(usersRef, where("role", "==", "school"), where("status", "==", "active"));
-
-    const [graduateSnapshot, companySnapshot, schoolSnapshot] = await Promise.all([
-        getDocs(graduateQuery),
-        getDocs(companyQuery),
-        getDocs(schoolQuery),
-    ]);
-
-    const stats = {
-        totalUsers: graduateSnapshot.size + companySnapshot.size + schoolSnapshot.size,
-        activeCompanies: companySnapshot.size,
-        activeSchools: schoolSnapshot.size,
-    };
-
-    // Fetch pending requests
-    const pendingQuery = query(
-        usersRef,
-        where('status', '==', 'pending'),
-        where('role', 'in', ['company', 'school'])
-    );
-    const pendingSnapshot = await getDocs(pendingQuery);
-    const pendingRequests = pendingSnapshot.docs.map(doc => {
-        const data = doc.data() as DocumentData;
-        const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
-        return {
-            id: doc.id,
-            name: data.name,
-            email: data.email,
-            accountType: data.role.charAt(0).toUpperCase() + data.role.slice(1),
-            status: data.status,
-            date: createdAt.toISOString().split('T')[0],
-        } as User;
-    });
-
-    // Fetch recent activity (mocking job posts for now)
-    const recentUsersQuery = query(usersRef, orderBy("createdAt", "desc"), limit(3));
-    const recentUsersSnapshot = await getDocs(recentUsersQuery);
-    const recentActivity: Activity[] = recentUsersSnapshot.docs.map(doc => {
-        const data = doc.data() as DocumentData;
-        const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
-        const timeAgo = Math.floor((new Date().getTime() - createdAt.getTime()) / (1000 * 60));
-        return {
-            id: doc.id,
-            type: 'new_user',
-            text: `${data.name}|${data.role}`, // Store data for translation
-            icon: UserPlus,
-            time: timeAgo.toString()
-        }
-    });
-
-    // Adding a mock job post for variety
-    recentActivity.push({
-        id: 'job-1',
-        type: 'new_job',
-        text: 'Orange Côte d\'Ivoire|Software Engineer', // Store data for translation
-        icon: Briefcase,
-        time: "55"
-    });
-
-    recentActivity.sort(() => Math.random() - 0.5); // Randomize for demo
-
-    return { stats, pendingRequests, recentActivity };
+function relativeTime(value: string, language: string) {
+  const seconds = Math.round((new Date(value).getTime() - Date.now()) / 1000)
+  const formatter = new Intl.RelativeTimeFormat(language, { numeric: "auto" })
+  if (Math.abs(seconds) < 60) return formatter.format(seconds, "second")
+  const minutes = Math.round(seconds / 60)
+  if (Math.abs(minutes) < 60) return formatter.format(minutes, "minute")
+  const hours = Math.round(minutes / 60)
+  if (Math.abs(hours) < 24) return formatter.format(hours, "hour")
+  return formatter.format(Math.round(hours / 24), "day")
 }
 
 export default function AdminOverviewPage() {
-    const { t } = useLocalization();
-    const [stats, setStats] = useState({ totalUsers: 0, activeCompanies: 0, activeSchools: 0 });
-    const [pendingRequests, setPendingRequests] = useState<User[]>([]);
-    const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
+  const { t, language } = useLocalization()
+  const [dashboard, setDashboard] = useState(emptyDashboard)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-    useEffect(() => {
-        async function fetchData() {
-            const { stats, pendingRequests, recentActivity } = await getAdminDashboardData();
-            setStats(stats);
-            setPendingRequests(pendingRequests);
-            setRecentActivity(recentActivity);
-        }
-        fetchData();
-    }, []);
+  const loadDashboard = useCallback(async () => {
+    try {
+      const response = await apiFetch<DashboardResponse>("/api/admin/overview")
+      setDashboard(response.data)
+      setError(null)
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : "Unable to load the dashboard.")
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
-    return (
-        <div className="space-y-8">
-            <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-lg">
-                    <Shield className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.admin.overview.title')}</h1>
-                    <p className="text-muted-foreground mt-1">{t('dashboard.admin.overview.description')}</p>
-                </div>
-            </div>
+  useEffect(() => {
+    void loadDashboard()
+    const interval = window.setInterval(() => void loadDashboard(), 45_000)
+    return () => window.clearInterval(interval)
+  }, [loadDashboard])
 
-            {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('dashboard.admin.overview.totalUsers')}</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold"><CountUp end={stats.totalUsers} /></div>
-                        <p className="text-xs text-muted-foreground">{t('dashboard.admin.overview.totalUsersDescription')}</p>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('dashboard.admin.overview.activeCompanies')}</CardTitle>
-                        <Building className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold"><CountUp end={stats.activeCompanies} /></div>
-                        <p className="text-xs text-muted-foreground">{t('dashboard.admin.overview.activeCompaniesDescription')}</p>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('dashboard.admin.overview.partnerSchools')}</CardTitle>
-                        <GraduationCap className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold"><CountUp end={stats.activeSchools} /></div>
-                         <p className="text-xs text-muted-foreground">{t('dashboard.admin.overview.partnerSchoolsDescription')}</p>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('dashboard.admin.system_health')}</CardTitle>
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">99.8%</div>
-                        <p className="text-xs text-muted-foreground">Platform uptime this month</p>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Pending Requests and Recent Activity */}
-            <div className="grid lg:grid-cols-3 gap-8 items-start">
-                <div className="lg:col-span-2">
-                    <Card className="md:col-span-2">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                              <Clock className="h-5 w-5" />
-                              {t('dashboard.overview.pendingRequests')}
-                            </CardTitle>
-                            <CardDescription>{t('dashboard.overview.pendingRequestsDescription')}</CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-4">
-                              {pendingRequests.length === 0 ? (
-                                <p className="text-center text-muted-foreground py-4">{t('dashboard.overview.noPendingRequests')}</p>
-                              ) : (
-                                pendingRequests.map((request) => (
-                                  <div key={request.id} className="flex items-center justify-between p-3 border rounded-lg">
-                                    <div>
-                                      <p className="font-medium">{request.name}</p>
-                                      <p className="text-sm text-muted-foreground capitalize">{t(`dashboard.user_management.${request.type}`)} • {request.date}</p>
-                                    </div>
-                                    <div className="flex gap-2">
-                                      <Button size="sm" variant="outline">
-                                        <Eye className="h-4 w-4 mr-1" />
-                                        {t('common.view_profile')}
-                                      </Button>
-                                      <Button size="sm" variant="outline">
-                                        <CheckCircle className="h-4 w-4 mr-1" />
-                                        Approve
-                                      </Button>
-                                      <Button size="sm" variant="destructive">
-                                        <XCircle className="h-4 w-4 mr-1" />
-                                        Reject
-                                      </Button>
-                                    </div>
-                                  </div>
-                                ))
-                              )}
-                            </div>
-                          </CardContent>
-                    </Card>
-                </div>
-                <div className="lg:col-span-1">
-                     <Card>
-                        <CardHeader>
-                            <CardTitle>{t('dashboard.overview.recentActivity')}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                             {recentActivity.map((activity) => {
-                                let displayText = "";
-                                let displayTime = "";
-
-                                if (activity.type === 'new_user') {
-                                    const [name, role] = activity.text.split('|');
-                                    displayText = `${name} ${t('dashboard.admin.overview.signedUpAs')} ${t(`common.${role}`)}.`;
-                                    const minutes = parseInt(activity.time);
-                                    displayTime = `${minutes} ${t('common.time.minutes_ago')}`;
-                                } else if (activity.type === 'new_job') {
-                                    const [company, job] = activity.text.split('|');
-                                    displayText = `${company} ${t('dashboard.admin.overview.postedNewJob')}: "${job}".`;
-                                    const minutes = parseInt(activity.time);
-                                    displayTime = `${minutes} ${t('common.time.minutes_ago')}`;
-                                }
-
-                                return (
-                                    <div key={activity.id} className="flex items-center gap-4">
-                                        <Avatar className="h-9 w-9">
-                                            <AvatarFallback className="bg-primary/10">
-                                                <activity.icon className="h-4 w-4 text-primary" />
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <div className="grid gap-1">
-                                            <p className="text-sm font-medium leading-none">{displayText}</p>
-                                            <p className="text-sm text-muted-foreground">{displayTime}</p>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
-
+  return (
+    <div className="space-y-8">
+      <div className="flex items-start gap-4">
+        <div className="rounded-lg bg-primary/10 p-3">
+          <Shield className="h-6 w-6 text-primary" />
         </div>
-    )
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{t("dashboard.admin.overview.title")}</h1>
+          <p className="mt-1 text-muted-foreground">{t("dashboard.admin.overview.description")}</p>
+        </div>
+      </div>
+
+      {error && (
+        <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          {error}
+        </div>
+      )}
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t("dashboard.admin.overview.totalUsers")}</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <CountUp end={dashboard.stats.totalUsers} />}</div>
+            <p className="text-xs text-muted-foreground">{t("dashboard.admin.overview.totalUsersDescription")}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t("dashboard.admin.overview.activeCompanies")}</CardTitle>
+            <Building className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <CountUp end={dashboard.stats.activeCompanies} />}</div>
+            <p className="text-xs text-muted-foreground">{t("dashboard.admin.overview.activeCompaniesDescription")}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t("dashboard.admin.overview.partnerSchools")}</CardTitle>
+            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <CountUp end={dashboard.stats.activeSchools} />}</div>
+            <p className="text-xs text-muted-foreground">{t("dashboard.admin.overview.partnerSchoolsDescription")}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t("dashboard.admin.system_health")}</CardTitle>
+            <CheckCircle className="h-4 w-4 text-emerald-500" />
+          </CardHeader>
+          <CardContent>
+            <Badge className="bg-emerald-600 hover:bg-emerald-600">{t("Operational")}</Badge>
+            <p className="mt-2 text-xs text-muted-foreground">{t("Database and admin services are responding")}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid items-start gap-8 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>{t("dashboard.overview.pendingRequests")}</CardTitle>
+            <CardDescription>{t("dashboard.overview.pendingRequestsDescription")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="flex h-24 items-center justify-center text-muted-foreground">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t("Loading")}
+              </div>
+            ) : (
+              <AdminClient initialRequests={dashboard.pendingRequests} onChanged={loadDashboard} />
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("dashboard.overview.recentActivity")}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {dashboard.recentActivity.map((activity) => (
+              <div key={activity.id} className="flex items-center gap-4">
+                <Avatar className="h-9 w-9">
+                  <AvatarFallback className="bg-primary/10">
+                    <UserPlus className="h-4 w-4 text-primary" />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="min-w-0 space-y-1">
+                  <p className="truncate text-sm font-medium">
+                    {activity.name} {t("dashboard.admin.overview.signedUpAs")} {t(`common.${activity.role}`)}.
+                  </p>
+                  <p className="text-xs text-muted-foreground">{relativeTime(activity.occurredAt, language)}</p>
+                </div>
+              </div>
+            ))}
+            {!loading && dashboard.recentActivity.length === 0 && (
+              <p className="py-4 text-center text-sm text-muted-foreground">{t("No recent activity")}</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
 }

@@ -179,7 +179,7 @@ const EventForm = ({ event, onSave }: { event?: z.infer<typeof eventSchema>; onS
 }
 
 export default function CompanyEventsPage() {
-  const { t } = useLocalization()
+  const { t, language } = useLocalization()
   const { toast } = useToast()
   const [events, setEvents] = useState<Event[]>(initialEvents)
   const [isDialogOpen, setIsDialogOpen] = useState(false)

@@ -2,7 +2,7 @@
 "use client"
 
 import { redirect } from 'next/navigation';
-import { useAuth, type Role } from "@/context/auth-context"
+import { useAuth } from "@/context/auth-context"
 
 export function AdminDashboard() {
   const { role } = useAuth();
@@ -11,7 +11,7 @@ export function AdminDashboard() {
     redirect('/dashboard/support/center');
   }
   
-  if (role === 'content_manager') {
+  if (role === 'content_manager' || role === 'content_moderator') {
     redirect('/dashboard/content');
   }
 

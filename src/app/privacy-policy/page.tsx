@@ -4,9 +4,9 @@ import { MainNav } from "@/components/landing/main-nav";
 import { Footer } from "@/components/landing/footer";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChevronLeft } from "lucide-react";
 import { useLocalization } from "@/context/localization-context";
+import { DynamicLegalContent } from "@/components/legal/dynamic-legal-content";
 
 export default function PrivacyPolicyPage() {
   const { t } = useLocalization();
@@ -22,17 +22,7 @@ export default function PrivacyPolicyPage() {
                     {t('legal.back_to_home')}
                 </Link>
             </Button>
-            <Card className="p-6 md:p-8">
-                <CardHeader>
-                    <CardTitle className="text-4xl font-bold">{t('legal.privacy_title')}</CardTitle>
-                    <CardDescription>{t('legal.privacy_last_updated')}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="prose prose-lg max-w-none prose-h2:font-bold prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:font-semibold prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3 prose-p:leading-relaxed prose-ul:list-disc prose-ul:pl-6 prose-li:mb-2 prose-strong:font-semibold"
-                        dangerouslySetInnerHTML={{ __html: t('legal.privacy_content') }}
-                    />
-                </CardContent>
-            </Card>
+            <DynamicLegalContent pageId="privacy-policy" fallback={{ title: t('legal.privacy_title'), lastUpdated: t('legal.privacy_last_updated'), content: t('legal.privacy_content') }} />
           </div>
       </main>
       <Footer />

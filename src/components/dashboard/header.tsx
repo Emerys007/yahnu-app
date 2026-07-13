@@ -9,6 +9,7 @@ import {
   Check,
   School,
   Building,
+  GraduationCap,
   MoreVertical,
   Sun,
   Moon,
@@ -16,7 +17,6 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { UserNav } from "@/components/dashboard/user-nav"
-import { ThemeToggle } from "@/components/theme-toggle"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,8 +34,7 @@ import { useSidebar } from "./sidebar"
 import { useLocalization } from "@/context/localization-context"
 import { useAuth, type Role } from "@/context/auth-context"
 import { cn } from "@/lib/utils"
-import { collection, query, where, onSnapshot, limit, DocumentData } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { apiFetch } from "@/lib/api-client"
 import { SearchCommand } from "../search-command"
 import { useTheme } from "next-themes"
 
@@ -49,7 +48,7 @@ type NotificationItem = {
 };
 
 const formatDistanceToNow = (date: Date, t: (key: string) => string): string => {
-    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    const seconds = Math.max(0, Math.floor((new Date().getTime() - date.getTime()) / 1000));
     let interval = seconds / 31536000;
     if (interval > 1) return `${Math.floor(interval)} ${t('common.time.years_ago')}`;
     interval = seconds / 2592000;
@@ -63,15 +62,28 @@ const formatDistanceToNow = (date: Date, t: (key: string) => string): string => 
     return `${Math.floor(seconds)} ${t('common.time.seconds_ago')}`;
 };
 
-const getReadNotificationIds = (): string[] => {
+const notificationStorageKey = (userId: string) => `readNotificationIds:${userId}`;
+
+const getReadNotificationIds = (userId: string): string[] => {
     if (typeof window === "undefined") return [];
-    const stored = localStorage.getItem("readNotificationIds");
-    return stored ? JSON.parse(stored) : [];
+    try {
+        const stored = localStorage.getItem(notificationStorageKey(userId));
+        const parsed = stored ? JSON.parse(stored) : [];
+        return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : [];
+    } catch {
+        return [];
+    }
 };
 
-const setReadNotificationIds = (ids: string[]) => {
+const setReadNotificationIds = (userId: string, ids: string[]) => {
     if (typeof window === "undefined") return;
-    localStorage.setItem("readNotificationIds", JSON.stringify(ids));
+    localStorage.setItem(notificationStorageKey(userId), JSON.stringify([...new Set(ids)].slice(-100)));
+};
+
+type NotificationResponse = {
+    data: {
+        notifications: Array<{ id: string; name: string; role: Role; createdAt: string }>;
+    };
 };
 
 
@@ -84,82 +96,72 @@ export function DashboardHeader() {
   const [notifications, setNotifications] = React.useState<NotificationItem[]>([]);
 
   React.useEffect(() => {
-    if (!user) return;
-
-    let q;
-    if (role === 'admin') {
-      q = query(
-        collection(db, "users"), 
-        where('status', '==', 'pending'),
-        where('role', 'in', ['company', 'school']),
-        limit(5)
-      );
-    } else if (role === 'school') {
-        q = query(
-            collection(db, "users"),
-            where('status', '==', 'pending'),
-            where('role', '==', 'graduate'),
-            where('schoolId', '==', user.uid), // Use user's UID as the schoolId
-            limit(5)
-        );
+    const receivesNotifications = role === "admin" || role === "super_admin" || role === "school";
+    if (!user || !receivesNotifications) {
+      setNotifications([]);
+      return;
     }
 
-    if (!q) return;
+    let active = true;
+    const loadNotifications = async () => {
+      try {
+        const response = await apiFetch<NotificationResponse>("/api/notifications");
+        if (!active) return;
+        const readIds = getReadNotificationIds(user.uid);
+        setNotifications(response.data.notifications.map((notification) => {
+          let text = "";
+          let icon: React.ElementType = Building;
+          if (notification.role === "company") {
+            text = t("common.notifications.new_company_approval", { name: notification.name });
+          } else if (notification.role === "school") {
+            text = t("common.notifications.new_school_approval", { name: notification.name });
+            icon = School;
+          } else {
+            text = t("common.notifications.new_graduate_activation", { name: notification.name });
+            icon = GraduationCap;
+          }
+          const createdAt = new Date(notification.createdAt);
+          return {
+            id: notification.id,
+            text,
+            time: formatDistanceToNow(Number.isNaN(createdAt.getTime()) ? new Date() : createdAt, t),
+            icon,
+            read: readIds.includes(notification.id),
+          };
+        }));
+      } catch (error) {
+        if (active) console.error("Unable to load notifications:", error);
+      }
+    };
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const readIds = getReadNotificationIds();
-        const fetchedNotifications: NotificationItem[] = [];
-        querySnapshot.forEach((doc) => {
-            const data = doc.data() as DocumentData;
-            const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
-
-            let notificationText = '';
-            let icon = Building;
-            if (data.role === 'company') {
-                notificationText = t("common.notifications.new_company_approval", { name: data.name });
-                icon = Building;
-            } else if (data.role === 'school') {
-                notificationText = t("common.notifications.new_school_approval", { name: data.name });
-                icon = School;
-            } else if (data.role === 'graduate') {
-                notificationText = t("common.notifications.new_graduate_activation", { name: data.name });
-                icon = Building; // TODO: Change to a more appropriate icon for a graduate
-            }
-
-            fetchedNotifications.push({
-                id: doc.id,
-                text: notificationText,
-                time: formatDistanceToNow(createdAt, t),
-                icon: icon,
-                read: readIds.includes(doc.id),
-            });
-        });
-        setNotifications(fetchedNotifications);
-    }, (error) => {
-        console.error("Firestore snapshot error:", error);
-    });
-
-    return () => unsubscribe();
+    void loadNotifications();
+    const interval = window.setInterval(() => void loadNotifications(), 45_000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
   }, [user, role, t]);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const handleRead = (id: string) => {
+    if (!user) return;
     const updatedNotifications = notifications.map(n => n.id === id ? { ...n, read: true } : n);
     setNotifications(updatedNotifications);
 
-    const readIds = getReadNotificationIds();
+    const readIds = getReadNotificationIds(user.uid);
     if (!readIds.includes(id)) {
-        setReadNotificationIds([...readIds, id]);
+        setReadNotificationIds(user.uid, [...readIds, id]);
     }
   };
 
   const handleReadAll = () => {
+    if (!user) return;
     const updatedNotifications = notifications.map(n => ({ ...n, read: true }));
     setNotifications(updatedNotifications);
 
     const allIds = notifications.map(n => n.id);
-    setReadNotificationIds(allIds);
+    setReadNotificationIds(user.uid, [...getReadNotificationIds(user.uid), ...allIds]);
   };
 
   const languageSelectorMenu = (

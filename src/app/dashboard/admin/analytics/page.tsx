@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BarChart3 } from "lucide-react"
 import { AnalyticsClient } from "./analytics-client"
 import { CreateReportDialog } from "@/features/analytics/CreateReportDialog";
-import { Report, ReportMap } from "@/features/analytics/ReportWidget";
 import { useLocalization } from "@/context/localization-context";
 
 const analyticsData = {

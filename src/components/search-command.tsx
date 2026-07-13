@@ -38,8 +38,12 @@ import { useRouter } from "next/navigation"
 import { Button } from "./ui/button"
 import { useAuth, type Role } from "@/context/auth-context"
 
+type Router = ReturnType<typeof useRouter>;
+type CommandLink = { icon: React.ElementType; text: string; onSelect: (router: Router) => void };
+type CommandGroupDefinition = { group: string; items: CommandLink[]; roles: Role[] };
+
 const getNavItems = (t: (key: string) => string, role: Role) => {
-    const main = [
+    const main: CommandGroupDefinition[] = [
         {
             group: t('dashboard.nav.dashboard'),
             items: [
@@ -68,7 +72,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
         },
     ];
 
-    const footer = [
+    const footer: CommandGroupDefinition[] = [
         {
             group: t('dashboard.nav.general'),
             items: [
@@ -105,7 +109,7 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
         }
     ];
 
-    const filterByRole = (items: any[]) => items.filter(group => group.roles.includes(role));
+    const filterByRole = (items: CommandGroupDefinition[]) => items.filter(group => group.roles.includes(role));
 
     return { main: filterByRole(main), footer: filterByRole(footer) };
 }
