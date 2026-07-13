@@ -22,6 +22,8 @@ services:
     healthCheckPath: /api/health
     maxShutdownDelaySeconds: 30
     autoDeployTrigger: commit
+    maintenanceMode:
+      enabled: true
     envVars:
       - key: NODE_VERSION
         value: "22"
