@@ -16,8 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { apiFetch } from "@/lib/api-client";
 
 interface FaqItem {
   question: string;
@@ -74,14 +73,12 @@ const ContactSupportForm = () => {
         }
 
         try {
-            await addDoc(collection(db, "tickets"), {
-                userId: user.uid,
-                userName: user.name,
-                userEmail: user.email,
-                subject: values.subject,
-                message: values.message,
-                status: "new",
-                submittedAt: serverTimestamp(),
+            await apiFetch('/api/tickets', {
+                method: 'POST',
+                body: JSON.stringify({
+                    subject: values.subject,
+                    message: values.message,
+                }),
             });
             toast({
                 title: "Ticket soumis",

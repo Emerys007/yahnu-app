@@ -1,17 +1,19 @@
+"use client"
 
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 
-import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
-import { type Role } from '@/context/auth-context'
+import { useAuth } from "@/context/auth-context"
 
-// This page redirects to the correct analytics page based on the user's role.
 export default function AnalyticsRedirectPage() {
-  const role = cookies().get('userRole')?.value as Role | undefined;
+  const router = useRouter()
+  const { role } = useAuth()
 
-  if (role === 'school') {
-    redirect('/dashboard/reports/school-analytics');
-  }
-  
-  // Default for company and any other roles.
-  redirect('/dashboard/reports/company-analytics')
+  useEffect(() => {
+    if (role === "school") router.replace("/dashboard/reports/school-analytics")
+    else if (role === "company") router.replace("/dashboard/reports/company-analytics")
+    else router.replace("/dashboard/reports/custom-report-generator")
+  }, [role, router])
+
+  return <div className="h-24 animate-pulse rounded-xl bg-muted" aria-label="Loading reports" />
 }

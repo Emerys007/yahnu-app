@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { useSearchParams, useParams, useRouter } from 'next/navigation';
@@ -6,18 +7,37 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Award, CheckCircle, XCircle } from 'lucide-react';
 import { useConfetti } from '@/context/confetti-context';
+import { useLocalization } from '@/context/localization-context';
 import React from 'react';
 
-const testTitles: Record<string, string> = {
-    'frontend-basics': 'Développement Frontend (React)',
-    'financial-analysis': 'Principes de l\'Analyse Financière',
-    'agronomy-principles': 'Principes d\'Agronomie Moderne',
-    'supply-chain': 'Essentiels de la Chaîne d\'Approvisionnement',
-    'cognitive-aptitude': 'Test d\'Aptitude Cognitive',
-    'customer-service': 'Excellence du Service Client'
+const testTitles: Record<string, Record<string, string>> = {
+    'frontend-basics': {
+        en: 'Frontend Development (React)',
+        fr: 'Développement Frontend (React)'
+    },
+    'financial-analysis': {
+        en: 'Financial Analysis Fundamentals',
+        fr: 'Principes de l\'Analyse Financière'
+    },
+    'agronomy-principles': {
+        en: 'Modern Agronomy Principles',
+        fr: 'Principes d\'Agronomie Moderne'
+    },
+    'supply-chain': {
+        en: 'Supply Chain Essentials',
+        fr: 'Essentiels de la Chaîne d\'Approvisionnement'
+    },
+    'cognitive-aptitude': {
+        en: 'Cognitive Aptitude Test',
+        fr: 'Test d\'Aptitude Cognitive'
+    },
+    'customer-service': {
+        en: 'Customer Service Excellence',
+        fr: 'Excellence du Service Client'
+    }
 }
 
-export default function AssessmentResultPage() {
+function AssessmentResultContent() {
     const params = useParams();
     const testId = params.testId as string;
     const router = useRouter();
@@ -25,17 +45,18 @@ export default function AssessmentResultPage() {
     const score = searchParams.get('score');
     const disqualified = searchParams.get('disqualified') === 'true';
     const { fire } = useConfetti();
-    const [testTitle, setTestTitle] = React.useState("Évaluation");
+    const { t, language } = useLocalization();
+    const [testTitle, setTestTitle] = React.useState("Assessment");
 
     const scoreValue = score ? parseInt(score, 10) : 0;
     const passed = scoreValue >= 70 && !disqualified;
 
     React.useEffect(() => {
-        setTestTitle(testTitles[testId] || "Évaluation");
+        setTestTitle(testTitles[testId]?.[language] || "Assessment");
         if(passed) {
             fire();
         }
-    }, [testId, passed, fire]);
+    }, [testId, language, passed, fire]);
     
     // In a real app, you'd save this result and badge to the user's profile in the DB here.
     // For now, we simulate this by just showing the result.
@@ -52,16 +73,16 @@ export default function AssessmentResultPage() {
                         )}
                     </div>
                     <CardTitle className="text-3xl">
-                        {disqualified ? "Test Disqualifié" : passed ? "Félicitations !" : "Évaluation Terminée"}
+                        {disqualified ? "Test Disqualified" : passed ? t("Congratulations!") : t("Assessment Complete")}
                     </CardTitle>
                     <CardDescription>
-                        Vous avez terminé l'évaluation de {testTitle}.
+                        {t('You have completed the {testTitle} assessment.', {testTitle})}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                      {disqualified ? (
                         <p className="text-destructive font-semibold">
-                            Votre test a été disqualifié pour avoir quitté la fenêtre du navigateur. Vous ne pourrez pas repasser cette évaluation avant 3 mois.
+                            Your test was disqualified due to leaving the browser window. You will be unable to retake this assessment for 3 months.
                         </p>
                      ) : (
                         <>
@@ -71,11 +92,11 @@ export default function AssessmentResultPage() {
                             {passed ? (
                                 <div className="flex items-center justify-center gap-2 text-green-600">
                                     <CheckCircle className="h-5 w-5" />
-                                    <p className="font-semibold">Vous avez réussi ! Un nouveau badge a été ajouté à votre profil.</p>
+                                    <p className="font-semibold">{t('You passed! A new badge has been added to your profile.')}</p>
                                 </div>
                             ) : (
                                 <p className="text-destructive">
-                                    Vous n'avez pas atteint le score de passage de 70%. Vous pourrez réessayer dans 30 jours.
+                                    {t('You did not meet the passing score of 70%. You can try again in 30 days.')}
                                 </p>
                             )}
                         </>
@@ -83,10 +104,20 @@ export default function AssessmentResultPage() {
                 </CardContent>
                 <CardFooter className="flex justify-center">
                     <Button onClick={() => router.push('/dashboard/profile')}>
-                        Retourner à Mon Profil
+                        {t('Return to My Profile')}
                     </Button>
                 </CardFooter>
             </Card>
         </div>
     )
 }
+
+export default function AssessmentResultPage() {
+    return (
+        <React.Suspense fallback={<div className="mx-auto h-96 max-w-lg animate-pulse rounded-xl bg-muted" aria-label="Loading assessment result" />}>
+            <AssessmentResultContent />
+        </React.Suspense>
+    )
+}
+
+    

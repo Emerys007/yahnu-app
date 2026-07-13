@@ -24,15 +24,13 @@ import { useAuth, type UserProfile, type Role } from "@/context/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { useLocalization } from "@/context/localization-context"
 import { PasswordInput } from "@/components/ui/password-input"
-import { Separator } from "@/components/ui/separator"
-import { db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
 import { Loader2, ShieldCheck, AlertTriangle } from "lucide-react"
+import { apiFetch } from "@/lib/api-client"
 
 const adminRegisterSchema = z.object({
     firstName: z.string().min(2, { message: "First name is required." }),
     lastName: z.string().min(2, { message: "Last name is required." }),
-    password: z.string().min(8, { message: "Password must be at least 8 characters." }),
+    password: z.string().min(10, { message: "Password must be at least 10 characters." }).regex(/^(?=.*[A-Za-z])(?=.*\d)/, { message: "Password must include a letter and a number." }),
     confirmPassword: z.string()
 }).refine(data => data.password === data.confirmPassword, {
     message: "Passwords do not match.",
@@ -41,9 +39,9 @@ const adminRegisterSchema = z.object({
 
 
 type InviteData = {
-    email: string;
+    maskedEmail: string;
     role: Role;
-    status: 'pending' | 'used';
+    expiresAt: string;
 }
 
 export default function AdminRegistrationPage() {
@@ -67,14 +65,8 @@ export default function AdminRegistrationPage() {
                 return;
             }
             try {
-                const inviteDocRef = doc(db, "invites", token);
-                const docSnap = await getDoc(inviteDocRef);
-
-                if (docSnap.exists() && docSnap.data().status === 'pending') {
-                    setInviteData(docSnap.data() as InviteData);
-                } else {
-                    setError("This invitation is invalid or has already been used.");
-                }
+                const response = await apiFetch<{ data: InviteData }>(`/api/invites/${encodeURIComponent(token)}`);
+                setInviteData(response.data);
             } catch (err) {
                 console.error("Token validation error:", err);
                 setError("An error occurred while validating the invitation.");
@@ -105,17 +97,23 @@ export default function AdminRegistrationPage() {
             name, 
             firstName: values.firstName, 
             lastName: values.lastName,
-            email: inviteData.email,
+            email: null,
             role: inviteData.role,
         };
         
-        await signUp(profileData, values.password, token);
+        const registration = await signUp(profileData, values.password, token);
 
         toast({
             title: t("Account Created!"),
-            description: t("Your administrator account has been created. You can now log in."),
+            description: registration.emailDelivery === 'failed'
+                ? t("Your account was created, but the verification email could not be delivered. Please contact a Yahnu administrator.")
+                : t("Your administrator account has been created. Verify your email, then log in."),
           });
-        
+
+        if (registration.debugUrl) {
+            window.location.assign(registration.debugUrl);
+            return;
+        }
         router.push('/login');
     } catch (error: any) {
         toast({
@@ -132,6 +130,7 @@ export default function AdminRegistrationPage() {
     const roleMap: Record<Role, string> = {
         admin: 'Admin',
         super_admin: 'Super Admin',
+        content_manager: 'Content Manager',
         content_moderator: 'Content Moderator',
         support_staff: 'Support Staff',
         graduate: 'Graduate',
@@ -199,15 +198,10 @@ export default function AdminRegistrationPage() {
                     />
                 </div>
 
-                <FormField
-                    control={form.control} name="email"
-                    render={() => (
-                        <FormItem>
-                        <FormLabel>{t('Email')}</FormLabel>
-                        <FormControl><Input type="email" value={inviteData!.email} disabled /></FormControl>
-                        </FormItem>
-                    )}
-                />
+                <FormItem>
+                    <FormLabel>{t('Email')}</FormLabel>
+                    <FormControl><Input type="email" value={inviteData!.maskedEmail} disabled /></FormControl>
+                </FormItem>
                 <FormField
                 control={form.control} name="password"
                 render={({ field }) => (

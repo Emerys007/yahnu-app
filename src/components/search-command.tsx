@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -23,91 +22,96 @@ import {
   MessageSquare,
   Award,
   Wrench,
-  Newspaper,
-  BookOpen,
 } from "lucide-react"
 
 import {
   CommandDialog,
   CommandEmpty,
-  CommandInput,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command"
+import { useLocalization } from "@/context/localization-context"
 import { useRouter } from "next/navigation"
 import { Button } from "./ui/button"
 import { useAuth, type Role } from "@/context/auth-context"
 
-const getNavItems = (role: Role) => {
-    const allItems = [
-        // Graduate
-        { group: 'Navigation', text: 'Tableau de bord', icon: LayoutDashboard, href: '/dashboard', roles: ['graduate'] },
-        { group: 'Navigation', text: 'Mon Profil', icon: User, href: '/dashboard/profile', roles: ['graduate'] },
-        { group: 'Navigation', text: 'Recherche d\'emploi', icon: Briefcase, href: '/dashboard/jobs', roles: ['graduate'] },
-        { group: 'Navigation', text: 'Mes Candidatures', icon: FileText, href: '/dashboard/applications', roles: ['graduate'] },
-        { group: 'Navigation', text: 'Événements', icon: Calendar, href: '/dashboard/events', roles: ['graduate'] },
-        { group: 'Outils IA', text: 'Certifications', icon: Award, href: '/dashboard/assessments', roles: ['graduate'] },
-        { group: 'Outils IA', text: 'Préparation aux entretiens', icon: BrainCircuit, href: '/dashboard/interview-prep', roles: ['graduate'] },
+type Router = ReturnType<typeof useRouter>;
+type CommandLink = { icon: React.ElementType; text: string; onSelect: (router: Router) => void };
+type CommandGroupDefinition = { group: string; items: CommandLink[]; roles: Role[] };
 
-        // Company
-        { group: 'Navigation', text: 'Tableau de bord', icon: LayoutDashboard, href: '/dashboard', roles: ['company'] },
-        { group: 'Navigation', text: 'Profil de l\'entreprise', icon: Building, href: '/dashboard/organization-profile', roles: ['company'] },
-        { group: 'Navigation', text: 'Offres d\'emploi', icon: Briefcase, href: '/dashboard/job-postings', roles: ['company'] },
-        { group: 'Navigation', text: 'Candidats', icon: FileText, href: '/dashboard/applicants', roles: ['company'] },
-        { group: 'Navigation', text: 'Vivier de talents', icon: Users2, href: '/dashboard/talent-pool', roles: ['company'] },
-        { group: 'Navigation', text: 'Gestion d\'événements', icon: Calendar, href: '/dashboard/company-events', roles: ['company'] },
-        { group: 'Navigation', text: 'Partenariats', icon: Handshake, href: '/dashboard/partnerships', roles: ['company'] },
-
-        // School
-        { group: 'Navigation', text: 'Tableau de bord', icon: LayoutDashboard, href: '/dashboard', roles: ['school'] },
-        { group: 'Navigation', text: 'Profil de l\'école', icon: School, href: '/dashboard/organization-profile', roles: ['school'] },
-        { group: 'Navigation', text: 'Gestion des diplômés', icon: UserCheck, href: '/dashboard/graduates', roles: ['school'] },
-        { group: 'Navigation', text: 'Gestion d\'événements', icon: Calendar, href: '/dashboard/school-events', roles: ['school'] },
-        { group: 'Navigation', text: 'Partenariats', icon: Handshake, href: '/dashboard/partnerships', roles: ['school'] },
-
-        // Admin, Super Admin
-        { group: 'Admin', text: 'Aperçu', icon: Shield, href: '/dashboard/admin/overview', roles: ['admin', 'super_admin'] },
-        { group: 'Admin', text: 'Gestion des utilisateurs', icon: UserCog, href: '/dashboard/admin/user-management', roles: ['admin', 'super_admin'] },
-        { group: 'Admin', text: 'Analytique', icon: BarChart3, href: '/dashboard/admin/analytics', roles: ['admin', 'super_admin'] },
-        { group: 'Admin', text: 'Centre de Support', icon: LifeBuoy, href: '/dashboard/support/center', roles: ['admin', 'super_admin'] },
-        { group: 'Admin', text: 'Gérer l\'équipe', icon: Users2, href: '/dashboard/admin/manage-team', roles: ['super_admin'] },
-
-        // Content Manager
-        { group: 'Gestion de Contenu', text: 'Pages Statiques', icon: FileText, href: '/dashboard/content/static-pages', roles: ['content_manager', 'admin', 'super_admin'] },
-        { group: 'Gestion de Contenu', text: 'Articles de Blog', icon: Newspaper, href: '/dashboard/content/blog', roles: ['content_manager', 'admin', 'super_admin'] },
-        { group: 'Gestion de Contenu', text: 'Annonces', icon: LifeBuoy, href: '/dashboard/support/announcements', roles: ['content_manager', 'support_staff', 'admin', 'super_admin'] },
-
-        // Support Staff
-        { group: 'Support', text: 'Centre de Support', icon: LifeBuoy, href: '/dashboard/support/center', roles: ['support_staff'] },
-        { group: 'Support', text: 'Recherche d\'utilisateur', icon: SearchIcon, href: '/dashboard/support/user-lookup', roles: ['support_staff'] },
-        { group: 'Support', text: 'Base de connaissances', icon: BookOpen, href: '/dashboard/support/knowledge-base-editor', roles: ['support_staff', 'admin', 'super_admin'] },
-        
-        // Common
-        { group: 'Commun', text: 'Messagerie', icon: MessageSquare, href: '/dashboard/messages', roles: ['graduate', 'company', 'school', 'support_staff'] },
-        { group: 'Commun', text: 'Paramètres', icon: Settings, href: '/dashboard/settings', roles: ['graduate', 'company', 'school', 'admin', 'super_admin', 'content_manager', 'support_staff'] },
-        { group: 'Commun', text: 'Support', icon: LifeBuoy, href: '/dashboard/support', roles: ['graduate', 'company', 'school'] },
-
-        // Reports
-        { group: 'Rapports', text: 'Analytique de recrutement', icon: BarChart3, href: '/dashboard/reports/company-analytics', roles: ['company'] },
-        { group: 'Rapports', text: 'Analytique de placement', icon: BarChart3, href: '/dashboard/reports/school-analytics', roles: ['school'] },
-        { group: 'Rapports', text: 'Générateur de rapports', icon: Wrench, href: '/dashboard/reports/custom-report-generator', roles: ['company', 'school', 'admin', 'super_admin'] },
-
+const getNavItems = (t: (key: string) => string, role: Role) => {
+    const main: CommandGroupDefinition[] = [
+        {
+            group: t('dashboard.nav.dashboard'),
+            items: [
+                { icon: LayoutDashboard, text: t('dashboard.nav.home'), onSelect: (router) => router.push('/dashboard') },
+                { icon: User, text: t('dashboard.nav.profile'), onSelect: (router) => router.push('/dashboard/profile') },
+            ],
+            roles: ['admin', 'graduate', 'company', 'school'],
+        },
+        {
+            group: t('dashboard.nav.job_postings'),
+            items: [
+                { icon: Briefcase, text: t('dashboard.nav.my_applications'), onSelect: (router) => router.push('/dashboard/my-applications') },
+                { icon: Building, text: t('dashboard.nav.company_profiles'), onSelect: (router) => router.push('/dashboard/company-profiles') },
+                { icon: School, text: t('dashboard.nav.school_profiles'), onSelect: (router) => router.push('/dashboard/school-profiles') },
+            ],
+            roles: ['admin', 'graduate'],
+        },
+        {
+            group: t('dashboard.nav.recruitment'),
+            items: [
+                { icon: FileText, text: t('dashboard.nav.post_job'), onSelect: (router) => router.push('/dashboard/job-postings/new') },
+                { icon: Users2, text: t('dashboard.nav.candidates'), onSelect: (router) => router.push('/dashboard/candidates') },
+                { icon: Handshake, text: t('dashboard.nav.partnerships'), onSelect: (router) => router.push('/dashboard/partnerships') },
+            ],
+            roles: ['admin', 'company', 'school'],
+        },
     ];
 
-    const userNavItems = allItems.filter(item => item.roles.includes(role));
-
-    const groupedItems = userNavItems.reduce((acc, item) => {
-        const group = item.group;
-        if (!acc[group]) {
-            acc[group] = [];
+    const footer: CommandGroupDefinition[] = [
+        {
+            group: t('dashboard.nav.general'),
+            items: [
+                { icon: Settings, text: t('dashboard.nav.settings'), onSelect: (router) => router.push('/dashboard/settings') },
+                { icon: LifeBuoy, text: t('dashboard.nav.support'), onSelect: (router) => router.push('/dashboard/support') },
+            ],
+            roles: ['admin', 'graduate', 'company', 'school'],
+        },
+        {
+            group: t('dashboard.nav.admin'),
+            items: [
+                { icon: Shield, text: t('dashboard.nav.security'), onSelect: (router) => router.push('/dashboard/admin/security') },
+                { icon: UserCheck, text: t('dashboard.nav.approvals'), onSelect: (router) => router.push('/dashboard/admin/approvals') },
+                { icon: UserCog, text: t('dashboard.nav.user_management'), onSelect: (router) => router.push('/dashboard/admin/user-management') },
+            ],
+            roles: ['admin'],
+        },
+        {
+            group: t('dashboard.nav.ai_tools'),
+            items: [
+                { icon: BrainCircuit, text: t('dashboard.nav.ai_insights'), onSelect: (router) => router.push('/dashboard/ai/insights') },
+                { icon: MessageSquare, text: t('dashboard.nav.chatbot_builder'), onSelect: (router) => router.push('/dashboard/ai/chatbot-builder') },
+                { icon: Award, text: t('dashboard.nav.assessment_generator'), onSelect: (router) => router.push('/dashboard/ai/assessment-generator') },
+            ],
+            roles: ['admin', 'company', 'school'],
+        },
+        {
+            group: t('dashboard.nav.reporting'),
+            items: [
+                 { icon: BarChart3, text: t('dashboard.nav.analytics'), onSelect: (router) => router.push('/dashboard/reports') },
+                 { icon: Wrench, text: t('dashboard.nav.report_generator'), onSelect: (router) => router.push('/dashboard/reports/custom-report-generator') },
+            ],
+             roles: ['admin', 'company', 'school'],
         }
-        acc[group].push(item);
-        return acc;
-    }, {} as Record<string, typeof userNavItems>);
-    
-    return groupedItems;
+    ];
+
+    const filterByRole = (items: CommandGroupDefinition[]) => items.filter(group => group.roles.includes(role));
+
+    return { main: filterByRole(main), footer: filterByRole(footer) };
 }
 
 
@@ -115,8 +119,9 @@ export function SearchCommand() {
   const [open, setOpen] = React.useState(false)
   const router = useRouter()
   const { role } = useAuth();
+  const { t } = useLocalization();
 
-  const groupedNavItems = React.useMemo(() => getNavItems(role), [role]);
+  const {main: mainItems, footer: footerItems} = React.useMemo(() => getNavItems(t, role), [t, role]);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -142,7 +147,7 @@ export function SearchCommand() {
         onClick={() => setOpen(true)}
       >
         <SearchIcon className="mr-2 h-4 w-4" />
-        <span className="hidden lg:inline-flex">Rechercher...</span>
+        <span className="hidden lg:inline-flex">{t('common.search')}</span>
         <span className="ml-auto hidden lg:inline-flex">
           <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
             <span className="text-xs">⌘</span>K
@@ -150,23 +155,41 @@ export function SearchCommand() {
         </span>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder={'Saisissez une commande ou effectuez une recherche...'} />
+        <CommandInput placeholder={t('common.search_placeholder')} />
         <CommandList>
-            <CommandEmpty>{'Aucun résultat trouvé.'}</CommandEmpty>
-            {Object.entries(groupedNavItems).map(([groupName, items]) => (
-                <CommandGroup key={groupName} heading={groupName}>
-                    {items.map((item) => (
-                        <CommandItem
-                        key={item.href}
-                        value={`${groupName} ${item.text}`}
-                        onSelect={() => runCommand(() => router.push(item.href))}
-                        >
-                        <item.icon className="mr-2 h-4 w-4" />
-                        {item.text}
-                        </CommandItem>
-                    ))}
-                </CommandGroup>
-            ))}
+          <CommandEmpty>{t('common.no_results_found')}</CommandEmpty>
+
+          {mainItems.map((group) => (
+            <CommandGroup key={group.group} heading={group.group}>
+              {group.items.map((item) => (
+                <CommandItem
+                  key={item.text}
+                  value={item.text}
+                  onSelect={() => runCommand(() => item.onSelect(router))}
+                >
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.text}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          ))}
+
+          <CommandSeparator />
+
+          {footerItems.map((group) => (
+            <CommandGroup key={group.group} heading={group.group}>
+              {group.items.map((item) => (
+                <CommandItem
+                  key={item.text}
+                  value={item.text}
+                  onSelect={() => runCommand(() => item.onSelect(router))}
+                >
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.text}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          ))}
         </CommandList>
       </CommandDialog>
     </>

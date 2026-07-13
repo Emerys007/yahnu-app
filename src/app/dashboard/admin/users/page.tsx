@@ -1,6 +1,5 @@
+import { redirect } from "next/navigation"
 
-import { redirect } from 'next/navigation'
-
-export default function AdminUsersRedirect() {
-  redirect('/dashboard/admin/user-management')
+export default function UsersRedirectPage() {
+  redirect("/dashboard/admin/user-management")
 }

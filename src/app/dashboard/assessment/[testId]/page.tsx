@@ -274,7 +274,6 @@ const TestInterface = ({ testId, onTestComplete, onDisqualify }: { testId: TestI
     }
     const timer = setInterval(() => setTimeLeft(timeLeft - 1), 1000);
     return () => clearInterval(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft, disqualified]);
   
   useEffect(() => {

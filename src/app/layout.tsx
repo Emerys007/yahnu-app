@@ -21,6 +21,8 @@ export const metadata: Metadata = {
   description: 'Une plateforme pour les diplômés, les entreprises et les écoles pour se connecter et trouver des opportunités d\'emploi.',
 };
 
+const hubspotEnabled = process.env.NEXT_PUBLIC_ENABLE_HUBSPOT === 'true';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -51,11 +53,7 @@ export default function RootLayout({
             </LocalizationProvider>
           </CountryProvider>
         </AuthProvider>
-        <Script
-          id="hs-script-loader"
-          src="//js.hs-scripts.com/8886743.js?businessUnitId=2764550"
-          strategy="afterInteractive"
-        />
+        {hubspotEnabled && <Script id="hs-script-loader" src="https://js.hs-scripts.com/8886743.js?businessUnitId=2764550" strategy="afterInteractive" />}
       </body>
     </html>
   );

@@ -1,9 +1,10 @@
-
 "use client"
 
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart3 } from "lucide-react"
 import { AnalyticsClient } from "./analytics-client"
-import { motion } from "framer-motion"
+import { CreateReportDialog } from "@/features/analytics/CreateReportDialog";
+import { useLocalization } from "@/context/localization-context";
 
 const analyticsData = {
     totalUsers: 1256,
@@ -27,24 +28,21 @@ const analyticsData = {
 }
 
 export default function AdminAnalyticsPage() {
+    const { t } = useLocalization();
+
     return (
         <div className="space-y-8">
-            <motion.div 
-                className="flex items-start justify-between"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-            >
+            <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
                     <div className="bg-primary/10 p-3 rounded-lg">
                         <BarChart3 className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight">Analytique de la Plateforme</h1>
-                        <p className="text-muted-foreground mt-1">Aperçu de la croissance et de l'engagement des utilisateurs.</p>
+                        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.analytics.title')}</h1>
+                        <p className="text-muted-foreground mt-1">{t('dashboard.analytics.description')}</p>
                     </div>
                 </div>
-            </motion.div>
+            </div>
 
             <AnalyticsClient data={analyticsData} />
         </div>

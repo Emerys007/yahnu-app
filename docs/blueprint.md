@@ -60,14 +60,14 @@ The application uses the 'Inter' sans-serif font as the primary font for all bod
 
 - **Framework**: Next.js (App Router)
 - **Styling**: Tailwind CSS with shadcn/ui components
-- **Authentication**: Firebase Authentication
-- **Database**: Firebase Firestore
-- **AI**: Google AI Platform (via Genkit)
-- **Deployment**: Firebase App Hosting
+- **Authentication**: PostgreSQL-backed opaque sessions, scrypt passwords, and optional Google OpenID Connect
+- **Database**: PostgreSQL 17
+- **AI**: Server-only Gemini REST integration (optional)
+- **Deployment**: Render Web Service and Render Postgres
 
 ## 4. Architectural Patterns
 
 - **Component Organization**: Components are organized by feature in the `src/features` directory. Reusable, generic UI components are located in `src/components/ui`.
 - **State Management**: Global state (e.g., authentication, localization) is managed via React Context.
-- **Data Fetching**: Server-side rendering (SSR) and Server Components are used for static content, while client-side fetching is used for dynamic, real-time data from Firestore.
+- **Data Fetching**: Server Components are used for static content, while authenticated client views call validated same-origin API routes backed by PostgreSQL.
 - **Styling**: Utility-first styling is managed with Tailwind CSS. All colors, fonts, and spacing are defined as variables to ensure consistency.

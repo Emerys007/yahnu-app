@@ -1,359 +1,168 @@
-
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser, sendPasswordResetEmail, linkWithPopup, sendEmailVerification, updateEmail } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, writeBatch, collection, addDoc, query, where, getDocs, serverTimestamp, Timestamp } from "firebase/firestore";
-import { app } from '@/lib/firebase';
-import Cookies from 'js-cookie';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-const auth = getAuth(app);
-const db = getFirestore(app);
-const googleProvider = new GoogleAuthProvider();
+import { apiFetch } from '@/lib/api-client';
+import type { Role, UserProfile } from '@/lib/auth-types';
 
-export type Role = 'graduate' | 'company' | 'school' | 'admin' | 'super_admin' | 'content_manager' | 'support_staff';
-export type UserStatus = 'pending' | 'active' | 'suspended' | 'declined';
-
-export type EducationEntry = {
-  degree: string;
-  field: string;
-  gradYear: string;
-  verified: boolean;
-};
-
-export interface UserProfile {
-  uid: string;
-  email: string | null;
-  name?: string;
-  role: Role;
-  status: UserStatus;
-  firstName?: string;
-  lastName?: string;
-  schoolId?: string;
-  schoolName?: string;
-  companyName?: string;
-  contactName?: string;
-  industry?: string;
-  experience?: string;
-  education?: EducationEntry[];
-  skills?: string[] | string;
-  phone?: string;
-}
+export type { EducationEntry, Role, UserProfile, UserStatus } from '@/lib/auth-types';
 
 interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
   role: Role;
-  signUp: (profile: Omit<UserProfile, 'uid' | 'status'>, password: string, inviteToken?: string) => Promise<void>;
+  googleEnabled: boolean;
+  signUp: (profile: Omit<UserProfile, 'uid' | 'status'>, password: string, inviteToken?: string) => Promise<SignUpResult>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: (returnTo?: string) => Promise<void>;
   isGoogleProvider: () => boolean;
-  createPassword: () => Promise<void>;
-  updateProfile: (updates: Partial<UserProfile>) => Promise<{ emailChanged: boolean }>;
-  verifyEmailChange: (code: string) => Promise<void>;
+  createPassword: () => Promise<{ debugUrl?: string }>;
+  updateProfile: (updates: ProfileUpdateInput) => Promise<ProfileUpdateResult>;
+  refreshUser: () => Promise<void>;
 }
+
+export type SignUpResult = {
+  created: boolean;
+  emailDelivery: 'sent' | 'development_link' | 'failed';
+  debugUrl?: string;
+};
+
+export type ProfileUpdateResult = {
+  emailChangeDelivery?: 'sent' | 'development_link' | 'failed';
+  debugUrl?: string;
+};
+
+export type ProfileUpdateInput = Partial<Pick<UserProfile,
+  'email' | 'name' | 'firstName' | 'lastName' | 'schoolName' | 'companyName' |
+  'contactName' | 'industry' | 'experience' | 'education' | 'skills' | 'phone'
+>> & { currentPassword?: string };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 }
 
 const identifyHubSpotUser = (user: UserProfile) => {
-    const _hsq = (window as any)._hsq = (window as any)._hsq || [];
-    _hsq.push(["identify", {
-        id: user.uid,
-        email: user.email,
-        firstname: user.firstName,
-        lastname: user.lastName,
-        role: user.role,
-        company: user.companyName,
-    }]);
+  if (process.env.NEXT_PUBLIC_ENABLE_HUBSPOT !== 'true') return;
+  const browser = window as typeof window & { _hsq?: unknown[][] };
+  const queue = browser._hsq = browser._hsq ?? [];
+  queue.push(['identify', {
+    id: user.uid,
+    email: user.email,
+    firstname: user.firstName,
+    lastname: user.lastName,
+    role: user.role,
+    company: user.companyName,
+  }]);
 };
+
+type SessionResponse = { data: { user: UserProfile | null; googleEnabled: boolean } };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [googleEnabled, setGoogleEnabled] = useState(false);
 
-  const fetchUserDocument = async (firebaseUser: FirebaseUser): Promise<UserProfile | null> => {
-    const userDocRef = doc(db, "users", firebaseUser.uid);
-    const userDoc = await getDoc(userDocRef);
-    if (userDoc.exists()) {
-      return {
-        uid: firebaseUser.uid,
-        email: firebaseUser.email,
-        ...userDoc.data(),
-      } as UserProfile;
-    }
-    return null;
-  }
-  
-  const updateUserState = (profile: UserProfile | null) => {
+  const setAuthenticatedUser = useCallback((profile: UserProfile | null) => {
     setUser(profile);
-    if (profile) {
-      Cookies.set('userRole', profile.role, { expires: 7, path: '/' });
-      identifyHubSpotUser(profile);
-    } else {
-      Cookies.remove('userRole', { path: '/' });
-    }
-  }
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
-      if (firebaseUser) {
-        const userProfile = await fetchUserDocument(firebaseUser);
-         if (userProfile) {
-          if (userProfile.status === 'active') {
-            updateUserState(userProfile);
-          } else {
-            updateUserState(null); 
-          }
-        } else {
-           updateUserState(null);
-        }
-      } else {
-        updateUserState(null);
-      }
-      setLoading(false);
-    });
-    return () => unsubscribe();
+    if (profile) identifyHubSpotUser(profile);
   }, []);
 
-  const createUserDocument = async (firebaseUser: FirebaseUser, profile: Omit<UserProfile, 'uid' | 'email'>, email: string) => {
-    const userDocRef = doc(db, "users", firebaseUser.uid);
-    const status: UserStatus = (profile.role === 'admin' || profile.role === 'content_manager' || profile.role === 'support_staff' || profile.role === 'super_admin') ? 'active' : 'pending';
-    
-    await setDoc(userDocRef, {
-        ...profile,
-        uid: firebaseUser.uid,
-        email: email,
-        status: status,
-        createdAt: serverTimestamp(),
+  const refreshUser = useCallback(async () => {
+    const response = await apiFetch<SessionResponse>('/api/auth/session');
+    setGoogleEnabled(response.data.googleEnabled);
+    setAuthenticatedUser(response.data.user);
+  }, [setAuthenticatedUser]);
+
+  useEffect(() => {
+    refreshUser()
+      .catch((error) => {
+        console.error('Unable to restore the current session.', error);
+        setAuthenticatedUser(null);
+      })
+      .finally(() => setLoading(false));
+  }, [refreshUser, setAuthenticatedUser]);
+
+  const signUp = useCallback(async (
+    profile: Omit<UserProfile, 'uid' | 'status'>,
+    password: string,
+    inviteToken?: string,
+  ) => {
+    const response = await apiFetch<{ data: SignUpResult }>('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: inviteToken ? undefined : profile.email,
+        password,
+        role: profile.role,
+        name: profile.name,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        schoolId: profile.schoolId,
+        schoolName: profile.schoolName,
+        companyName: profile.companyName,
+        contactName: profile.contactName,
+        industry: profile.industry,
+        inviteToken,
+      }),
     });
+    return response.data;
+  }, []);
 
-    return status;
-  }
-
-  const signUp = async (profile: Omit<UserProfile, 'uid' | 'status'>, password: string, inviteToken?: string) => {
-    if (!profile.email) throw new Error("Email is required for sign up.");
-    
-    const userCredential = await createUserWithEmailAndPassword(auth, profile.email, password);
-    const firebaseUser = userCredential.user;
-    
-    await sendEmailVerification(firebaseUser);
-
-    const { email, ...profileData } = profile;
-    
-    const userDocRef = doc(db, "users", firebaseUser.uid);
-    const status: UserStatus = (profile.role === 'admin' || profile.role === 'content_manager' || profile.role === 'support_staff' || profile.role === 'super_admin') ? 'active' : 'pending';
-    
-    const batch = writeBatch(db);
-
-    batch.set(userDocRef, {
-        ...profileData,
-        uid: firebaseUser.uid,
-        email: firebaseUser.email!,
-        status: status,
-        createdAt: serverTimestamp(),
+  const signIn = useCallback(async (email: string, password: string) => {
+    const response = await apiFetch<{ data: { user: UserProfile } }>('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
     });
+    setAuthenticatedUser(response.data.user);
+  }, [setAuthenticatedUser]);
 
-    if (inviteToken) {
-        const inviteDocRef = doc(db, "invites", inviteToken);
-        batch.update(inviteDocRef, { status: "used", usedBy: firebaseUser.uid, usedAt: serverTimestamp() });
+  const signOut = useCallback(async () => {
+    try {
+      await apiFetch('/api/auth/logout', { method: 'POST' });
+    } finally {
+      setAuthenticatedUser(null);
     }
-    
-    await batch.commit();
-    await firebaseSignOut(auth);
-  };
+  }, [setAuthenticatedUser]);
 
-  const signIn = async (email: string, password: string) => {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const userProfile = await fetchUserDocument(userCredential.user);
+  const signInWithGoogle = useCallback(async (returnTo = '/dashboard') => {
+    if (!googleEnabled) throw new Error('Google sign-in is not configured.');
+    const safeReturnTo = returnTo.startsWith('/') && !returnTo.startsWith('//') ? returnTo : '/dashboard';
+    window.location.assign(`/api/auth/google/start?returnTo=${encodeURIComponent(safeReturnTo)}`);
+  }, [googleEnabled]);
 
-    if (!userProfile) {
-        await firebaseSignOut(auth);
-        throw new Error("User data not found. Please contact support.");
-    }
+  const isGoogleProvider = useCallback(() => user?.authProvider === 'google', [user]);
 
-    if (userProfile.status !== 'active') {
-        const status = userProfile.status;
-        await firebaseSignOut(auth);
-        if (status === 'pending') {
-            throw new Error(userProfile.role === 'graduate' ? "pending_graduate" : "pending_org");
-        }
-        if (status === 'suspended') {
-             throw new Error("suspended");
-        }
-    }
-    
-    updateUserState(userProfile);
-  };
+  const createPassword = useCallback(async () => {
+    if (!user?.email) throw new Error('No email address is associated with this account.');
+    const response = await apiFetch<{ data: { debugUrl?: string } }>('/api/auth/password/forgot', {
+      method: 'POST',
+      body: JSON.stringify({ email: user.email }),
+    });
+    return response.data;
+  }, [user]);
 
-  const signInWithGoogle = async () => {
-    if (auth.currentUser) {
-        try {
-            const result = await linkWithPopup(auth.currentUser, googleProvider);
-            const userProfile = await fetchUserDocument(result.user);
-            if(userProfile) updateUserState(userProfile);
-        } catch (error: any) {
-             console.error("Failed to link Google account:", error);
-            if(error.code === 'auth/credential-already-in-use') {
-                throw new Error("This Google account is already linked to another Yahnu user.");
-            }
-            throw new Error("Failed to link Google account.");
-        }
-    } else {
-        const result = await signInWithPopup(auth, googleProvider);
-        const firebaseUser = result.user;
-        const userDocRef = doc(db, "users", firebaseUser.uid);
-        let userDoc = await getDoc(userDocRef);
+  const updateProfile = useCallback(async (updates: ProfileUpdateInput) => {
+    const response = await apiFetch<{ data: { user: UserProfile } & ProfileUpdateResult }>('/api/me', {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    });
+    setAuthenticatedUser(response.data.user);
+    if (response.data.debugUrl) window.location.assign(response.data.debugUrl);
+    return {
+      emailChangeDelivery: response.data.emailChangeDelivery,
+      debugUrl: response.data.debugUrl,
+    };
+  }, [setAuthenticatedUser]);
 
-        if (!userDoc.exists()) {
-            const [firstName, ...lastNameParts] = (firebaseUser.displayName || "").split(" ");
-            const lastName = lastNameParts.join(" ");
-            const profile: Omit<UserProfile, 'uid' | 'email' | 'status'> = {
-                name: firebaseUser.displayName || "Google User",
-                firstName,
-                lastName,
-                role: 'graduate',
-            };
-            await createUserDocument(firebaseUser, profile, firebaseUser.email!);
-            userDoc = await getDoc(userDocRef);
-        }
-        
-        const userProfile = userDoc.data() as UserProfile;
-        
-        if (userProfile?.status !== 'active') {
-            await firebaseSignOut(auth);
-            if (userProfile?.role === 'graduate') {
-                throw new Error("pending_graduate");
-            } else if (userProfile?.status === 'pending') {
-                throw new Error("pending_org");
-            } else if (userProfile?.status === 'suspended') {
-                throw new Error("suspended");
-            }
-        }
-        
-        if (userProfile) updateUserState(userProfile);
-    }
-  };
-
-  const signOut = async () => {
-    await firebaseSignOut(auth);
-    updateUserState(null);
-  };
-
-  const isGoogleProvider = () => {
-      if (!auth.currentUser) return false;
-      return auth.currentUser.providerData.some(p => p.providerId === 'google.com');
-  }
-
-  const createPassword = async () => {
-      if (!auth.currentUser || !auth.currentUser.email) {
-          throw new Error("Aucun utilisateur n'est actuellement connecté ou l'utilisateur n'a pas d'e-mail.");
-      }
-      await sendPasswordResetEmail(auth, auth.currentUser.email);
-  }
-
-  const updateProfile = async (updates: Partial<UserProfile>) => {
-    if (!auth.currentUser) {
-      throw new Error("Aucun utilisateur n'est actuellement connecté.");
-    }
-    
-    const { email, ...otherUpdates } = updates;
-    
-    // Handle email change separately
-    if (email && email !== auth.currentUser.email) {
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-        const expiresAt = Timestamp.fromMillis(Date.now() + 15 * 60 * 1000); // 15 minutes
-
-        // This collection is watched by the "Trigger Email" Firebase Extension
-        await addDoc(collection(db, "emailVerificationCodes"), {
-            to: auth.currentUser.email,
-            template: {
-                name: "emailChange", // Name of the template you create in SendGrid
-                data: { code: code },
-            },
-            userId: auth.currentUser.uid,
-            newEmail: email,
-            code: code,
-            expiresAt: expiresAt,
-        });
-        
-        // Save other non-email updates if there are any
-        if (Object.keys(otherUpdates).length > 0) {
-            const userDocRef = doc(db, "users", auth.currentUser.uid);
-            await updateDoc(userDocRef, otherUpdates);
-            const userProfile = await fetchUserDocument(auth.currentUser);
-            updateUserState(userProfile);
-        }
-        return { emailChanged: true };
-    }
-    
-    // Handle other profile updates
-    if (Object.keys(otherUpdates).length > 0) {
-        const userDocRef = doc(db, "users", auth.currentUser.uid);
-        await updateDoc(userDocRef, otherUpdates);
-        const userProfile = await fetchUserDocument(auth.currentUser);
-        updateUserState(userProfile);
-    }
-    
-    return { emailChanged: false };
-  };
-
-  const verifyEmailChange = async (code: string) => {
-    if (!user) throw new Error("No user is logged in.");
-
-    const q = query(
-        collection(db, "emailVerificationCodes"),
-        where("userId", "==", user.uid),
-        where("code", "==", code)
-    );
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
-        throw new Error("Invalid or expired verification code.");
-    }
-
-    const verificationDoc = querySnapshot.docs[0];
-    const data = verificationDoc.data();
-
-    if (data.expiresAt.toMillis() < Date.now()) {
-        await updateDoc(verificationDoc.ref, { status: "expired" });
-        throw new Error("Verification code has expired.");
-    }
-
-    const newEmail = data.newEmail;
-
-    // Batch update Auth, Firestore user, and verification doc
-    const batch = writeBatch(db);
-    const userDocRef = doc(db, "users", user.uid);
-
-    // This requires re-authentication, which is complex to handle here.
-    // For now, we will update Firestore only. A more robust solution
-    // would trigger re-auth.
-    if(auth.currentUser) {
-        await updateEmail(auth.currentUser, newEmail);
-    }
-    batch.update(userDocRef, { email: newEmail });
-    batch.update(verificationDoc.ref, { status: "used" });
-    
-    await batch.commit();
-
-    // Refresh user state
-    const userProfile = await fetchUserDocument(auth.currentUser!);
-    updateUserState(userProfile);
-  }
-
-  const value = {
+  const value = useMemo<AuthContextType>(() => ({
     user,
     loading,
-    role: user?.role || 'graduate',
+    role: user?.role ?? 'graduate',
+    googleEnabled,
     signUp,
     signIn,
     signOut,
@@ -361,12 +170,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isGoogleProvider,
     createPassword,
     updateProfile,
-    verifyEmailChange,
-  };
+    refreshUser,
+  }), [user, loading, googleEnabled, signUp, signIn, signOut, signInWithGoogle, isGoogleProvider, createPassword, updateProfile, refreshUser]);
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

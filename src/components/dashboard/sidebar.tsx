@@ -159,6 +159,7 @@ const getNavItems = (role: Role) => {
     case 'admin':
       return { main: adminNav, footer: adminFooterNav };
     case 'content_manager':
+    case 'content_moderator':
       return { main: contentManagerNav, footer: adminFooterNav };
     case 'support_staff':
         return { main: supportStaffNav, footer: adminFooterNav };

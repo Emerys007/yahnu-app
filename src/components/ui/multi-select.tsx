@@ -31,11 +31,23 @@ interface MultiSelectProps {
   options?: MultiSelectOption[]
   groups?: { label: string; options: MultiSelectOption[] }[]
   selected: string[]
-  onChange: React.Dispatch<React.SetStateAction<string[]>>
+  onChange: (selected: string[]) => void
   placeholder?: string
   searchPlaceholder?: string
   emptyPlaceholder?: string
   className?: string
+}
+
+type MultiSelectGroup = { label: string; options: MultiSelectOption[] };
+type MultiSelectComboboxProps = Omit<MultiSelectProps, 'options' | 'selected' | 'onChange'> & {
+  groups: MultiSelectGroup[];
+  selected: MultiSelectOption[];
+  onChange: (selected: MultiSelectOption[]) => void;
+};
+
+export function MultiSelectCombobox({ groups, selected, onChange, ...props }: MultiSelectComboboxProps) {
+  const options = groups.flatMap((group) => group.options);
+  return <MultiSelect {...props} options={options} selected={selected.map((option) => option.value)} onChange={(values) => onChange(options.filter((option) => values.includes(option.value)))} />;
 }
 
 export function MultiSelect({

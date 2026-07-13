@@ -1,0 +1,59 @@
+databases:
+  - name: yahnu-postgres
+    databaseName: yahnu
+    user: yahnu_app
+    plan: basic-1gb
+    region: ohio
+    postgresMajorVersion: "17"
+    diskSizeGB: 15
+    storageAutoscalingEnabled: true
+    connectionPool: none
+    ipAllowList: []
+
+services:
+  - type: web
+    name: yahnu-web
+    runtime: node
+    plan: starter
+    region: ohio
+    buildCommand: npm ci --include=dev && npm run build
+    preDeployCommand: npm run db:migrate
+    startCommand: npm start
+    healthCheckPath: /api/health
+    maxShutdownDelaySeconds: 30
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: HOSTNAME
+        value: 0.0.0.0
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: yahnu-postgres
+          property: connectionString
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: APP_URL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: NEXT_PUBLIC_OPENCAGE_API_KEY
+        sync: false
+      - key: NEXT_PUBLIC_ENABLE_HUBSPOT
+        value: "false"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: YAHNU_ENABLE_AI
+        value: "false"
+      - key: YAHNU_GEMINI_MODEL
+        value: gemini-3.5-flash

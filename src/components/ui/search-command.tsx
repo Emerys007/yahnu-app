@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -34,73 +33,75 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command"
+import { useLocalization } from "@/context/localization-context"
 import { useRouter } from "next/navigation"
 import { Button } from "./button"
 import { useAuth, type Role } from "@/context/auth-context"
 
-const getNavItems = (role: Role) => {
+const getNavItems = (t: (key: string) => string, role: Role) => {
     const main = [
         {
-            group: 'Tableau de bord',
+            group: t('Dashboard'),
             items: [
-                { icon: LayoutDashboard, text: 'Accueil', onSelect: (router) => router.push('/dashboard') },
-                { icon: User, text: 'Profil', onSelect: (router) => router.push('/dashboard/profile') },
+                { icon: LayoutDashboard, text: t('Home'), onSelect: (router) => router.push('/dashboard') },
+                { icon: User, text: t('Profile'), onSelect: (router) => router.push('/dashboard/profile') },
             ],
-            roles: ['admin', 'graduate', 'company', 'school', 'super_admin', 'content_manager', 'support_staff'],
+            roles: ['admin', 'graduate', 'company', 'school'],
         },
         {
-            group: 'Offres d\'emploi',
+            group: t('Job Postings'),
             items: [
-                { icon: Briefcase, text: 'Mes candidatures', onSelect: (router) => router.push('/dashboard/applications') },
-                { icon: Building, text: 'Profils d\'entreprises', onSelect: (router) => router.push('/dashboard/companies') },
-                { icon: School, text: 'Profils d\'écoles', onSelect: (router) => router.push('/dashboard/schools') },
+                { icon: Briefcase, text: t('My Applications'), onSelect: (router) => router.push('/dashboard/my-applications') },
+                { icon: Building, text: t('Company Profiles'), onSelect: (router) => router.push('/dashboard/company-profiles') },
+                { icon: School, text: t('School Profiles'), onSelect: (router) => router.push('/dashboard/school-profiles') },
             ],
-            roles: ['graduate'],
+            roles: ['admin', 'graduate'],
         },
         {
-            group: 'Recrutement',
+            group: t('Recruitment'),
             items: [
-                { icon: FileText, text: 'Publier une offre', onSelect: (router) => router.push('/dashboard/job-postings') },
-                { icon: Users2, text: 'Vivier de Talents', onSelect: (router) => router.push('/dashboard/talent-pool') },
-                { icon: Handshake, text: 'Partenariats', onSelect: (router) => router.push('/dashboard/partnerships') },
+                { icon: FileText, text: t('Post a Job'), onSelect: (router) => router.push('/dashboard/job-postings/new') },
+                { icon: Users2, text: t('Candidates'), onSelect: (router) => router.push('/dashboard/candidates') },
+                { icon: Handshake, text: t('Partnerships'), onSelect: (router) => router.push('/dashboard/partnerships') },
             ],
-            roles: ['company', 'school'],
+            roles: ['admin', 'company', 'school'],
         },
     ];
 
     const footer = [
         {
-            group: 'Général',
+            group: t('General'),
             items: [
-                { icon: Settings, text: 'Paramètres', onSelect: (router) => router.push('/dashboard/settings') },
-                { icon: LifeBuoy, text: 'Support', onSelect: (router) => router.push('/dashboard/support') },
+                { icon: Settings, text: t('Settings'), onSelect: (router) => router.push('/dashboard/settings') },
+                { icon: LifeBuoy, text: t('Support'), onSelect: (router) => router.push('/dashboard/support') },
             ],
-            roles: ['admin', 'graduate', 'company', 'school', 'super_admin', 'content_manager', 'support_staff'],
+            roles: ['admin', 'graduate', 'company', 'school'],
         },
         {
-            group: 'Admin',
+            group: t('Admin'),
             items: [
-                { icon: Shield, text: 'Aperçu', onSelect: (router) => router.push('/dashboard/admin/overview') },
-                { icon: UserCheck, text: 'Approbations', onSelect: (router) => router.push('/dashboard/admin/overview') },
-                { icon: UserCog, text: 'Gestion des utilisateurs', onSelect: (router) => router.push('/dashboard/admin/user-management') },
+                { icon: Shield, text: t('Security'), onSelect: (router) => router.push('/dashboard/admin/security') },
+                { icon: UserCheck, text: t('Approvals'), onSelect: (router) => router.push('/dashboard/admin/approvals') },
+                { icon: UserCog, text: t('User Management'), onSelect: (router) => router.push('/dashboard/admin/user-management') },
             ],
-            roles: ['admin', 'super_admin'],
+            roles: ['admin'],
         },
         {
-            group: 'Outils IA',
+            group: t('AI Tools'),
             items: [
-                { icon: BrainCircuit, text: 'Préparation aux entretiens', onSelect: (router) => router.push('/dashboard/interview-prep') },
-                { icon: Award, text: 'Certifications', onSelect: (router) => router.push('/dashboard/assessments') },
+                { icon: BrainCircuit, text: t('AI Insights'), onSelect: (router) => router.push('/dashboard/ai/insights') },
+                { icon: MessageSquare, text: t('Chatbot Builder'), onSelect: (router) => router.push('/dashboard/ai/chatbot-builder') },
+                { icon: Award, text: t('Assessment Generator'), onSelect: (router) => router.push('/dashboard/ai/assessment-generator') },
             ],
-            roles: ['graduate'],
+            roles: ['admin', 'company', 'school'],
         },
         {
-            group: 'Rapports',
+            group: t('Reporting'),
             items: [
-                 { icon: BarChart3, text: 'Analytique', onSelect: (router) => router.push('/dashboard/reports') },
-                 { icon: Wrench, text: 'Générateur de rapports', onSelect: (router) => router.push('/dashboard/reports/custom-report-generator') },
+                 { icon: BarChart3, text: t('Analytics'), onSelect: (router) => router.push('/dashboard/reports') },
+                 { icon: Wrench, text: t('Report Generator'), onSelect: (router) => router.push('/dashboard/reports/custom-report-generator') },
             ],
-             roles: ['admin', 'company', 'school', 'super_admin'],
+             roles: ['admin', 'company', 'school'],
         }
     ];
 
@@ -114,8 +115,9 @@ export function SearchCommand() {
   const [open, setOpen] = React.useState(false)
   const router = useRouter()
   const { role } = useAuth();
+  const { t } = useLocalization();
 
-  const {main: mainItems, footer: footerItems} = React.useMemo(() => getNavItems(role), [role]);
+  const {main: mainItems, footer: footerItems} = React.useMemo(() => getNavItems(t, role), [t, role]);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -141,7 +143,7 @@ export function SearchCommand() {
         onClick={() => setOpen(true)}
       >
         <SearchIcon className="mr-2 h-4 w-4" />
-        <span className="hidden lg:inline-flex">Rechercher...</span>
+        <span className="hidden lg:inline-flex">{t('Search...')}</span>
         <span className="ml-auto hidden lg:inline-flex">
           <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
             <span className="text-xs">⌘</span>K
@@ -149,41 +151,41 @@ export function SearchCommand() {
         </span>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder={'Saisissez une commande ou effectuez une recherche...'} />
+        <CommandInput placeholder={t ? t('common.search_placeholder') : 'Type a command or search...'} />
         <CommandList>
-            <CommandEmpty>{'Aucun résultat trouvé.'}</CommandEmpty>
+          <CommandEmpty>{t ? t('common.no_results_found') : 'No results found.'}</CommandEmpty>
 
-            {mainItems.map((group) => (
-                <CommandGroup key={group.group} heading={group.group}>
-                {group.items.map((item) => (
-                    <CommandItem
-                    key={item.text}
-                    value={item.text}
-                    onSelect={() => runCommand(() => item.onSelect(router))}
-                    >
-                    <item.icon className="mr-2 h-4 w-4" />
-                    {item.text}
-                    </CommandItem>
-                ))}
-                </CommandGroup>
-            ))}
+          {mainItems.map((group) => (
+            <CommandGroup key={group.group} heading={group.group}>
+              {group.items.map((item) => (
+                <CommandItem
+                  key={item.text}
+                  value={item.text}
+                  onSelect={() => runCommand(() => item.onSelect(router))}
+                >
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.text}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          ))}
 
-            <CommandSeparator />
+          <CommandSeparator />
 
-            {footerItems.map((group) => (
-                <CommandGroup key={group.group} heading={group.group}>
-                {group.items.map((item) => (
-                    <CommandItem
-                    key={item.text}
-                    value={item.text}
-                    onSelect={() => runCommand(() => item.onSelect(router))}
-                    >
-                    <item.icon className="mr-2 h-4 w-4" />
-                    {item.text}
-                    </CommandItem>
-                ))}
-                </CommandGroup>
-            ))}
+          {footerItems.map((group) => (
+            <CommandGroup key={group.group} heading={group.group}>
+              {group.items.map((item) => (
+                <CommandItem
+                  key={item.text}
+                  value={item.text}
+                  onSelect={() => runCommand(() => item.onSelect(router))}
+                >
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.text}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          ))}
         </CommandList>
       </CommandDialog>
     </>

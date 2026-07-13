@@ -12,8 +12,7 @@ import { UserCheck, Check, X, Search, Loader2, Send } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Input } from "@/components/ui/input"
-import { collection, query, where, getDocs, doc, updateDoc, onSnapshot, DocumentData } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { apiFetch } from "@/lib/api-client"
 import {
   Dialog,
   DialogContent,
@@ -43,6 +42,10 @@ type Graduate = {
   status: GraduateStatus
   education?: EducationEntry[]
 }
+
+type GraduatesResponse = { data: { graduates: Graduate[] } }
+type GraduateResponse = { data: { graduate: Graduate } }
+type EducationResponse = { data: { education: EducationEntry[] } }
 
 const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
     const { t } = useLocalization();
@@ -134,44 +137,55 @@ export default function GraduateManagementPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (!user) return
-
-    setIsLoading(true);
-    const graduatesQuery = query(
-        collection(db, "users"),
-        where("role", "==", "graduate"),
-        where("schoolId", "==", user.uid)
-    );
-
-    const unsubscribe = onSnapshot(graduatesQuery, (querySnapshot) => {
-        const grads = querySnapshot.docs.map(doc => {
-            const data = doc.data() as DocumentData;
-            return {
-                id: doc.id,
-                name: data.name,
-                email: data.email,
-                status: data.status,
-                education: data.education || [],
-            } as Graduate;
-        });
-        setGraduates(grads);
+    if (!user?.uid) {
+        setGraduates([]);
         setIsLoading(false);
-    }, (error) => {
-        console.error("Error fetching graduates:", error);
-        toast({ title: "Error", description: "Could not fetch graduate data.", variant: "destructive" });
-        setIsLoading(false);
-    });
+        return;
+    }
 
-    return () => unsubscribe();
-  }, [user, toast]);
+    let cancelled = false;
+    const controller = new AbortController();
+    const loadGraduates = async (showLoader: boolean) => {
+        if (showLoader) setIsLoading(true);
+        try {
+            const response = await apiFetch<GraduatesResponse>('/api/schools/graduates', { signal: controller.signal });
+            if (!cancelled) setGraduates(response.data.graduates);
+        } catch (error) {
+            if (cancelled || controller.signal.aborted) return;
+            console.error("Error fetching graduates:", error);
+            if (showLoader) {
+                toast({ title: "Error", description: "Could not fetch graduate data.", variant: "destructive" });
+            }
+        } finally {
+            if (!cancelled && showLoader) setIsLoading(false);
+        }
+    };
+
+    void loadGraduates(true);
+    const refresh = () => {
+        if (document.visibilityState === 'visible') void loadGraduates(false);
+    };
+    const interval = window.setInterval(refresh, 30_000);
+    document.addEventListener('visibilitychange', refresh);
+
+    return () => {
+        cancelled = true;
+        controller.abort();
+        window.clearInterval(interval);
+        document.removeEventListener('visibilitychange', refresh);
+    };
+  }, [user?.uid, toast]);
 
   const handleStatusChange = async (id: string, newStatus: GraduateStatus) => {
     const graduate = graduates.find(g => g.id === id)
     if (!graduate) return
 
     try {
-        const userDocRef = doc(db, "users", id);
-        await updateDoc(userDocRef, { status: newStatus });
+        const response = await apiFetch<GraduateResponse>(`/api/schools/graduates/${encodeURIComponent(id)}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: newStatus }),
+        });
+        setGraduates((current) => current.map((item) => item.id === id ? response.data.graduate : item));
         
         toast({
           title: t(newStatus === 'active' ? 'Account activated' : 'Account deactivated'),
@@ -186,13 +200,14 @@ export default function GraduateManagementPage() {
   const handleVerifyEducation = async (graduateId: string, eduIndex: number) => {
     const graduate = graduates.find(g => g.id === graduateId);
     if (!graduate || !graduate.education) return;
-    
-    const updatedEducation = [...graduate.education];
-    updatedEducation[eduIndex].verified = true;
 
     try {
-        const userDocRef = doc(db, "users", graduateId);
-        await updateDoc(userDocRef, { education: updatedEducation });
+        const response = await apiFetch<EducationResponse>(`/api/schools/graduates/${encodeURIComponent(graduateId)}/education/${eduIndex}/verify`, {
+            method: 'POST',
+        });
+        setGraduates((current) => current.map((item) => (
+            item.id === graduateId ? { ...item, education: response.data.education } : item
+        )));
         toast({ title: t("Education Verified"), description: t("The degree has been marked as verified.") });
     } catch (error) {
         console.error("Failed to verify education:", error);

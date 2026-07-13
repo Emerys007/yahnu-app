@@ -3,115 +3,75 @@
 
 import { useState } from "react"
 import { useAuth, type Role } from "@/context/auth-context"
+import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, School as SchoolIcon, KeyRound, Check, ChevronsUpDown, Loader2 } from "lucide-react"
+import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, School as SchoolIcon, KeyRound, Check, ChevronsUpDown } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 
 // #region Shared Settings
-
-const EmailVerificationDialog = ({
-  isOpen,
-  onClose,
-  onConfirm
-}: {
-  isOpen: boolean,
-  onClose: () => void,
-  onConfirm: (code: string) => void
-}) => {
-    const [code, setCode] = useState("");
-    const [isConfirming, setIsConfirming] = useState(false);
-
-    const handleConfirm = async () => {
-        setIsConfirming(true);
-        await onConfirm(code);
-        setIsConfirming(false);
-    }
-
-    return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Vérifiez votre adresse e-mail</DialogTitle>
-                    <DialogDescription>
-                        Nous avons envoyé un code de vérification à votre ancienne adresse e-mail. Veuillez saisir le code ci-dessous pour confirmer le changement.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="py-4">
-                    <Label htmlFor="verification-code">Code de vérification</Label>
-                    <Input 
-                        id="verification-code" 
-                        value={code} 
-                        onChange={(e) => setCode(e.target.value)} 
-                        placeholder="Entrez le code à 6 chiffres"
-                        disabled={isConfirming}
-                    />
-                </div>
-                <DialogFooter>
-                    <Button variant="outline" onClick={onClose} disabled={isConfirming}>Annuler</Button>
-                    <Button onClick={handleConfirm} disabled={!code || isConfirming}>
-                        {isConfirming && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Confirmer
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-    )
-}
-
-
 const UserAccountSettings = () => {
-    const { user, createPassword, isGoogleProvider, updateProfile, verifyEmailChange } = useAuth();
+    const { t } = useLocalization();
+    const { user, createPassword, updateProfile } = useAuth();
     const { toast } = useToast();
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
+    const [currentPassword, setCurrentPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isVerificationOpen, setIsVerificationOpen] = useState(false);
+    const emailChanged = Boolean(user && email.trim().toLowerCase() !== (user.email ?? '').toLowerCase());
 
     const handleSaveChanges = async () => {
         if (!user) return;
-        
-        const nameChanged = name !== user.name;
-        const emailChanged = email !== user.email;
-
-        if (!nameChanged && !emailChanged) {
-             toast({
-                title: "Aucune modification",
-                description: "Vous n'avez effectué aucune modification.",
-            });
-            return;
-        }
-        
         setIsSubmitting(true);
-        
         try {
-            const result = await updateProfile({ name, email });
-            if (result.emailChanged) {
-                setIsVerificationOpen(true);
+            const updates: { name?: string; email?: string; currentPassword?: string } = {};
+            if (name !== user.name) {
+                updates.name = name;
+            }
+            if (emailChanged) {
+                updates.email = email.trim().toLowerCase();
+                updates.currentPassword = currentPassword;
+            }
+
+            if (Object.keys(updates).length > 0) {
+                const result = await updateProfile(updates);
+                toast({
+                    title: t('Profile Updated'),
+                    description: t('Your changes have been saved successfully.'),
+                });
+                if (updates.email && result.emailChangeDelivery === 'failed') {
+                    toast({
+                        title: t('Verification email could not be sent'),
+                        description: t('Your email change is pending. Try again later or contact support.'),
+                        variant: 'destructive',
+                    });
+                } else if (updates.email && result.emailChangeDelivery) {
+                    toast({
+                        title: t('Verification email sent'),
+                        description: t('Please check your new email address to verify the change.'),
+                    });
+                }
+                if (updates.email) {
+                    setCurrentPassword('');
+                    setEmail(user.email ?? '');
+                }
             } else {
                  toast({
-                    title: "Profil mis à jour",
-                    description: "Vos modifications ont été enregistrées avec succès.",
+                    title: t('No Changes'),
+                    description: t("You haven't made any changes."),
                 });
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast({
-                title: "Erreur",
-                description: error.message || "La mise à jour du profil a échoué.",
+                title: t('Error'),
+                description: error instanceof Error ? error.message : t('Failed to update profile.'),
                 variant: 'destructive',
             });
         } finally {
@@ -119,83 +79,78 @@ const UserAccountSettings = () => {
         }
     };
 
-    const onConfirmVerification = async (code: string) => {
-        try {
-            await verifyEmailChange(code);
-            toast({
-                title: "Adresse e-mail mise à jour !",
-                description: "Votre adresse e-mail a été modifiée avec succès.",
-            });
-            setIsVerificationOpen(false);
-        } catch (error: any) {
-             toast({
-                title: "Erreur de vérification",
-                description: error.message || "Le code est incorrect ou a expiré.",
-                variant: 'destructive',
-            });
-        }
-    };
-
-
     const handleCreatePassword = async () => {
         if (!user || !user.email) return;
         try {
-            await createPassword();
+            const reset = await createPassword();
             toast({
-                title: "E-mail de réinitialisation de mot de passe envoyé",
-                description: "Consultez votre boîte de réception pour créer un nouveau mot de passe.",
+                title: t('Password reset email sent'),
+                description: t('Check your inbox to create a new password.'),
             });
+            if (reset.debugUrl) window.location.assign(reset.debugUrl);
         } catch (error) {
             toast({
-                title: "Erreur",
-                description: "L'envoi de l'e-mail de réinitialisation de mot de passe a échoué.",
+                title: t('Error'),
+                description: t('Failed to send password reset email.'),
                 variant: 'destructive',
             });
         }
     };
 
     return (
-        <>
         <Card>
             <CardHeader>
-              <CardTitle>Informations sur le compte</CardTitle>
-              <CardDescription>Gérez vos informations personnelles et de connexion.</CardDescription>
+              <CardTitle>{t('Account Information')}</CardTitle>
+              <CardDescription>{t('Manage your personal and login details.')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label htmlFor="name">Nom complet</Label>
+                  <Label htmlFor="name">{t('Full Name')}</Label>
                   <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="email">Adresse e-mail</Label>
-                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <Label htmlFor="email">{t('Email Address')}</Label>
+                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
                 </div>
               </div>
+              {emailChanged && (user?.hasPassword ? (
+                <div className="max-w-md space-y-1">
+                  <Label htmlFor="current-password">{t('Current Password')}</Label>
+                  <PasswordInput
+                    id="current-password"
+                    value={currentPassword}
+                    onChange={(event) => setCurrentPassword(event.target.value)}
+                    autoComplete="current-password"
+                    hideSuggestions
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    {t('Re-enter your password to authorize this email change. You will be signed out after the new address is verified.')}
+                  </p>
+                </div>
+              ) : (
+                <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100">
+                  {t('Create a password before changing your email address. Use the button below, then return here after setting it.')}
+                </div>
+              ))}
               <div className="flex flex-wrap gap-2">
-                <Button onClick={handleSaveChanges} disabled={isSubmitting}>
-                    {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    {isSubmitting ? "Enregistrement..." : "Enregistrer les modifications"}
+                <Button onClick={handleSaveChanges} disabled={isSubmitting || (emailChanged && (!user?.hasPassword || !currentPassword))}>
+                    {isSubmitting ? t('Saving...') : t('Save Changes')}
                 </Button>
                 <Button variant="outline" onClick={handleCreatePassword}>
                     <KeyRound className="mr-2 h-4 w-4" />
-                    {isGoogleProvider() ? "Créer un mot de passe" : "Changer le mot de passe"}
+                    {user?.hasPassword ? t('Change Password') : t('Create Password')}
                 </Button>
               </div>
             </CardContent>
         </Card>
-         <EmailVerificationDialog 
-            isOpen={isVerificationOpen}
-            onClose={() => setIsVerificationOpen(false)}
-            onConfirm={onConfirmVerification}
-         />
-        </>
     )
 }
 // #endregion
 
 // #region Graduate Settings
 const GraduateSettings = () => {
+  const { t } = useLocalization()
   return (
     <motion.div 
         className="space-y-8"
@@ -212,15 +167,15 @@ const GraduateSettings = () => {
       <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
         <Card>
           <CardHeader>
-            <CardTitle>Visibilité du Profil</CardTitle>
-            <CardDescription>Contrôlez la visibilité de votre profil professionnel.</CardDescription>
+            <CardTitle>{t('Profile Visibility')}</CardTitle>
+            <CardDescription>{t('Control the visibility of your professional profile.')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <Label className="text-base">Profil Public</Label>
+                <Label className="text-base">{t('Public Profile')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Autoriser les entreprises à voir votre profil complet.
+                  {t('Allow companies to view your full profile.')}
                 </p>
               </div>
               <Switch defaultChecked />
@@ -231,20 +186,20 @@ const GraduateSettings = () => {
       <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
         <Card>
           <CardHeader>
-            <CardTitle>Alertes d'emploi</CardTitle>
-            <CardDescription>Configurez vos notifications par e-mail pour les nouvelles opportunités d'emploi.</CardDescription>
+            <CardTitle>{t('Job Alerts')}</CardTitle>
+            <CardDescription>{t('Configure your email notifications for new job opportunities.')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
               <div className="space-y-1">
-                  <Label htmlFor="alert-frequency">Fréquence des notifications</Label>
+                  <Label htmlFor="alert-frequency">{t('Notification Frequency')}</Label>
                   <Select defaultValue="daily">
                       <SelectTrigger id="alert-frequency" className="w-[280px]">
-                          <SelectValue placeholder="Sélectionner la fréquence" />
+                          <SelectValue placeholder={t('Select frequency')} />
                       </SelectTrigger>
                       <SelectContent>
-                          <SelectItem value="daily">Quotidien</SelectItem>
-                          <SelectItem value="weekly">Hebdomadaire</SelectItem>
-                          <SelectItem value="never">Jamais</SelectItem>
+                          <SelectItem value="daily">{t('Daily')}</SelectItem>
+                          <SelectItem value="weekly">{t('Weekly')}</SelectItem>
+                          <SelectItem value="never">{t('Never')}</SelectItem>
                       </SelectContent>
                   </Select>
               </div>
@@ -258,6 +213,7 @@ const GraduateSettings = () => {
 
 // #region Company Settings
 const CompanySettings = () => {
+    const { t } = useLocalization();
     return (
         <motion.div 
             className="space-y-8"
@@ -274,13 +230,13 @@ const CompanySettings = () => {
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
                 <Card>
                     <CardHeader>
-                        <CardTitle>Membres de l'équipe</CardTitle>
-                        <CardDescription>Gérez qui a accès au compte de votre entreprise.</CardDescription>
+                        <CardTitle>{t('Team Members')}</CardTitle>
+                        <CardDescription>{t('Manage who has access to your company account.')}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="flex justify-between items-center">
-                            <p className="font-medium">Inviter un nouveau membre</p>
-                            <Button>Envoyer une invitation</Button>
+                            <p className="font-medium">{t('Invite a new team member')}</p>
+                            <Button>{t('Send Invite')}</Button>
                         </div>
                          <div className="space-y-2">
                             <div className="flex items-center justify-between p-3 rounded-lg border">
@@ -297,11 +253,11 @@ const CompanySettings = () => {
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
                 <Card>
                     <CardHeader>
-                        <CardTitle>Informations de facturation</CardTitle>
-                        <CardDescription>Gérez votre abonnement et vos moyens de paiement.</CardDescription>
+                        <CardTitle>{t('Billing Information')}</CardTitle>
+                        <CardDescription>{t('Manage your subscription and payment methods.')}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-muted-foreground">Les fonctionnalités de facturation seront bientôt disponibles.</p>
+                        <p className="text-muted-foreground">{t('Billing features coming soon.')}</p>
                     </CardContent>
                 </Card>
             </motion.div>
@@ -312,6 +268,7 @@ const CompanySettings = () => {
 
 // #region School Settings
 const SchoolSettings = () => {
+    const { t } = useLocalization();
     return (
         <motion.div 
             className="space-y-8"
@@ -328,23 +285,23 @@ const SchoolSettings = () => {
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
                  <Card>
                     <CardHeader>
-                        <CardTitle>Contacts Clés</CardTitle>
-                        <CardDescription>Gérez les points de contact principaux pour les partenariats industriels.</CardDescription>
+                        <CardTitle>{t('Key Contacts')}</CardTitle>
+                        <CardDescription>{t('Manage primary points of contact for industry partnerships.')}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="space-y-1">
-                            <Label htmlFor="contact-name">Nom du contact principal</Label>
+                            <Label htmlFor="contact-name">{t('Primary Contact Name')}</Label>
                             <Input id="contact-name" defaultValue="Dr. Fatou Bamba" />
                         </div>
                          <div className="space-y-1">
-                            <Label htmlFor="contact-email">Email du contact</Label>
+                            <Label htmlFor="contact-email">{t('Contact Email')}</Label>
                             <Input id="contact-email" type="email" defaultValue="partnerships@inphb.ci" />
                         </div>
                          <div className="flex items-center justify-between rounded-lg border p-4 mt-4">
                             <div className="space-y-0.5">
-                            <Label className="text-base">Demandes de partenariat</Label>
+                            <Label className="text-base">{t('Partnership Requests')}</Label>
                             <p className="text-sm text-muted-foreground">
-                                Recevoir des notifications par e-mail pour les nouvelles demandes de partenariat d'entreprises.
+                                {t('Receive email notifications for new company partnership requests.')}
                             </p>
                             </div>
                             <Switch defaultChecked />
@@ -365,21 +322,24 @@ const settingsComponents: Record<Role, React.ComponentType> = {
   admin: UserAccountSettings,
   super_admin: UserAccountSettings,
   content_manager: UserAccountSettings,
+  content_moderator: UserAccountSettings,
   support_staff: UserAccountSettings,
 };
 
 const pageConfig: Record<string, { icon: React.ElementType; title: string; description: string }> = {
-    graduate: { icon: User, title: 'Vos Paramètres', description: 'Gérez les détails de votre compte personnel, la visibilité de votre profil et les notifications.' },
-    company: { icon: Building, title: 'Paramètres de l\'entreprise', description: 'Gérez votre compte personnel, les membres de l\'équipe et la facturation.' },
-    school: { icon: SchoolIcon, title: 'Paramètres de l\'école', description: 'Gérez votre compte personnel et les contacts de votre établissement.' },
-    admin: { icon: Shield, title: 'Paramètres Administrateur', description: 'Gérez les détails de votre compte administrateur.' },
-    super_admin: { icon: Shield, title: 'Paramètres Administrateur', description: 'Gérez les détails de votre compte administrateur.' },
-    content_manager: { icon: Shield, title: 'Paramètres Administrateur', description: 'Gérez les détails de votre compte administrateur.' },
-    support_staff: { icon: Shield, title: 'Paramètres Administrateur', description: 'Gérez les détails de votre compte administrateur.' },
+    graduate: { icon: User, title: 'Your Settings', description: 'Manage your personal account details, profile visibility, and notifications.' },
+    company: { icon: Building, title: 'Company Settings', description: 'Manage your personal account, team members, and billing.' },
+    school: { icon: SchoolIcon, title: 'School Settings', description: 'Manage your personal account and institution contacts.' },
+    admin: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
+    super_admin: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
+    content_manager: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
+    content_moderator: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
+    support_staff: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
 }
 
 export default function SettingsPage() {
   const { role } = useAuth()
+  const { t } = useLocalization()
 
   const ActiveSettingsComponent = settingsComponents[role] || GraduateSettings;
   const { icon: Icon, title, description } = pageConfig[role] || pageConfig.graduate;
@@ -396,12 +356,12 @@ export default function SettingsPage() {
                 <Icon className="h-6 w-6 text-primary" />
             </div>
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
-                <p className="text-muted-foreground mt-1">{description}</p>
+                <h1 className="text-3xl font-bold tracking-tight">{t(title)}</h1>
+                <p className="text-muted-foreground mt-1">{t(description)}</p>
             </div>
         </motion.div>
         <Separator />
-        {ActiveSettingsComponent ? <ActiveSettingsComponent /> : <p>Aucun paramètre disponible pour ce rôle.</p>}
+        {ActiveSettingsComponent ? <ActiveSettingsComponent /> : <p>{t('No settings available for this role.')}</p>}
     </div>
   );
 }
