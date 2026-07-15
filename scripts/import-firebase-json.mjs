@@ -73,6 +73,11 @@ const TICKET_STATUS_MAP = new Map([
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1_000
 const FALLBACK_AUTH_SECRET = 'yahnu-development-secret-change-me'
 const FIRESTORE_FORMATS = new Set(['yahnu-firestore-rest-v1', 'yahnu-firestore-rest-v2'])
+const SUPPORTED_FIREBASE_AUTH_PROVIDERS = new Set(['password', 'google.com'])
+const MFA_EXPORT_FIELD_KEYS = new Set([
+  'mfainfo', 'multifactor', 'multifactorinfo', 'multifactorenrollment',
+  'multifactorenrollments', 'enrolledfactors',
+])
 const FIRESTORE_COLLECTIONS = [
   'users', 'invites', 'tickets', 'pages', 'dashboards', 'blogPosts',
   'conversations', 'notifications', 'emailVerificationCodes', 'jobs',
@@ -133,6 +138,7 @@ Usage:
 Options:
   --file <path>          Firebase JSON file (or FIREBASE_EXPORT_PATH)
   --source <kind>        auth or firestore; auto-detected for standard exports
+  --preflight            Report Firebase Auth compatibility without a database connection
   --dry-run              Execute all checks and writes, then roll the transaction back
   --allow-partial        Commit valid records despite skipped/rejected records
   --help                 Show this help
@@ -141,9 +147,12 @@ Supported collections: users, invites, tickets, pages, dashboards, blogPosts,
 conversations, notifications, emailVerificationCodes, jobs, applications,
 partnerships, mail, announcements, and knowledgeBaseArticles. Input may use
 named collection wrappers/maps, document arrays, direct maps, or REST-style typed fields.
-Firebase Auth { users: [...] } is also supported. DATABASE_URL is required. AUTH_SECRET
-is required when an importable pending invitation is present. Imported Firebase passwords
-and password hashes are never used, and raw invitation tokens are never printed.
+Firebase Auth { users: [...] } is also supported. Auth preflight permits only email
+password-reset continuity and stable Google identities; it rejects phone, anonymous,
+MFA, tenant, malformed Google, and other federated account types before any write.
+DATABASE_URL is required except for --preflight. AUTH_SECRET is required when an
+importable pending invitation is present. Imported Firebase passwords and password hashes
+are never used, and raw invitation tokens are never printed.
 Email verification codes are one-way hashed and recorded as explicitly invalidated;
 they are never inserted into the active auth_tokens table. Unknown collections and
 document subcollections fail closed.
@@ -151,7 +160,14 @@ document subcollections fail closed.
 }
 
 function parseArguments(argv) {
-  const result = { dryRun: false, allowPartial: false, file: undefined, source: undefined, help: false }
+  const result = {
+    dryRun: false,
+    allowPartial: false,
+    preflight: false,
+    file: undefined,
+    source: undefined,
+    help: false,
+  }
 
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index]
@@ -161,6 +177,10 @@ function parseArguments(argv) {
     }
     if (argument === '--allow-partial') {
       result.allowPartial = true
+      continue
+    }
+    if (argument === '--preflight') {
+      result.preflight = true
       continue
     }
     if (argument === '--help') {
@@ -679,6 +699,138 @@ function normalizeArray(value, { splitStrings = false } = {}) {
   return splitStrings ? value.split(',').map((item) => item.trim()).filter(Boolean) : [value.trim()]
 }
 
+function hasAuthExportValue(value) {
+  if (Array.isArray(value)) return value.length > 0
+  if (isObject(value)) return Object.keys(value).length > 0
+  if (typeof value === 'string') return Boolean(value.trim())
+  return value !== null && value !== undefined
+}
+
+function firebaseAuthProviderSubject(provider) {
+  return normalizeId(firstPresent(
+    provider.rawId,
+    provider.federatedId,
+    provider.uid,
+    provider.userId,
+  ))
+}
+
+function firebaseAuthPreflightFailure(report) {
+  const summary = Object.entries(report.blockedReasonCounts)
+    .map(([reason, count]) => `${reason} (${count})`)
+    .join(', ')
+  return [
+    `Firebase Auth preflight rejected ${report.blockedAccounts.length} of ${report.totalUsers} account(s): ${summary}.`,
+    'The Render target supports email password-reset continuity and stable Google identities only.',
+    'No database writes were attempted. Run the same command with --preflight to inspect UID-only details.',
+  ].join(' ')
+}
+
+function preflightFirebaseAuthExport(root) {
+  const blockedAccounts = []
+  const blockedReasonCounts = {}
+  const accepted = {
+    passwordResetEligible: 0,
+    googleContinuityEligible: 0,
+  }
+  const sourceUsers = Array.isArray(root?.users) ? root.users : null
+
+  if (!sourceUsers) {
+    const reason = 'missing top-level users array'
+    return {
+      passed: false,
+      totalUsers: 0,
+      importableUsers: 0,
+      ...accepted,
+      blockedReasonCounts: { [reason]: 1 },
+      blockedAccounts: [{ index: 0, uid: null, reasons: [reason] }],
+    }
+  }
+
+  for (const [index, sourceRecord] of sourceUsers.entries()) {
+    const reasons = new Set()
+    const record = isObject(sourceRecord) ? sourceRecord : null
+    const uid = record ? normalizeId(record.localId) : null
+    let hasGoogleIdentity = false
+
+    if (!record) {
+      reasons.add('malformed Auth user record')
+    } else {
+      if (!uid) reasons.add('missing or invalid Firebase UID')
+      if (record.isAnonymous === true || String(record.isAnonymous).toLowerCase() === 'true') {
+        reasons.add('anonymous account')
+      }
+      if (hasAuthExportValue(record.phoneNumber)) reasons.add('phone authentication')
+      if (hasAuthExportValue(record.tenantId) || hasAuthExportValue(record.tenant)) {
+        reasons.add('Firebase multi-tenant account')
+      }
+      if (Object.entries(record).some(([key, value]) => (
+        MFA_EXPORT_FIELD_KEYS.has(normalizedKey(key)) && hasAuthExportValue(value)
+      ))) reasons.add('multi-factor authentication')
+
+      const rawProviders = record.providerUserInfo
+      if (rawProviders !== undefined && rawProviders !== null && !Array.isArray(rawProviders)) {
+        reasons.add('malformed provider metadata')
+      }
+      const providers = Array.isArray(rawProviders) ? rawProviders : []
+      const googleSubjects = new Set()
+      for (const provider of providers) {
+        if (!isObject(provider)) {
+          reasons.add('malformed provider metadata')
+          continue
+        }
+        const providerName = String(firstPresent(provider.providerId, provider.provider) ?? '').trim().toLowerCase()
+        if (!providerName) {
+          reasons.add('malformed provider metadata')
+          continue
+        }
+        if (providerName === 'anonymous') reasons.add('anonymous account')
+        if (providerName === 'phone' || providerName === 'phone.com' || hasAuthExportValue(provider.phoneNumber)) {
+          reasons.add('phone authentication')
+        }
+        if (!SUPPORTED_FIREBASE_AUTH_PROVIDERS.has(providerName)) {
+          reasons.add(`unsupported provider ${providerName}`)
+          continue
+        }
+        if (providerName === 'google.com') {
+          const subject = firebaseAuthProviderSubject(provider)
+          if (!subject) {
+            reasons.add('Google identity is missing a stable subject')
+          } else {
+            googleSubjects.add(subject)
+            hasGoogleIdentity = true
+          }
+        }
+      }
+      if (googleSubjects.size > 1) reasons.add('conflicting Google identities')
+
+      const email = normalizeEmail(firstPresent(record.email, record.emailAddress, firstProviderEmail(rawProviders)))
+      if (!email) reasons.add('missing a usable email address for password reset')
+    }
+
+    if (reasons.size) {
+      const sortedReasons = [...reasons].sort()
+      blockedAccounts.push({ index: index + 1, uid, reasons: sortedReasons })
+      for (const reason of sortedReasons) {
+        blockedReasonCounts[reason] = (blockedReasonCounts[reason] ?? 0) + 1
+      }
+      continue
+    }
+
+    accepted.passwordResetEligible += 1
+    if (hasGoogleIdentity) accepted.googleContinuityEligible += 1
+  }
+
+  return {
+    passed: blockedAccounts.length === 0,
+    totalUsers: sourceUsers.length,
+    importableUsers: sourceUsers.length - blockedAccounts.length,
+    ...accepted,
+    blockedReasonCounts,
+    blockedAccounts,
+  }
+}
+
 function profileFromRecord(record) {
   const profile = isObject(record.profile) ? { ...record.profile } : {}
   for (const [key, value] of Object.entries(record)) {
@@ -890,16 +1042,25 @@ function extraRecordData(record, excludedKeys) {
   return redactFirebaseStorageSecrets(sanitizeSensitive(result))
 }
 
+function legacyInviteDatabaseId(rawToken) {
+  // The previous Firebase client used the Firestore document ID as the public
+  // registration token. Keep that token only long enough to create its HMAC;
+  // it must never become a PostgreSQL primary key or appear in administrative
+  // identifiers.
+  return `firebase-invite-${sha256(`legacy-invite-id:${rawToken}`).slice(0, 48)}`
+}
+
 function normalizeInvite(source, importTimestamp, sourceIndex) {
   const decoded = materializeRecord(source.record)
   if (!decoded) return { error: 'record is not an object' }
   const record = sanitizeSensitive(mergeNestedPayload(decoded, ['email', 'emailaddress', 'invitetoken', 'token']))
-  const id = sourceRecordId(source, 'invites', record)
-  if (!id) return { error: 'missing or invalid document ID' }
+  const sourceId = sourceRecordId(source, 'invites', record)
+  if (!sourceId) return { error: 'missing or invalid document ID' }
 
-  const rawTokenValue = firstPresent(record.token, record.inviteToken, record.rawToken, id)
+  const rawTokenValue = firstPresent(record.token, record.inviteToken, record.rawToken, sourceId)
   const rawToken = typeof rawTokenValue === 'string' ? rawTokenValue.trim() : ''
   if (!rawToken || rawToken.length > 4_096) return { error: 'missing or invalid legacy token' }
+  const id = rawToken === sourceId ? legacyInviteDatabaseId(rawToken) : sourceId
 
   const email = normalizeEmail(firstPresent(record.email, record.emailAddress))
   if (!email) return { error: 'missing or invalid email' }
@@ -2490,8 +2651,6 @@ async function main() {
     return
   }
 
-  const connectionString = process.env.DATABASE_URL
-  if (!connectionString) throw new Error('DATABASE_URL is required.')
   const input = args.file ?? process.env.FIREBASE_EXPORT_PATH
   if (!input) throw new Error('Provide a JSON path as an argument, with --file, or through FIREBASE_EXPORT_PATH.')
 
@@ -2503,15 +2662,30 @@ async function main() {
     throw new Error(`Unable to read valid JSON from ${inputPath}: ${error instanceof Error ? error.message : String(error)}`)
   }
 
-  const extracted = extractPersistedCollections(parsed)
-  const totalSourceRecords = Object.values(extracted).reduce((total, records) => total + records.length, 0)
-  if (!totalSourceRecords) throw new Error('No supported Firebase records were found in the supplied JSON structure.')
   const detectedSource = detectSourceMode(parsed)
   if (args.source && detectedSource && args.source !== detectedSource) {
     throw new Error(`The input looks like a ${detectedSource} export but --source ${args.source} was supplied.`)
   }
   const sourceMode = args.source ?? detectedSource
   assertAccountedFirestoreShape(parsed, sourceMode)
+  if (args.preflight && sourceMode !== 'auth') {
+    throw new Error('--preflight is available only for Firebase Auth exports. Supply --source auth if auto-detection is ambiguous.')
+  }
+  if (sourceMode === 'auth') {
+    const preflight = preflightFirebaseAuthExport(parsed)
+    if (args.preflight) {
+      process.stdout.write(`${JSON.stringify({ input: inputPath, source: 'auth', preflight: true, ...preflight }, null, 2)}\n`)
+      if (!preflight.passed) process.exitCode = 2
+      return
+    }
+    if (!preflight.passed) throw new Error(firebaseAuthPreflightFailure(preflight))
+  }
+
+  const connectionString = process.env.DATABASE_URL
+  if (!connectionString) throw new Error('DATABASE_URL is required.')
+  const extracted = extractPersistedCollections(parsed)
+  const totalSourceRecords = Object.values(extracted).reduce((total, records) => total + records.length, 0)
+  if (!totalSourceRecords) throw new Error('No supported Firebase records were found in the supplied JSON structure.')
   if (extracted.users.length && !sourceMode) {
     throw new Error('The user-record source is ambiguous. Supply --source auth or --source firestore.')
   }
@@ -3515,6 +3689,7 @@ export {
   normalizePartnership,
   normalizeTicket,
   normalizeUser,
+  preflightFirebaseAuthExport,
   isValidatedImportedHtml,
   synthesizedAnnouncementNotification,
 }

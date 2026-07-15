@@ -16,6 +16,7 @@ import {
   normalizePartnership,
   normalizeTicket,
   normalizeUser,
+  preflightFirebaseAuthExport,
 } from './import-firebase-json.mjs'
 
 const FIRESTORE_FORMATS = new Set(['yahnu-firestore-rest-v1', 'yahnu-firestore-rest-v2'])
@@ -407,7 +408,12 @@ function normalizedOperationalCollection(collection, normalizer, resultKey, idFi
       index + 1,
     )
     if (result.error || !result[resultKey] || result.warnings?.length) {
-      invalid.push(documentId(document) || `index-${index + 1}`)
+      const id = documentId(document)
+      // Legacy Firebase invites used their document ID as the public token.
+      // Never echo such a token in reconciliation output.
+      invalid.push(resultKey === 'invite' && id
+        ? `firebase-invite-${sha256(`invalid-invite-document:${id}`).slice(0, 48)}`
+        : id || `index-${index + 1}`)
     }
     else records.set(result[resultKey][idField], result[resultKey])
   })
@@ -663,6 +669,16 @@ async function main() {
     readJson(args.auth, 'auth'),
     readJson(args.firestore, 'firestore'),
   ])
+  const authPreflight = preflightFirebaseAuthExport(authFile.data)
+  if (!authPreflight.passed) {
+    const summary = Object.entries(authPreflight.blockedReasonCounts)
+      .map(([reason, count]) => `${reason} (${count})`)
+      .join(', ')
+    throw new Error(
+      `Firebase Auth export contains account types unsupported by Render: ${summary}. `
+      + 'Run firebase:import with --source auth --preflight before retrying reconciliation.',
+    )
+  }
   const auth = authSource(authFile.data)
   const firestore = firestoreSource(firestoreFile.data)
   const failures = {}
@@ -809,11 +825,17 @@ async function main() {
       SELECT id, token_hash, email, role, status, created_by, used_by,
         expires_at, created_at, used_at
       FROM invites WHERE id = ANY($1::text[])
-    `, [[...firestore.invites.ids]])
+    `, [[...operational.invites.records.keys()]])
     const inviteById = new Map(inviteRows.rows.map((row) => [row.id, row]))
     const inviteFieldMismatches = []
     firestore.invites.documents.forEach((document, index) => {
-      const id = documentId(document)
+      const preliminary = normalizeInvite(
+        { record: document, inferredId: null },
+        '2000-01-01T00:00:00.000Z',
+        index + 1,
+      )
+      if (preliminary.error) return
+      const id = preliminary.invite.id
       const stored = inviteById.get(id)
       if (!stored) return
       const normalized = normalizeInvite(
@@ -860,6 +882,8 @@ async function main() {
           const payload = materializePersistenceDocument(document)
           return referenceId(payload?.userId ?? payload?.user_id) || documentId(document)
         }))
+        : collectionName === 'invites'
+          ? new Set(operational.invites.records.keys())
         : firestore[collectionName].ids
       compareSet(collectionName, expectedIds, new Set(result.rows.map((row) => row.id)), failures)
     }
@@ -1402,7 +1426,14 @@ async function main() {
     process.stdout.write(`${JSON.stringify({
       passed,
       sources: { auth: authFile.path, firestore: firestoreFile.path },
-      counts: { authUsers: auth.identities.size, authProviders: auth.providers.size, ...expectedCounts, roleStatus: roleStatus.rows },
+      counts: {
+        authUsers: auth.identities.size,
+        authProviders: auth.providers.size,
+        authPasswordResetEligible: authPreflight.passwordResetEligible,
+        authGoogleContinuityEligible: authPreflight.googleContinuityEligible,
+        ...expectedCounts,
+        roleStatus: roleStatus.rows,
+      },
       failures,
       review: { privilegedAccounts: privileged.rows },
     }, null, 2)}\n`)

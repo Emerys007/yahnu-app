@@ -164,18 +164,27 @@ The Firestore export must report every expected collection and zero unknown subc
 
 ### 6. Import and reconcile in Render PostgreSQL
 
-Run from an access-controlled operator machine using the exact Render `DATABASE_URL` and `AUTH_SECRET`, with a temporary `/32` database allowlist. Remove that rule after success, failure, or abort.
+Run from an access-controlled operator machine using the exact Render `DATABASE_URL` and `AUTH_SECRET`, with a temporary `/32` database allowlist. Remove that rule after success, failure, or abort. Before the first committed import, create and checksum a logical backup of the migration-only Render database. Each import file is transactional, but the Auth -> Firestore -> Storage sequence is not one cross-source transaction. If any committed import or either verifier fails, keep Maintenance Mode on, restore that baseline (or recreate the empty migrated database), and rerun the entire sequence from the same immutable exports. Do not resume at a later phase or use `--allow-partial` to work around a failure.
+
+The individual dry-runs below validate each source and schema, but they do not compose into a media-linkage rehearsal because each rolls back before the next command. The required full rehearsal in step 1 must use committed Auth, Firestore, and Storage imports on a disposable database, followed by both verifiers. For every Storage dry-run and real import, pass the exact provisioned database disk size in bytes. The opt-in preflight rejects an import when current database size plus twice the manifest payload would exceed 80% of that capacity, preserving bytea and WAL headroom.
+
+Before opening a database connection or freezing Firebase, inspect the Auth export for account types that the Render runtime can actually preserve. This command exits non-zero when it finds phone, anonymous, MFA, multi-tenant, malformed Google, or other unsupported federated accounts; resolve every reported account before continuing.
+
+```powershell
+npm run firebase:import -- --file C:\secure\yahnu-auth.json --source auth --preflight
+```
 
 ```powershell
 npm run db:migrate
+$databaseCapacityBytes = 15GB
 
 npm run firebase:import -- --file C:\secure\yahnu-auth.json --source auth --dry-run
 npm run firebase:import -- --file C:\secure\yahnu-firestore.json --source firestore --dry-run
-npm run firebase:import:storage -- --manifest C:\secure\yahnu-storage\manifest.json --dry-run
+npm run firebase:import:storage -- --manifest C:\secure\yahnu-storage\manifest.json --database-capacity-bytes $databaseCapacityBytes --dry-run
 
 npm run firebase:import -- --file C:\secure\yahnu-auth.json --source auth
 npm run firebase:import -- --file C:\secure\yahnu-firestore.json --source firestore
-npm run firebase:import:storage -- --manifest C:\secure\yahnu-storage\manifest.json --rewrite-output C:\secure\yahnu-media-url-rewrites.json
+npm run firebase:import:storage -- --manifest C:\secure\yahnu-storage\manifest.json --database-capacity-bytes $databaseCapacityBytes --rewrite-output C:\secure\yahnu-media-url-rewrites.json
 
 npm run firebase:verify -- --auth C:\secure\yahnu-auth.json --firestore C:\secure\yahnu-firestore.json
 npm run firebase:verify:storage -- --manifest C:\secure\yahnu-storage\manifest.json

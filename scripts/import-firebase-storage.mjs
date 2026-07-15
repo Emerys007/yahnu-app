@@ -10,6 +10,8 @@ const MAX_OBJECT_BYTES = 100 * 1024 * 1024
 const MAX_TOTAL_BYTES = 10 * 1024 * 1024 * 1024
 const MAX_PUBLIC_IMAGE_BYTES = 5 * 1024 * 1024
 const MAX_LINKED_PRIVATE_BYTES = 10 * 1024 * 1024
+const CAPACITY_SAFETY_FRACTION = 0.8
+const STORAGE_IMPORT_PEAK_MULTIPLIER = 2
 
 function printHelp() {
   process.stdout.write(`Import a Firebase Storage export into PostgreSQL-backed media assets.
@@ -20,6 +22,9 @@ Usage:
 Options:
   --manifest <path>       Storage manifest created by export-firebase-storage.mjs (required)
   --rewrite-output <path> Optional new JSON file containing URL SHA-256 -> Render path mappings
+  --database-capacity-bytes <n>
+                          Opt-in preflight: reject if current database size plus twice the
+                          manifest payload exceeds 80% of the declared database disk capacity
   --dry-run               Check and write every object, then roll the transaction back
   --allow-partial         Commit valid objects despite rejected/missing objects
   --help                  Show this help
@@ -30,7 +35,14 @@ rolls the entire import back. SHA-256 and byte length are recomputed before each
 }
 
 function parseArguments(argv) {
-  const result = { manifest: undefined, rewriteOutput: undefined, dryRun: false, allowPartial: false, help: false }
+  const result = {
+    manifest: undefined,
+    rewriteOutput: undefined,
+    databaseCapacityBytes: process.env.YAHNU_DATABASE_CAPACITY_BYTES,
+    dryRun: false,
+    allowPartial: false,
+    help: false,
+  }
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index]
     if (argument === '--dry-run') {
@@ -48,6 +60,7 @@ function parseArguments(argv) {
     const option = [
       ['manifest', 'manifest'],
       ['rewrite-output', 'rewriteOutput'],
+      ['database-capacity-bytes', 'databaseCapacityBytes'],
     ].find(([flag]) => argument === `--${flag}` || argument.startsWith(`--${flag}=`))
     if (!option) throw new Error(`Unknown option: ${argument}`)
     const [flag, key] = option
@@ -86,6 +99,48 @@ function stableJson(value) {
     return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableJson(value[key])}`).join(',')}}`
   }
   return JSON.stringify(value)
+}
+
+function parseDatabaseCapacityBytes(value) {
+  if (value === undefined || value === null || value === '') return null
+  const text = String(value)
+  if (!/^[1-9][0-9]*$/.test(text)) {
+    throw new Error('--database-capacity-bytes must be a positive whole number of bytes.')
+  }
+  const parsed = Number(text)
+  if (!Number.isSafeInteger(parsed)) {
+    throw new Error('--database-capacity-bytes is outside the supported safe-integer range.')
+  }
+  return parsed
+}
+
+function assertStorageImportCapacity({ currentDatabaseBytes, manifestPayloadBytes, databaseCapacityBytes }) {
+  const currentBytes = Number(currentDatabaseBytes)
+  const payloadBytes = Number(manifestPayloadBytes)
+  const capacityBytes = Number(databaseCapacityBytes)
+  if (!Number.isSafeInteger(currentBytes) || currentBytes < 0) {
+    throw new Error('PostgreSQL returned an invalid current database size for the Storage capacity preflight.')
+  }
+  if (!Number.isSafeInteger(payloadBytes) || payloadBytes < 0) {
+    throw new Error('The Storage manifest has an invalid payload size for the capacity preflight.')
+  }
+  if (!Number.isSafeInteger(capacityBytes) || capacityBytes <= 0) {
+    throw new Error('The declared database capacity must be a positive safe-integer byte count.')
+  }
+
+  const estimatedPeakBytes = currentBytes + (payloadBytes * STORAGE_IMPORT_PEAK_MULTIPLIER)
+  if (!Number.isSafeInteger(estimatedPeakBytes)) {
+    throw new Error('The estimated Storage import peak is outside the supported safe-integer range.')
+  }
+  const approvedLimitBytes = Math.floor(capacityBytes * CAPACITY_SAFETY_FRACTION)
+  if (estimatedPeakBytes > approvedLimitBytes) {
+    throw new Error(
+      `Storage import capacity gate failed: current database size (${currentBytes}) plus twice the Storage payload (${payloadBytes}) `
+      + `requires ${estimatedPeakBytes} bytes, above 80% of the declared capacity (${approvedLimitBytes} of ${capacityBytes}). `
+      + 'Increase the approved database disk capacity or redesign the migration before continuing.',
+    )
+  }
+  return { currentBytes, payloadBytes, capacityBytes, estimatedPeakBytes, approvedLimitBytes }
 }
 
 function isInsideDirectory(base, target) {
@@ -301,6 +356,7 @@ async function main() {
   if (args.rewriteOutput && isInsideDirectory(process.cwd(), path.resolve(args.rewriteOutput))) {
     throw new Error('--rewrite-output must be outside this repository.')
   }
+  const databaseCapacityBytes = parseDatabaseCapacityBytes(args.databaseCapacityBytes)
 
   const manifest = await loadManifest(args.manifest)
   const seenIds = new Set()
@@ -363,11 +419,20 @@ async function main() {
   let unmappedReferences = 0
   let messageAttachmentsLinked = 0
   let applicationResumesLinked = 0
+  let capacityPreflight = null
   const rewrites = {}
   try {
     await client.query('BEGIN')
     transactionOpen = true
     await client.query('SELECT pg_advisory_xact_lock($1)', [78_342_111])
+    if (databaseCapacityBytes !== null) {
+      const sizeResult = await client.query('SELECT pg_database_size(current_database())::text AS current_database_bytes')
+      capacityPreflight = assertStorageImportCapacity({
+        currentDatabaseBytes: sizeResult.rows[0]?.current_database_bytes,
+        manifestPayloadBytes: manifest.parsed._metadata.totalBytes,
+        databaseCapacityBytes,
+      })
+    }
     const existingResult = await client.query(`
       SELECT id, source_provider, source_bucket, source_path, source_generation
       FROM media_assets
@@ -605,6 +670,7 @@ async function main() {
       bucket: manifest.bucket,
       dryRun: args.dryRun,
       allowPartial: args.allowPartial,
+      capacityPreflight: capacityPreflight ?? { enforced: false },
       transaction: transactionOutcome,
       counts: {
         source: manifest.parsed.files.length,
@@ -643,4 +709,10 @@ if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) 
   })
 }
 
-export { databaseSafeStorageProvenance, deterministicStorageAssetId, validatedPublicImageContentType }
+export {
+  assertStorageImportCapacity,
+  databaseSafeStorageProvenance,
+  deterministicStorageAssetId,
+  parseDatabaseCapacityBytes,
+  validatedPublicImageContentType,
+}

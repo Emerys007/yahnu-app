@@ -10,6 +10,7 @@ import {
   normalizeApplication,
   normalizeBlogPost,
   normalizeConversation,
+  normalizeInvite,
   normalizeJob,
   normalizeKnowledgeBaseArticle,
   normalizeMail,
@@ -17,10 +18,12 @@ import {
   normalizePartnership,
   normalizeTicket,
   normalizeUser,
+  preflightFirebaseAuthExport,
   synthesizedAnnouncementNotification,
 } from '../import-firebase-json.mjs'
 import { deterministicStorageAssetId as exportedStorageAssetId } from '../export-firebase-storage.mjs'
 import {
+  assertStorageImportCapacity,
   databaseSafeStorageProvenance,
   deterministicStorageAssetId as importedStorageAssetId,
   validatedPublicImageContentType,
@@ -496,6 +499,32 @@ test('Storage asset IDs are immutable-generation bound in export, import, and ve
   assert.throws(() => importedStorageAssetId(bucket, name, ''), /generation/i)
 })
 
+test('Storage capacity preflight leaves WAL and bytea headroom before an import', () => {
+  const gib = 1024 ** 3
+  assert.deepEqual(
+    assertStorageImportCapacity({
+      currentDatabaseBytes: 2 * gib,
+      manifestPayloadBytes: 4 * gib,
+      databaseCapacityBytes: 16 * gib,
+    }),
+    {
+      currentBytes: 2 * gib,
+      payloadBytes: 4 * gib,
+      capacityBytes: 16 * gib,
+      estimatedPeakBytes: 10 * gib,
+      approvedLimitBytes: Math.floor(16 * gib * 0.8),
+    },
+  )
+  assert.throws(
+    () => assertStorageImportCapacity({
+      currentDatabaseBytes: 4 * gib,
+      manifestPayloadBytes: 5 * gib,
+      databaseCapacityBytes: 16 * gib,
+    }),
+    /capacity gate failed/i,
+  )
+})
+
 test('public Firebase media uses the runtime image signatures and 5 MB cap', () => {
   assert.equal(validatedPublicImageContentType(Buffer.from([0xff, 0xd8, 0xff, 0x00])), 'image/jpeg')
   assert.equal(
@@ -533,6 +562,47 @@ test('Firebase download tokens and token metadata never enter Storage database p
     createHash('sha256').update('gs://example.appspot.com/resumes/user.pdf').digest('hex'),
     createHash('sha256').update(tokenUrl).digest('hex'),
   ])
+})
+
+test('legacy Firebase invite document tokens become opaque PostgreSQL IDs', () => {
+  const timestamp = '2026-07-13T00:00:00.000Z'
+  const legacyToken = 'HhK4wA0wbKZJn3TuYm8Q'
+  const fromLegacyDocument = normalizeInvite({
+    record: {
+      name: `projects/yahnu-50c61/databases/(default)/documents/invites/${legacyToken}`,
+      fields: {
+        email: { stringValue: 'admin@example.com' },
+        role: { stringValue: 'admin' },
+        status: { stringValue: 'pending' },
+        createdBy: { stringValue: 'super-admin-1' },
+        createdAt: { timestampValue: timestamp },
+      },
+    },
+    inferredId: null,
+  }, timestamp, 1).invite
+
+  assert.equal(fromLegacyDocument.rawToken, legacyToken)
+  assert.match(fromLegacyDocument.id, /^firebase-invite-[0-9a-f]{48}$/)
+  assert.notEqual(fromLegacyDocument.id, legacyToken)
+  assert.equal(fromLegacyDocument.id.includes(legacyToken), false)
+  assert.equal(JSON.stringify({ ...fromLegacyDocument, rawToken: undefined }).includes(legacyToken), false)
+
+  const explicitToken = 'separate-legacy-invite-token'
+  const fromSeparateFields = normalizeInvite({
+    record: {
+      id: 'firestore-invite-record-1',
+      token: explicitToken,
+      email: 'admin@example.com',
+      role: 'admin',
+      status: 'pending',
+      createdBy: 'super-admin-1',
+      createdAt: timestamp,
+    },
+    inferredId: null,
+  }, timestamp, 2).invite
+
+  assert.equal(fromSeparateFields.id, 'firestore-invite-record-1')
+  assert.equal(fromSeparateFields.rawToken, explicitToken)
 })
 
 test('Firestore media references persist only canonical URL hashes and redacted payloads', () => {
@@ -645,6 +715,83 @@ test('explicit unknown user roles and statuses fail closed', () => {
     inferredId: null,
   }, timestamp, 'firestore')
   assert.match(unknownStatus.error, /status is not supported/i)
+})
+
+test('Firebase Auth preflight permits password reset and stable Google continuity', () => {
+  const report = preflightFirebaseAuthExport({
+    users: [
+      {
+        localId: 'password-user',
+        email: 'password@example.com',
+        providerUserInfo: [{ providerId: 'password' }],
+      },
+      {
+        localId: 'google-user',
+        email: 'google@example.com',
+        providerUserInfo: [{ providerId: 'google.com', rawId: 'google-subject-1' }],
+      },
+    ],
+  })
+
+  assert.equal(report.passed, true)
+  assert.equal(report.totalUsers, 2)
+  assert.equal(report.importableUsers, 2)
+  assert.equal(report.passwordResetEligible, 2)
+  assert.equal(report.googleContinuityEligible, 1)
+  assert.deepEqual(report.blockedReasonCounts, {})
+  assert.deepEqual(report.blockedAccounts, [])
+})
+
+test('Firebase Auth preflight fails closed for unsupported or lossy account types', () => {
+  const report = preflightFirebaseAuthExport({
+    users: [
+      {
+        localId: 'phone-user',
+        email: 'phone@example.com',
+        phoneNumber: '+15555550100',
+        providerUserInfo: [{ providerId: 'phone', rawId: 'phone-subject' }],
+      },
+      {
+        localId: 'anonymous-user',
+        isAnonymous: true,
+        providerUserInfo: [{ providerId: 'anonymous', rawId: 'anonymous-subject' }],
+      },
+      {
+        localId: 'mfa-user',
+        email: 'mfa@example.com',
+        mfaInfo: [{ mfaEnrollmentId: 'enrollment-1', phoneInfo: '+15555550101' }],
+        providerUserInfo: [{ providerId: 'password' }],
+      },
+      {
+        localId: 'federated-user',
+        email: 'federated@example.com',
+        providerUserInfo: [{ providerId: 'facebook.com', rawId: 'facebook-subject' }],
+      },
+      {
+        localId: 'google-without-subject',
+        email: 'google-missing@example.com',
+        providerUserInfo: [{ providerId: 'google.com' }],
+      },
+      {
+        localId: 'tenant-user',
+        email: 'tenant@example.com',
+        tenantId: 'tenant-1',
+        providerUserInfo: [{ providerId: 'password' }],
+      },
+    ],
+  })
+
+  assert.equal(report.passed, false)
+  assert.equal(report.importableUsers, 0)
+  assert.equal(report.blockedAccounts.length, 6)
+  assert.equal(report.blockedReasonCounts['phone authentication'], 1)
+  assert.equal(report.blockedReasonCounts['anonymous account'], 1)
+  assert.equal(report.blockedReasonCounts['multi-factor authentication'], 1)
+  assert.equal(report.blockedReasonCounts['unsupported provider facebook.com'], 1)
+  assert.equal(report.blockedReasonCounts['Google identity is missing a stable subject'], 1)
+  assert.equal(report.blockedReasonCounts['Firebase multi-tenant account'], 1)
+  assert.ok(report.blockedAccounts.every((account) => account.uid))
+  assert.equal(report.blockedAccounts.find((account) => account.uid === 'anonymous-user').reasons.includes('missing a usable email address for password reset'), true)
 })
 
 test('ticket and partnership enums preserve meaning or fail closed', () => {
