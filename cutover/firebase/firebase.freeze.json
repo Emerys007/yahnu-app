@@ -1,8 +1,8 @@
 {
   "firestore": {
-    "rules": "cutover/firebase/firestore.freeze.rules"
+    "rules": "firestore.freeze.rules"
   },
   "storage": {
-    "rules": "cutover/firebase/storage.freeze.rules"
+    "rules": "storage.freeze.rules"
   }
 }
