@@ -37,14 +37,6 @@
   ],
   "exclude": [
     "node_modules",
-    "attached_assets/**",
-    "yahnu-app/**",
-    "src/features/landing/**",
-    "src/components/search-command.tsx",
-    "src/components/ui/search-command.tsx",
-    "src/components/dashboard/applications/**",
-    "src/components/dashboard/page.tsx",
-    "src/components/dashboard/partnerships/**",
-    "src/components/dashboard/settings/**"
+    "attached_assets/**"
   ]
 }

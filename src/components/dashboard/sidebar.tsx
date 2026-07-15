@@ -26,7 +26,6 @@ import {
   MessageSquare,
   Award,
   Calendar,
-  Wrench,
   LogOut,
   Newspaper,
   Ticket,
@@ -34,7 +33,6 @@ import {
   Megaphone,
   HeartPulse,
   BookOpen,
-  Eye,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -71,8 +69,7 @@ const getNavItems = (role: Role) => {
     { href: "/dashboard/partnerships", icon: Handshake, label: 'Partenariats' },
     { href: "/dashboard/talent-pool", icon: Users2, label: 'Vivier de talents' },
     { type: "divider", label: "Analytique" },
-    { href: "/dashboard/reports/company-analytics", icon: BarChart3, label: 'Analytique' },
-    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: 'Générateur de rapports' },
+    { href: "/dashboard/reports", icon: BarChart3, label: 'Rapports et analyses' },
   ];
   
   const schoolNav = [
@@ -83,8 +80,7 @@ const getNavItems = (role: Role) => {
     { href: "/dashboard/school-events", icon: Calendar, label: "Gestion d'événements"},
     { href: "/dashboard/partnerships", icon: Handshake, label: 'Partenariats' },
     { type: "divider", label: "Analytique" },
-    { href: "/dashboard/reports/school-analytics", icon: BarChart3, label: 'Analytique' },
-    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: 'Générateur de rapports' },
+    { href: "/dashboard/reports", icon: BarChart3, label: 'Rapports et analyses' },
   ];
 
   const superAdminNav = [
@@ -99,7 +95,7 @@ const getNavItems = (role: Role) => {
     { href: "/dashboard/support/announcements", icon: Megaphone, label: 'Annonces' },
     { href: "/dashboard/support/system-health", icon: HeartPulse, label: 'Santé du système' },
     { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: 'Base de connaissances' },
-    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: 'Générateur de rapports' },
+    { href: "/dashboard/reports", icon: BarChart3, label: 'Rapports et analyses' },
   ];
 
   const adminNav = [
@@ -113,16 +109,15 @@ const getNavItems = (role: Role) => {
     { href: "/dashboard/support/announcements", icon: Megaphone, label: 'Annonces' },
     { href: "/dashboard/support/system-health", icon: HeartPulse, label: 'Santé du système' },
     { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: 'Base de connaissances' },
-    { href: "/dashboard/reports/custom-report-generator", icon: Wrench, label: 'Générateur de rapports' },
+    { href: "/dashboard/reports", icon: BarChart3, label: 'Rapports et analyses' },
   ];
   
   const contentManagerNav = [
     { href: "/dashboard", icon: LayoutDashboard, label: 'Tableau de bord' },
     { type: "divider", label: 'Gestion de Contenu' },
-    { href: "/dashboard/admin/content-moderation", icon: Eye, label: 'Modération de contenu' },
-    { href: "/dashboard/admin/blog", icon: Newspaper, label: 'Gestion du blog' },
-    { href: "/dashboard/admin/announcements", icon: Megaphone, label: 'Annonces' },
-    { href: "/dashboard/admin/knowledge-base-editor", icon: BookOpen, label: 'Base de connaissances' },
+    { href: "/dashboard/content/blog", icon: Newspaper, label: 'Gestion du blog' },
+    { href: "/dashboard/support/announcements", icon: Megaphone, label: 'Annonces' },
+    { href: "/dashboard/support/knowledge-base-editor", icon: BookOpen, label: 'Base de connaissances' },
   ];
   
   const supportStaffNav = [

@@ -21,7 +21,6 @@ import {
   BrainCircuit,
   MessageSquare,
   Award,
-  Wrench,
 } from "lucide-react"
 
 import {
@@ -103,7 +102,6 @@ const getNavItems = (t: (key: string) => string, role: Role) => {
             group: t('dashboard.nav.reporting'),
             items: [
                  { icon: BarChart3, text: t('dashboard.nav.analytics'), onSelect: (router) => router.push('/dashboard/reports') },
-                 { icon: Wrench, text: t('dashboard.nav.report_generator'), onSelect: (router) => router.push('/dashboard/reports/custom-report-generator') },
             ],
              roles: ['admin', 'company', 'school'],
         }

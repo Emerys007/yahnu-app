@@ -27,8 +27,12 @@ const accessRules: AccessRule[] = [
   { path: '/dashboard/support', roles: coreRoles },
   { path: '/dashboard/messages', roles: messagingRoles },
 
+  { path: '/dashboard/support/announcements', roles: [...contentRoles, 'support_staff'] },
+  { path: '/dashboard/support/knowledge-base-editor', roles: [...contentRoles, 'support_staff'] },
+  { path: '/dashboard/support/system-health', roles: supportRoles },
+
   { path: '/dashboard/admin', roles: administratorRoles, nested: true },
-  { path: '/dashboard/content', roles: contentRoles },
+  { path: '/dashboard/content', roles: contentRoles, nested: true },
   { path: '/dashboard/support', roles: supportRoles, nested: true },
 
   { path: '/dashboard/profile', roles: ['graduate'] },

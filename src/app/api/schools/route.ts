@@ -1,25 +1,11 @@
-import { query } from '@/lib/server/db';
+import { listPublicOrganizations } from '@/lib/public-organizations-server';
 import { handleApiError, jsonOk } from '@/lib/server/http';
-
-type SchoolRow = {
-  id: string;
-  name: string;
-};
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const result = await query<SchoolRow>(`
-      SELECT id, COALESCE(NULLIF(school_name, ''), name) AS name
-      FROM users
-      WHERE role = 'school'
-        AND status = 'active'
-        AND deleted_at IS NULL
-      ORDER BY lower(COALESCE(NULLIF(school_name, ''), name)), id
-    `);
-
-    return jsonOk({ schools: result.rows });
+    return jsonOk({ schools: await listPublicOrganizations('school') });
   } catch (error) {
     return handleApiError(error);
   }

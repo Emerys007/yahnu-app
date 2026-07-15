@@ -47,4 +47,8 @@ next-env.d.ts
 /firebase-*.json
 /yahnu-auth*.json
 /yahnu-firestore*.json
+/yahnu-storage*/
+/firebase-storage*/
+/storage-manifest*.json
+/media-url-rewrites*.json
 /migration-data/

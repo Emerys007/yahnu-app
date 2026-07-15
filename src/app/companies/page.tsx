@@ -1,124 +1,108 @@
+import Link from 'next/link';
+import { ArrowRight, BriefcaseBusiness, Building2, PlusCircle, RefreshCw } from 'lucide-react';
 
-"use client"
+import { Footer } from '@/components/landing/footer';
+import { MainNav } from '@/components/landing/main-nav';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { listPublicOrganizations, type PublicOrganization } from '@/lib/public-organizations-server';
 
-import { MainNav } from "@/components/landing/main-nav";
-import { Footer } from "@/components/landing/footer";
-import Link from "next/link";
-import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Briefcase, MapPin, Building, ArrowRight, PlusCircle } from "lucide-react";
+export const dynamic = 'force-dynamic';
 
-interface Company {
-    id: string;
-    name: string;
-    tagline: string;
-    location: string;
-    industry: string;
-    featuredJobs: string[];
-    slug: string;
-    logoUrl: string;
+function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('') || 'Y';
 }
 
-const companiesData: Company[] = [
-    {
-        id: "1",
-        name: "Orange Côte d'Ivoire",
-        slug: "orange-ci",
-        tagline: "Vous rapprocher de l'essentiel",
-        location: "Abidjan, Côte d'Ivoire",
-        industry: "Télécommunications",
-        featuredJobs: ["Ingénieur Réseau Senior", "Chef de Produit Mobile Money", "Data Scientist"],
-        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Orange_logo.svg"
-    },
-    {
-        id: "2",
-        name: "SIFCA",
-        slug: "sifca",
-        tagline: "Le leader de l'agro-industrie en Afrique de l'Ouest",
-        location: "Abidjan, Côte d'Ivoire",
-        industry: "Agriculture",
-        featuredJobs: ["Ingénieur Agronome", "Contrôleur de Gestion", "Responsable Logistique"],
-        logoUrl: "https://groupesifca.com/wp-content/uploads/2021/04/Logotype_Sifca-1.png"
-    },
-    {
-        id: "3",
-        name: "Bridge Bank Group",
-        slug: "bridge-bank-group",
-        tagline: "Au-delà de la banque",
-        location: "Abidjan, Côte d'Ivoire",
-        industry: "Finance & Banque",
-        featuredJobs: ["Analyste Financier", "Chargé d'Affaires Entreprises", "Gestionnaire de Risque"],
-        logoUrl: "https://www.bridgebankgroup.com/images/interface/logo-white.svg"
-    },
-    {
-        id: "4",
-        name: "Ceva Logistics",
-        slug: "ceva-logistics",
-        tagline: "Ce qui vous anime, nous anime.",
-        location: "Abidjan, Côte d'Ivoire",
-        industry: "Transport & Logistique",
-        featuredJobs: ["Déclarant en Douane", "Responsable d'Entrepôt", "Affréteur Routier"],
-        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/6/62/CEVA_Logistics_New_Logo.png"
-    },
-];
+function CompanyCard({ company }: { company: PublicOrganization }) {
+  const jobLabel = company.openJobCount === 1 ? '1 offre ouverte' : `${company.openJobCount} offres ouvertes`;
 
-export default function CompaniesPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <Card className="group flex h-full flex-col border-border/70 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <CardHeader className="space-y-4">
+        <div className="grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-lg font-bold text-primary">
+          {initials(company.name)}
+        </div>
+        <div className="space-y-2">
+          <Badge variant="secondary">{company.industry || 'Entreprise partenaire'}</Badge>
+          <CardTitle className="text-xl leading-snug">{company.name}</CardTitle>
+          <CardDescription className="inline-flex items-center gap-1.5">
+            <BriefcaseBusiness className="h-4 w-4" />{jobLabel}
+          </CardDescription>
+        </div>
+      </CardHeader>
+      <CardContent className="mt-auto">
+        <Button asChild className="w-full" variant="outline">
+          <Link href={`/companies/${encodeURIComponent(company.id)}`}>
+            Voir l’entreprise <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default async function CompaniesPage() {
+  let companies: PublicOrganization[] = [];
+  let unavailable = false;
+
+  try {
+    companies = await listPublicOrganizations('company');
+  } catch (error) {
+    unavailable = true;
+    console.error('Unable to load the public companies directory.', error);
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col bg-background">
       <MainNav />
-      <main className="flex-1 container mx-auto py-12">
-        <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold tracking-tight">Entreprises Partenaires</h1>
-            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                Découvrez les entreprises leaders qui recrutent les meilleurs talents ivoiriens sur Yahnu.
+      <main className="container mx-auto flex-1 py-12">
+        <div className="mx-auto mb-12 max-w-3xl text-center">
+          <Badge variant="secondary" className="mb-4">Réseau Yahnu</Badge>
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Entreprises partenaires</h1>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Découvrez les entreprises actives qui recrutent et font grandir l’écosystème Yahnu.
+          </p>
+        </div>
+
+        {unavailable ? (
+          <Card className="mx-auto max-w-xl">
+            <CardContent className="py-12 text-center">
+              <RefreshCw className="mx-auto h-8 w-8 text-muted-foreground" />
+              <h2 className="mt-4 text-lg font-semibold">Le répertoire est momentanément indisponible</h2>
+              <p className="mt-2 text-sm text-muted-foreground">Réessayez dans un instant.</p>
+              <Button asChild className="mt-6" variant="outline"><Link href="/companies">Actualiser</Link></Button>
+            </CardContent>
+          </Card>
+        ) : companies.length ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {companies.map((company) => <CompanyCard key={company.id} company={company} />)}
+          </div>
+        ) : (
+          <Card className="mx-auto max-w-xl">
+            <CardContent className="py-12 text-center">
+              <Building2 className="mx-auto h-9 w-9 text-muted-foreground" />
+              <h2 className="mt-4 text-lg font-semibold">Aucune entreprise n’est encore publiée</h2>
+              <p className="mt-2 text-sm text-muted-foreground">Revenez bientôt pour découvrir les nouveaux partenaires.</p>
+            </CardContent>
+          </Card>
+        )}
+
+        <Card className="mt-10 border-2 border-dashed border-primary/20 bg-primary/5">
+          <CardContent className="flex flex-col items-center p-8 text-center">
+            <PlusCircle className="mb-4 h-12 w-12 text-primary" />
+            <h2 className="text-2xl font-bold">Votre entreprise sera-t-elle la prochaine&nbsp;?</h2>
+            <p className="mx-auto mt-2 max-w-2xl text-muted-foreground">
+              Rejoignez Yahnu pour présenter vos opportunités aux talents issus des établissements partenaires.
             </p>
-        </div>
-        <div className="space-y-8">
-            {companiesData.map((company) => (
-                <Link href={`/companies/${company.slug}`} key={company.id} className="group block">
-                    <Card className="flex flex-col md:flex-row items-center p-6 gap-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                        <Image src={company.logoUrl} alt={`${company.name} Logo`} width={96} height={96} className="h-24 w-24 shrink-0 object-contain" />
-                        <div className="flex-grow text-center md:text-left">
-                            <h2 className="text-2xl font-bold">{company.name}</h2>
-                            <p className="text-muted-foreground italic">"{company.tagline}"</p>
-                            <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 mt-2 text-sm text-muted-foreground">
-                                <span className="flex items-center gap-1"><Building className="h-4 w-4"/> {company.industry}</span>
-                                <span className="flex items-center gap-1"><MapPin className="h-4 w-4"/> {company.location}</span>
-                            </div>
-                        </div>
-                        <div className="w-full md:w-1/3 text-center md:text-left">
-                            <h3 className="font-semibold mb-2 text-primary">Postes à la une :</h3>
-                            <ul className="space-y-1 text-sm">
-                                {company.featuredJobs.map((job) => (
-                                    <li key={job} className="flex items-center gap-2 justify-center md:justify-start">
-                                        <Briefcase className="h-4 w-4 text-muted-foreground"/>
-                                        <span>{job}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div className="self-center mt-4 md:mt-0">
-                            <Button asChild>
-                                <div className="flex items-center">
-                                    Voir le profil <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"/>
-                                </div>
-                            </Button>
-                        </div>
-                    </Card>
-                </Link>
-            ))}
-             <Card className="bg-primary/5 border-2 border-dashed border-primary/20">
-                <CardContent className="p-8 text-center flex flex-col items-center justify-center">
-                    <PlusCircle className="h-12 w-12 text-primary mb-4" />
-                    <h2 className="text-2xl font-bold mb-2">Votre entreprise est-elle la prochaine ?</h2>
-                    <p className="text-muted-foreground max-w-md mx-auto mb-6">Rejoignez la plateforme Yahnu pour accéder à un vivier de talents qualifiés et prêts à l'emploi issus des meilleures écoles de Côte d'Ivoire.</p>
-                    <Button asChild size="lg">
-                        <Link href="/signup?type=company">Devenir une entreprise partenaire</Link>
-                    </Button>
-                </CardContent>
-            </Card>
-        </div>
+            <Button asChild size="lg" className="mt-6"><Link href="/signup?type=company">Devenir partenaire</Link></Button>
+          </CardContent>
+        </Card>
       </main>
       <Footer />
     </div>

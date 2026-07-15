@@ -6,8 +6,6 @@ import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useFieldArray } from "react-hook-form"
 import { z } from "zod"
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import { useAuth, type EducationEntry } from "@/context/auth-context";
 import { parseResume, type ParseResumeOutput } from "@/ai/flows/resume-parser"
 import { Button } from "@/components/ui/button"
@@ -52,7 +50,7 @@ const earnedBadges = [
 
 export function GraduateProfile() {
   const { toast } = useToast()
-  const { user, loading } = useAuth();
+  const { user, loading, updateProfile } = useAuth();
   const [isParsing, setIsParsing] = useState(false)
   const [isSaving, setIsSaving] = useState(false);
   const [badges, setBadges] = useState(earnedBadges);
@@ -151,13 +149,12 @@ export function GraduateProfile() {
     }
     setIsSaving(true);
     try {
-        const userDocRef = doc(db, "users", user.uid);
         const { email, name, ...updateData } = values; 
         
         const [firstName, ...lastNameParts] = name.split(' ');
         const lastName = lastNameParts.join(' ');
         
-        await updateDoc(userDocRef, {
+        await updateProfile({
             ...updateData,
             name,
             firstName,

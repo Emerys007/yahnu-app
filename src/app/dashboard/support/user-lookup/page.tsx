@@ -1,20 +1,19 @@
 
 "use client"
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, User, Mail, Briefcase, Building, School, UserCheck, Loader2, CheckCircle, Clock, XCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Search, User, Briefcase, Building, School, UserCheck, Loader2, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { db } from "@/lib/firebase";
-import { collection, query, where, getDocs, DocumentData } from "firebase/firestore";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { apiFetch } from '@/lib/api-client';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 
 type UserAccount = {
     id: string;
@@ -27,6 +26,8 @@ type UserAccount = {
     industry?: string;
     joinDate: string;
 };
+
+type UsersResponse = { data: { users: UserAccount[]; hasMore: boolean } };
 
 const UserProfileDialog = ({ user }: { user: UserAccount }) => {
     const getAccountTypeIcon = (type: UserAccount['type']) => {
@@ -119,53 +120,89 @@ export default function UserLookupPage() {
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
     const [allUsers, setAllUsers] = useState<UserAccount[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(false);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [messageRecipient, setMessageRecipient] = useState<UserAccount | null>(null);
+    const [messageBody, setMessageBody] = useState('');
+    const [messageError, setMessageError] = useState('');
+    const [isSendingMessage, setIsSendingMessage] = useState(false);
 
     useEffect(() => {
-        const fetchUsers = async () => {
+        const query = searchTerm.trim();
+        if (query.length < 2) {
+            setAllUsers([]);
+            setHasMore(false);
+            setIsLoading(false);
+            return;
+        }
+        const controller = new AbortController();
+        const timer = window.setTimeout(async () => {
             setIsLoading(true);
             try {
-                const usersRef = collection(db, "users");
-                const q = query(usersRef, where("role", "in", ["graduate", "company", "school", "admin"]));
-                const querySnapshot = await getDocs(q);
-                const usersList = querySnapshot.docs.map(doc => {
-                    const data = doc.data() as DocumentData;
-                    return {
-                        id: doc.id,
-                        name: data.name || data.firstName || data.companyName || data.schoolName || data.email,
-                        email: data.email,
-                        type: data.role,
-                        status: (data.status || 'pending').toLowerCase(),
-                        slug: data.slug || doc.id,
-                        schoolName: data.schoolName || '',
-                        industry: data.industry || '',
-                        joinDate: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
-                    } as UserAccount;
+                const response = await apiFetch<UsersResponse>(`/api/support/users?q=${encodeURIComponent(query)}&limit=25&offset=0`, {
+                    signal: controller.signal,
                 });
-                setAllUsers(usersList);
+                setAllUsers(response.data.users);
+                setHasMore(response.data.hasMore);
             } catch (error) {
-                console.error("Error fetching users: ", error);
+                if (!controller.signal.aborted) console.error("Error fetching users: ", error);
             } finally {
-                setIsLoading(false);
+                if (!controller.signal.aborted) setIsLoading(false);
             }
+        }, 350);
+        return () => {
+            window.clearTimeout(timer);
+            controller.abort();
         };
-        fetchUsers();
-    }, []);
+    }, [searchTerm]);
 
-    const filteredUsers = useMemo(() => {
-        if (!searchTerm.trim()) {
-            return allUsers;
+    const loadMoreUsers = async () => {
+        const query = searchTerm.trim();
+        if (query.length < 2 || !hasMore || isLoadingMore) return;
+        setIsLoadingMore(true);
+        try {
+            const response = await apiFetch<UsersResponse>(
+                `/api/support/users?q=${encodeURIComponent(query)}&limit=25&offset=${allUsers.length}`,
+            );
+            setAllUsers((current) => {
+                const existing = new Set(current.map((user) => user.id));
+                return [...current, ...response.data.users.filter((user) => !existing.has(user.id))];
+            });
+            setHasMore(response.data.hasMore);
+        } catch (error) {
+            console.error('Unable to load more users.', error);
+        } finally {
+            setIsLoadingMore(false);
         }
-        const term = searchTerm.toLowerCase();
-        return allUsers.filter(u =>
-            (u.name && u.name.toLowerCase().includes(term)) ||
-            (u.email && u.email.toLowerCase().includes(term))
-        );
-    }, [searchTerm, allUsers]);
+    };
 
     const handleSendMessage = (user: UserAccount) => {
-        const newConvoId = user.email.split('@')[0].replace(/[^a-z0-9]/gi, '-');
-        router.push(`/dashboard/messages?new=${newConvoId}&name=${encodeURIComponent(user.name)}`);
+        setMessageRecipient(user);
+        setMessageBody('');
+        setMessageError('');
+    };
+
+    const createConversation = async () => {
+        if (!messageRecipient || !messageBody.trim() || isSendingMessage) return;
+        setIsSendingMessage(true);
+        setMessageError('');
+        try {
+            const response = await apiFetch<{ data: { conversation: { id: string } } }>('/api/conversations', {
+                method: 'POST',
+                body: JSON.stringify({
+                    recipientIds: [messageRecipient.id],
+                    initialMessage: messageBody.trim(),
+                }),
+            });
+            const conversationId = response.data.conversation.id;
+            setMessageRecipient(null);
+            router.push(`/dashboard/messages?convoId=${encodeURIComponent(conversationId)}`);
+        } catch (error) {
+            setMessageError(error instanceof Error ? error.message : 'Impossible de créer la conversation.');
+        } finally {
+            setIsSendingMessage(false);
+        }
     };
 
     const getStatusVariant = (status: UserAccount['status']) => {
@@ -250,7 +287,7 @@ export default function UserLookupPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {filteredUsers.length > 0 ? filteredUsers.map(user => (
+                            {allUsers.length > 0 ? allUsers.map(user => (
                                 <TableRow key={user.id}>
                                     <TableCell>
                                         <div className="font-medium">{user.name}</div>
@@ -272,7 +309,13 @@ export default function UserLookupPage() {
                                             </DialogTrigger>
                                             <UserProfileDialog user={user} />
                                         </Dialog>
-                                        <Button variant="outline" size="sm" onClick={() => handleSendMessage(user)}>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => handleSendMessage(user)}
+                                            disabled={user.status !== 'active'}
+                                            title={user.status === 'active' ? 'Envoyer un message' : 'Le compte doit être actif pour recevoir un message'}
+                                        >
                                             Message
                                         </Button>
                                     </TableCell>
@@ -280,15 +323,68 @@ export default function UserLookupPage() {
                             )) : (
                                 <TableRow>
                                     <TableCell colSpan={4} className="text-center h-24">
-                                        Aucun utilisateur ne correspond à votre recherche.
+                                        {searchTerm.trim().length < 2
+                                            ? 'Saisissez au moins deux caractères pour rechercher un utilisateur.'
+                                            : 'Aucun utilisateur ne correspond à votre recherche.'}
                                     </TableCell>
                                 </TableRow>
                             )}
                         </TableBody>
                     </Table>
                     )}
+                    {hasMore && !isLoading && (
+                        <div className="flex justify-center border-t pt-4">
+                            <Button type="button" variant="outline" onClick={() => void loadMoreUsers()} disabled={isLoadingMore}>
+                                {isLoadingMore && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                Charger plus de résultats
+                            </Button>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
+            <Dialog
+                open={Boolean(messageRecipient)}
+                onOpenChange={(open) => {
+                    if (!open && !isSendingMessage) {
+                        setMessageRecipient(null);
+                        setMessageBody('');
+                        setMessageError('');
+                    }
+                }}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Nouveau message</DialogTitle>
+                        <DialogDescription>
+                            Démarrez une conversation privée avec {messageRecipient?.name || 'cet utilisateur'}.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <Textarea
+                        value={messageBody}
+                        onChange={(event) => setMessageBody(event.target.value)}
+                        maxLength={10_000}
+                        rows={7}
+                        placeholder="Écrivez votre message…"
+                        aria-label="Message initial"
+                        disabled={isSendingMessage}
+                    />
+                    {messageError && <p className="text-sm text-destructive" role="alert">{messageError}</p>}
+                    <DialogFooter>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setMessageRecipient(null)}
+                            disabled={isSendingMessage}
+                        >
+                            Annuler
+                        </Button>
+                        <Button type="button" onClick={() => void createConversation()} disabled={isSendingMessage || !messageBody.trim()}>
+                            {isSendingMessage && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Envoyer
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

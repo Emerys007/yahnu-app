@@ -2,16 +2,16 @@
 "use client"
 
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
-import Cookies from 'js-cookie';
-import { useRouter, usePathname } from 'next/navigation';
+import en from '@/locales/en.json';
 import fr from '@/locales/fr.json';
 
-type Locale = 'fr';
+type Locale = 'en' | 'fr';
 
-const translations: Record<string, any> = { fr };
+const translations: Record<Locale, Record<string, unknown>> = { en, fr };
 
 interface LocalizationContextType {
   language: Locale;
+  countryName: string;
   setLanguage: (lang: Locale) => void;
   t: (key: string, params?: { [key: string]: string | number }) => string;
 }
@@ -30,26 +30,27 @@ export const LocalizationProvider = ({ children }: { children: React.ReactNode }
   const [language, setLanguageState] = useState<Locale>('fr');
 
   useEffect(() => {
-    const savedLanguage = Cookies.get('language') as Locale;
-    if (savedLanguage && savedLanguage === 'fr') {
-      setLanguageState(savedLanguage);
-    } else {
-      // Always default to French
-      setLanguageState('fr');
-      Cookies.set('language', 'fr', { expires: 365, path: '/' });
-    }
+    const saved = document.cookie
+      .split('; ')
+      .find((entry) => entry.startsWith('language='))
+      ?.split('=')[1];
+    const preferred: Locale = saved === 'en' ? 'en' : 'fr';
+    setLanguageState(preferred);
+    document.cookie = `language=${preferred}; Max-Age=31536000; Path=/; SameSite=Lax`;
   }, []);
 
   const setLanguage = (lang: Locale) => {
     setLanguageState(lang);
-    Cookies.set('language', lang, { expires: 365, path: '/' });
+    document.cookie = `language=${lang}; Max-Age=31536000; Path=/; SameSite=Lax`;
   };
   
   const t = useCallback((key: string, params?: { [key: string]: string | number }) => {
       const keys = key.split('.');
-      let result = translations[language];
+      let result: unknown = translations[language];
       for (const k of keys) {
-          result = result?.[k];
+          result = result && typeof result === 'object'
+            ? (result as Record<string, unknown>)[k]
+            : undefined;
           if (!result) {
               break;
           }
@@ -66,7 +67,12 @@ export const LocalizationProvider = ({ children }: { children: React.ReactNode }
       return text;
   }, [language]);
 
-  const value = useMemo(() => ({ language, setLanguage, t }), [language, t]);
+  const value = useMemo(() => ({
+    language,
+    countryName: "Côte d'Ivoire",
+    setLanguage,
+    t,
+  }), [language, t]);
 
   return (
     <LocalizationContext.Provider value={value}>

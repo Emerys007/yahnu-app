@@ -1,19 +1,11 @@
-"use client"
+import { FeatureUnavailable } from "@/components/dashboard/feature-unavailable"
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-
-import { useAuth } from "@/context/auth-context"
-
-export default function AnalyticsRedirectPage() {
-  const router = useRouter()
-  const { role } = useAuth()
-
-  useEffect(() => {
-    if (role === "school") router.replace("/dashboard/reports/school-analytics")
-    else if (role === "company") router.replace("/dashboard/reports/company-analytics")
-    else router.replace("/dashboard/reports/custom-report-generator")
-  }, [role, router])
-
-  return <div className="h-24 animate-pulse rounded-xl bg-muted" aria-label="Loading reports" />
+export default function ReportsPage() {
+  return (
+    <FeatureUnavailable
+      title="Reporting is not connected to production data yet"
+      description="Analytics, generated reports, and file exports will return when they are backed by the production database and access controls. No fabricated metrics, report history, or downloads are shown here."
+      actions={[{ href: "/dashboard", label: "Return to dashboard" }]}
+    />
+  )
 }

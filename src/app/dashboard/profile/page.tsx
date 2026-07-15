@@ -2,7 +2,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useFieldArray } from "react-hook-form"
 import { z } from "zod"
@@ -21,9 +20,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Upload, Loader2, PlusCircle, Trash2, Award, Eye, EyeOff, User as UserIcon } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Switch } from "@/components/ui/switch"
+import { Upload, Loader2, PlusCircle, Trash2, Award, User as UserIcon } from "lucide-react"
 import { useLocalization } from "@/context/localization-context"
 
 const educationSchema = z.object({
@@ -42,12 +39,6 @@ const profileSchema = z.object({
   skills: z.string().optional(),
 })
 
-// Mock data for badges
-const earnedBadges = [
-    { id: 'frontend-basics', name: "Frontend Development (React)", visible: true },
-    { id: 'financial-analysis', name: "Financial Analysis", visible: false },
-]
-
 const MAX_RESUME_SIZE_BYTES = 4 * 1024 * 1024
 
 export default function ProfilePage() {
@@ -56,7 +47,6 @@ export default function ProfilePage() {
   const { user, loading, updateProfile } = useAuth();
   const [isParsing, setIsParsing] = useState(false)
   const [isSaving, setIsSaving] = useState(false);
-  const [badges, setBadges] = useState(earnedBadges);
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -195,10 +185,6 @@ export default function ProfilePage() {
     }
   }
 
-  const toggleBadgeVisibility = (id: string) => {
-    setBadges(badges.map(b => b.id === id ? { ...b, visible: !b.visible } : b));
-  }
-  
   if (loading) {
     return <div className="flex justify-center items-center h-64"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
   }
@@ -400,30 +386,14 @@ export default function ProfilePage() {
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><Award /> {t('Certifications & Badges')}</CardTitle>
-                        <CardDescription>{t('Manage the visibility of your earned skill badges.')}</CardDescription>
+                        <CardDescription>Les badges vérifiés associés à votre compte apparaîtront ici.</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        {badges.length > 0 ? badges.map(badge => (
-                            <div key={badge.id} className="flex items-center justify-between p-3 border rounded-lg">
-                                <div className="flex items-center gap-2">
-                                    <Award className="h-5 w-5 text-primary" />
-                                    <span className="font-medium">{t(badge.name)}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                     {badge.visible ? <Eye className="h-4 w-4 text-muted-foreground" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
-                                     <Switch
-                                        checked={badge.visible}
-                                        onCheckedChange={() => toggleBadgeVisibility(badge.id)}
-                                        aria-label={`Toggle visibility for ${badge.name} badge`}
-                                    />
-                                </div>
-                            </div>
-                        )) : (
-                            <p className="text-sm text-muted-foreground text-center py-4">{t('No badges earned yet. Take an assessment to get started!')}</p>
-                        )}
-                        <Button variant="secondary" asChild className="w-full">
-                            <Link href="/dashboard/assessments">{t('Take a New Assessment')}</Link>
-                        </Button>
+                    <CardContent>
+                        <div className="rounded-lg border border-dashed bg-muted/20 p-5 text-center">
+                            <Award className="mx-auto h-7 w-7 text-muted-foreground" />
+                            <p className="mt-3 text-sm font-medium">Aucun badge vérifié à afficher</p>
+                            <p className="mt-1 text-sm text-muted-foreground">Cette section n’affichera que des badges réellement enregistrés sur votre compte.</p>
+                        </div>
                     </CardContent>
                 </Card>
             </div>

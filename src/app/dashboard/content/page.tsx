@@ -1,209 +1,68 @@
+import Link from "next/link"
+import { ArrowUpRight, FileText, Megaphone, Newspaper } from "lucide-react"
 
-'use client'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { PlusCircle, FileText, Globe, Users, Calendar, Edit, Trash2, Eye, Search } from 'lucide-react'
-import { useLocalization } from '@/context/localization-context'
-import { ContentPagesEditor } from '@/features/content/ContentPagesEditor'
+const contentWorkspaces = [
+  {
+    href: "/dashboard/content/blog",
+    title: "Blog posts",
+    description: "Create, edit, publish, and unpublish articles from the production-backed blog workspace.",
+    icon: Newspaper,
+  },
+  {
+    href: "/dashboard/content/static-pages",
+    title: "Static pages",
+    description: "Update the public About, Privacy Policy, and Terms pages through the page-content service.",
+    icon: FileText,
+  },
+  {
+    href: "/dashboard/support/announcements",
+    title: "Announcements",
+    description: "Create and manage announcements using the shared production announcement workflow.",
+    icon: Megaphone,
+  },
+]
 
 export default function ContentManagementPage() {
-  const { t } = useLocalization()
-
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div className="flex items-start gap-4">
-          <div className="bg-primary/10 p-3 rounded-lg">
-            <FileText className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.content.title')}</h1>
-            <p className="text-muted-foreground mt-1">{t('dashboard.content.description')}</p>
-          </div>
-        </div>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          {t('dashboard.content.create_content')}
-        </Button>
+    <div className="mx-auto max-w-5xl space-y-8 py-2">
+      <div className="max-w-2xl space-y-3">
+        <p className="text-sm font-medium text-primary">Content operations</p>
+        <h1 className="text-3xl font-bold tracking-tight">Manage live content</h1>
+        <p className="text-muted-foreground leading-7">
+          Choose a production-backed workspace. Drafts, edits, and publication actions are performed only in the service that owns that content.
+        </p>
       </div>
 
-      <Tabs defaultValue="blog" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="blog">{t('dashboard.content.blog_posts')}</TabsTrigger>
-          <TabsTrigger value="pages">{t('dashboard.content.static_pages')}</TabsTrigger>
-          <TabsTrigger value="announcements">{t('dashboard.content.announcements')}</TabsTrigger>
-        </TabsList>
+      <div className="grid gap-5 md:grid-cols-3">
+        {contentWorkspaces.map((workspace) => {
+          const Icon = workspace.icon
 
-        <TabsContent value="blog" className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <Input placeholder={t('dashboard.content.search_blog_posts')} className="w-[300px]" />
-            </div>
-            <Button>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              {t('dashboard.content.new_blog_post')}
-            </Button>
-          </div>
-
-          <div className="grid gap-6">
-            {[1, 2, 3].map((post) => (
-              <Card key={post}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2">
-                      <CardTitle className="text-xl">{t('dashboard.content.blog_posts')} {post}</CardTitle>
-                      <CardDescription>
-                        {t('dashboard.content.published')} {new Date().toLocaleDateString()} {t('common.by')} {t('blog.author_name')}
-                      </CardDescription>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="secondary">{t('dashboard.content.published')}</Badge>
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    {t('dashboard.content.description')}
-                  </p>
-                  <div className="flex items-center mt-4 space-x-4 text-sm text-muted-foreground">
-                    <div className="flex items-center">
-                      <Users className="mr-1 h-3 w-3" />
-                      {post * 317} {t('dashboard.content.views')}
-                    </div>
-                    <div className="flex items-center">
-                      <Calendar className="mr-1 h-3 w-3" />
-                      {t('dashboard.content.last_updated')} {t('common.time.days_ago', {days: '2'})}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="pages" className="space-y-6">
-          <ContentPagesEditor />
-        </TabsContent>
-
-        <TabsContent value="legacy-pages" className="hidden" aria-hidden="true">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <Input placeholder={t('dashboard.content.search_pages')} className="w-[300px]" />
-            </div>
-            <Button>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              {t('dashboard.content.new_page')}
-            </Button>
-          </div>
-
-          <div className="grid gap-6">
-            {[t('about.title'), t('legal.privacy_title'), t('legal.terms_title'), t('common.contact_us')].map((page) => (
-              <Card key={page}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2">
-                      <CardTitle className="text-xl">{page}</CardTitle>
-                      <CardDescription>
-                        {t('dashboard.content.static')} • {t('dashboard.content.last_updated')} 7 {t('dashboard.content.days_ago')}
-                      </CardDescription>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="outline">{t('dashboard.content.static')}</Badge>
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    {t('dashboard.content.description')}
-                  </p>
-                  <div className="flex items-center mt-4 space-x-4 text-sm text-muted-foreground">
-                    <div className="flex items-center">
-                      <Globe className="mr-1 h-3 w-3" />
-                      {t('dashboard.content.public_page')}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="announcements" className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <Input placeholder={t('dashboard.content.search_announcements')} className="w-[300px]" />
-            </div>
-            <Button>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              {t('dashboard.content.new_announcement')}
-            </Button>
-          </div>
-
-          <div className="grid gap-6">
-            {[1, 2].map((announcement) => (
-              <Card key={announcement}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2">
-                      <CardTitle className="text-xl">{t('dashboard.content.announcements')} {announcement}</CardTitle>
-                      <CardDescription>
-                        {t('dashboard.content.active')} {t('common.until')} {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}
-                      </CardDescription>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="default">{t('dashboard.content.active')}</Badge>
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    {t('dashboard.content.description')}
-                  </p>
-                  <div className="flex items-center mt-4 space-x-4 text-sm text-muted-foreground">
-                    <div className="flex items-center">
-                      <Users className="mr-1 h-3 w-3" />
-                      {t('dashboard.content.all_users')}
-                    </div>
-                    <div className="flex items-center">
-                      <Calendar className="mr-1 h-3 w-3" />
-                      {t('dashboard.content.expires_in')} 7 {t('dashboard.content.days')}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
+          return (
+            <Card key={workspace.href} className="flex flex-col">
+              <CardHeader className="space-y-4">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div className="space-y-2">
+                  <CardTitle>{workspace.title}</CardTitle>
+                  <CardDescription className="leading-6">{workspace.description}</CardDescription>
+                </div>
+              </CardHeader>
+              <CardContent className="mt-auto">
+                <Button asChild className="w-full" variant="outline">
+                  <Link href={workspace.href}>
+                    Open workspace
+                    <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
     </div>
   )
 }

@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 interface RichTextEditorProps {
-  value: string
+  value?: string
   onChange: (value: string) => void
   className?: string
   placeholder?: string
 }
 
-export function RichTextEditor({ value, onChange, className, placeholder = "Write content…" }: RichTextEditorProps) {
+export function RichTextEditor({ value = "", onChange, className, placeholder = "Write content…" }: RichTextEditorProps) {
   const editorRef = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {

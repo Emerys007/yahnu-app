@@ -82,21 +82,46 @@ export async function GET(request: NextRequest) {
 
     const email = claims.email.toLowerCase();
     const user = await transaction(async (client) => {
+      const linkedIdentity = await client.query<{ user_id: string }>(`
+        SELECT user_id FROM auth_identities
+        WHERE provider = 'google.com' AND provider_subject = $1
+        LIMIT 1
+      `, [claims.sub]);
       const existing = await client.query<GoogleUserRow>(`
         SELECT id, email, google_sub, name, first_name, last_name, role, status, school_id,
           school_name, company_name, contact_name, industry, experience, education,
           skills, phone, auth_provider, email_verified_at, created_at
         FROM users
-        WHERE (google_sub = $1 OR lower(email) = $2) AND deleted_at IS NULL
-        ORDER BY CASE WHEN google_sub = $1 THEN 0 ELSE 1 END
+        WHERE (
+          id = $3
+          OR google_sub = $1
+          OR ($3 IS NULL AND lower(email) = $2)
+        ) AND deleted_at IS NULL
+        ORDER BY CASE WHEN id = $3 THEN 0 WHEN google_sub = $1 THEN 1 ELSE 2 END
         LIMIT 1 FOR UPDATE
-      `, [claims.sub, email]);
+      `, [claims.sub, email, linkedIdentity.rows[0]?.user_id ?? null]);
       const row = existing.rows[0];
 
       if (row) {
         if (row.google_sub && row.google_sub !== claims.sub) {
           throw new Error('This email is already linked to another Google identity.');
         }
+        const providerLink = await client.query<{ provider_subject: string }>(`
+          SELECT provider_subject FROM auth_identities
+          WHERE user_id = $1 AND provider = 'google.com'
+          FOR UPDATE
+        `, [row.id]);
+        if (providerLink.rows[0] && providerLink.rows[0].provider_subject !== claims.sub) {
+          throw new Error('This account is already linked to another Google identity.');
+        }
+        await client.query(`
+          INSERT INTO auth_identities (user_id, provider, provider_subject, provider_email)
+          VALUES ($1, 'google.com', $2, $3)
+          ON CONFLICT (user_id, provider) DO UPDATE SET
+            provider_subject = EXCLUDED.provider_subject,
+            provider_email = EXCLUDED.provider_email
+          WHERE auth_identities.provider_subject = EXCLUDED.provider_subject
+        `, [row.id, claims.sub, email]);
         await client.query(`
           UPDATE users SET google_sub = COALESCE(google_sub, $1), auth_provider = 'google',
             email_verified_at = COALESCE(email_verified_at, now())

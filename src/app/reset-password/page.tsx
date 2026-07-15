@@ -48,9 +48,9 @@ function ResetPasswordForm() {
 
   return (
     <form className="space-y-4" onSubmit={submit}>
-      <div className="space-y-2"><Label htmlFor="password">New password</Label><PasswordInput id="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={10} required autoComplete="new-password" /></div>
-      <div className="space-y-2"><Label htmlFor="confirmation">Confirm new password</Label><PasswordInput id="confirmation" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} minLength={10} required autoComplete="new-password" hideSuggestions /></div>
-      <p className="text-xs text-muted-foreground">Use at least 10 characters with a letter and a number.</p>
+      <div className="space-y-2"><Label htmlFor="password">New password</Label><PasswordInput id="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={12} required autoComplete="new-password" /></div>
+      <div className="space-y-2"><Label htmlFor="confirmation">Confirm new password</Label><PasswordInput id="confirmation" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} minLength={12} required autoComplete="new-password" hideSuggestions /></div>
+      <p className="text-xs text-muted-foreground">Use at least 12 characters with a letter and a number.</p>
       {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
       <Button className="w-full" disabled={submitting}>{submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}{submitting ? 'Updating password…' : 'Update password'}</Button>
     </form>

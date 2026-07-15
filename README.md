@@ -1,211 +1,233 @@
 # Yahnu
 
-Yahnu is a career network connecting graduates, institutions, and employers around trusted opportunities. The application now runs entirely on Next.js and PostgreSQL and is designed for deployment on Render.
+Yahnu is a Next.js application for graduates, schools, employers, content teams, and support staff. The target production architecture is a Render Node service with Render PostgreSQL, Yahnu-owned authentication, Resend email, and Google OpenID Connect. Firebase is still the live production system until the cutover checklist below is completed.
 
-## Architecture
+## Current production and target
 
-- **Application:** Next.js 16 App Router with standalone Node output
-- **Database:** PostgreSQL 17 through `node-postgres`
-- **Authentication:** Yahnu-owned password and Google OpenID Connect flows
-- **Sessions:** opaque, revocable, HTTP-only cookies backed by PostgreSQL
-- **Email:** Resend's HTTP API for verification, reset, and staff-invitation messages
-- **Hosting:** Render web service and Render Postgres, provisioned by `render.yaml`
+- Live Firebase project: `yahnu-50c61`
+- Live App Hosting backend: `yahnu-app` in `europe-west4`
+- Live URL: `https://yahnu-app--yahnu-50c61.europe-west4.hosted.app`
+- Live source: `main` at `ed982f3`
+- Firebase rollback tag: `firebase-live-main-2026-07-13`
+- Render release branch: `agent/render-production-main`
+- Production hostname: `yahnu.org`, with `www.yahnu.org` redirected to it after the Render release is healthy
+- Render region: Frankfurt
+- Budgeted Render footprint: **about $17.50/month** (Starter web service $7, Basic-256 MB PostgreSQL $6, and 15 GB database storage at $0.30/GB). This stays below the owner's $25/month ceiling; no automatic storage scaling is enabled.
 
-Firebase is not a runtime dependency. The only Firebase-specific code left is the optional, one-time export/import tooling used during cutover.
+`render.yaml` starts in Maintenance Mode, disables automatic deploys, caps storage autoscaling, and pins Node `22.23.1`. No Render resource has been created merely by committing this file.
 
-## Local setup
+## Local setup and verification
 
-Requirements: Node 22.9 or newer in the Node 22 line, plus Docker Desktop (or a local PostgreSQL 17 server).
+Use exactly Node `22.23.1` (`.nvmrc` and `package.json` are pinned), PostgreSQL 17, and npm.
 
 ```powershell
-Copy-Item .env.example .env.local
+node --version
 npm ci
-docker compose up -d --wait
+Copy-Item .env.example .env.local
+docker compose up -d
 npm run db:migrate
 npm run admin:create -- --email admin@example.com --name "Local Admin" --password "ChangeMe12345!"
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The database-aware health endpoint is [http://localhost:3000/api/health](http://localhost:3000/api/health).
-
-Without `RESEND_API_KEY` and `EMAIL_FROM`, development-mode verification and reset screens expose a local-only link so the complete flow can still be tested. Production fails closed when email is not configured.
-
-Useful checks:
+Open `http://localhost:3000`. To verify a release candidate:
 
 ```powershell
+npm run typecheck
 npm run lint
 npm run lint:i18n
-npm run typecheck
+npm run test:migration
 npm run build
-npm audit --omit=dev
+npm audit
+git diff --check
 ```
 
-Stop the database with `docker compose stop`; restart it with `docker compose up -d --wait`. Data lives in the named `yahnu_pgdata` volume. To smoke-test the production bundle locally after `npm run build`, run `npm start`; the start script loads `.env.local` before launching the standalone server.
+The build script also prepares Next.js standalone output. Run `npm start` to test that exact production artifact at `http://localhost:3000`. Without `RESEND_API_KEY` and `EMAIL_FROM`, development-only verification/reset links are shown in the UI; production fails closed.
 
-## Environment
+Important environment variables:
 
-Copy `.env.example` to `.env.local`. Important values:
+- `DATABASE_URL`: direct PostgreSQL URL for migrations and local development
+- `DATABASE_POOL_URL`: optional pooled runtime URL
+- `AUTH_SECRET`: at least 32 random characters; the same value must be available to import and runtime
+- `APP_URL`: the exact public origin, without a trailing slash
+- `RESEND_API_KEY` and `EMAIL_FROM`: mandatory production email configuration
+- `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`: optional Google sign-in; callback is `${APP_URL}/api/auth/google/callback`
+- `NEXT_PUBLIC_OPENCAGE_API_KEY`: optional address autocomplete
+- `YAHNU_ENABLE_AI`, `GEMINI_API_KEY`, and `YAHNU_GEMINI_MODEL`: optional AI features
 
-- `DATABASE_URL`: direct PostgreSQL connection; migrations always use this URL.
-- `DATABASE_POOL_URL`: optional PgBouncer URL for application traffic. Runtime code prefers it when present.
-- `AUTH_SECRET`: at least 32 random characters in production.
-- `APP_URL`: the public origin, without a trailing slash.
-- `RESEND_API_KEY` and `EMAIL_FROM`: required for production account email.
-- `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`: optional Google login. Register `${APP_URL}/api/auth/google/callback` as an authorized redirect URI.
-- `NEXT_PUBLIC_OPENCAGE_API_KEY`: optional address autocomplete.
-- `GEMINI_API_KEY` plus `YAHNU_ENABLE_AI=true`: optional server-only AI features.
+## Production cutover approval gates
 
-Never commit `.env.local`, database dumps, Firebase exports, or service credentials.
+Before production provisioning, verify these three choices against the current Render pricing page:
 
-## Render deployment
+1. Recurring Render spend remains at or below `$25/month`.
+2. Frankfurt is the immutable web/database region.
+3. `yahnu.org` is the application hostname and `www.yahnu.org` redirects to it.
 
-Create a Render Blueprint from this repository. `render.yaml` provisions a paid Starter web service and a production PostgreSQL database in the same Ohio region. It also:
+The operator also needs working access to GitHub, Render, Firebase/Google Cloud, Firebase Authentication, Resend, Google OAuth, and GoDaddy DNS. Create a tested break-glass `super_admin` before opening production.
 
-- runs `npm ci --include=dev && npm run build`;
-- runs `npm run db:migrate` as a pre-deploy command before traffic moves;
-- injects the internal database URL and generates `AUTH_SECRET`;
-- blocks external database access by default;
-- checks both Node and PostgreSQL through `/api/health`.
+Migrated Firebase password hashes are intentionally not accepted by Yahnu. Linked Google users can continue with Google; every email/password user must complete forgot-password through Resend. Verified sender deliverability, user communication, and recovery support are hard launch gates.
 
-Set the prompted secret values in Render. Set `APP_URL` to the final HTTPS origin. A custom domain change also requires updating the Google callback URI. Verify the `EMAIL_FROM` domain/address in Resend and send a production delivery test before opening registration.
+## Data contract
 
-After the first migration succeeds, immediately enable Render [Maintenance Mode](https://render.com/docs/maintenance-mode) for the web service and verify its `onrender.com` URL returns HTTP 503. Then open Render Shell and create the first super administrator. Use an email that does not belong to any legacy Firebase account. For shell-history safety, add `ADMIN_EMAIL`, `ADMIN_NAME`, and a temporary `ADMIN_PASSWORD` as secret environment variables, run `npm run admin:create`, then remove `ADMIN_PASSWORD`. Additional staff should use the in-app invitation flow.
+The final Firestore export dynamically discovers roots and fails closed on unknown collections or subcollections. The known production roots are:
 
-The migration script uses a session-level PostgreSQL advisory lock. Keep `DATABASE_URL` pointed at the direct port 5432 connection. If PgBouncer is enabled later, expose its `connectionPoolString` separately as `DATABASE_POOL_URL`; never run migrations through the transaction pool.
+`users`, `invites`, `tickets`, `pages`, `dashboards`, `blogPosts`, `conversations`, `notifications`, `emailVerificationCodes`, `mail`, `jobs`, `applications`, and `partnerships`.
 
-## Firebase data cutover
+`announcements` and `knowledgeBaseArticles` are also accounted for as new/optional roots. Cutover requires zero unknown roots, zero unknown subcollections, and zero unaccounted Storage object paths.
 
-The one-time cutover workstation needs the Firebase CLI and Google Cloud CLI (`gcloud`). Rehearse the entire process against staging first and start the final production import from the fresh Blueprint database plus the distinct break-glass administrator.
+Firebase Auth is authoritative for UID, canonical email, verification, disabled state, and linked providers. Firestore only enriches matching Auth users. Password-like fields are recursively removed, legacy email codes are invalidated, Trigger Email bodies/tokens are not retained, and strict imports roll back on skipped, invalid, orphaned, conflicting, or rejected records. Never use `--allow-partial` in production.
 
-The importer treats Firebase Auth as the identity authority. Auth owns UID, canonical email, verification, and disabled state; Firestore can enrich only an already-imported Auth UID. Firestore-only user documents are never resurrected as accounts, an Auth-disabled user cannot be reactivated by stale profile data, and password-like fields are stripped recursively. Any skipped, invalid, orphaned, conflicting, or database-rejected record rolls the whole import back and fails non-zero (the direct script uses exit code 2) unless `--allow-partial` is deliberately supplied.
+## Cutover runbook
 
-### 1. Enforce the source freeze
+### 1. Protect source control and rehearse
 
-Schedule a maintenance window and lower the existing domain's DNS TTL 24-48 hours beforehand. At the start of the window:
+1. Keep Firebase `main` at `ed982f3` and the rollback tag intact.
+2. Disable Firebase App Hosting automatic rollouts before merging or moving migration code to `main`.
+3. Deploy Render only from `agent/render-production-main` with manual deploys while migration is in progress.
+4. Rehearse Auth, Firestore, and full-bucket Storage export/import/verification against a disposable PostgreSQL database.
+5. Confirm `schema_migrations` before every rehearsal. An applied migration checksum may not be rewritten; recreate an empty rehearsal DB or add a new migration.
+6. Inventory every role and dataset before scheduling downtime.
 
-1. Save the current Firebase Auth provider settings and Firestore rules for rollback.
-2. Deploy a maintenance-only Firebase build with registration, login, and all mutations removed.
-3. Temporarily disable the enabled sign-in providers in Firebase Authentication.
-4. Deploy Firestore rules that deny every client write while preserving only the reads needed for the maintenance page.
-5. Prove the freeze: a test signup/sign-in must fail, a direct Firestore write must be denied, and no background worker may still write.
-6. Keep the paid Render web service in Maintenance Mode too; its `onrender.com` URL must return 503 throughout import and reconciliation.
-
-A banner alone is not a freeze. Do not take either export until both source and target write checks pass.
-
-### 2. Export Auth and Firestore
-
-`C:\secure` is only an example path, not a security control. Before exporting, create it on a BitLocker/device-encrypted volume, remove inherited access, grant only the cutover operator access, and inspect the final ACL. Do not proceed if another interactive user or broad group can read it.
+The App Hosting build record names `yahnu-50c61.firebasestorage.app`, while old application source names `yahnu-50c61.appspot.com`. Confirm the actual bucket rather than guessing:
 
 ```powershell
-New-Item -ItemType Directory -Path C:\secure -Force | Out-Null
-icacls C:\secure /inheritance:r
-if ($LASTEXITCODE -ne 0) { throw 'Could not remove inherited export-directory access.' }
-icacls C:\secure /grant:r "$($env:USERDOMAIN)\$($env:USERNAME):(OI)(CI)F"
-if ($LASTEXITCODE -ne 0) { throw 'Could not grant the cutover operator access.' }
-Get-Acl C:\secure | Format-List Owner,AccessToString
-```
-
-Firebase Auth exports can contain password hashes, and legacy Firestore data can contain plaintext secrets. Keep both files out of source control, sync folders, chat, and tickets.
-
-```powershell
-firebase auth:export C:\secure\yahnu-auth.json --project <firebase-project-id> --format=json
-if ($LASTEXITCODE -ne 0) { throw 'Firebase Auth export failed.' }
-
 gcloud auth login
-if ($LASTEXITCODE -ne 0) { throw 'Google Cloud login failed.' }
-$token = gcloud auth print-access-token
-if ($LASTEXITCODE -ne 0) { throw 'Access-token creation failed.' }
-$env:GOOGLE_ACCESS_TOKEN = $token
-try {
-  npm run firebase:export:firestore -- --project <firebase-project-id> --output C:\secure\yahnu-firestore.json
-  if ($LASTEXITCODE -ne 0) { throw 'Firestore export failed.' }
-} finally {
-  Remove-Item Env:GOOGLE_ACCESS_TOKEN -ErrorAction SilentlyContinue
-  $token = $null
-}
+gcloud storage buckets list --project yahnu-50c61
+$bucket = '<exact bucket returned by Google Cloud>'
 ```
 
-The Google identity needs Firestore read permission. The OAuth token is short-lived and is never written by the exporter. Do not use `gcloud firestore export`: it creates a managed Cloud Storage backup, not importer-compatible JSON.
+Always export the full bucket without `--prefix`. The tools cap a single object at 100 MB and the bucket at 10 GB. The proposed database disk is 15 GB, so account for existing tables, bytea overhead, indexes, and transaction/WAL space. As a conservative gate, do not proceed unless current database size plus twice the manifest payload remains below 80% of provisioned disk; otherwise increase the approved plan/disk or redesign the import before downtime.
 
-### 3. Import with explicit review gates
+### 2. Provision Render in maintenance
 
-In Render PostgreSQL **Networking**, temporarily allow only the workstation's current public IP as a `/32`, then copy the full external database URL. The following block prompts for secrets without placing them in shell history, stops after any failed native command, and requires typed confirmation between the dry runs and writes:
+Only after the approval gates, create the Blueprint from `render.yaml` and the release branch. Confirm:
+
+- web and database are in the approved region;
+- Maintenance Mode is already enabled and the public `onrender.com` URL returns `503`;
+- automatic deployment is off;
+- Node is exactly `22.23.1`;
+- migrations complete against the empty database;
+- secrets are populated without placing them in Git or chat;
+- database external access is closed except for a temporary operator `/32` rule during import.
+
+Set up Resend and Google OAuth in staging first. Do not send production reset links until the final hostname has valid TLS and `APP_URL`/OAuth callback match it exactly.
+
+### 3. Archive rollback state
+
+Create an encrypted, access-controlled rollback bundle containing:
+
+- active Firestore and Storage rules;
+- active App Hosting release and automatic-rollout configuration;
+- enabled Firebase Authentication providers;
+- Trigger Email extension and every privileged writer configuration;
+- encrypted Storage token metadata and the tested command needed to restore it only during a pre-write rollback;
+- GoDaddy DNS records for `app`, root, and `www`;
+- the release commit/tag and all environment settings needed to restore Firebase.
+
+Test the restoration procedure in a non-production project. Keep Firebase; do not delete it after launch.
+
+### 4. Freeze Firebase
+
+1. Announce the maintenance window and stop new sessions.
+2. Drain or explicitly disposition pending `mail` documents, then disable Trigger Email.
+3. Disable Firebase sign-in providers and every Admin SDK, scheduled, extension, or background writer.
+4. Disable App Hosting automatic rollouts.
+5. Deploy the deny-all Firestore and Storage rules:
 
 ```powershell
-function Set-SecretEnvironmentVariable([string]$Name, [string]$Prompt) {
-  $secure = Read-Host $Prompt -AsSecureString
-  $pointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
-  try {
-    [Environment]::SetEnvironmentVariable($Name, [Runtime.InteropServices.Marshal]::PtrToStringBSTR($pointer), 'Process')
-  } finally {
-    [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pointer)
-  }
-}
-function Assert-NativeStep([string]$Step) {
-  if ($LASTEXITCODE -ne 0) { throw "$Step failed with exit code $LASTEXITCODE." }
-}
-function Confirm-Gate([string]$Expected, [string]$Prompt) {
-  if ((Read-Host $Prompt) -cne $Expected) { throw 'Cutover stopped at operator review gate.' }
-}
-
-Set-SecretEnvironmentVariable DATABASE_URL 'Paste the full external Render PostgreSQL URL'
-Set-SecretEnvironmentVariable AUTH_SECRET 'Paste the exact Render AUTH_SECRET'
-$env:PGSSLMODE = 'verify-full'
-
-try {
-  npm run db:migrate
-  Assert-NativeStep 'Database migration'
-
-  npm run firebase:import -- --file C:\secure\yahnu-auth.json --source auth --dry-run
-  Assert-NativeStep 'Auth dry run'
-  Confirm-Gate 'IMPORT AUTH' 'Review the complete Auth summary, then type IMPORT AUTH'
-
-  npm run firebase:import -- --file C:\secure\yahnu-auth.json --source auth
-  Assert-NativeStep 'Auth import'
-  Confirm-Gate 'AUTH BACKUP READY' 'Create and wait for a Render logical export now, then type AUTH BACKUP READY'
-
-  npm run firebase:import -- --file C:\secure\yahnu-firestore.json --source firestore --dry-run
-  Assert-NativeStep 'Firestore dry run'
-  Confirm-Gate 'IMPORT FIRESTORE' 'Review every Firestore warning, then type IMPORT FIRESTORE'
-
-  npm run firebase:import -- --file C:\secure\yahnu-firestore.json --source firestore
-  Assert-NativeStep 'Firestore import'
-
-  npm run firebase:verify -- --auth C:\secure\yahnu-auth.json --firestore C:\secure\yahnu-firestore.json
-  Assert-NativeStep 'Post-import reconciliation'
-  Confirm-Gate 'RECONCILIATION APPROVED' 'Review privileged accounts, role/status totals, Firestore-only UIDs, collection counts, and every accepted exception; then type RECONCILIATION APPROVED'
-} finally {
-  Remove-Item Env:DATABASE_URL,Env:PGSSLMODE,Env:AUTH_SECRET -ErrorAction SilentlyContinue
-}
+firebase deploy --project yahnu-50c61 --only firestore:rules --config cutover/firebase/firebase.freeze.json
+firebase deploy --project yahnu-50c61 --only storage --config cutover/firebase/firebase.freeze.json
 ```
 
-Do not bypass a non-zero strict dry run reflexively. Correct the data or importer first. If records are confirmed obsolete and partial import is an explicit business decision, rerun both that dry run and live command with `--allow-partial`, record the accepted exceptions, and expect reconciliation to keep reporting any collection shortfall.
+6. Prove client reads and writes fail and privileged write metrics remain at zero. Also test representative Firebase download-token URLs anonymously: bearer tokens can remain usable independently of the deny-all rules.
+7. After the final Storage export, revoke or rotate download tokens for every private object and re-test them anonymously. Keep the encrypted token metadata only for an approved pre-write rollback; PostgreSQL must retain hashes or redacted URLs, never plaintext download tokens.
 
-The Auth import must commit before the Firestore dry run because Firestore updates are intentionally UID-matched and update-only. The reconciliation command checks the Auth UID set, canonical emails, verification flags, disabled users, privileged accounts, role/status counts, school links, and collection counts.
+Export and verification use privileged OAuth and remain available. The live application may show only its static shell during the freeze; data access is intentionally closed.
 
-Historical Firebase invitations did not record their creator. Non-pending history is retained with null provenance; an untrusted pending legacy invitation is revoked during import and should be recreated from Yahnu after go-live. A pending invite with valid creator provenance remains usable only when imported with the exact Render `AUTH_SECRET`.
+### 5. Create final encrypted exports
 
-### 4. Validate and switch traffic
+Use a new encrypted directory outside this repository, cloud-sync folders, and chat attachments. Firebase Auth JSON can contain password hashes.
 
-1. Complete representative graduate, school, company, staff, password-reset, verification, Google, CMS, dashboard, and support-ticket browser flows in staging before the final freeze. In production maintenance, run the reconciliation command and verify `/api/health` from Render Shell/private access.
-2. Verify the Resend sender and deliver real verification/reset emails from staging. Confirm the production Google callback exactly matches `${APP_URL}/api/auth/google/callback`.
-3. Create a final [Render logical export](https://render.com/docs/postgresql-backups). Paid Render PostgreSQL also provides point-in-time recovery.
-4. Remove the temporary database `/32` rule immediately, revoke temporary Google/Firebase credentials, and delete both local export files with `Remove-Item -LiteralPath C:\secure\yahnu-auth.json,C:\secure\yahnu-firestore.json -Force`. Verify they are gone. Residual-data protection depends on the encrypted volume; a path named `secure` or Windows file deletion alone is not a secure-erasure guarantee.
-5. [Add and verify the custom domain](https://render.com/docs/custom-domains), update DNS, and wait until Render has issued TLS and HTTPS succeeds. Only then disable Render Maintenance Mode.
-6. Monitor health, authentication, email delivery, database errors, and support traffic closely.
+```powershell
+firebase auth:export C:\secure\yahnu-auth.json --project yahnu-50c61 --format=json
 
-Imported accounts intentionally receive no Firebase password hash. Treat legacy credentials as unavailable and direct users through forgot-password; Firebase profile documents could contain plaintext credential fields, which the importer removes.
+$env:GOOGLE_ACCESS_TOKEN = gcloud auth print-access-token
+npm run firebase:export:firestore -- --project yahnu-50c61 --database '(default)' --output C:\secure\yahnu-firestore.json
+npm run firebase:export:storage -- --bucket $bucket --output-dir C:\secure\yahnu-storage
 
-Rollback is lossless only while Render is still in Maintenance Mode and has accepted no new writes. After go-live, switching DNS back to the frozen Firebase database would discard Render-side changes. A later rollback therefore requires putting Render back into maintenance, reverse-reconciling/exporting new Render data, and either applying it to Firebase or explicitly accepting the loss. Never let both databases accept writes concurrently.
+Get-FileHash C:\secure\yahnu-auth.json -Algorithm SHA256
+Get-FileHash C:\secure\yahnu-firestore.json -Algorithm SHA256
+Get-FileHash C:\secure\yahnu-storage\manifest.json -Algorithm SHA256
+```
 
-## Security boundaries
+The Firestore export must report every expected collection and zero unknown subcollections. The Storage manifest must match the observed object count and byte total. Clear `GOOGLE_ACCESS_TOKEN` immediately after export.
 
-- Public signup can only create pending graduate, company, or school accounts.
-- Staff accounts require an email-bound, hashed, expiring, single-use invitation.
-- Every data mutation is authorized by a server route; dashboard visibility is only a UX layer.
-- Graduates cannot approve themselves, change their school association, or mark education as verified.
-- Admin updates are field-allowlisted, sensitive actions revoke sessions, and security-relevant actions are audited.
-- Passwords use memory-hard scrypt hashing; reset and verification tokens are hashed and single-use.
-- Authentication endpoints are rate-limited and reject cross-site browser requests.
-- Production cookies are Secure, HTTP-only, SameSite=Lax, and use the `__Host-` prefix.
-- Health and API errors do not expose database or provider internals.
+### 6. Import and reconcile in Render PostgreSQL
+
+Run from an access-controlled operator machine using the exact Render `DATABASE_URL` and `AUTH_SECRET`, with a temporary `/32` database allowlist. Remove that rule after success, failure, or abort.
+
+```powershell
+npm run db:migrate
+
+npm run firebase:import -- --file C:\secure\yahnu-auth.json --source auth --dry-run
+npm run firebase:import -- --file C:\secure\yahnu-firestore.json --source firestore --dry-run
+npm run firebase:import:storage -- --manifest C:\secure\yahnu-storage\manifest.json --dry-run
+
+npm run firebase:import -- --file C:\secure\yahnu-auth.json --source auth
+npm run firebase:import -- --file C:\secure\yahnu-firestore.json --source firestore
+npm run firebase:import:storage -- --manifest C:\secure\yahnu-storage\manifest.json --rewrite-output C:\secure\yahnu-media-url-rewrites.json
+
+npm run firebase:verify -- --auth C:\secure\yahnu-auth.json --firestore C:\secure\yahnu-firestore.json
+npm run firebase:verify:storage -- --manifest C:\secure\yahnu-storage\manifest.json
+```
+
+Every command must exit zero. Verification must prove exact IDs, normalized operational fields, provider identities, audiences, source hashes, object generations/hashes, public/private media exposure, URL rewrites, and reference linkage. Any mismatch is a no-go.
+
+### 7. Go/no-go validation while Render stays closed
+
+Create and download a final Render logical backup, checksum it, and verify it includes the post-Storage state. Then test all of the following against the Render service while Maintenance Mode remains enabled externally:
+
+- graduate, company, school, admin, super-admin, content, moderator, and support permissions;
+- Google sign-in and forced password reset through real Resend delivery;
+- registration, email verification, reset, invitation, logout, and break-glass access;
+- profiles, schools, graduates, approvals, pages, dashboard layouts, and tickets;
+- public blog list/article, editor CRUD, migrated images, and new uploads;
+- private media IDs are not anonymously retrievable;
+- conversations, older-history pagination, unread counts, broadcasts, ticket handoff, and notifications;
+- jobs, applications, partnerships, announcements, and published knowledge-base content;
+- support user search/direct message, system health, and audit logs;
+- `/api/health`, database latency, error logs, backup restore, TLS, and the Render release commit.
+
+Do not proceed with unresolved warnings, a skipped migration suite, unverified email delivery, an unknown bucket, unknown collections/objects, or insufficient disk/WAL headroom.
+
+### 8. Hostname and release
+
+1. Add `yahnu.org` and `www.yahnu.org` as Render custom domains and use the exact DNS targets Render supplies.
+2. Replace only the root and `www` web records at GoDaddy; preserve all email-related MX, SPF, DKIM, and DMARC records.
+3. Wait for valid TLS, then set `APP_URL=https://yahnu.org` and the Google callback to `https://yahnu.org/api/auth/google/callback`.
+4. Re-run login, reset-email, callback, image, and health smoke tests.
+5. Disable Render Maintenance Mode and watch errors, authentication, email delivery, database capacity, and support traffic closely.
+6. Keep Firebase frozen for the agreed rollback window. Keep Render deploys manual until the migration is formally closed.
+
+### 9. Cleanup
+
+- Remove and verify removal of the temporary database `/32` allowlist on every exit path.
+- Revoke temporary Google/Firebase credentials and clear shell history containing secrets.
+- Securely dispose of Auth, Firestore, Storage object, manifest, and rewrite artifacts according to the retention policy. `Remove-Item` alone is not guaranteed secure erasure on SSDs or synced/encrypted volumes.
+- Rotate any credential that appeared in logs or operator history.
+
+## Rollback
+
+Before Render accepts writes: enable Render Maintenance Mode first, restore the archived Firebase rules, providers, writers, App Hosting release, and only the application DNS record; verify Firebase end to end, then reopen it.
+
+After Render accepts writes: a simple DNS rollback can lose production data. Freeze Render first, reverse-reconcile new Render writes into Firebase or obtain explicit loss acceptance, and only then restore Firebase. Never allow both systems to accept writes.
+
+## Security model
+
+- Browser code never receives database credentials or privileged Firebase credentials.
+- Every mutation is authorized by a server route; dashboard visibility is not an authorization boundary.
+- Sessions use opaque hashed tokens in `HttpOnly`, `Secure`, `SameSite=Lax` cookies.
+- Passwords use memory-hard scrypt; reset, verification, and invitation tokens are hashed and single-use.
+- State-changing routes enforce same-origin checks, body limits, strict schemas, rate limits, and audit logging.
+- Public media is image-signature checked and immutable; migrated private objects remain non-public and require explicit authorization paths.
+- Production responses set restrictive security headers in `next.config.ts`.

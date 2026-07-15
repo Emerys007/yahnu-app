@@ -2,11 +2,15 @@ databases:
   - name: yahnu-postgres
     databaseName: yahnu
     user: yahnu_app
-    plan: basic-1gb
-    region: ohio
+    # Keeps the initial Render deployment below the owner's $25/month ceiling.
+    plan: basic-256mb
+    # Proposed production region. Confirm before first Blueprint creation; Render
+    # does not allow an in-place region change after provisioning.
+    region: frankfurt
     postgresMajorVersion: "17"
     diskSizeGB: 15
-    storageAutoscalingEnabled: true
+    # Keep spend capped until a separate capacity/budget decision is approved.
+    storageAutoscalingEnabled: false
     connectionPool: none
     ipAllowList: []
 
@@ -14,19 +18,21 @@ services:
   - type: web
     name: yahnu-web
     runtime: node
+    branch: agent/render-production-main
     plan: starter
-    region: ohio
+    region: frankfurt
     buildCommand: npm ci --include=dev && npm run build
     preDeployCommand: npm run db:migrate
     startCommand: npm start
     healthCheckPath: /api/health
     maxShutdownDelaySeconds: 30
-    autoDeployTrigger: commit
+    # Production releases are promoted deliberately during the migration.
+    autoDeployTrigger: off
     maintenanceMode:
       enabled: true
     envVars:
       - key: NODE_VERSION
-        value: "22"
+        value: "22.23.1"
       - key: NODE_ENV
         value: production
       - key: HOSTNAME

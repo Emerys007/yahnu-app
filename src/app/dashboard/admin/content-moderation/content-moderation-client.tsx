@@ -11,21 +11,22 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Check, X, Building, School, Eye } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { type ModerationItem } from './page';
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { apiFetch } from "@/lib/api-client";
 
 export function ContentModerationClient({ initialItems }: { initialItems: ModerationItem[] }) {
     const [items, setItems] = useState<ModerationItem[]>(initialItems);
     const [selectedItem, setSelectedItem] = useState<ModerationItem | null>(null);
     const { toast } = useToast();
 
-    const handleAction = async (itemId: string, status: 'active' | 'rejected') => {
+    const handleAction = async (itemId: string, status: 'active' | 'declined') => {
         const itemToUpdate = items.find(item => item.id === itemId);
         if (!itemToUpdate) return;
         
         try {
-            const itemRef = doc(db, "users", itemId);
-            await updateDoc(itemRef, { status: status });
+            await apiFetch(`/api/content/moderation/${encodeURIComponent(itemId)}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ status }),
+            });
             
             setItems(prevItems => prevItems.filter(item => item.id !== itemId));
             
@@ -63,13 +64,13 @@ export function ContentModerationClient({ initialItems }: { initialItems: Modera
                         <TableCell>{item.email}</TableCell>
                         <TableCell>{item.submittedAt}</TableCell>
                         <TableCell className="text-right space-x-2">
-                            <DialogTrigger asChild onSelect={() => setSelectedItem(item)}>
-                                <Button variant="outline" size="sm"><Eye className="h-4 w-4 mr-1" />Détails</Button>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" size="sm" onClick={() => setSelectedItem(item)}><Eye className="h-4 w-4 mr-1" />Détails</Button>
                             </DialogTrigger>
                             <Button variant="ghost" size="icon" className="text-green-500" onClick={() => handleAction(item.id, 'active')}>
                                 <Check className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="text-red-500" onClick={() => handleAction(item.id, 'rejected')}>
+                            <Button variant="ghost" size="icon" className="text-red-500" onClick={() => handleAction(item.id, 'declined')}>
                                 <X className="h-4 w-4" />
                             </Button>
                         </TableCell>
@@ -113,14 +114,16 @@ export function ContentModerationClient({ initialItems }: { initialItems: Modera
                                 {Object.entries(selectedItem.details).map(([key, value]) => (
                                     <div key={key} className="grid grid-cols-3 items-center gap-4">
                                         <div className="font-semibold capitalize col-span-1">{key.replace(/([A-Z])/g, ' $1')}</div>
-                                        <div className="col-span-2 text-muted-foreground">{typeof value === 'object' ? JSON.stringify(value) : value.toString()}</div>
+                                        <div className="col-span-2 break-words text-muted-foreground">
+                                            {typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value ?? '—')}
+                                        </div>
                                     </div>
                                 ))}
                             </div>
                             <DialogFooter>
                                 <Button variant="outline" onClick={() => setSelectedItem(null)}>Fermer</Button>
-                                <Button className="bg-red-500 hover:bg-red-600" onClick={() => { handleAction(selectedItem.id, 'rejected'); setSelectedItem(null); }}>Rejeter</Button>
-                                <Button className="bg-green-500 hover:bg-green-600" onClick={() => { handleAction(selectedItem.id, 'active'); setSelectedItem(null); }}>Approuver</Button>
+                                <Button className="bg-red-500 hover:bg-red-600" onClick={() => { void handleAction(selectedItem.id, 'declined'); setSelectedItem(null); }}>Rejeter</Button>
+                                <Button className="bg-green-500 hover:bg-green-600" onClick={() => { void handleAction(selectedItem.id, 'active'); setSelectedItem(null); }}>Approuver</Button>
                             </DialogFooter>
                         </DialogContent>
                     )}

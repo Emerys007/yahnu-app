@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
+import { MultiSelectCombobox, type MultiSelectOption } from "@/components/ui/multi-select"
 
 
 type GraduateStatus = "pending" | "active"
@@ -96,7 +96,7 @@ const BroadcastDialog = ({ graduates }: { graduates: Graduate[] }) => {
                 <div className="space-y-4 py-4">
                     <div>
                         <Label htmlFor="recipients">{t('Recipients')}</Label>
-                        <MultiSelect
+                        <MultiSelectCombobox
                             groups={[
                                 { label: t('Groups'), options: groupOptions },
                                 { label: t('Individuals'), options: graduateOptions }

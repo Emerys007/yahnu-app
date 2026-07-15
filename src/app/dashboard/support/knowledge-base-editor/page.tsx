@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,12 +11,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { Plus, BookOpen, Edit, Trash2 } from "lucide-react";
+import { Plus, BookOpen, Edit, Trash2, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"
-import { db } from "@/lib/firebase"
-import { useAuth } from "@/context/auth-context"
 import { useToast } from "@/hooks/use-toast"
+import { apiFetch } from "@/lib/api-client"
 
 const articleSchema = z.object({
   id: z.string().optional(),
@@ -26,54 +24,129 @@ const articleSchema = z.object({
 });
 
 type Article = z.infer<typeof articleSchema>;
+type ArticleRecord = Article & { id: string; status: 'draft' | 'published' };
+type ArticleSummary = { id: string; title: string; category: string; contentPreview: string; status: 'draft' | 'published' };
+type ArticlesResponse = { data: { articles: ArticleSummary[]; hasMore: boolean; nextOffset: number | null } };
+type ArticleResponse = { data: { article: ArticleRecord } };
 
-const initialArticles: Article[] = [
-    { id: '1', title: 'Comment créer un profil d\'entreprise ?', category: 'Entreprises', content: 'Pour créer un profil d\'entreprise, allez dans votre tableau de bord et sélectionnez "Profil de l\'entreprise"...' },
-    { id: '2', title: 'Comment postuler à un emploi ?', category: 'Diplômés', content: 'Pour postuler à un emploi, cliquez sur une offre qui vous intéresse et suivez les instructions...' },
-];
+const PAGE_SIZE = 30;
+const previewContent = (content: string) => content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 480);
+const summaryFromArticle = (article: ArticleRecord): ArticleSummary => ({
+    id: article.id,
+    title: article.title,
+    category: article.category,
+    contentPreview: previewContent(article.content),
+    status: article.status,
+});
+const fetchArticles = (offset = 0) => apiFetch<ArticlesResponse>(`/api/knowledge-base?scope=all&limit=${PAGE_SIZE}&offset=${offset}`);
 
 export default function KnowledgeBaseEditorPage() {
-    const { user } = useAuth();
     const { toast } = useToast();
-    const [articles, setArticles] = useState<Article[]>(initialArticles);
-    const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+    const [articles, setArticles] = useState<ArticleSummary[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [hasMore, setHasMore] = useState(false);
+    const [nextOffset, setNextOffset] = useState(0);
+    const [openingArticleId, setOpeningArticleId] = useState<string | null>(null);
+    const [selectedArticle, setSelectedArticle] = useState<ArticleRecord | null>(null);
     const [isFormVisible, setIsFormVisible] = useState(false);
 
     const form = useForm<Article>({
         resolver: zodResolver(articleSchema),
     });
 
-    const onSubmit = async (data: Article) => {
-        if (selectedArticle) {
-            setArticles(articles.map(a => a.id === selectedArticle.id ? { ...data, id: a.id } : a));
-        } else {
-            setArticles([...articles, { ...data, id: Date.now().toString() }]);
-        }
+    useEffect(() => {
+        fetchArticles()
+            .then((response) => {
+                setArticles(response.data.articles);
+                setHasMore(response.data.hasMore);
+                setNextOffset(response.data.nextOffset ?? 0);
+            })
+            .catch((error) => toast({
+                title: 'Chargement impossible',
+                description: error instanceof Error ? error.message : 'La base de connaissances est temporairement indisponible.',
+                variant: 'destructive',
+            }))
+            .finally(() => setIsLoading(false));
+    }, [toast]);
 
+    const loadMoreArticles = async () => {
+        if (!hasMore || isLoadingMore) return;
+        setIsLoadingMore(true);
         try {
-            await addDoc(collection(db, "notifications"), {
-                recipientRole: 'content_manager',
-                text: `Un article de la base de connaissances a été ${selectedArticle ? 'mis à jour' : 'créé'}: "${data.title}"`,
-                link: '/dashboard/support/knowledge-base-editor',
-                type: 'knowledge_base',
-                createdAt: serverTimestamp(),
-                createdBy: user?.uid,
+            const response = await fetchArticles(nextOffset);
+            const loaded = response.data.articles;
+            setArticles((current) => [...current, ...loaded.filter((article) => !current.some((existing) => existing.id === article.id))]);
+            setHasMore(response.data.hasMore);
+            setNextOffset(response.data.nextOffset ?? 0);
+        } catch (error) {
+            toast({
+                title: 'Chargement impossible',
+                description: error instanceof Error ? error.message : 'Impossible de charger davantage d’articles.',
+                variant: 'destructive',
             });
-        } catch (e) {
-            console.error("Error creating notification for knowledge base article:", e);
+        } finally {
+            setIsLoadingMore(false);
         }
+    };
 
-        resetForm();
+    const onSubmit = async (data: Article) => {
+        setIsSaving(true);
+        try {
+            const endpoint = selectedArticle?.id
+                ? `/api/knowledge-base/${encodeURIComponent(selectedArticle.id)}`
+                : '/api/knowledge-base';
+            const response = await apiFetch<ArticleResponse>(endpoint, {
+                method: selectedArticle?.id ? 'PATCH' : 'POST',
+                body: JSON.stringify({ ...data, status: 'published' }),
+            });
+            const saved = summaryFromArticle(response.data.article);
+            setArticles((current) => selectedArticle?.id
+                ? current.map((article) => article.id === selectedArticle.id ? saved : article)
+                : [saved, ...current]);
+            toast({ title: selectedArticle ? 'Article mis à jour' : 'Article publié' });
+            resetForm();
+        } catch (error) {
+            toast({
+                title: 'Enregistrement impossible',
+                description: error instanceof Error ? error.message : 'Veuillez réessayer.',
+                variant: 'destructive',
+            });
+        } finally {
+            setIsSaving(false);
+        }
     };
     
-    const handleEdit = (article: Article) => {
-        setSelectedArticle(article);
-        form.reset(article);
-        setIsFormVisible(true);
+    const handleEdit = async (article: ArticleSummary) => {
+        setOpeningArticleId(article.id);
+        try {
+            const response = await apiFetch<ArticleResponse>(`/api/knowledge-base/${encodeURIComponent(article.id)}?scope=all`);
+            setSelectedArticle(response.data.article);
+            form.reset(response.data.article);
+            setIsFormVisible(true);
+        } catch (error) {
+            toast({
+                title: 'Chargement impossible',
+                description: error instanceof Error ? error.message : 'Impossible de charger cet article.',
+                variant: 'destructive',
+            });
+        } finally {
+            setOpeningArticleId(null);
+        }
     };
 
-    const handleDelete = (id: string) => {
-        setArticles(articles.filter(a => a.id !== id));
+    const handleDelete = async (id: string) => {
+        try {
+            await apiFetch(`/api/knowledge-base/${encodeURIComponent(id)}`, { method: 'DELETE' });
+            setArticles((current) => current.filter((article) => article.id !== id));
+        } catch (error) {
+            toast({
+                title: 'Suppression impossible',
+                description: error instanceof Error ? error.message : 'Veuillez réessayer.',
+                variant: 'destructive',
+            });
+        }
     };
 
     const resetForm = () => {
@@ -149,7 +222,10 @@ export default function KnowledgeBaseEditorPage() {
                                     )} />
                                     <div className="flex justify-end gap-2">
                                         <Button type="button" variant="ghost" onClick={resetForm}>Annuler</Button>
-                                        <Button type="submit">{selectedArticle ? "Mettre à jour" : "Publier"}</Button>
+                                        <Button type="submit" disabled={isSaving}>
+                                            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                                            {selectedArticle ? "Mettre à jour" : "Publier"}
+                                        </Button>
                                     </div>
                                 </form>
                             </Form>
@@ -166,18 +242,32 @@ export default function KnowledgeBaseEditorPage() {
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
+                        {isLoading ? <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div> : null}
+                        {!isLoading && articles.length === 0 ? <p className="py-10 text-center text-sm text-muted-foreground">Aucun article publié.</p> : null}
                         {articles.map(article => (
                             <div key={article.id} className="border rounded-lg p-4 flex justify-between items-start">
                                 <div>
                                     <h3 className="font-semibold">{article.title}</h3>
                                     <p className="text-sm text-muted-foreground">{article.category}</p>
+                                    <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{article.contentPreview}</p>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button size="sm" variant="outline" onClick={() => handleEdit(article)}><Edit className="h-4 w-4 mr-1" />Modifier</Button>
-                                    <Button size="sm" variant="destructive" onClick={() => handleDelete(article.id!)}><Trash2 className="h-4 w-4 mr-1" />Supprimer</Button>
+                                    <Button size="sm" variant="outline" onClick={() => void handleEdit(article)} disabled={openingArticleId !== null}>
+                                        {openingArticleId === article.id ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Edit className="h-4 w-4 mr-1" />}
+                                        Modifier
+                                    </Button>
+                                    <Button size="sm" variant="destructive" onClick={() => article.id && void handleDelete(article.id)}><Trash2 className="h-4 w-4 mr-1" />Supprimer</Button>
                                 </div>
                             </div>
                         ))}
+                        {hasMore ? (
+                            <div className="flex justify-center pt-2">
+                                <Button variant="outline" onClick={() => void loadMoreArticles()} disabled={isLoadingMore}>
+                                    {isLoadingMore ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                                    Afficher plus d&apos;articles
+                                </Button>
+                            </div>
+                        ) : null}
                     </div>
                 </CardContent>
             </Card>

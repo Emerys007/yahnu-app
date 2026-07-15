@@ -18,7 +18,7 @@ function deriveKey(password: string, salt: Buffer, keyLength: number, options: {
 }
 
 export function validatePassword(password: string) {
-  if (password.length < 10) return 'Password must be at least 10 characters.';
+  if (password.length < 12) return 'Password must be at least 12 characters.';
   if (password.length > 128) return 'Password must be 128 characters or fewer.';
   if (!/[A-Za-z]/.test(password) || !/\d/.test(password)) {
     return 'Password must include at least one letter and one number.';

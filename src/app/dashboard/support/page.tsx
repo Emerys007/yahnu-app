@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useAuth, type Role } from "@/context/auth-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LifeBuoy, Mail, Send, University, Search } from "lucide-react";
@@ -17,23 +17,45 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { apiFetch } from "@/lib/api-client";
+import { SafeRichText } from "@/components/ui/safe-rich-text";
 
 interface FaqItem {
+  id?: string;
   question: string;
-  answer: string;
+  answer?: string;
+  preview?: string;
+  richText?: boolean;
+  knowledgeBaseArticle?: boolean;
 }
+
+type KnowledgeBaseResponse = {
+  data: {
+    articles: Array<{ id: string; title: string; category: string; contentPreview: string; status: 'draft' | 'published' }>;
+    hasMore: boolean;
+    nextOffset: number | null;
+  };
+};
+
+type KnowledgeBaseArticleResponse = {
+  data: {
+    article: { id: string; title: string; category: string; content: string; status: 'draft' | 'published' };
+  };
+};
+
+const ARTICLE_PAGE_SIZE = 24;
+const fetchPublishedArticles = (offset = 0) => apiFetch<KnowledgeBaseResponse>(`/api/knowledge-base?scope=published&limit=${ARTICLE_PAGE_SIZE}&offset=${offset}`);
 
 const contactFormSchema = z.object({
   subject: z.string().min(5, { message: "Le sujet doit comporter au moins 5 caractères." }),
   message: z.string().min(20, { message: "Le message doit comporter au moins 20 caractères." }),
 });
 
-const FAQSection = ({ faqs, searchTerm }: { faqs: FaqItem[], searchTerm: string }) => {
+const FAQSection = ({ faqs, searchTerm, onKnowledgeBaseOpen }: { faqs: FaqItem[], searchTerm: string; onKnowledgeBaseOpen: (id: string) => void }) => {
     const filteredFaqs = useMemo(() => {
         if (!searchTerm) return faqs;
         return faqs.filter(faq => 
             faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
+            `${faq.answer ?? ''} ${faq.preview ?? ''}`.replace(/<[^>]*>/g, ' ').toLowerCase().includes(searchTerm.toLowerCase())
         );
     }, [faqs, searchTerm]);
 
@@ -47,11 +69,23 @@ const FAQSection = ({ faqs, searchTerm }: { faqs: FaqItem[], searchTerm: string 
     }
 
     return (
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion
+            type="single"
+            collapsible
+            className="w-full"
+            onValueChange={(value) => {
+                const faq = filteredFaqs.find((entry, index) => `item-${entry.id || index}` === value);
+                if (faq?.knowledgeBaseArticle && faq.id && !faq.answer) void onKnowledgeBaseOpen(faq.id);
+            }}
+        >
         {filteredFaqs.map((faq, index) => (
-            <AccordionItem value={`item-${index}`} key={index}>
+            <AccordionItem value={`item-${faq.id || index}`} key={faq.id || index}>
             <AccordionTrigger>{faq.question}</AccordionTrigger>
-            <AccordionContent>{faq.answer}</AccordionContent>
+            <AccordionContent>
+                {faq.richText && faq.answer
+                    ? <SafeRichText html={faq.answer} className="prose-sm" />
+                    : faq.answer ?? faq.preview ?? 'Chargement de l’article...'}
+            </AccordionContent>
             </AccordionItem>
         ))}
         </Accordion>
@@ -139,13 +173,74 @@ const ContactSupportForm = () => {
 export default function SupportPage() {
   const { user, role } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
+  const [publishedArticles, setPublishedArticles] = useState<KnowledgeBaseResponse['data']['articles']>([]);
+  const [articleContentById, setArticleContentById] = useState<Record<string, string>>({});
+  const [hasMoreArticles, setHasMoreArticles] = useState(false);
+  const [nextArticleOffset, setNextArticleOffset] = useState(0);
+  const [isLoadingArticles, setIsLoadingArticles] = useState(true);
+  const [isLoadingMoreArticles, setIsLoadingMoreArticles] = useState(false);
+  const [loadingArticleIds, setLoadingArticleIds] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchPublishedArticles()
+      .then((response) => {
+        if (cancelled) return;
+        setPublishedArticles(response.data.articles);
+        setHasMoreArticles(response.data.hasMore);
+        setNextArticleOffset(response.data.nextOffset ?? 0);
+      })
+      .catch((error) => console.error('Unable to load published knowledge-base articles.', error))
+      .finally(() => {
+        if (!cancelled) setIsLoadingArticles(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const loadMorePublishedArticles = async () => {
+    if (!hasMoreArticles || isLoadingMoreArticles) return;
+    setIsLoadingMoreArticles(true);
+    try {
+      const response = await fetchPublishedArticles(nextArticleOffset);
+      const loaded = response.data.articles;
+      setPublishedArticles((current) => [...current, ...loaded.filter((article) => !current.some((existing) => existing.id === article.id))]);
+      setHasMoreArticles(response.data.hasMore);
+      setNextArticleOffset(response.data.nextOffset ?? 0);
+    } catch (error) {
+      toast({
+        title: 'Chargement impossible',
+        description: error instanceof Error ? error.message : 'Impossible de charger davantage d’articles.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoadingMoreArticles(false);
+    }
+  };
+
+  const loadArticleContent = async (id: string) => {
+    if (articleContentById[id] !== undefined || loadingArticleIds[id]) return;
+    setLoadingArticleIds((current) => ({ ...current, [id]: true }));
+    try {
+      const response = await apiFetch<KnowledgeBaseArticleResponse>(`/api/knowledge-base/${encodeURIComponent(id)}?scope=published`);
+      setArticleContentById((current) => ({ ...current, [id]: response.data.article.content }));
+    } catch (error) {
+      toast({
+        title: 'Chargement impossible',
+        description: error instanceof Error ? error.message : 'Impossible de charger cet article.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingArticleIds((current) => ({ ...current, [id]: false }));
+    }
+  };
 
   const handleContactSchool = () => {
     if (user?.schoolId) {
-        // Construct a unique but predictable conversation ID for the school
-        const schoolConvoId = `school-admin-${user.schoolId}`;
-        router.push(`/dashboard/messages?new=${schoolConvoId}&name=${encodeURIComponent(user.schoolName || 'Admin École')}`);
+        router.push(`/dashboard/messages?recipientId=${encodeURIComponent(user.schoolId)}&recipientName=${encodeURIComponent(user.schoolName || 'Administration de l’école')}`);
     }
   }
 
@@ -188,7 +283,15 @@ export default function SupportPage() {
   };
 
   const specificFaqs = roleFaqs[role] || [];
-  const allFaqs = [...specificFaqs, ...generalFaqs];
+  const publishedFaqs: FaqItem[] = publishedArticles.map((article) => ({
+    id: article.id,
+    question: article.title,
+    answer: articleContentById[article.id],
+    preview: article.contentPreview,
+    richText: true,
+    knowledgeBaseArticle: true,
+  }));
+  const allFaqs = [...publishedFaqs, ...specificFaqs, ...generalFaqs];
 
   return (
     <motion.div 
@@ -224,7 +327,15 @@ export default function SupportPage() {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <FAQSection faqs={allFaqs} searchTerm={searchTerm} />
+                        {isLoadingArticles ? <p className="mb-4 text-sm text-muted-foreground">Chargement des articles...</p> : null}
+                        <FAQSection faqs={allFaqs} searchTerm={searchTerm} onKnowledgeBaseOpen={loadArticleContent} />
+                        {hasMoreArticles ? (
+                            <div className="mt-6 flex justify-center">
+                                <Button variant="outline" onClick={() => void loadMorePublishedArticles()} disabled={isLoadingMoreArticles}>
+                                    {isLoadingMoreArticles ? 'Chargement...' : 'Afficher plus d’articles'}
+                                </Button>
+                            </div>
+                        ) : null}
                     </CardContent>
                 </Card>
             </div>

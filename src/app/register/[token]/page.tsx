@@ -30,7 +30,7 @@ import { apiFetch } from "@/lib/api-client"
 const adminRegisterSchema = z.object({
     firstName: z.string().min(2, { message: "First name is required." }),
     lastName: z.string().min(2, { message: "Last name is required." }),
-    password: z.string().min(10, { message: "Password must be at least 10 characters." }).regex(/^(?=.*[A-Za-z])(?=.*\d)/, { message: "Password must include a letter and a number." }),
+    password: z.string().min(12, { message: "Password must be at least 12 characters." }).regex(/^(?=.*[A-Za-z])(?=.*\d)/, { message: "Password must include a letter and a number." }),
     confirmPassword: z.string()
 }).refine(data => data.password === data.confirmPassword, {
     message: "Passwords do not match.",

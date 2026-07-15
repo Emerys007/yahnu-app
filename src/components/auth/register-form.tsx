@@ -52,7 +52,7 @@ const baseSchema = z.object({
     role: z.enum(['graduate', 'company', 'school']),
     email: z.string().email({ message: "Please enter a valid email address." }),
     password: z.string()
-        .min(10, { message: "Password must be at least 10 characters." })
+        .min(12, { message: "Password must be at least 12 characters." })
         .max(128, { message: "Password must be 128 characters or fewer." })
         .regex(/[A-Za-z]/, { message: "Password must include at least one letter and one number." })
         .regex(/\d/, { message: "Password must include at least one letter and one number." }),

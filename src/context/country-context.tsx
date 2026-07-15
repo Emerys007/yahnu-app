@@ -6,15 +6,23 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 interface CountryContextType {
   selectedCountry: string;
   setSelectedCountry: (country: string) => void;
+  country: {
+    code: string;
+    name: string;
+  };
 }
 
 const CountryContext = createContext<CountryContextType | undefined>(undefined);
 
 export function CountryProvider({ children }: { children: ReactNode }) {
-  const [selectedCountry, setSelectedCountry] = useState('CI'); // Default to Côte d'Ivoire
+  const [selectedCountry, setSelectedCountry] = useState('CI');
+  const country = {
+    code: selectedCountry,
+    name: selectedCountry === 'CI' ? "Côte d'Ivoire" : selectedCountry,
+  };
 
   return (
-    <CountryContext.Provider value={{ selectedCountry, setSelectedCountry }}>
+    <CountryContext.Provider value={{ selectedCountry, setSelectedCountry, country }}>
       {children}
     </CountryContext.Provider>
   );
