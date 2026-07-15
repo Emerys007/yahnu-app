@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 import { writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 const COLLECTIONS = [
   'users',
@@ -23,6 +24,22 @@ const ACCOUNTED_COLLECTIONS = new Set(COLLECTIONS)
 const PAGE_SIZE = 300
 const MAX_DOCUMENTS_PER_COLLECTION = 250_000
 const SUBCOLLECTION_SCAN_CONCURRENCY = 12
+const MAX_FETCH_ATTEMPTS = 4
+const RETRY_BASE_DELAY_MS = 500
+const RETRY_MAX_DELAY_MS = 2_000
+const RETRYABLE_HTTP_STATUSES = new Set([408, 429, 500, 502, 503, 504])
+const RETRYABLE_NETWORK_CODES = new Set([
+  'EAI_AGAIN',
+  'ECONNRESET',
+  'ECONNREFUSED',
+  'ENETUNREACH',
+  'EHOSTUNREACH',
+  'ETIMEDOUT',
+  'UND_ERR_CONNECT_TIMEOUT',
+  'UND_ERR_HEADERS_TIMEOUT',
+  'UND_ERR_BODY_TIMEOUT',
+  'UND_ERR_SOCKET',
+])
 
 function printHelp() {
   process.stdout.write(`Export every accounted Yahnu Firestore root collection as importer-compatible JSON.
@@ -100,24 +117,87 @@ function documentsBase({ project, database }) {
   return `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(project)}/databases/${encodeURIComponent(database)}/documents`
 }
 
-async function firestoreJson(endpoint, { token, method = 'GET', body } = {}) {
-  const response = await fetch(endpoint, {
+function sleep(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds))
+}
+
+function retryDelayMilliseconds(attempt) {
+  return Math.min(RETRY_MAX_DELAY_MS, RETRY_BASE_DELAY_MS * (2 ** (attempt - 1)))
+}
+
+function transportCode(error) {
+  const code = error?.cause?.code ?? error?.code
+  return typeof code === 'string' && /^[A-Z0-9_]{2,64}$/.test(code) ? code : null
+}
+
+function isRetryableTransportError(error) {
+  return error?.name === 'AbortError'
+    || error?.name === 'TimeoutError'
+    || error?.name === 'TypeError'
+    || RETRYABLE_NETWORK_CODES.has(transportCode(error))
+}
+
+function safeTransportCause(error) {
+  if (error?.name === 'AbortError' || error?.name === 'TimeoutError') return 'request timed out'
+  const code = transportCode(error)
+  return code ? `network error ${code}` : 'network request failed'
+}
+
+async function firestoreJson(
+  endpoint,
+  { token, method = 'GET', body } = {},
+  { fetchImpl = globalThis.fetch, sleepImpl = sleep } = {},
+) {
+  const request = {
     method,
     headers: {
       Authorization: `Bearer ${token}`,
       ...(body ? { 'Content-Type': 'application/json' } : {}),
     },
     body: body ? JSON.stringify(body) : undefined,
-    signal: AbortSignal.timeout(30_000),
-  })
-  if (!response.ok) {
+  }
+
+  for (let attempt = 1; attempt <= MAX_FETCH_ATTEMPTS; attempt += 1) {
+    let response
+    try {
+      response = await fetchImpl(endpoint, {
+        ...request,
+        signal: AbortSignal.timeout(30_000),
+      })
+    } catch (error) {
+      if (isRetryableTransportError(error) && attempt < MAX_FETCH_ATTEMPTS) {
+        await sleepImpl(retryDelayMilliseconds(attempt))
+        continue
+      }
+      const suffix = isRetryableTransportError(error) ? ` after ${attempt} attempts` : ''
+      throw new Error(`Firestore API request failed${suffix}: ${safeTransportCause(error)}.`)
+    }
+
+    if (response.ok) {
+      try {
+        return await response.json()
+      } catch (error) {
+        if (isRetryableTransportError(error) && attempt < MAX_FETCH_ATTEMPTS) {
+          await sleepImpl(retryDelayMilliseconds(attempt))
+          continue
+        }
+        throw new Error(`Firestore API returned an unreadable response: ${safeTransportCause(error)}.`)
+      }
+    }
+
+    if (RETRYABLE_HTTP_STATUSES.has(response.status) && attempt < MAX_FETCH_ATTEMPTS) {
+      await response.body?.cancel().catch(() => undefined)
+      await sleepImpl(retryDelayMilliseconds(attempt))
+      continue
+    }
+
     const responseBody = await response.json().catch(() => null)
     const providerMessage = typeof responseBody?.error?.message === 'string'
       ? ` ${responseBody.error.message.slice(0, 300)}`
       : ''
-    throw new Error(`Firestore API request was rejected (${response.status}).${providerMessage}`)
+    const suffix = RETRYABLE_HTTP_STATUSES.has(response.status) ? ` after ${attempt} attempts` : ''
+    throw new Error(`Firestore API request was rejected (${response.status})${suffix}.${providerMessage}`)
   }
-  return response.json()
 }
 
 async function listCollectionIds({ project, database, token, documentPath = '' }) {
@@ -286,7 +366,11 @@ async function main() {
   process.stdout.write(`${JSON.stringify({ output: outputPath, discoveredCollections, counts }, null, 2)}\n`)
 }
 
-main().catch((error) => {
-  process.stderr.write(`Firestore export failed: ${error instanceof Error ? error.message : String(error)}\n`)
-  process.exitCode = 1
-})
+if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
+  main().catch((error) => {
+    process.stderr.write(`Firestore export failed: ${error instanceof Error ? error.message : String(error)}\n`)
+    process.exitCode = 1
+  })
+}
+
+export { firestoreJson }

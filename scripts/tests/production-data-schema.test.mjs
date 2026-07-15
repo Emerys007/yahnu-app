@@ -28,6 +28,7 @@ import {
   deterministicStorageAssetId as importedStorageAssetId,
   validatedPublicImageContentType,
 } from '../import-firebase-storage.mjs'
+import { firestoreJson } from '../export-firestore-json.mjs'
 import { runtimeTokenHash } from '../verify-firebase-import.mjs'
 import {
   deterministicStorageAssetId as verifiedStorageAssetId,
@@ -86,6 +87,73 @@ async function storageVerifierSql(name) {
   assert.ok(match, `missing Storage verifier SQL constant ${name}`)
   return match[1]
 }
+
+test('Firestore exporter retries bounded transient responses before returning JSON', async () => {
+  const statuses = [503, 503, 200]
+  const delays = []
+  const calls = []
+  const result = await firestoreJson('https://firestore.example.test/read', { token: 'test-token' }, {
+    fetchImpl: async (endpoint, request) => {
+      calls.push({ endpoint, method: request.method })
+      const status = statuses.shift()
+      return status === 200
+        ? new Response(JSON.stringify({ collectionIds: ['users'] }), { status })
+        : new Response('', { status })
+    },
+    sleepImpl: async (milliseconds) => { delays.push(milliseconds) },
+  })
+
+  assert.deepEqual(result, { collectionIds: ['users'] })
+  assert.deepEqual(delays, [500, 1_000])
+  assert.equal(calls.length, 3)
+  assert.ok(calls.every((call) => call.method === 'GET'))
+})
+
+test('Firestore exporter sanitizes exhausted transient network failures', async () => {
+  const token = 'super-sensitive-test-token'
+  const endpoint = 'https://firestore.example.test/read?pageToken=private-page-token'
+  const delays = []
+  let calls = 0
+
+  await assert.rejects(
+    firestoreJson(endpoint, { token }, {
+      fetchImpl: async () => {
+        calls += 1
+        throw new TypeError('fetch failed', { cause: { code: 'ETIMEDOUT' } })
+      },
+      sleepImpl: async (milliseconds) => { delays.push(milliseconds) },
+    }),
+    (error) => {
+      assert.match(error.message, /after 4 attempts/i)
+      assert.match(error.message, /ETIMEDOUT/)
+      assert.equal(error.message.includes(token), false)
+      assert.equal(error.message.includes('private-page-token'), false)
+      return true
+    },
+  )
+
+  assert.equal(calls, 4)
+  assert.deepEqual(delays, [500, 1_000, 2_000])
+})
+
+test('Firestore exporter does not retry authorization failures', async () => {
+  const delays = []
+  let calls = 0
+
+  await assert.rejects(
+    firestoreJson('https://firestore.example.test/read', { token: 'test-token' }, {
+      fetchImpl: async () => {
+        calls += 1
+        return new Response(JSON.stringify({ error: { message: 'The caller is not authorized.' } }), { status: 401 })
+      },
+      sleepImpl: async (milliseconds) => { delays.push(milliseconds) },
+    }),
+    /Firestore API request was rejected \(401\).*caller is not authorized/i,
+  )
+
+  assert.equal(calls, 1)
+  assert.deepEqual(delays, [])
+})
 
 test('production parity schema supports native APIs and Firebase provenance rows', { skip: !PGlite }, async () => {
   const database = await migratedDatabase()
