@@ -33,7 +33,11 @@ import {
   validatedPublicImageContentType,
 } from '../import-firebase-storage.mjs'
 import { firestoreJson } from '../export-firestore-json.mjs'
-import { runtimeTokenHash } from '../verify-firebase-import.mjs'
+import {
+  classifyFirestoreUsersForArchive,
+  expectedArchiveProfileReferences,
+  runtimeTokenHash,
+} from '../verify-firebase-import.mjs'
 import {
   deterministicStorageAssetId as verifiedStorageAssetId,
   hashStoredContentOneAtATime,
@@ -53,6 +57,7 @@ const migrations = [
   '001_render_postgres.sql',
   '002_legacy_invite_provenance.sql',
   '003_production_data_parity.sql',
+  '004_legacy_firestore_user_archives.sql',
 ]
 const sourceHash = 'a'.repeat(64)
 
@@ -254,6 +259,7 @@ test('production parity schema supports native APIs and Firebase provenance rows
       'conversations', 'conversation_participants', 'messages', 'notifications',
       'notification_receipts', 'jobs', 'applications', 'partnerships', 'archived_mail',
       'announcements', 'knowledge_base_articles', 'invalidated_legacy_email_codes',
+      'legacy_firestore_user_archives', 'legacy_firestore_user_archive_references',
     ]) assert.ok(tableNames.has(table), `missing table ${table}`)
 
     const counts = await database.query(`
@@ -296,9 +302,74 @@ test('production constraints reject mismatched media bytes and active legacy aut
       WHERE constraint_name LIKE 'auth_tokens_purpose%'
     `)
     assert.equal(activePurpose.rows.some((row) => String(row.check_clause).includes('legacy')), false)
+
+    await database.exec(`
+      INSERT INTO legacy_firestore_user_archives (
+        legacy_firebase_uid, source_payload, source_hash, archive_reason
+      ) VALUES (
+        'firestore-only-profile', '{"format":"yahnu-legacy-firestore-user-archive-v1"}', '${sourceHash}', 'missing_auth_identity'
+      );
+    `)
+    await assert.rejects(database.exec(`
+      INSERT INTO legacy_firestore_user_archive_references (
+        source_collection, source_id, source_field, legacy_firebase_uid, source_hash
+      ) VALUES ('tickets', 'ticket-1', 'user_id', 'firestore-only-profile', '${sourceHash}');
+    `), /check constraint/i)
   } finally {
     await database.close()
   }
+})
+
+test('Firestore-only profiles are archived only when no Auth identity candidate exists', () => {
+  const auth = {
+    identities: new Map([
+      ['auth-uid', { id: 'auth-uid', email: 'auth@example.com' }],
+      ['direct-uid', { id: 'direct-uid', email: 'direct@example.com' }],
+      ['other-auth', { id: 'other-auth', email: 'other@example.com' }],
+    ]),
+  }
+  const users = {
+    records: new Map([
+      ['auth-uid', { id: 'auth-uid', firestoreIdentityCandidateIds: [], firestoreIdentityCandidateEmails: [] }],
+      ['archive-uid', { id: 'archive-uid', firestoreIdentityCandidateIds: [], firestoreIdentityCandidateEmails: [] }],
+      ['ambiguous-uid', {
+        id: 'ambiguous-uid', firestoreIdentityCandidateIds: ['auth-uid'], firestoreIdentityCandidateEmails: [],
+      }],
+      ['ambiguous-email', {
+        id: 'ambiguous-email', firestoreIdentityCandidateIds: [], firestoreIdentityCandidateEmails: ['auth@example.com'],
+      }],
+      ['direct-uid', {
+        id: 'direct-uid', firestoreIdentityCandidateIds: ['other-auth'], firestoreIdentityCandidateEmails: [],
+      }],
+    ]),
+  }
+  const classification = classifyFirestoreUsersForArchive(users, auth)
+  assert.deepEqual([...classification.active.keys()], ['auth-uid'])
+  assert.deepEqual([...classification.archived.keys()], ['archive-uid'])
+  assert.deepEqual(classification.identityConflicts.sort(), ['ambiguous-email', 'ambiguous-uid', 'direct-uid'])
+})
+
+test('only sanctioned Firestore archive references are expected outside runtime foreign keys', () => {
+  const archiveId = 'archive-uid'
+  const sourceHash = 'b'.repeat(64)
+  const active = new Map([['active-uid', {
+    id: 'active-uid', schoolId: archiveId, firestoreSourceHash: sourceHash,
+  }]])
+  const archived = new Map([[archiveId, { id: archiveId }]])
+  const references = expectedArchiveProfileReferences({
+    jobs: { records: new Map([['job-1', { companyRef: archiveId, sourceHash }]]) },
+    applications: { records: new Map([['application-1', { applicantRef: archiveId, sourceHash }]]) },
+    partnerships: { records: new Map([['partnership-1', {
+      requesterRef: archiveId, partnerRef: archiveId, sourceHash,
+    }]]) },
+  }, active, archived)
+  assert.deepEqual([...references.values()], [
+    { sourceCollection: 'users', sourceId: 'active-uid', sourceField: 'school_id', legacyFirebaseUid: archiveId, sourceHash },
+    { sourceCollection: 'jobs', sourceId: 'job-1', sourceField: 'company_ref', legacyFirebaseUid: archiveId, sourceHash },
+    { sourceCollection: 'applications', sourceId: 'application-1', sourceField: 'applicant_ref', legacyFirebaseUid: archiveId, sourceHash },
+    { sourceCollection: 'partnerships', sourceId: 'partnership-1', sourceField: 'requester_ref', legacyFirebaseUid: archiveId, sourceHash },
+    { sourceCollection: 'partnerships', sourceId: 'partnership-1', sourceField: 'partner_ref', legacyFirebaseUid: archiveId, sourceHash },
+  ])
 })
 
 test('legacy email codes activated with the runtime HMAC are detected', { skip: !PGlite }, async () => {
@@ -343,6 +414,12 @@ test('every production collection importer upsert matches the migrated schema', 
     await database.query(await importerSql('UPDATE_FIRESTORE_USER_SQL'), [
       'user-1', 'Updated User', 'Updated', 'User', 'graduate', 'active', null, null,
       null, null, null, null, '[]', '[]', null, payload, true, sourceHash, null, false,
+    ])
+    await database.query(await importerSql('UPSERT_LEGACY_FIRESTORE_USER_ARCHIVE_SQL'), [
+      'firestore-only-profile', payload, sourceHash, now, now,
+    ])
+    await database.query(await importerSql('UPSERT_LEGACY_FIRESTORE_USER_ARCHIVE_REFERENCE_SQL'), [
+      'jobs', 'job-1', 'company_ref', 'firestore-only-profile', sourceHash,
     ])
     await database.query(await importerSql('UPSERT_TICKET_SQL'), [
       'ticket-1', 'user-1', 'Account assistance',
@@ -429,7 +506,9 @@ test('every production collection importer upsert matches the migrated schema', 
         (SELECT count(*)::integer FROM archived_mail WHERE source_hash = '${sourceHash}') AS mail,
         (SELECT count(*)::integer FROM announcements WHERE source_hash = '${sourceHash}') AS announcements,
         (SELECT count(*)::integer FROM knowledge_base_articles WHERE source_hash = '${sourceHash}') AS knowledge,
-        (SELECT count(*)::integer FROM invalidated_legacy_email_codes WHERE source_hash = '${sourceHash}') AS invalidated_codes
+        (SELECT count(*)::integer FROM invalidated_legacy_email_codes WHERE source_hash = '${sourceHash}') AS invalidated_codes,
+        (SELECT count(*)::integer FROM legacy_firestore_user_archives WHERE source_hash = '${sourceHash}') AS archived_profiles,
+        (SELECT count(*)::integer FROM legacy_firestore_user_archive_references WHERE source_hash = '${sourceHash}') AS archived_profile_references
     `)
     assert.deepEqual(result.rows[0], {
       identities: 1,
@@ -446,6 +525,8 @@ test('every production collection importer upsert matches the migrated schema', 
       announcements: 1,
       knowledge: 1,
       invalidated_codes: 1,
+      archived_profiles: 1,
+      archived_profile_references: 1,
     })
   } finally {
     await database.close()

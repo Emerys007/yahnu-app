@@ -5,6 +5,7 @@ import { pathToFileURL } from 'node:url'
 import pg from 'pg'
 import {
   disambiguateBlogSlugs,
+  firestoreArchivePayload,
   normalizeApplication,
   normalizeBlogPost,
   normalizeConversation,
@@ -605,6 +606,73 @@ function compareSet(label, expected, actual, failures) {
   if (extra.length) failures[`${label}ExtraIds`] = sample(extra)
 }
 
+function archiveReferenceKey(sourceCollection, sourceId, sourceField) {
+  return `${sourceCollection}\0${sourceId}\0${sourceField}`
+}
+
+// A Firestore document is only an archive candidate when there is no direct
+// Auth UID and no embedded UID or email that could identify an Auth account.
+// Ambiguous candidates must stop cutover instead of being silently detached.
+function classifyFirestoreUsersForArchive(users, auth) {
+  const authIds = new Set(auth.identities.keys())
+  const authEmails = new Set([...auth.identities.values()].map((identity) => identity.email))
+  const active = new Map()
+  const archived = new Map()
+  const identityConflicts = []
+  for (const [id, user] of users.records) {
+    const matchingCandidateIds = (user.firestoreIdentityCandidateIds ?? [])
+      .filter((candidate) => authIds.has(candidate))
+    const matchingCandidateEmails = (user.firestoreIdentityCandidateEmails ?? [])
+      .filter((candidate) => authEmails.has(candidate))
+    if (authIds.has(id)) {
+      const directAuthEmail = auth.identities.get(id)?.email ?? null
+      const mismatchedDirectIdentity = matchingCandidateIds.some((candidate) => candidate !== id)
+        || matchingCandidateEmails.some((candidate) => candidate !== directAuthEmail)
+      if (mismatchedDirectIdentity) {
+        identityConflicts.push(id)
+        continue
+      }
+      active.set(id, user)
+      continue
+    }
+    if (matchingCandidateIds.length || matchingCandidateEmails.length) {
+      identityConflicts.push(id)
+      continue
+    }
+    archived.set(id, user)
+  }
+  return { active, archived, identityConflicts }
+}
+
+function expectedArchiveProfileReferences(operational, activeFirestoreUsers, archivedFirestoreUsers) {
+  const expected = new Map()
+  const add = (sourceCollection, sourceId, sourceField, legacyFirebaseUid, sourceHash) => {
+    if (!legacyFirebaseUid || !archivedFirestoreUsers.has(legacyFirebaseUid)) return
+    const reference = {
+      sourceCollection,
+      sourceId,
+      sourceField,
+      legacyFirebaseUid,
+      sourceHash,
+    }
+    expected.set(archiveReferenceKey(sourceCollection, sourceId, sourceField), reference)
+  }
+  for (const [id, user] of activeFirestoreUsers) {
+    add('users', id, 'school_id', user.schoolId, user.firestoreSourceHash)
+  }
+  for (const [id, job] of operational.jobs.records) {
+    add('jobs', id, 'company_ref', job.companyRef, job.sourceHash)
+  }
+  for (const [id, application] of operational.applications.records) {
+    add('applications', id, 'applicant_ref', application.applicantRef, application.sourceHash)
+  }
+  for (const [id, partnership] of operational.partnerships.records) {
+    add('partnerships', id, 'requester_ref', partnership.requesterRef, partnership.sourceHash)
+    add('partnerships', id, 'partner_ref', partnership.partnerRef, partnership.sourceHash)
+  }
+  return expected
+}
+
 function embeddedConversationExpectations(conversations) {
   const messageHashes = new Map()
   const participants = new Set()
@@ -723,6 +791,21 @@ async function main() {
   if (announcementNotificationCollisions.length) {
     failures.announcementNotificationIdCollisions = sample(announcementNotificationCollisions)
   }
+  const firestoreArchiveClassification = classifyFirestoreUsersForArchive(operational.users, auth)
+  if (firestoreArchiveClassification.identityConflicts.length) {
+    failures.firestoreUserArchiveIdentityCandidates = sample(firestoreArchiveClassification.identityConflicts)
+  }
+  const firestoreProfileEmailMismatches = [...firestoreArchiveClassification.active]
+    .filter(([id, user]) => user.email !== auth.identities.get(id)?.email)
+    .map(([id]) => id)
+  if (firestoreProfileEmailMismatches.length) {
+    failures.firestoreProfileAuthEmailMismatches = sample(firestoreProfileEmailMismatches)
+  }
+  const expectedArchivedProfileReferences = expectedArchiveProfileReferences(
+    operational,
+    firestoreArchiveClassification.active,
+    firestoreArchiveClassification.archived,
+  )
 
   const client = new pg.Client(databaseConfig(connectionString))
   await client.connect()
@@ -750,16 +833,136 @@ async function main() {
     if (emailMismatches.length) failures.authEmailMismatches = sample(emailMismatches)
     if (verificationMismatches.length) failures.authVerificationMismatches = sample(verificationMismatches)
     if (disabledNotSuspended.length) failures.disabledUsersNotSuspended = sample(disabledNotSuspended)
-    const firestoreUsersWithoutAuth = setDifference(firestore.users.ids, new Set(auth.identities.keys()))
-    if (firestoreUsersWithoutAuth.length) failures.firestoreUsersWithoutAuth = sample(firestoreUsersWithoutAuth)
+    const archivedFirestoreUsers = firestoreArchiveClassification.archived
+    const archivedFirestoreUserIds = new Set(archivedFirestoreUsers.keys())
+    const archivedProfilesResult = await client.query(`
+      SELECT legacy_firebase_uid, source_payload, source_hash, archive_reason
+      FROM legacy_firestore_user_archives
+    `)
+    const archivedProfiles = new Map(archivedProfilesResult.rows.map((row) => [row.legacy_firebase_uid, row]))
+    compareSet('archivedFirestoreUsers', archivedFirestoreUserIds, new Set(archivedProfiles.keys()), failures)
+    const archivedFirestoreUserHashMismatches = []
+    const archivedFirestoreUserReasonMismatches = []
+    const archivedFirestoreUserPayloadMismatches = []
+    for (const [id, expected] of archivedFirestoreUsers) {
+      const archived = archivedProfiles.get(id)
+      if (!archived) continue
+      if (archived.source_hash !== expected.firestoreSourceHash) archivedFirestoreUserHashMismatches.push(id)
+      if (archived.archive_reason !== 'missing_auth_identity') archivedFirestoreUserReasonMismatches.push(id)
+      if (!jsonEquivalent(archived.source_payload, firestoreArchivePayload(expected))) {
+        archivedFirestoreUserPayloadMismatches.push(id)
+      }
+    }
+    if (archivedFirestoreUserHashMismatches.length) {
+      failures.archivedFirestoreUserHashMismatches = sample(archivedFirestoreUserHashMismatches)
+    }
+    if (archivedFirestoreUserReasonMismatches.length) {
+      failures.archivedFirestoreUserReasonMismatches = sample(archivedFirestoreUserReasonMismatches)
+    }
+    if (archivedFirestoreUserPayloadMismatches.length) {
+      failures.archivedFirestoreUserPayloadMismatches = sample(archivedFirestoreUserPayloadMismatches)
+    }
+    const archivedUsersInRuntime = await client.query(`
+      SELECT id FROM users WHERE id = ANY($1::text[])
+    `, [[...archivedFirestoreUserIds]])
+    if (archivedUsersInRuntime.rowCount) {
+      failures.archivedFirestoreUsersPresentAsRuntimeAccounts = sample(archivedUsersInRuntime.rows.map((row) => row.id))
+    }
+
+    const archivedReferenceResult = await client.query(`
+      SELECT source_collection, source_id, source_field, legacy_firebase_uid, source_hash
+      FROM legacy_firestore_user_archive_references
+    `)
+    const archivedReferences = new Map(archivedReferenceResult.rows.map((row) => [
+      archiveReferenceKey(row.source_collection, row.source_id, row.source_field),
+      row,
+    ]))
+    compareSet(
+      'archivedFirestoreUserReferences',
+      new Set(expectedArchivedProfileReferences.keys()),
+      new Set(archivedReferences.keys()),
+      failures,
+    )
+    const archivedReferenceMismatches = []
+    for (const [key, expected] of expectedArchivedProfileReferences) {
+      const stored = archivedReferences.get(key)
+      if (stored && (
+        stored.legacy_firebase_uid !== expected.legacyFirebaseUid
+        || stored.source_hash !== expected.sourceHash
+      )) archivedReferenceMismatches.push(key)
+    }
+    if (archivedReferenceMismatches.length) {
+      failures.archivedFirestoreUserReferenceMismatches = sample(archivedReferenceMismatches)
+    }
+
+    const archivedReferenceSourceIds = (collection) => [...expectedArchivedProfileReferences.values()]
+      .filter((reference) => reference.sourceCollection === collection)
+      .map((reference) => reference.sourceId)
+    const [archiveUserSources, archiveJobSources, archiveApplicationSources, archivePartnershipSources] = await Promise.all([
+      client.query('SELECT id, school_id FROM users WHERE id = ANY($1::text[])', [archivedReferenceSourceIds('users')]),
+      client.query('SELECT id, company_id FROM jobs WHERE id = ANY($1::text[])', [archivedReferenceSourceIds('jobs')]),
+      client.query('SELECT id, applicant_id FROM applications WHERE id = ANY($1::text[])', [archivedReferenceSourceIds('applications')]),
+      client.query('SELECT id, requester_id, partner_id FROM partnerships WHERE id = ANY($1::text[])', [archivedReferenceSourceIds('partnerships')]),
+    ])
+    const archiveReferenceSources = {
+      users: new Map(archiveUserSources.rows.map((row) => [row.id, row])),
+      jobs: new Map(archiveJobSources.rows.map((row) => [row.id, row])),
+      applications: new Map(archiveApplicationSources.rows.map((row) => [row.id, row])),
+      partnerships: new Map(archivePartnershipSources.rows.map((row) => [row.id, row])),
+    }
+    const archiveReferenceForeignKeyMismatches = []
+    for (const [key, reference] of expectedArchivedProfileReferences) {
+      const source = archiveReferenceSources[reference.sourceCollection].get(reference.sourceId)
+      const foreignKey = reference.sourceCollection === 'users'
+        ? source?.school_id
+        : reference.sourceCollection === 'jobs'
+          ? source?.company_id
+          : reference.sourceCollection === 'applications'
+            ? source?.applicant_id
+            : reference.sourceField === 'requester_ref'
+              ? source?.requester_id
+              : source?.partner_id
+      if (!source || foreignKey !== null) archiveReferenceForeignKeyMismatches.push(key)
+    }
+    if (archiveReferenceForeignKeyMismatches.length) {
+      failures.archivedFirestoreUserReferenceForeignKeyMismatches = sample(archiveReferenceForeignKeyMismatches)
+    }
+    const untrackedDetachedReferences = await client.query(`
+      WITH detached_references AS (
+        SELECT 'jobs'::text AS source_collection, id AS source_id, 'company_ref'::text AS source_field
+        FROM jobs WHERE company_ref IS NOT NULL AND company_id IS NULL
+        UNION ALL
+        SELECT 'applications', id, 'applicant_ref'
+        FROM applications WHERE applicant_ref IS NOT NULL AND applicant_id IS NULL
+        UNION ALL
+        SELECT 'partnerships', id, 'requester_ref'
+        FROM partnerships WHERE requester_ref IS NOT NULL AND requester_id IS NULL
+        UNION ALL
+        SELECT 'partnerships', id, 'partner_ref'
+        FROM partnerships WHERE partner_ref IS NOT NULL AND partner_id IS NULL
+      )
+      SELECT detached_references.source_collection, detached_references.source_id, detached_references.source_field
+      FROM detached_references
+      LEFT JOIN legacy_firestore_user_archive_references archive_reference
+        ON archive_reference.source_collection = detached_references.source_collection
+       AND archive_reference.source_id = detached_references.source_id
+       AND archive_reference.source_field = detached_references.source_field
+      WHERE archive_reference.source_id IS NULL
+      ORDER BY detached_references.source_collection, detached_references.source_id, detached_references.source_field
+    `)
+    if (untrackedDetachedReferences.rowCount) {
+      failures.untrackedDetachedProfileReferences = sample(untrackedDetachedReferences.rows)
+    }
+
     const firestoreUserHashMismatches = []
-    for (const [id, expectedHash] of firestore.users.hashes) {
+    for (const id of firestoreArchiveClassification.active.keys()) {
+      const expectedHash = firestore.users.hashes.get(id)
       const stored = databaseUsers.get(id)
       if (stored && stored.legacy_firestore_source_hash !== expectedHash) firestoreUserHashMismatches.push(id)
     }
     if (firestoreUserHashMismatches.length) failures.firestoreUserHashMismatches = sample(firestoreUserHashMismatches)
     const firestoreUserFieldMismatches = []
-    for (const [id, expected] of operational.users.records) {
+    for (const [id, expected] of firestoreArchiveClassification.active) {
       const stored = databaseUsers.get(id)
       const authExpected = operationalAuthUsers.records.get(id)
       const protectedAuthStatus = ['suspended', 'declined'].includes(authExpected?.status)
@@ -775,6 +978,7 @@ async function main() {
         if (authAvatar) expectedProfile = { ...expectedProfile, avatarUrl: authAvatar }
       }
       const storedProfile = parsedJsonObject(stored?.profile)
+      const expectedSchoolId = archivedFirestoreUserIds.has(expected.schoolId) ? null : expected.schoolId
       const profilesMatch = expectedAvatarHash
         ? stableJson(profileWithoutAvatar(storedProfile)) === stableJson(profileWithoutAvatar(expectedProfile))
         : stableJson(storedProfile) === stableJson(expectedProfile)
@@ -784,7 +988,7 @@ async function main() {
         || stored.last_name !== expected.lastName
         || stored.role !== expected.role
         || stored.status !== expectedStatus
-        || stored.school_id !== expected.schoolId
+        || stored.school_id !== expectedSchoolId
         || stored.school_name !== expected.schoolName
         || stored.company_name !== expected.companyName
         || stored.contact_name !== expected.contactName
@@ -1201,6 +1405,7 @@ async function main() {
         UNION ALL SELECT 'partnership_operational', id, jsonb_build_object('organizationName', organization_name, 'contactEmail', contact_email) FROM partnerships
         UNION ALL SELECT 'mail', id, source_payload FROM archived_mail
         UNION ALL SELECT 'mail_operational', id, jsonb_build_object('from', envelope_from, 'to', envelope_to, 'subject', subject, 'status', delivery_status) FROM archived_mail
+        UNION ALL SELECT 'archived_profile', legacy_firebase_uid, source_payload FROM legacy_firestore_user_archives
         UNION ALL SELECT 'announcement', id, source_payload FROM announcements
         UNION ALL SELECT 'announcement_operational', id, jsonb_build_object('title', title, 'content', content) FROM announcements
         UNION ALL SELECT 'knowledge', id, source_payload FROM knowledge_base_articles
@@ -1233,6 +1438,7 @@ async function main() {
         UNION ALL SELECT 'application', id, cover_letter FROM applications
         UNION ALL SELECT 'partnership', id, concat_ws(' ', organization_name, contact_email) FROM partnerships
         UNION ALL SELECT 'mail', id, concat_ws(' ', envelope_from, envelope_to::text, subject, delivery_status) FROM archived_mail
+        UNION ALL SELECT 'archived_profile', legacy_firebase_uid, source_payload::text FROM legacy_firestore_user_archives
         UNION ALL SELECT 'announcement', id, concat_ws(' ', title, content) FROM announcements
         UNION ALL SELECT 'knowledge', id, concat_ws(' ', title, category, content_html) FROM knowledge_base_articles
       )
@@ -1453,4 +1659,9 @@ if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) 
   })
 }
 
-export { runtimeTokenHash }
+export {
+  archiveReferenceKey,
+  classifyFirestoreUsersForArchive,
+  expectedArchiveProfileReferences,
+  runtimeTokenHash,
+}

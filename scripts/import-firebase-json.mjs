@@ -908,6 +908,35 @@ function authProviderIdentities(record, userId, fallbackEmail, sourceMode) {
   return identities
 }
 
+function firestoreArchivePayload(user) {
+  return {
+    format: 'yahnu-legacy-firestore-user-archive-v1',
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    role: user.role,
+    status: user.status,
+    schoolId: user.schoolId,
+    schoolName: user.schoolName,
+    companyName: user.companyName,
+    contactName: user.contactName,
+    industry: user.industry,
+    experience: user.experience,
+    education: user.education,
+    skills: user.skills,
+    phone: user.phone,
+    profile: user.profile,
+    legacyAvatarUrlSha256: user.legacyAvatarUrlSha256,
+    hasAvatarField: user.hasAvatarField,
+    emailVerifiedAt: user.emailVerifiedAt,
+    lastLoginAt: user.lastLoginAt,
+    sourceCreatedAt: user.createdAt,
+    sourceUpdatedAt: user.sourceUpdatedAt,
+  }
+}
+
 function normalizeUser(source, importTimestamp, sourceMode) {
   const decoded = materializeRecord(source.record)
   if (!decoded) return { error: 'record is not an object' }
@@ -966,6 +995,11 @@ function normalizeUser(source, importTimestamp, sourceMode) {
   const name = importedName || fallbackName
 
   const createdAt = normalizeDate(firstPresent(record.createdAt, record.creationTime, source.record.createTime))
+  const sourceUpdatedAt = normalizeDate(firstPresent(
+    record.updatedAt,
+    record.lastUpdatedAt,
+    source.record.updateTime,
+  ))
   const explicitVerifiedAt = normalizeDate(record.emailVerifiedAt)
   const emailVerified = record.emailVerified === true || String(record.emailVerified).toLowerCase() === 'true'
   const emailVerifiedAt = explicitVerifiedAt ?? (emailVerified ? createdAt ?? importTimestamp : null)
@@ -981,34 +1015,56 @@ function normalizeUser(source, importTimestamp, sourceMode) {
     record.industry, record.experience, education, skills, phone,
   ])) return { error: 'user profile fields contain an unsupported Firebase Storage or signed URL reference', id }
 
+  const firestoreIdentityCandidateIds = sourceMode === 'firestore'
+    ? [...new Set([
+      record.localId,
+      record.uid,
+      record.userId,
+      record.firebaseUid,
+      record.id,
+    ].map(referencedEntityId).filter(Boolean))]
+    : []
+  const firestoreIdentityCandidateEmails = sourceMode === 'firestore'
+    ? [...new Set([
+      record.email,
+      record.emailAddress,
+      ...normalizeArray(record.providerUserInfo).map((provider) => isObject(provider) ? provider.email : null),
+    ].map(normalizeEmail).filter(Boolean))]
+    : []
+  const user = {
+    id,
+    email,
+    name,
+    firstName,
+    lastName,
+    role: roleResult.role,
+    status: statusResult.status,
+    schoolId: referencedUserId(record.schoolId),
+    schoolName: String(record.schoolName ?? '').trim() || null,
+    companyName: String(record.companyName ?? '').trim() || null,
+    contactName: String(record.contactName ?? '').trim() || null,
+    industry: String(record.industry ?? '').trim() || null,
+    experience: String(record.experience ?? '').trim() || null,
+    education,
+    skills,
+    phone,
+    profile: profileMedia.profile,
+    legacyAvatarUrlSha256: profileMedia.legacyAvatarUrlSha256,
+    hasAvatarField: profileMedia.hasAvatarField,
+    emailVerifiedAt,
+    lastLoginAt: normalizeDate(firstPresent(record.lastLoginAt, record.lastSignIn, record.lastSignInTime)),
+    createdAt,
+    sourceUpdatedAt,
+    hasExplicitStatus,
+    firestoreSourceHash: sourceMode === 'firestore' ? sha256(stableJson(rawRecord)) : null,
+    firestoreIdentityCandidateIds,
+    firestoreIdentityCandidateEmails,
+    identities: authProviderIdentities(record, id, email, sourceMode),
+  }
+  if (sourceMode === 'firestore') user.firestoreArchivePayload = firestoreArchivePayload(user)
+
   return {
-    user: {
-      id,
-      email,
-      name,
-      firstName,
-      lastName,
-      role: roleResult.role,
-      status: statusResult.status,
-      schoolId: referencedUserId(record.schoolId),
-      schoolName: String(record.schoolName ?? '').trim() || null,
-      companyName: String(record.companyName ?? '').trim() || null,
-      contactName: String(record.contactName ?? '').trim() || null,
-      industry: String(record.industry ?? '').trim() || null,
-      experience: String(record.experience ?? '').trim() || null,
-      education,
-      skills,
-      phone,
-      profile: profileMedia.profile,
-      legacyAvatarUrlSha256: profileMedia.legacyAvatarUrlSha256,
-      hasAvatarField: profileMedia.hasAvatarField,
-      emailVerifiedAt,
-      lastLoginAt: normalizeDate(firstPresent(record.lastLoginAt, record.lastSignIn, record.lastSignInTime)),
-      createdAt,
-      hasExplicitStatus,
-      firestoreSourceHash: sourceMode === 'firestore' ? sha256(stableJson(rawRecord)) : null,
-      identities: authProviderIdentities(record, id, email, sourceMode),
-    },
+    user,
     roleDefaulted: roleResult.defaulted,
     statusDefaulted: statusResult.defaulted,
   }
@@ -2412,6 +2468,36 @@ const UPSERT_AUTH_IDENTITY_SQL = `
   RETURNING user_id
 `
 
+const UPSERT_LEGACY_FIRESTORE_USER_ARCHIVE_SQL = `
+  INSERT INTO legacy_firestore_user_archives (
+    legacy_firebase_uid, source_payload, source_hash, archive_reason, source_created_at, source_updated_at
+  ) VALUES ($1, $2::jsonb, $3, 'missing_auth_identity', $4::timestamptz, $5::timestamptz)
+  ON CONFLICT (legacy_firebase_uid) DO UPDATE SET
+    source_payload = EXCLUDED.source_payload,
+    source_hash = EXCLUDED.source_hash,
+    archive_reason = EXCLUDED.archive_reason,
+    source_created_at = EXCLUDED.source_created_at,
+    source_updated_at = EXCLUDED.source_updated_at
+  WHERE legacy_firestore_user_archives.source_hash <> EXCLUDED.source_hash
+    OR legacy_firestore_user_archives.source_payload IS DISTINCT FROM EXCLUDED.source_payload
+    OR legacy_firestore_user_archives.source_created_at IS DISTINCT FROM EXCLUDED.source_created_at
+    OR legacy_firestore_user_archives.source_updated_at IS DISTINCT FROM EXCLUDED.source_updated_at
+  RETURNING legacy_firebase_uid
+`
+
+const UPSERT_LEGACY_FIRESTORE_USER_ARCHIVE_REFERENCE_SQL = `
+  INSERT INTO legacy_firestore_user_archive_references (
+    source_collection, source_id, source_field, legacy_firebase_uid, source_hash
+  ) VALUES ($1, $2, $3, $4, $5)
+  ON CONFLICT (source_collection, source_id, source_field) DO UPDATE SET
+    legacy_firebase_uid = EXCLUDED.legacy_firebase_uid,
+    source_hash = EXCLUDED.source_hash,
+    updated_at = now()
+  WHERE legacy_firestore_user_archive_references.legacy_firebase_uid IS DISTINCT FROM EXCLUDED.legacy_firebase_uid
+    OR legacy_firestore_user_archive_references.source_hash <> EXCLUDED.source_hash
+  RETURNING source_id
+`
+
 const UPSERT_BLOG_POST_SQL = `
   INSERT INTO blog_posts (
     id, slug, title, author, excerpt, content_html, status, image_url, created_by,
@@ -2735,6 +2821,7 @@ function baseCollectionSummary(sourceRecords) {
     databaseRejected: 0,
     normalizationWarnings: 0,
     safetyNormalizations: 0,
+    archivedReferences: 0,
   }
 }
 
@@ -2803,6 +2890,10 @@ async function main() {
       identityConflicts: 0,
       identitiesUpserted: 0,
       protectedAccounts: 0,
+      archivedNonAuthProfiles: 0,
+      archivedNonAuthProfilesInserted: 0,
+      archivedNonAuthProfilesUpdated: 0,
+      archivedNonAuthProfilesUnchanged: 0,
     },
     invites: {
       ...baseCollectionSummary(extracted.invites.length),
@@ -3039,15 +3130,118 @@ async function main() {
     const existingUsers = new Map(existingUserResult.rows.map((row) => [row.id, row]))
     const existingSchoolResult = await client.query("SELECT id FROM users WHERE role = 'school' AND deleted_at IS NULL")
     const validSchoolIds = new Set(existingSchoolResult.rows.map((row) => row.id))
+    const existingArchivedUserResult = await client.query(`
+      SELECT legacy_firebase_uid FROM legacy_firestore_user_archives
+    `)
+    const existingArchivedUserIds = new Set(existingArchivedUserResult.rows.map((row) => row.legacy_firebase_uid))
+    const importedAuthIdentityIds = new Set([...existingUsers.values()]
+      .filter((user) => user.legacy_firebase_uid && !user.deleted_at)
+      .map((user) => user.legacy_firebase_uid))
+    const importedAuthIdentityEmails = new Set([...existingUsers.values()]
+      .filter((user) => user.legacy_firebase_uid && !user.deleted_at && typeof user.email === 'string')
+      .map((user) => user.email.toLowerCase()))
+    const archiveCandidateIds = new Set()
+    const identityConflictIds = new Set()
+    if (sourceMode === 'firestore') {
+      for (const user of users) {
+        const existingUser = existingUsers.get(user.id)
+        const matchingCandidateIds = user.firestoreIdentityCandidateIds
+          .filter((id) => importedAuthIdentityIds.has(id))
+        const matchingCandidateEmails = user.firestoreIdentityCandidateEmails
+          .filter((email) => importedAuthIdentityEmails.has(email))
+        const directAuthIdentity = importedAuthIdentityIds.has(user.id)
+        const directAuthEmail = directAuthIdentity && typeof existingUser?.email === 'string'
+          ? existingUser.email.toLowerCase()
+          : null
+        const mismatchedDirectIdentity = directAuthIdentity && (
+          matchingCandidateIds.some((id) => id !== user.id)
+          || matchingCandidateEmails.some((email) => email !== directAuthEmail)
+        )
+        if (mismatchedDirectIdentity || (!existingUser && (matchingCandidateIds.length || matchingCandidateEmails.length))) {
+          identityConflictIds.add(user.id)
+          collections.users.identityConflicts += 1
+          collections.users.skipped += 1
+          warn(`Firestore user ${user.id}: potential Firebase Auth identity requires an explicit reviewed mapping`)
+          continue
+        }
+        if (existingUser) continue
+        archiveCandidateIds.add(user.id)
+      }
+    }
+    const archivedFirestoreUserIds = new Set()
+
+    // Archive candidates before any active-profile reconciliation: an
+    // Auth-backed profile may safely reference one of these archive rows.
+    for (const user of users) {
+      if (!archiveCandidateIds.has(user.id)) continue
+      if (!user.firestoreArchivePayload || !user.firestoreSourceHash) {
+        collections.users.databaseRejected += 1
+        collections.users.skipped += 1
+        warn(`Firestore user ${user.id}: could not create a safe non-auth profile archive`)
+        continue
+      }
+      const existingArchive = existingArchivedUserIds.has(user.id)
+      const archiveOutcome = await executeRecoverableUpsert(
+        client,
+        'firebase_non_auth_user_archive',
+        UPSERT_LEGACY_FIRESTORE_USER_ARCHIVE_SQL,
+        [
+          user.id,
+          JSON.stringify(user.firestoreArchivePayload),
+          user.firestoreSourceHash,
+          user.createdAt,
+          user.sourceUpdatedAt,
+        ],
+      )
+      if (archiveOutcome.error) {
+        collections.users.databaseRejected += 1
+        collections.users.skipped += 1
+        warn(`Firestore user ${user.id}: non-auth profile archive was rejected (${archiveOutcome.error.code})`)
+        continue
+      }
+      archivedFirestoreUserIds.add(user.id)
+      collections.users.archivedNonAuthProfiles += 1
+      if (!archiveOutcome.result.rowCount) collections.users.archivedNonAuthProfilesUnchanged += 1
+      else if (existingArchive) collections.users.archivedNonAuthProfilesUpdated += 1
+      else {
+        collections.users.archivedNonAuthProfilesInserted += 1
+        existingArchivedUserIds.add(user.id)
+      }
+    }
+
+    async function reconcileArchivedProfileReference(collectionName, recordId, fieldName, reference, sourceHash) {
+      const archivedProfileId = reference && archivedFirestoreUserIds.has(reference) ? reference : null
+      if (!archivedProfileId) {
+        await client.query(`
+          DELETE FROM legacy_firestore_user_archive_references
+          WHERE source_collection = $1 AND source_id = $2 AND source_field = $3
+        `, [collectionName, recordId, fieldName])
+        return false
+      }
+      const outcome = await executeRecoverableUpsert(
+        client,
+        'firebase_archived_profile_reference',
+        UPSERT_LEGACY_FIRESTORE_USER_ARCHIVE_REFERENCE_SQL,
+        [collectionName, recordId, fieldName, archivedProfileId, sourceHash],
+      )
+      if (outcome.error) {
+        collections[collectionName].databaseRejected += 1
+        collections[collectionName].skipped += 1
+        warn(`${collectionName} ${recordId}: archived profile reference was rejected (${outcome.error.code})`)
+        return true
+      }
+      collections[collectionName].archivedReferences += 1
+      return true
+    }
 
     for (const user of users) {
       const existingUser = existingUsers.get(user.id)
       const existingById = Boolean(existingUser)
 
-      if (sourceMode === 'firestore' && (!existingUser || existingUser.legacy_firebase_uid !== user.id)) {
-        collections.users.orphaned += 1
-        collections.users.skipped += 1
-        warn(`Firestore user ${user.id}: no matching Firebase Auth identity was imported`)
+      if (sourceMode === 'firestore' && identityConflictIds.has(user.id)) {
+        continue
+      }
+      if (sourceMode === 'firestore' && !existingUser) {
         continue
       }
       if (existingUser?.deleted_at || (existingUser && existingUser.legacy_firebase_uid !== user.id)) {
@@ -3067,7 +3261,13 @@ async function main() {
         warn(`Firestore user ${user.id}: profile email differed from Firebase Auth and was ignored`)
       }
 
-      if (user.schoolId && !validSchoolIds.has(user.schoolId)) {
+      const archivedSchoolReference = sourceMode === 'firestore'
+        && user.schoolId
+        && archivedFirestoreUserIds.has(user.schoolId)
+        ? user.schoolId
+        : null
+      if (archivedSchoolReference) user.schoolId = null
+      else if (user.schoolId && !validSchoolIds.has(user.schoolId)) {
         collections.users.missingSchoolReferences += 1
         collections.users.orphaned += 1
         warn(`User ${user.id}: school ${user.schoolId} was not found; school_id was left unset`)
@@ -3116,6 +3316,15 @@ async function main() {
             collections.users.identitiesUpserted += Number(identityOutcome.result.rowCount > 0)
           }
         }
+      }
+      if (sourceMode === 'firestore') {
+        await reconcileArchivedProfileReference(
+          'users',
+          user.id,
+          'school_id',
+          archivedSchoolReference,
+          user.firestoreSourceHash,
+        )
       }
       if (!outcome.result.rowCount) {
         collections.users.unchanged += 1
@@ -3341,8 +3550,9 @@ async function main() {
 
     const existingJobIds = await existingIdSet('SELECT id FROM jobs')
     for (const job of jobs) {
-      noteMissingReference('jobs', job.id, 'company', job.companyRef, validUserIds)
-      await trackedUpsert('jobs', job.id, existingJobIds, 'firebase_job_import', UPSERT_JOB_SQL, [
+      const archivedCompanyReference = archivedFirestoreUserIds.has(job.companyRef)
+      if (!archivedCompanyReference) noteMissingReference('jobs', job.id, 'company', job.companyRef, validUserIds)
+      const jobOutcome = await trackedUpsert('jobs', job.id, existingJobIds, 'firebase_job_import', UPSERT_JOB_SQL, [
         job.id,
         job.companyRef && validUserIds.has(job.companyRef) ? job.companyRef : null,
         job.companyRef,
@@ -3360,14 +3570,20 @@ async function main() {
         job.createdAt,
         job.updatedAt,
       ])
+      if (jobOutcome.accepted) {
+        await reconcileArchivedProfileReference('jobs', job.id, 'company_ref', job.companyRef, job.sourceHash)
+      }
     }
 
     const validJobIds = await existingIdSet('SELECT id FROM jobs')
     const existingApplicationIds = await existingIdSet('SELECT id FROM applications')
     for (const application of applications) {
       noteMissingReference('applications', application.id, 'job', application.jobRef, validJobIds)
-      noteMissingReference('applications', application.id, 'applicant', application.applicantRef, validUserIds)
-      await trackedUpsert('applications', application.id, existingApplicationIds, 'firebase_application_import', UPSERT_APPLICATION_SQL, [
+      const archivedApplicantReference = archivedFirestoreUserIds.has(application.applicantRef)
+      if (!archivedApplicantReference) {
+        noteMissingReference('applications', application.id, 'applicant', application.applicantRef, validUserIds)
+      }
+      const applicationOutcome = await trackedUpsert('applications', application.id, existingApplicationIds, 'firebase_application_import', UPSERT_APPLICATION_SQL, [
         application.id,
         application.jobRef && validJobIds.has(application.jobRef) ? application.jobRef : null,
         application.jobRef,
@@ -3382,13 +3598,28 @@ async function main() {
         application.submittedAt,
         application.updatedAt,
       ])
+      if (applicationOutcome.accepted) {
+        await reconcileArchivedProfileReference(
+          'applications',
+          application.id,
+          'applicant_ref',
+          application.applicantRef,
+          application.sourceHash,
+        )
+      }
     }
 
     const existingPartnershipIds = await existingIdSet('SELECT id FROM partnerships')
     for (const partnership of partnerships) {
-      noteMissingReference('partnerships', partnership.id, 'requester', partnership.requesterRef, validUserIds)
-      noteMissingReference('partnerships', partnership.id, 'partner', partnership.partnerRef, validUserIds)
-      await trackedUpsert('partnerships', partnership.id, existingPartnershipIds, 'firebase_partnership_import', UPSERT_PARTNERSHIP_SQL, [
+      const archivedRequesterReference = archivedFirestoreUserIds.has(partnership.requesterRef)
+      const archivedPartnerReference = archivedFirestoreUserIds.has(partnership.partnerRef)
+      if (!archivedRequesterReference) {
+        noteMissingReference('partnerships', partnership.id, 'requester', partnership.requesterRef, validUserIds)
+      }
+      if (!archivedPartnerReference) {
+        noteMissingReference('partnerships', partnership.id, 'partner', partnership.partnerRef, validUserIds)
+      }
+      const partnershipOutcome = await trackedUpsert('partnerships', partnership.id, existingPartnershipIds, 'firebase_partnership_import', UPSERT_PARTNERSHIP_SQL, [
         partnership.id,
         partnership.requesterRef && validUserIds.has(partnership.requesterRef) ? partnership.requesterRef : null,
         partnership.requesterRef,
@@ -3403,6 +3634,22 @@ async function main() {
         partnership.createdAt,
         partnership.updatedAt,
       ])
+      if (partnershipOutcome.accepted) {
+        await reconcileArchivedProfileReference(
+          'partnerships',
+          partnership.id,
+          'requester_ref',
+          partnership.requesterRef,
+          partnership.sourceHash,
+        )
+        await reconcileArchivedProfileReference(
+          'partnerships',
+          partnership.id,
+          'partner_ref',
+          partnership.partnerRef,
+          partnership.sourceHash,
+        )
+      }
     }
 
     const validTicketIds = await existingIdSet('SELECT id FROM tickets')
@@ -3801,6 +4048,7 @@ export {
   normalizePartnership,
   normalizeTicket,
   normalizeUser,
+  firestoreArchivePayload,
   preflightFirebaseAuthExport,
   isValidatedImportedHtml,
   synthesizedAnnouncementNotification,
