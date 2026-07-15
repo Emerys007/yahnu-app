@@ -6,15 +6,19 @@ import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
 import {
+  disambiguateBlogSlugs,
+  hasBlockingImportIssues,
   normalizeAnnouncement,
   normalizeApplication,
   normalizeBlogPost,
   normalizeConversation,
+  normalizeDashboard,
   normalizeInvite,
   normalizeJob,
   normalizeKnowledgeBaseArticle,
   normalizeMail,
   normalizeNotification,
+  normalizePage,
   normalizePartnership,
   normalizeTicket,
   normalizeUser,
@@ -1037,6 +1041,90 @@ test('blog normalization fails closed instead of truncating runtime-bound fields
     inferredId: null,
   }, timestamp)
   assert.match(oversizedImage.error, /image URL exceeds/i)
+})
+
+test('legacy application status aliases map only to supported Render statuses', () => {
+  const timestamp = '2026-07-13T00:00:00.000Z'
+  const pending = normalizeApplication({
+    record: { id: 'application-pending', status: 'pending' }, inferredId: null,
+  }, timestamp)
+  const reviewed = normalizeApplication({
+    record: { id: 'application-reviewed', status: 'reviewed' }, inferredId: null,
+  }, timestamp)
+  const unsupported = normalizeApplication({
+    record: { id: 'application-unsupported', status: 'needs-followup' }, inferredId: null,
+  }, timestamp)
+
+  assert.equal(pending.application.status, 'submitted')
+  assert.equal(reviewed.application.status, 'reviewing')
+  assert.match(unsupported.error, /not supported/i)
+})
+
+test('duplicate blog slugs are deterministically disambiguated without replacing source slugs', () => {
+  const baseSlug = 'shared-migration-slug'
+  const laterId = 'blog-later'
+  const digest = createHash('sha256').update(laterId).digest('hex')
+  const posts = [
+    { id: laterId, slug: baseSlug, slugPriorityAt: '2026-07-13T00:00:00.000Z' },
+    { id: 'blog-earlier', slug: baseSlug, slugPriorityAt: '2025-07-13T00:00:00.000Z' },
+    { id: 'blog-reserved', slug: `${baseSlug}-${digest.slice(0, 8)}`, slugPriorityAt: '2025-01-01T00:00:00.000Z' },
+  ]
+
+  const resolved = disambiguateBlogSlugs(posts)
+  const reversed = disambiguateBlogSlugs([...posts].reverse())
+  const byId = new Map(resolved.posts.map((post) => [post.id, post.slug]))
+  const reversedById = new Map(reversed.posts.map((post) => [post.id, post.slug]))
+
+  assert.equal(resolved.slugDisambiguated, 1)
+  assert.equal(byId.get('blog-earlier'), baseSlug)
+  assert.equal(byId.get(laterId), `${baseSlug}-${digest.slice(0, 12)}`)
+  assert.equal(byId.get('blog-reserved'), `${baseSlug}-${digest.slice(0, 8)}`)
+  assert.deepEqual([...byId.entries()].sort(), [...reversedById.entries()].sort())
+  assert.equal(posts[0].slug, baseSlug)
+
+  const longSlug = 'a'.repeat(120)
+  const longResolved = disambiguateBlogSlugs([
+    { id: 'long-one', slug: longSlug },
+    { id: 'long-two', slug: longSlug },
+  ])
+  const longFollower = longResolved.posts.find((post) => post.id === 'long-two')
+  assert.match(longFollower.slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+  assert.ok(longFollower.slug.length <= 120)
+})
+
+test('deterministic page and dashboard safety repairs do not become blocking warnings', () => {
+  const timestamp = '2026-07-13T00:00:00.000Z'
+  const page = normalizePage({
+    record: {
+      id: 'about-us',
+      aboutTitle: 'About Yahnu', aboutSubtitle: 'Building stronger professional communities.',
+      storyTitle: 'Our story', missionTitle: 'Our mission', visionTitle: 'Our vision', valuesTitle: 'Our values',
+      storyContent1: '<p>Our story.</p>', storyContent2: '<p>Our future.</p>',
+      missionContent: '<p>Our mission.</p>', visionContent: '<p>Our vision.</p>', valuesContent: '<p>Our values.</p>',
+      teamMembers: [{ name: 'Yahnu Team', role: 'Administrator', imageUrl: 'https://example.com/unsafe-remote.png' }],
+    },
+    inferredId: null,
+  }, timestamp, 1)
+  const dashboard = normalizeDashboard({
+    record: {
+      id: 'user-1', userId: 'user-1',
+      reports: { graduates: { dataSource: 'graduates', visualization: 'count', title: 'Graduates' } },
+      layouts: { lg: [{ i: 'graduates', x: 0, y: null, w: 1, h: 1 }] },
+    },
+    inferredId: null,
+  }, timestamp, 1)
+
+  assert.deepEqual(page.warnings, [])
+  assert.match(page.safetyNormalizations[0], /image path/i)
+  assert.equal(page.page.data.teamMembers[0].imageUrl, '')
+  assert.deepEqual(dashboard.warnings, [])
+  assert.match(dashboard.safetyNormalizations[0], /finite rows/i)
+  assert.equal(dashboard.dashboard.layouts.lg[0].y, 0)
+  assert.equal(hasBlockingImportIssues({
+    pages: { safetyNormalizations: 1 },
+    dashboards: { safetyNormalizations: 1 },
+  }), false)
+  assert.equal(hasBlockingImportIssues({ pages: { normalizationWarnings: 1 } }), true)
 })
 
 test('mail normalization stores only allowlisted metadata and one-way body hashes', () => {

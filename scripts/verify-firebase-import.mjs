@@ -4,6 +4,7 @@ import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import pg from 'pg'
 import {
+  disambiguateBlogSlugs,
   normalizeApplication,
   normalizeBlogPost,
   normalizeConversation,
@@ -700,6 +701,8 @@ async function main() {
     partnerships: normalizedOperationalCollection(firestore.partnerships, normalizePartnership, 'partnership'),
     mail: normalizedOperationalCollection(firestore.mail, normalizeMail, 'mail'),
   }
+  const resolvedBlogPosts = disambiguateBlogSlugs([...operational.blogPosts.records.values()])
+  operational.blogPosts.records = new Map(resolvedBlogPosts.posts.map((post) => [post.id, post]))
   const operationalAuthUsers = normalizedOperationalCollection(
     { documents: authFile.data.users },
     (source, timestamp) => normalizeUser(source, timestamp, 'auth'),

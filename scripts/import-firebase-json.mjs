@@ -110,6 +110,10 @@ const JOB_STATUSES = new Set(['draft', 'open', 'closed'])
 const APPLICATION_STATUSES = new Set([
   'submitted', 'reviewing', 'shortlisted', 'interviewing', 'accepted', 'rejected', 'withdrawn',
 ])
+const APPLICATION_STATUS_ALIASES = new Map([
+  ['pending', 'submitted'],
+  ['reviewed', 'reviewing'],
+])
 const PARTNERSHIP_STATUS_MAP = new Map([
   ['pending', 'pending'], ['accepted', 'accepted'], ['approved', 'accepted'],
   ['declined', 'declined'], ['rejected', 'declined'], ['cancelled', 'cancelled'], ['canceled', 'cancelled'],
@@ -1195,6 +1199,7 @@ function importedRichText(value) {
 function normalizeImportedPageData(id, sourceData) {
   if (!SUPPORTED_PAGE_IDS.has(id)) return { error: 'page ID is not supported by the Render application' }
   const warnings = []
+  const safetyNormalizations = []
 
   if (id !== 'about-us') {
     const title = requiredImportedText(sourceData.title, 300)
@@ -1204,7 +1209,7 @@ function normalizeImportedPageData(id, sourceData) {
     if (Object.keys(sourceData).some((key) => !['title', 'lastUpdated', 'content'].includes(key))) {
       warnings.push('stale fields were removed from legal page content')
     }
-    return { data: { title, lastUpdated, content }, warnings }
+    return { data: { title, lastUpdated, content }, warnings, safetyNormalizations }
   }
 
   const textFields = [
@@ -1247,17 +1252,23 @@ function normalizeImportedPageData(id, sourceData) {
     }
     if (sourceData.teamMembers.length > 50) droppedMembers += sourceData.teamMembers.length - 50
     if (droppedMembers) warnings.push(`${droppedMembers} invalid or excess team member(s) were removed`)
-    if (replacedImages) warnings.push(`${replacedImages} remote or unsafe team image path(s) were replaced with placeholders`)
+    if (replacedImages) safetyNormalizations.push(`${replacedImages} remote or unsafe team image path(s) were replaced with placeholders`)
     data.teamMembers = teamMembers
   }
 
   const allowedKeys = new Set([...textFields.map(([key]) => key), ...richTextFields, 'teamMembers'])
   if (Object.keys(sourceData).some((key) => !allowedKeys.has(key))) warnings.push('stale fields were removed from about page content')
-  return { data, warnings }
+  return { data, warnings, safetyNormalizations }
 }
 
 function normalizeImportedReports(value) {
-  if (!isObject(value)) return { reports: {}, warnings: value === undefined ? [] : ['dashboard reports were not an object and were reset'] }
+  if (!isObject(value)) {
+    return {
+      reports: {},
+      warnings: value === undefined ? [] : ['dashboard reports were not an object and were reset'],
+      safetyNormalizations: [],
+    }
+  }
   const reports = {}
   let dropped = 0
   for (const [id, report] of Object.entries(value).slice(0, 100)) {
@@ -1277,13 +1288,24 @@ function normalizeImportedReports(value) {
     }
   }
   if (Object.keys(value).length > 100) dropped += Object.keys(value).length - 100
-  return { reports, warnings: dropped ? [`${dropped} invalid or excess dashboard report(s) were removed`] : [] }
+  return {
+    reports,
+    warnings: dropped ? [`${dropped} invalid or excess dashboard report(s) were removed`] : [],
+    safetyNormalizations: [],
+  }
 }
 
 function normalizeImportedLayouts(value, reports) {
-  if (!isObject(value)) return { layouts: {}, warnings: value === undefined ? [] : ['dashboard layouts were not an object and were reset'] }
+  if (!isObject(value)) {
+    return {
+      layouts: {},
+      warnings: value === undefined ? [] : ['dashboard layouts were not an object and were reset'],
+      safetyNormalizations: [],
+    }
+  }
   const layouts = {}
   const warnings = []
+  const safetyNormalizations = []
   let dropped = 0
   let repositioned = 0
   const entries = Object.entries(value).slice(0, 5)
@@ -1328,8 +1350,8 @@ function normalizeImportedLayouts(value, reports) {
   }
   if (Object.keys(value).length > 5) dropped += Object.keys(value).length - 5
   if (dropped) warnings.push(`${dropped} invalid, orphaned, or excess dashboard layout item(s) were removed`)
-  if (repositioned) warnings.push(`${repositioned} bottom-positioned dashboard item(s) were assigned finite rows`)
-  return { layouts, warnings }
+  if (repositioned) safetyNormalizations.push(`${repositioned} bottom-positioned dashboard item(s) were assigned finite rows`)
+  return { layouts, warnings, safetyNormalizations }
 }
 
 function normalizePage(source, importTimestamp, sourceIndex) {
@@ -1366,6 +1388,7 @@ function normalizePage(source, importTimestamp, sourceIndex) {
       sourceIndex,
     },
     warnings: pageData.warnings,
+    safetyNormalizations: pageData.safetyNormalizations,
   }
 }
 
@@ -1390,6 +1413,10 @@ function normalizeDashboard(source, importTimestamp, sourceIndex) {
       sourceIndex,
     },
     warnings: [...normalizedReports.warnings, ...normalizedLayouts.warnings],
+    safetyNormalizations: [
+      ...normalizedReports.safetyNormalizations,
+      ...normalizedLayouts.safetyNormalizations,
+    ],
   }
 }
 
@@ -1520,6 +1547,60 @@ function strictImportedBlogImage(value) {
   }
 }
 
+function blogSlugCandidate(baseSlug, postId, collisionSeed, hashLength) {
+  const digest = collisionSeed === 0
+    ? sha256(postId)
+    : sha256(`${postId}:blog-slug-collision:${collisionSeed}`)
+  const suffix = `-${digest.slice(0, hashLength)}`
+  const stem = baseSlug.slice(0, 120 - suffix.length).replace(/-+$/, '')
+  return `${stem}${suffix}`
+}
+
+function compareBlogSlugPriority(left, right) {
+  const leftTimestamp = left.slugPriorityAt ?? ''
+  const rightTimestamp = right.slugPriorityAt ?? ''
+  return leftTimestamp.localeCompare(rightTimestamp) || left.id.localeCompare(right.id)
+}
+
+function disambiguateBlogSlugs(posts) {
+  const bySlug = new Map()
+  const occupiedSlugs = new Set(posts.map((post) => post.slug))
+  const resolvedSlugs = new Map()
+
+  for (const post of posts) {
+    const group = bySlug.get(post.slug) ?? []
+    group.push(post)
+    bySlug.set(post.slug, group)
+  }
+
+  for (const [slug, group] of bySlug) {
+    if (group.length < 2) continue
+    const sorted = [...group].sort(compareBlogSlugPriority)
+    for (const post of sorted.slice(1)) {
+      let candidate = null
+      for (let collisionSeed = 0; collisionSeed < 1024 && !candidate; collisionSeed += 1) {
+        for (const hashLength of [8, 12, 16, 24, 32, 48, 64]) {
+          const next = blogSlugCandidate(slug, post.id, collisionSeed, hashLength)
+          if (!occupiedSlugs.has(next)) {
+            candidate = next
+            break
+          }
+        }
+      }
+      if (!candidate) throw new Error('Unable to deterministically disambiguate duplicate blog slugs.')
+      occupiedSlugs.add(candidate)
+      resolvedSlugs.set(post.id, candidate)
+    }
+  }
+
+  return {
+    posts: posts.map((post) => resolvedSlugs.has(post.id)
+      ? { ...post, slug: resolvedSlugs.get(post.id) }
+      : post),
+    slugDisambiguated: resolvedSlugs.size,
+  }
+}
+
 function normalizeBlogPost(source, importTimestamp) {
   const base = baseSourceRecord(source, 'blogPosts', importTimestamp)
   if (base.error) return base
@@ -1550,6 +1631,14 @@ function normalizeBlogPost(source, importTimestamp) {
   const legacyImageUrlSha256 = firebaseStorageReferenceHash(image.value)
   const rawStatus = normalizeEnum(record.status)
   if (!['draft', 'published'].includes(rawStatus)) return { error: 'status must be draft or published', id: base.id }
+  const slugPriorityAt = normalizeDate(firstPresent(
+    record.publishedAt,
+    record.createdAt,
+    record.creationTime,
+    source.record.createTime,
+    record.updatedAt,
+    source.record.updateTime,
+  ))
   return {
     post: {
       ...base,
@@ -1563,6 +1652,9 @@ function normalizeBlogPost(source, importTimestamp) {
       imageUrl: legacyImageUrlSha256 ? null : image.value,
       legacyImageUrlSha256,
       publishedAt: normalizeDate(firstPresent(record.publishedAt, rawStatus === 'published' ? record.updatedAt : null)),
+      // Deliberately separate from base.createdAt: the latter may be the
+      // current import time when legacy source timestamps are absent.
+      slugPriorityAt,
     },
   }
 }
@@ -1803,7 +1895,8 @@ function normalizeApplication(source, importTimestamp) {
   if (base.error) return base
   if (!routeCompatibleId(base.id, 200)) return { error: 'application ID exceeds the 200-character route limit', id: base.id }
   const record = base.payload
-  const status = normalizeEnum(record.status || 'submitted')
+  const normalizedStatus = normalizeEnum(record.status || 'submitted')
+  const status = APPLICATION_STATUS_ALIASES.get(normalizedStatus) ?? normalizedStatus
   if (!APPLICATION_STATUSES.has(status)) return { error: 'application status is not supported by the Render application', id: base.id }
   const coverLetter = strictOptionalImportedText(record.coverLetter, 'cover letter', 20_000, 0)
   if (coverLetter.error) return { error: coverLetter.error, id: base.id }
@@ -2641,7 +2734,15 @@ function baseCollectionSummary(sourceRecords) {
     duplicateIds: 0,
     databaseRejected: 0,
     normalizationWarnings: 0,
+    safetyNormalizations: 0,
   }
+}
+
+function hasBlockingImportIssues(collections) {
+  return Object.values(collections).some((collection) => [
+    'skipped', 'invalid', 'orphaned', 'databaseRejected', 'emailConflicts', 'identityConflicts',
+    'normalizationWarnings',
+  ].some((key) => (collection[key] ?? 0) > 0))
 }
 
 async function main() {
@@ -2715,7 +2816,10 @@ async function main() {
       invalidUpdatedByCleared: 0,
     },
     dashboards: baseCollectionSummary(extracted.dashboards.length),
-    blogPosts: baseCollectionSummary(extracted.blogPosts.length),
+    blogPosts: {
+      ...baseCollectionSummary(extracted.blogPosts.length),
+      slugDisambiguated: 0,
+    },
     conversations: {
       ...baseCollectionSummary(extracted.conversations.length),
       participants: 0,
@@ -2836,6 +2940,9 @@ async function main() {
       collections.pages.normalizationWarnings += 1
       warn(`Page ${normalized.page.id}: ${warning}`)
     }
+    // These are deterministic safety repairs (for example, replacing an
+    // unsafe asset path), not data-loss warnings that should block cutover.
+    collections.pages.safetyNormalizations += (normalized.safetyNormalizations ?? []).length
     pages.push(normalized.page)
   }
 
@@ -2861,6 +2968,9 @@ async function main() {
       collections.dashboards.normalizationWarnings += 1
       warn(`Dashboard ${normalized.dashboard.userId}: ${warning}`)
     }
+    // See page handling above: these repairs preserve a renderable,
+    // runtime-safe record and are reported separately from partial imports.
+    collections.dashboards.safetyNormalizations += (normalized.safetyNormalizations ?? []).length
     dashboards.push(normalized.dashboard)
   }
 
@@ -2889,7 +2999,10 @@ async function main() {
     return records
   }
 
-  const blogPosts = normalizeSourceCollection('blogPosts', normalizeBlogPost, 'post')
+  const normalizedBlogPosts = normalizeSourceCollection('blogPosts', normalizeBlogPost, 'post')
+  const resolvedBlogPosts = disambiguateBlogSlugs(normalizedBlogPosts)
+  const blogPosts = resolvedBlogPosts.posts
+  collections.blogPosts.slugDisambiguated = resolvedBlogPosts.slugDisambiguated
   const conversations = normalizeSourceCollection('conversations', normalizeConversation, 'conversation')
   const notifications = normalizeSourceCollection('notifications', normalizeNotification, 'notification')
   const invalidatedEmailCodes = normalizeSourceCollection(
@@ -3607,10 +3720,7 @@ async function main() {
           OR conversation.avatar_url IS DISTINCT FROM rewrite.replacement_path)
     `)
 
-    partial = Object.values(collections).some((collection) => [
-      'skipped', 'invalid', 'orphaned', 'databaseRejected', 'emailConflicts', 'identityConflicts',
-      'normalizationWarnings',
-    ].some((key) => (collection[key] ?? 0) > 0))
+    partial = hasBlockingImportIssues(collections)
 
     if (args.dryRun) {
       await client.query('ROLLBACK')
@@ -3674,6 +3784,8 @@ if (invokedAsScript) {
 
 export {
   announcementNotificationId,
+  disambiguateBlogSlugs,
+  hasBlockingImportIssues,
   normalizeApplication,
   normalizeAnnouncement,
   normalizeBlogPost,
