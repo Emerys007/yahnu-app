@@ -3,19 +3,11 @@ import { readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import pg from 'pg'
-
-const databaseUrl = process.env.DATABASE_URL
-if (!databaseUrl) throw new Error('DATABASE_URL is required to run database migrations.')
+import { directDatabaseConfig } from '../src/lib/server/database-config.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const migrationsDirectory = path.join(root, 'db', 'migrations')
-const sslMode = process.env.PGSSLMODE?.toLowerCase()
-const pool = new pg.Pool({
-  connectionString: databaseUrl,
-  ...(sslMode === 'disable' ? { ssl: false } : {}),
-  ...(sslMode === 'require' ? { ssl: { rejectUnauthorized: false } } : {}),
-  ...(['verify-ca', 'verify-full'].includes(sslMode) ? { ssl: { rejectUnauthorized: true } } : {}),
-})
+const pool = new pg.Pool(directDatabaseConfig())
 
 const client = await pool.connect()
 try {

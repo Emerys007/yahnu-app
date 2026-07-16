@@ -1,6 +1,7 @@
 import { randomBytes, randomUUID, scrypt as scryptCallback } from 'node:crypto'
 import { promisify } from 'node:util'
 import pg from 'pg'
+import { directDatabaseConfig } from '../src/lib/server/database-config.mjs'
 
 const SCRYPT_N = 32_768
 const SCRYPT_R = 8
@@ -81,24 +82,12 @@ async function hashPassword(password) {
   return `scrypt$${SCRYPT_N}$${SCRYPT_R}$${SCRYPT_P}$${salt.toString('base64url')}$${derivedKey.toString('base64url')}`
 }
 
-function databaseConfig(connectionString) {
-  const config = { connectionString }
-  const sslMode = process.env.PGSSLMODE?.toLowerCase()
-  if (sslMode === 'disable') config.ssl = false
-  else if (sslMode === 'require') config.ssl = { rejectUnauthorized: false }
-  else if (sslMode === 'verify-ca' || sslMode === 'verify-full') config.ssl = { rejectUnauthorized: true }
-  return config
-}
-
 async function main() {
   const args = parseArguments(process.argv.slice(2))
   if (args.help) {
     printHelp()
     return
   }
-
-  const connectionString = process.env.DATABASE_URL
-  if (!connectionString) throw new Error('DATABASE_URL is required.')
 
   const email = normalizeEmail(args.email ?? process.env.ADMIN_EMAIL)
   const password = validatePassword(args.password ?? process.env.ADMIN_PASSWORD)
@@ -108,7 +97,7 @@ async function main() {
   const role = String(args.role ?? process.env.ADMIN_ROLE ?? 'super_admin').trim().toLowerCase()
   if (!['admin', 'super_admin'].includes(role)) throw new Error('ADMIN_ROLE/--role must be admin or super_admin.')
 
-  const client = new pg.Client(databaseConfig(connectionString))
+  const client = new pg.Client(directDatabaseConfig())
   await client.connect()
 
   try {

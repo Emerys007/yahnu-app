@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import pg from 'pg'
+import { directDatabaseConfig } from '../src/lib/server/database-config.mjs'
 import { isApprovedQuarantinedFirestoreReference } from './firebase-quarantine-manifest.mjs'
 
 const ROLE_MAP = new Map([
@@ -2261,15 +2262,6 @@ function hashInviteToken(token, secret) {
   return createHmac('sha256', secret ?? FALLBACK_AUTH_SECRET).update(token).digest('hex')
 }
 
-function databaseConfig(connectionString) {
-  const config = { connectionString }
-  const sslMode = process.env.PGSSLMODE?.toLowerCase()
-  if (sslMode === 'disable') config.ssl = false
-  else if (sslMode === 'require') config.ssl = { rejectUnauthorized: false }
-  else if (sslMode === 'verify-ca' || sslMode === 'verify-full') config.ssl = { rejectUnauthorized: true }
-  return config
-}
-
 const UPSERT_AUTH_USER_SQL = `
   INSERT INTO users (
     id, legacy_firebase_uid, email, password_hash, google_sub, auth_provider,
@@ -2974,8 +2966,7 @@ async function main() {
     if (!preflight.passed) throw new Error(firebaseAuthPreflightFailure(preflight))
   }
 
-  const connectionString = process.env.DATABASE_URL
-  if (!connectionString) throw new Error('DATABASE_URL is required.')
+  const database = directDatabaseConfig()
   const knownFirestoreDocumentIds = sourceMode === 'firestore'
     ? rawFirestoreDocumentIds(parsed)
     : new Set()
@@ -3223,7 +3214,7 @@ async function main() {
     'article',
   )
 
-  const client = new pg.Client(databaseConfig(connectionString))
+  const client = new pg.Client(database)
   await client.connect()
   let transactionOpen = false
   let partial = false

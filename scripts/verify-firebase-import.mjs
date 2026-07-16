@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import pg from 'pg'
+import { directDatabaseConfig } from '../src/lib/server/database-config.mjs'
 import { isApprovedQuarantinedFirestoreReference } from './firebase-quarantine-manifest.mjs'
 import {
   disambiguateBlogSlugs,
@@ -583,15 +584,6 @@ function authSource(root) {
   return { identities, providers, invalid }
 }
 
-function databaseConfig(connectionString) {
-  const config = { connectionString }
-  const sslMode = process.env.PGSSLMODE?.toLowerCase()
-  if (sslMode === 'disable') config.ssl = false
-  else if (sslMode === 'require') config.ssl = { rejectUnauthorized: false }
-  else if (sslMode === 'verify-ca' || sslMode === 'verify-full') config.ssl = { rejectUnauthorized: true }
-  return config
-}
-
 function setDifference(left, right) {
   return [...left].filter((value) => !right.has(value))
 }
@@ -824,8 +816,7 @@ async function main() {
     printHelp()
     return
   }
-  const connectionString = process.env.DATABASE_URL
-  if (!connectionString) throw new Error('DATABASE_URL is required.')
+  const database = directDatabaseConfig()
   const authSecret = process.env.AUTH_SECRET
   if (!authSecret || authSecret.length < 32) {
     throw new Error('AUTH_SECRET with at least 32 characters is required for reconciliation.')
@@ -911,7 +902,7 @@ async function main() {
     rawFirestoreUserIdentityCandidates(firestore),
   )
 
-  const client = new pg.Client(databaseConfig(connectionString))
+  const client = new pg.Client(database)
   await client.connect()
   try {
     const legacyUsers = await client.query(`

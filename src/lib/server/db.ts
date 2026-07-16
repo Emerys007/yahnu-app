@@ -1,32 +1,21 @@
 import 'server-only';
 
 import { Pool, type PoolClient, type QueryResult, type QueryResultRow } from 'pg';
+import { runtimeDatabaseConfig } from './database-config.mjs';
 
 declare global {
   var __yahnuPostgresPool: Pool | undefined;
 }
 
-function databaseUrl() {
-  const value = process.env.DATABASE_POOL_URL ?? process.env.DATABASE_URL;
-  if (!value) throw new Error('DATABASE_URL is not configured.');
-  return value;
-}
-
-function sslConfig() {
-  const sslMode = process.env.PGSSLMODE?.toLowerCase();
-  if (sslMode === 'require' || sslMode === 'verify-ca' || sslMode === 'verify-full') {
-    return { rejectUnauthorized: sslMode !== 'require' };
-  }
-  return undefined;
-}
-
 export function getPool() {
   if (!globalThis.__yahnuPostgresPool) {
-    const ssl = sslConfig();
+    const database = runtimeDatabaseConfig();
     globalThis.__yahnuPostgresPool = new Pool({
-      connectionString: databaseUrl(),
-      ...(ssl ? { ssl } : {}),
-      max: Number.parseInt(process.env.DATABASE_POOL_MAX ?? '10', 10),
+      connectionString: database.connectionString,
+      // Always supply an explicit value to prevent node-postgres from applying
+      // PGSSLMODE (including its insecure no-verify compatibility mode) behind us.
+      ssl: database.ssl,
+      max: database.max,
       idleTimeoutMillis: 30_000,
       connectionTimeoutMillis: 5_000,
       maxUses: 7_500,

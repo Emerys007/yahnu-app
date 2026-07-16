@@ -19,6 +19,7 @@
     "firebase:verify": "node --env-file-if-exists=.env.local scripts/verify-firebase-import.mjs",
     "firebase:verify:storage": "node --env-file-if-exists=.env.local scripts/verify-firebase-storage.mjs",
     "test:migration": "node --test scripts/tests/production-data-schema.test.mjs",
+    "test:db-config": "node --test scripts/tests/database-config.test.mjs",
     "status": "git status",
     "lint:i18n": "node scripts/validate-locales.mjs"
   },

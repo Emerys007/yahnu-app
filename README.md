@@ -37,6 +37,7 @@ npm run typecheck
 npm run lint
 npm run lint:i18n
 npm run test:migration
+npm run test:db-config
 npm run build
 npm audit
 git diff --check
@@ -46,8 +47,13 @@ The build script also prepares Next.js standalone output. Run `npm start` to tes
 
 Important environment variables:
 
-- `DATABASE_URL`: direct PostgreSQL URL for migrations and local development
-- `DATABASE_POOL_URL`: optional pooled runtime URL
+- `DATABASE_URL`: direct PostgreSQL URL for migrations, cutover commands, and local development. Every database URL must be a complete `postgres://`/`postgresql://` URL with a host, database, username, and password; query strings and fragments are rejected so node-postgres cannot override TLS options. The standard PostgreSQL port is normalized to `5432` when a provider omits it, preventing an inherited `PGPORT` from redirecting the connection.
+- `DATABASE_POOL_URL`: optional pooled runtime URL. A non-empty value takes precedence over `DATABASE_URL` at runtime; an invalid pooled URL fails closed rather than falling back to the direct URL. Cutover commands always use `DATABASE_URL` directly. Keep both URL-query-free.
+- `PGSSLMODE`: omit it (or set `disable`) for the local Docker database. Runtime accepts only `disable`, `require`, `verify-ca`, and `verify-full`; every enabled mode verifies the server certificate and identity. In this app, `require` is treated as verified TLS rather than libpq's relaxed compatibility mode. `no-verify`, `prefer`, and URL-level `sslmode` configuration are rejected.
+- `DATABASE_SSL_CA` or `DATABASE_SSL_CA_FILE`: optional private-CA PEM source for verified TLS. Configure exactly one; `PGSSLROOTCERT` is accepted as a file-path compatibility alias. When no custom CA is set, Node's platform trust store is used. For an external Render database URL, set `PGSSLMODE=verify-full` only after validating the certificate chain; retain the private-network URL's non-TLS setting unless that endpoint is independently verified to support TLS.
+- `DATABASE_SSL_SERVERNAME`: optional, owner-controlled expected certificate identity for a TLS endpoint whose URL host and certificate identity intentionally differ. It is accepted only with a configured private CA/leaf pin and delegates to Node's standard identity verifier, so it still requires successful certificate and hostname verification. Node-postgres still sends SNI for the database URL host, so use this only where that endpoint returns the intended certificate for the URL-host SNI value. Never replace this with `rejectUnauthorized: false` or an accepting `checkServerIdentity` bypass.
+- `DATABASE_SSL_CERT_SHA256`: optional owner-controlled SHA-256 fingerprint pin for the exact leaf certificate (hex or colon-separated hex). It requires the same private CA/leaf-pin source and is checked only after Node validates the certificate chain and expected identity. Use it for a self-signed internal endpoint only when the certificate rotation process is documented; leave it unset for the normal public-CA external URL.
+- `DATABASE_POOL_MAX`: runtime connection limit, an integer from 1 through 100 (default 10)
 - `AUTH_SECRET`: at least 32 random characters; the same value must be available to import and runtime
 - `APP_URL`: the exact public origin, without a trailing slash
 - `RESEND_API_KEY` and `EMAIL_FROM`: mandatory production email configuration

@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import pg from 'pg'
+import { directDatabaseConfig } from '../src/lib/server/database-config.mjs'
 
 const FORMAT = 'yahnu-firebase-storage-v2'
 const MAX_OBJECTS = 250_000
@@ -44,15 +45,6 @@ function parseArguments(argv) {
     throw new Error(`Unknown option: ${argument}`)
   }
   return result
-}
-
-function databaseConfig(connectionString) {
-  const config = { connectionString }
-  const sslMode = process.env.PGSSLMODE?.toLowerCase()
-  if (sslMode === 'disable') config.ssl = false
-  else if (sslMode === 'require') config.ssl = { rejectUnauthorized: false }
-  else if (sslMode === 'verify-ca' || sslMode === 'verify-full') config.ssl = { rejectUnauthorized: true }
-  return config
 }
 
 function sha256(value) {
@@ -314,8 +306,7 @@ async function main() {
     return
   }
   if (!args.manifest) throw new Error('--manifest is required.')
-  const connectionString = process.env.DATABASE_URL
-  if (!connectionString) throw new Error('DATABASE_URL is required.')
+  const database = directDatabaseConfig()
   const manifestPath = path.resolve(args.manifest)
   let manifest
   try {
@@ -326,7 +317,7 @@ async function main() {
   const { bucket, computedBytes, sourceById } = validateManifest(manifest)
   const expectedIds = [...sourceById.keys()]
 
-  const client = new pg.Client(databaseConfig(connectionString))
+  const client = new pg.Client(database)
   await client.connect()
   let transactionOpen = false
   try {

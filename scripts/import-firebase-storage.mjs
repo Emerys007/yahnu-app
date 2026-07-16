@@ -3,6 +3,7 @@ import { readFile, realpath, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import pg from 'pg'
+import { directDatabaseConfig } from '../src/lib/server/database-config.mjs'
 
 const FORMAT = 'yahnu-firebase-storage-v2'
 const MAX_OBJECTS = 250_000
@@ -69,15 +70,6 @@ function parseArguments(argv) {
     result[key] = value
   }
   return result
-}
-
-function databaseConfig(connectionString) {
-  const config = { connectionString }
-  const sslMode = process.env.PGSSLMODE?.toLowerCase()
-  if (sslMode === 'disable') config.ssl = false
-  else if (sslMode === 'require') config.ssl = { rejectUnauthorized: false }
-  else if (sslMode === 'verify-ca' || sslMode === 'verify-full') config.ssl = { rejectUnauthorized: true }
-  return config
 }
 
 function sha256(value) {
@@ -349,8 +341,7 @@ async function main() {
     printHelp()
     return
   }
-  const connectionString = process.env.DATABASE_URL
-  if (!connectionString) throw new Error('DATABASE_URL is required.')
+  const database = directDatabaseConfig()
   if (!args.manifest) throw new Error('--manifest is required.')
   if (args.rewriteOutput && !path.isAbsolute(args.rewriteOutput)) throw new Error('--rewrite-output must be an absolute path.')
   if (args.rewriteOutput && isInsideDirectory(process.cwd(), path.resolve(args.rewriteOutput))) {
@@ -404,7 +395,7 @@ async function main() {
     }
   }
 
-  const client = new pg.Client(databaseConfig(connectionString))
+  const client = new pg.Client(database)
   await client.connect()
   let transactionOpen = false
   let transactionOutcome = 'not_started'
