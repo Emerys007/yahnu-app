@@ -1,6 +1,10 @@
 databases:
-  - name: yahnu-postgres
-    databaseName: yahnu
+  # This resource is provisioned independently during the Firebase cutover.
+  # Its name is intentionally different from the retired database so a later
+  # Blueprint sync can adopt the clean target without touching rollback data.
+  - name: yahnu-postgres-live
+    # Render generated this name for the independently provisioned live target.
+    databaseName: yahnu_pq9g
     user: yahnu_app
     # Keeps the initial Render deployment below the owner's $25/month ceiling.
     plan: basic-256mb
@@ -8,7 +12,9 @@ databases:
     # does not allow an in-place region change after provisioning.
     region: frankfurt
     postgresMajorVersion: "17"
-    diskSizeGB: 15
+    # The Firebase source export is small; 1 GB is the minimum durable volume
+    # and keeps the clean-target overlap within the owner's monthly ceiling.
+    diskSizeGB: 1
     # Keep spend capped until a separate capacity/budget decision is approved.
     storageAutoscalingEnabled: false
     connectionPool: none
@@ -40,11 +46,15 @@ services:
       - key: NEXT_TELEMETRY_DISABLED
         value: "1"
       - key: DATABASE_URL
-        fromDatabase:
-          name: yahnu-postgres
-          property: connectionString
+        # Set only after the verified import.  This prevents a Blueprint sync
+        # from attaching the service to a target the importer has not sealed.
+        sync: false
+      - key: PGSSLMODE
+        value: verify-full
       - key: AUTH_SECRET
-        generateValue: true
+        # Rotation is bound to the import approval; never regenerate it as an
+        # incidental side effect of a Blueprint sync.
+        sync: false
       - key: APP_URL
         sync: false
       - key: RESEND_API_KEY
