@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "db:migrate": "node --env-file-if-exists=.env.local scripts/migrate-database.mjs",
     "admin:create": "node --env-file-if-exists=.env.local scripts/create-admin.mjs",
+    "firebase:export:auth": "node --env-file-if-exists=.env.local scripts/export-firebase-auth-rest.mjs",
     "firebase:export:firestore": "node --env-file-if-exists=.env.local scripts/export-firestore-json.mjs",
     "firebase:export:storage": "node --env-file-if-exists=.env.local scripts/export-firebase-storage.mjs",
     "firebase:import": "node --env-file-if-exists=.env.local scripts/import-firebase-json.mjs",
@@ -20,6 +21,7 @@
     "firebase:verify:storage": "node --env-file-if-exists=.env.local scripts/verify-firebase-storage.mjs",
     "test:migration": "node --test scripts/tests/production-data-schema.test.mjs",
     "test:db-config": "node --test scripts/tests/database-config.test.mjs",
+    "test:firebase-auth-export": "node --test scripts/tests/firebase-auth-export.test.mjs",
     "status": "git status",
     "lint:i18n": "node scripts/validate-locales.mjs"
   },
