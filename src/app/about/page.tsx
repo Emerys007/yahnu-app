@@ -97,7 +97,7 @@ export default function AboutPage() {
   }, []);
 
   const managedText = (key: string, fallback: string) =>
-    typeof managedContent?.[key] === "string"
+    language === "fr" && typeof managedContent?.[key] === "string"
       ? (managedContent[key] as string).replaceAll("{country}", "Côte d’Ivoire")
       : fallback;
   const teamMembers = Array.isArray(managedContent?.teamMembers)

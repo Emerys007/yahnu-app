@@ -44,6 +44,8 @@ import {
 import {
   classifyFirestoreUsersForArchive,
   expectedArchiveProfileReferences,
+  expectedBlogAfterIvorianLaunch,
+  expectedJobAfterIvorianLaunch,
   expectedQuarantinedFirestoreReferenceRows,
   rawFirestoreUserIdentityCandidates as verifyRawFirestoreUserIdentityCandidates,
   runtimeTokenHash,
@@ -69,6 +71,7 @@ const migrations = [
   '003_production_data_parity.sql',
   '004_legacy_firestore_user_archives.sql',
   '005_quarantined_firestore_references.sql',
+  '006_finalize_ivorian_launch_content.sql',
 ]
 const sourceHash = 'a'.repeat(64)
 
@@ -79,6 +82,171 @@ async function migratedDatabase() {
   }
   return database
 }
+
+test('the Côte d’Ivoire launch migration changes only exact prototype fingerprints', { skip: !PGlite }, async () => {
+  const database = new PGlite()
+  for (const migration of migrations.slice(0, -1)) {
+    await database.exec(await readFile(path.join(projectRoot, 'db', 'migrations', migration), 'utf8'))
+  }
+
+  await database.exec(`
+    INSERT INTO jobs (
+      id, company_ref, title, location, description, status, source_payload
+    ) VALUES
+      (
+        'job1', 'comp1', 'Frontend Developer', 'Remote',
+        'We are looking for a skilled Frontend Developer to join our team.', 'open',
+        '{"companyId":"comp1","salary":"Competitive"}'
+      ),
+      (
+        'job2', 'comp2', 'Marketing Specialist', 'New York, NY',
+        'We are seeking a Marketing Specialist to help grow our brand.', 'open',
+        '{"companyId":"comp2","salary":"Experience Dependent"}'
+      ),
+      (
+        'employer-job', 'company-real', 'Frontend Developer', 'Remote',
+        'A genuine employer-authored role that must remain visible after the cleanup.', 'open',
+        '{"companyId":"company-real","salary":"Competitive"}'
+      );
+
+    INSERT INTO applications (id, job_id, job_ref, applicant_ref, status)
+    VALUES ('application-on-seed', 'job1', 'job1', 'graduate-1', 'submitted');
+
+    INSERT INTO pages (id, data)
+    VALUES (
+      'about-us',
+      $json$
+      {
+        "aboutTitle": "About Yahnu",
+        "aboutSubtitle": "We are on a mission to bridge the gap between education and employment, creating a thriving ecosystem for talent to connect with opportunity in {country} and beyond.",
+        "storyTitle": "Our Story",
+        "storyContent1": "<p>Founded by a team of educators and entrepreneurs, Yahnu was born from a shared vision: to unlock the immense potential of graduates by directly connecting them with the industries that need their skills. We saw a disconnect between the classroom and the workplace and set out to build the bridge.</p>",
+        "storyContent2": "<p>Today, Yahnu is a dynamic platform that empowers students to launch their careers, helps companies find the right talent efficiently, and enables schools to forge meaningful industry partnerships. We believe in building futures, one connection at a time.</p>",
+        "missionTitle": "Our Mission",
+        "missionContent": "<p>To empower graduates, companies, and schools by creating a seamless and efficient ecosystem for talent development and career growth.</p>",
+        "visionTitle": "Our Vision",
+        "visionContent": "<p>To be the leading platform for professional connection and opportunity in Africa, driving economic growth and individual success.</p>",
+        "valuesTitle": "Our Values",
+        "valuesContent": "<p>Integrity, Innovation, Collaboration, and an unwavering commitment to the success of our users.</p>",
+        "teamMembers": [
+          {"name":"Colombe Koffi","role":"Founder & CEO","imageUrl":""},
+          {"name":"Joël K","role":"Head of Product & Lead Engineer","imageUrl":""},
+          {"name":"Bethel Touman","role":"Data Engineer","imageUrl":""}
+        ]
+      }$json$::jsonb
+    );
+
+    INSERT INTO blog_posts (
+      id, slug, title, author, excerpt, content_html, status
+    ) VALUES
+      (
+        'okXTCncxBSJrQIYAnIrm', 'legacy-creator-story',
+        'Entrepreneuriat numérique : Comment Yahnu soutient la nouvelle génération de créateurs en Afrique',
+        'Yahnu Staff', 'Un exemple suffisamment descriptif pour le test.',
+        '<p>Exemple fictif : Aïda, diplômée en informatique à Dakar, lance son produit.</p>',
+        'published'
+      ),
+      (
+        'nzi7LABXAQ8GHlRpFxiD', 'legacy-remote-story',
+        'L''avenir du travail en Afrique est à distance',
+        'Yanhu Staff', 'Un second exemple suffisamment descriptif pour le test.',
+        '<p>Exemple fictif : Aïda, diplômée en informatique à Dakar, lance son produit.</p>',
+        'published'
+      ),
+      (
+        'editor-post', 'editor-owned-story', 'Un article éditorial distinct',
+        'Yahnu Staff', 'Un contenu créé par un éditeur et laissé intact.',
+        '<p>Aïda, diplômée en informatique à Dakar, apparaît dans un article distinct.</p>',
+        'published'
+      );
+  `)
+
+  const migrationSql = await readFile(
+    path.join(projectRoot, 'db', 'migrations', '006_finalize_ivorian_launch_content.sql'),
+    'utf8',
+  )
+  await database.exec(migrationSql)
+
+  const jobs = await database.query('SELECT id, status FROM jobs ORDER BY id')
+  assert.deepEqual(jobs.rows, [
+    { id: 'employer-job', status: 'open' },
+    { id: 'job1', status: 'closed' },
+    { id: 'job2', status: 'closed' },
+  ])
+
+  const applications = await database.query(`
+    SELECT id, job_id FROM applications WHERE id = 'application-on-seed'
+  `)
+  assert.deepEqual(applications.rows, [
+    { id: 'application-on-seed', job_id: 'job1' },
+  ])
+
+  const about = await database.query(`
+    SELECT
+      data ->> 'aboutTitle' AS title,
+      data #>> '{teamMembers,0,imageUrl}' AS image_url
+    FROM pages
+    WHERE id = 'about-us'
+  `)
+  assert.deepEqual(about.rows, [{
+    title: 'Faire du diplôme un vrai point de départ.',
+    image_url: '/images/Colombe Koffi.jpeg',
+  }])
+
+  const posts = await database.query(`
+    SELECT id, author, content_html FROM blog_posts ORDER BY id
+  `)
+  assert.equal(posts.rows.find((post) => post.id === 'okXTCncxBSJrQIYAnIrm').content_html.includes('à Abidjan'), true)
+  assert.equal(posts.rows.find((post) => post.id === 'nzi7LABXAQ8GHlRpFxiD').author, 'Yahnu Staff')
+  assert.equal(posts.rows.find((post) => post.id === 'nzi7LABXAQ8GHlRpFxiD').content_html.includes('à Abidjan'), true)
+  assert.equal(posts.rows.find((post) => post.id === 'editor-post').content_html.includes('à Dakar'), true)
+
+  const audits = await database.query(`
+    SELECT action, count(*)::integer AS count
+    FROM audit_logs
+    GROUP BY action
+    ORDER BY action
+  `)
+  assert.deepEqual(audits.rows, [
+    { action: 'migration.close_legacy_seed_job', count: 2 },
+    { action: 'migration.localize_legacy_about_page', count: 1 },
+    { action: 'migration.localize_legacy_blog_example', count: 2 },
+  ])
+
+  await database.exec(migrationSql)
+  const auditCount = await database.query('SELECT count(*)::integer AS count FROM audit_logs')
+  assert.deepEqual(auditCount.rows, [{ count: 5 }])
+
+  await database.close()
+})
+
+test('the Firebase verifier recognizes only exact audited Côte d’Ivoire launch overrides', () => {
+  const legacyBlog = {
+    title: 'L\'avenir du travail en Afrique est à distance',
+    authorName: 'Yanhu Staff',
+    content: '<p>Aïda, diplômée en informatique à Dakar construit son projet.</p>',
+    status: 'published',
+  }
+  const localizedBlog = expectedBlogAfterIvorianLaunch('nzi7LABXAQ8GHlRpFxiD', legacyBlog)
+  assert.equal(localizedBlog.authorName, 'Yahnu Staff')
+  assert.equal(localizedBlog.content.includes('à Abidjan'), true)
+  assert.equal(expectedBlogAfterIvorianLaunch('editor-owned-post', legacyBlog), legacyBlog)
+
+  const legacyJob = {
+    companyRef: 'comp1',
+    companyName: null,
+    title: 'Frontend Developer',
+    description: 'We are looking for a skilled Frontend Developer to join our team.',
+    location: 'Remote',
+    employmentType: null,
+    applicationUrl: null,
+    status: 'open',
+    payload: { companyId: 'comp1', salary: 'Competitive' },
+  }
+  assert.equal(expectedJobAfterIvorianLaunch('job1', legacyJob).status, 'closed')
+  const editedJob = { ...legacyJob, description: 'An employer-edited description.' }
+  assert.equal(expectedJobAfterIvorianLaunch('job1', editedJob), editedJob)
+})
 
 async function importerSql(name) {
   const source = await readFile(path.join(projectRoot, 'scripts', 'import-firebase-json.mjs'), 'utf8')

@@ -748,7 +748,7 @@
       "keywords": "Keywords",
       "job_title_skills": "Job title, skills...",
       "location": "Location",
-      "city_state_remote": "City, state, remote",
+      "city_state_remote": "City or remote within Côte d’Ivoire",
       "job_type": "Job Type",
       "all_types": "All types",
       "full_time": "Full-time",
@@ -1007,7 +1007,7 @@
       " Abidjan": " Abidjan",
       " React, TypeScript": " React, Type Script",
       " Software Engineer": " Software Engineer",
-      " New York, NY": " New York, NY",
+      " Bouaké": " Bouaké",
       ", Upcoming Career Fair": ", Upcoming Career Fair",
       ", JavaScript, Product Management, ": {
         "": {
@@ -1068,7 +1068,7 @@
   "Your Company LLC": "Your Company LLC",
   "Website": "Website",
   "Headquarters": "Headquarters",
-  "City, State/Country": "City, State/Country",
+  "City in Côte d’Ivoire": "City in Côte d’Ivoire",
   "Industry Sector": "Industry Sector",
   "Select an industry": "Select An Industry",
   "Phone Number": "Phone Number",
@@ -1270,7 +1270,7 @@
       }
     }
   },
-  "City, state, remote": "City, State, Remote",
+  "City, state, remote": "City or remote within Côte d’Ivoire",
   "All types": "All Types",
   "All Types": "All Types",
   "Workplace": "Workplace",
