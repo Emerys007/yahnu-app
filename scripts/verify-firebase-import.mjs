@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import pg from 'pg'
+import { isApprovedQuarantinedFirestoreReference } from './firebase-quarantine-manifest.mjs'
 import {
   disambiguateBlogSlugs,
   firestoreArchivePayload,
@@ -673,7 +674,100 @@ function expectedArchiveProfileReferences(operational, activeFirestoreUsers, arc
   return expected
 }
 
-function embeddedConversationExpectations(conversations) {
+function unresolvedReferenceKey(sourceCollection, sourceId, sourceField, targetRefSha256) {
+  return `${sourceCollection}\0${sourceId}\0${sourceField}\0${targetRefSha256}`
+}
+
+function allFirestoreDocumentIds(firestore) {
+  return new Set(COLLECTIONS.flatMap((collection) => [...firestore[collection].ids]))
+}
+
+function rawFirestoreUserIdentityCandidates(firestore) {
+  const ids = new Set()
+  const emails = new Set()
+  for (const document of firestore.users.documents) {
+    const raw = materializeDocument(document) ?? {}
+    for (const candidate of [
+      documentId(document), raw.localId, raw.uid, raw.userId, raw.firebaseUid, raw.id,
+    ]) {
+      const id = referenceId(candidate)
+      if (id) ids.add(id)
+    }
+    for (const candidate of [raw.email, raw.emailAddress]) {
+      const email = normalizeEmail(candidate)
+      if (email) emails.add(email)
+    }
+    const providers = Array.isArray(raw.providerUserInfo)
+      ? raw.providerUserInfo
+      : isObject(raw.providerUserInfo) ? Object.values(raw.providerUserInfo) : []
+    for (const provider of providers) {
+      if (!isObject(provider)) continue
+      const email = normalizeEmail(provider.email ?? provider.emailAddress)
+      if (email) emails.add(email)
+    }
+  }
+  return { ids, emails }
+}
+
+// This is intentionally narrower than generic orphan handling. A reference is
+// quarantined only when its target does not exist anywhere in the immutable
+// source export, so it cannot represent a deferred runtime relationship.
+function expectedQuarantinedFirestoreReferenceRows(
+  operational,
+  activeFirestoreUsers,
+  archivedFirestoreUsers,
+  firestoreDocumentIds,
+  auth,
+  rawUserIdentityCandidates,
+) {
+  const expected = new Map()
+  const authEmails = new Set([...auth.identities.values()].map((identity) => identity.email))
+  const add = (sourceCollection, sourceId, sourceField, targetRef, sourceHash) => {
+    if (
+      !targetRef
+      || activeFirestoreUsers.has(targetRef)
+      || archivedFirestoreUsers.has(targetRef)
+      || firestoreDocumentIds.has(targetRef)
+      || auth.identities.has(targetRef)
+      || authEmails.has(String(targetRef).toLowerCase())
+      || rawUserIdentityCandidates.ids.has(targetRef)
+      || rawUserIdentityCandidates.emails.has(String(targetRef).toLowerCase())
+    ) return
+    const targetRefSha256 = sha256(targetRef)
+    if (!isApprovedQuarantinedFirestoreReference(
+      sourceCollection,
+      sha256(sourceId),
+      sourceField,
+      sourceHash,
+      targetRefSha256,
+    )) return
+    expected.set(
+      unresolvedReferenceKey(sourceCollection, sourceId, sourceField, targetRefSha256),
+      {
+        sourceCollection,
+        sourceId,
+        sourceField,
+        targetRef,
+        targetRefSha256,
+        sourceHash,
+      },
+    )
+  }
+  for (const [id, job] of operational.jobs.records) {
+    add('jobs', id, 'company_ref', job.companyRef, job.sourceHash)
+  }
+  for (const [id, partnership] of operational.partnerships.records) {
+    add('partnerships', id, 'partner_ref', partnership.partnerRef, partnership.sourceHash)
+  }
+  for (const [id, conversation] of operational.conversations.records) {
+    for (const participant of conversation.participants) {
+      add('conversations', id, 'participant_ref', participant.ref, conversation.sourceHash)
+    }
+  }
+  return expected
+}
+
+function embeddedConversationExpectations(conversations, quarantinedParticipants = new Set()) {
   const messageHashes = new Map()
   const participants = new Set()
   for (const document of conversations.documents) {
@@ -686,7 +780,9 @@ function embeddedConversationExpectations(conversations) {
       const participantId = referenceId(isObject(participant)
         ? participant.id ?? participant.uid ?? participant.userId ?? participant.ref
         : participant)
-      if (participantId) participants.add(`${conversationId}\0${participantId}`)
+      if (participantId && !quarantinedParticipants.has(`${conversationId}\0${participantId}`)) {
+        participants.add(`${conversationId}\0${participantId}`)
+      }
     }
     const rawMessages = Array.isArray(payload.messages)
       ? payload.messages
@@ -806,6 +902,14 @@ async function main() {
     firestoreArchiveClassification.active,
     firestoreArchiveClassification.archived,
   )
+  const expectedQuarantinedFirestoreReferences = expectedQuarantinedFirestoreReferenceRows(
+    operational,
+    firestoreArchiveClassification.active,
+    firestoreArchiveClassification.archived,
+    allFirestoreDocumentIds(firestore),
+    auth,
+    rawFirestoreUserIdentityCandidates(firestore),
+  )
 
   const client = new pg.Client(databaseConfig(connectionString))
   await client.connect()
@@ -895,14 +999,48 @@ async function main() {
       failures.archivedFirestoreUserReferenceMismatches = sample(archivedReferenceMismatches)
     }
 
-    const archivedReferenceSourceIds = (collection) => [...expectedArchivedProfileReferences.values()]
+    const quarantinedReferenceResult = await client.query(`
+      SELECT source_collection, source_id, source_field, target_ref_sha256, source_hash, reason
+      FROM legacy_unresolved_firestore_references
+    `)
+    const quarantinedReferences = new Map(quarantinedReferenceResult.rows.map((row) => [
+      unresolvedReferenceKey(
+        row.source_collection,
+        row.source_id,
+        row.source_field,
+        row.target_ref_sha256,
+      ),
+      row,
+    ]))
+    compareSet(
+      'quarantinedFirestoreReferences',
+      new Set(expectedQuarantinedFirestoreReferences.keys()),
+      new Set(quarantinedReferences.keys()),
+      failures,
+    )
+    const quarantinedReferenceMismatches = []
+    for (const [key, expected] of expectedQuarantinedFirestoreReferences) {
+      const stored = quarantinedReferences.get(key)
+      if (stored && (
+        stored.source_hash !== expected.sourceHash
+        || stored.reason !== 'source_target_absent_from_export'
+      )) quarantinedReferenceMismatches.push(key)
+    }
+    if (quarantinedReferenceMismatches.length) {
+      failures.quarantinedFirestoreReferenceMismatches = sample(quarantinedReferenceMismatches)
+    }
+
+    const detachedReferenceSourceIds = (collection) => [
+      ...expectedArchivedProfileReferences.values(),
+      ...expectedQuarantinedFirestoreReferences.values(),
+    ]
       .filter((reference) => reference.sourceCollection === collection)
       .map((reference) => reference.sourceId)
     const [archiveUserSources, archiveJobSources, archiveApplicationSources, archivePartnershipSources] = await Promise.all([
-      client.query('SELECT id, school_id FROM users WHERE id = ANY($1::text[])', [archivedReferenceSourceIds('users')]),
-      client.query('SELECT id, company_id FROM jobs WHERE id = ANY($1::text[])', [archivedReferenceSourceIds('jobs')]),
-      client.query('SELECT id, applicant_id FROM applications WHERE id = ANY($1::text[])', [archivedReferenceSourceIds('applications')]),
-      client.query('SELECT id, requester_id, partner_id FROM partnerships WHERE id = ANY($1::text[])', [archivedReferenceSourceIds('partnerships')]),
+      client.query('SELECT id, school_id FROM users WHERE id = ANY($1::text[])', [detachedReferenceSourceIds('users')]),
+      client.query('SELECT id, company_id FROM jobs WHERE id = ANY($1::text[])', [detachedReferenceSourceIds('jobs')]),
+      client.query('SELECT id, applicant_id FROM applications WHERE id = ANY($1::text[])', [detachedReferenceSourceIds('applications')]),
+      client.query('SELECT id, requester_id, partner_id FROM partnerships WHERE id = ANY($1::text[])', [detachedReferenceSourceIds('partnerships')]),
     ])
     const archiveReferenceSources = {
       users: new Map(archiveUserSources.rows.map((row) => [row.id, row])),
@@ -910,8 +1048,13 @@ async function main() {
       applications: new Map(archiveApplicationSources.rows.map((row) => [row.id, row])),
       partnerships: new Map(archivePartnershipSources.rows.map((row) => [row.id, row])),
     }
-    const archiveReferenceForeignKeyMismatches = []
-    for (const [key, reference] of expectedArchivedProfileReferences) {
+    const detachedReferenceForeignKeyMismatches = []
+    const expectedDetachedReferences = [
+      ...expectedArchivedProfileReferences.entries(),
+      ...expectedQuarantinedFirestoreReferences.entries(),
+    ]
+    for (const [key, reference] of expectedDetachedReferences) {
+      if (reference.sourceCollection === 'conversations') continue
       const source = archiveReferenceSources[reference.sourceCollection].get(reference.sourceId)
       const foreignKey = reference.sourceCollection === 'users'
         ? source?.school_id
@@ -922,10 +1065,10 @@ async function main() {
             : reference.sourceField === 'requester_ref'
               ? source?.requester_id
               : source?.partner_id
-      if (!source || foreignKey !== null) archiveReferenceForeignKeyMismatches.push(key)
+      if (!source || foreignKey !== null) detachedReferenceForeignKeyMismatches.push(key)
     }
-    if (archiveReferenceForeignKeyMismatches.length) {
-      failures.archivedFirestoreUserReferenceForeignKeyMismatches = sample(archiveReferenceForeignKeyMismatches)
+    if (detachedReferenceForeignKeyMismatches.length) {
+      failures.detachedFirestoreReferenceForeignKeyMismatches = sample(detachedReferenceForeignKeyMismatches)
     }
     const untrackedDetachedReferences = await client.query(`
       WITH detached_references AS (
@@ -947,7 +1090,12 @@ async function main() {
         ON archive_reference.source_collection = detached_references.source_collection
        AND archive_reference.source_id = detached_references.source_id
        AND archive_reference.source_field = detached_references.source_field
+      LEFT JOIN legacy_unresolved_firestore_references quarantined_reference
+        ON quarantined_reference.source_collection = detached_references.source_collection
+       AND quarantined_reference.source_id = detached_references.source_id
+       AND quarantined_reference.source_field = detached_references.source_field
       WHERE archive_reference.source_id IS NULL
+        AND quarantined_reference.source_id IS NULL
       ORDER BY detached_references.source_collection, detached_references.source_id, detached_references.source_field
     `)
     if (untrackedDetachedReferences.rowCount) {
@@ -1194,7 +1342,7 @@ async function main() {
     if (ticketFieldMismatches.length) failures.ticketFieldMismatches = sample(ticketFieldMismatches)
 
     const jobRows = await client.query(`
-      SELECT id, company_ref, title, company_name, location, employment_type,
+      SELECT id, company_id, company_ref, title, company_name, location, employment_type,
         description, status, application_url, closes_at
       FROM jobs WHERE id = ANY($1::text[])
     `, [[...operational.jobs.records.keys()]])
@@ -1202,8 +1350,12 @@ async function main() {
     const jobFieldMismatches = []
     for (const [id, expected] of operational.jobs.records) {
       const stored = jobById.get(id)
+      const expectedCompanyId = expected.companyRef && allUsers.has(expected.companyRef)
+        ? expected.companyRef
+        : null
       if (stored && (
-        stored.company_ref !== expected.companyRef
+        stored.company_id !== expectedCompanyId
+        || stored.company_ref !== expected.companyRef
         || stored.title !== expected.title
         || stored.company_name !== expected.companyName
         || stored.location !== expected.location
@@ -1235,15 +1387,23 @@ async function main() {
     if (applicationFieldMismatches.length) failures.applicationFieldMismatches = sample(applicationFieldMismatches)
 
     const partnershipRows = await client.query(`
-      SELECT id, requester_ref, partner_ref, organization_name, contact_email, status
+      SELECT id, requester_id, requester_ref, partner_id, partner_ref, organization_name, contact_email, status
       FROM partnerships WHERE id = ANY($1::text[])
     `, [[...operational.partnerships.records.keys()]])
     const partnershipById = new Map(partnershipRows.rows.map((row) => [row.id, row]))
     const partnershipFieldMismatches = []
     for (const [id, expected] of operational.partnerships.records) {
       const stored = partnershipById.get(id)
+      const expectedRequesterId = expected.requesterRef && allUsers.has(expected.requesterRef)
+        ? expected.requesterRef
+        : null
+      const expectedPartnerId = expected.partnerRef && allUsers.has(expected.partnerRef)
+        ? expected.partnerRef
+        : null
       if (stored && (
-        stored.requester_ref !== expected.requesterRef
+        stored.requester_id !== expectedRequesterId
+        || stored.requester_ref !== expected.requesterRef
+        || stored.partner_id !== expectedPartnerId
         || stored.partner_ref !== expected.partnerRef
         || stored.organization_name !== expected.organizationName
         || stored.contact_email !== expected.contactEmail
@@ -1593,7 +1753,10 @@ async function main() {
       if (activeLegacyCodes.rowCount) failures.legacyCodesPresentInActiveAuthTokens = activeLegacyCodes.rows.length
     }
 
-    const embedded = embeddedConversationExpectations(firestore.conversations)
+    const quarantinedConversationParticipants = new Set([...expectedQuarantinedFirestoreReferences.values()]
+      .filter((reference) => reference.sourceCollection === 'conversations')
+      .map((reference) => `${reference.sourceId}\0${reference.targetRef}`))
+    const embedded = embeddedConversationExpectations(firestore.conversations, quarantinedConversationParticipants)
     const actualMessageHashes = await idHashRows(client, 'messages')
     compareSet('conversationMessages', new Set(embedded.messageHashes.keys()), new Set(actualMessageHashes.keys()), failures)
     const messageHashMismatches = []
@@ -1660,8 +1823,12 @@ if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) 
 }
 
 export {
+  allFirestoreDocumentIds,
   archiveReferenceKey,
   classifyFirestoreUsersForArchive,
   expectedArchiveProfileReferences,
+  expectedQuarantinedFirestoreReferenceRows,
+  rawFirestoreUserIdentityCandidates,
   runtimeTokenHash,
+  unresolvedReferenceKey,
 }

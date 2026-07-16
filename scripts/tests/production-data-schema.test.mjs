@@ -6,6 +6,7 @@ import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
 import {
+  assertPartialFirestoreImportAllowed,
   disambiguateBlogSlugs,
   hasBlockingImportIssues,
   normalizeAnnouncement,
@@ -23,6 +24,7 @@ import {
   normalizeTicket,
   normalizeUser,
   preflightFirebaseAuthExport,
+  rawFirestoreUserIdentityCandidates as importRawFirestoreUserIdentityCandidates,
   synthesizedAnnouncementNotification,
 } from '../import-firebase-json.mjs'
 import { deterministicStorageAssetId as exportedStorageAssetId } from '../export-firebase-storage.mjs'
@@ -34,8 +36,14 @@ import {
 } from '../import-firebase-storage.mjs'
 import { firestoreJson } from '../export-firestore-json.mjs'
 import {
+  QUARANTINED_FIRESTORE_REFERENCE_MANIFEST,
+  isApprovedQuarantinedFirestoreReference,
+} from '../firebase-quarantine-manifest.mjs'
+import {
   classifyFirestoreUsersForArchive,
   expectedArchiveProfileReferences,
+  expectedQuarantinedFirestoreReferenceRows,
+  rawFirestoreUserIdentityCandidates as verifyRawFirestoreUserIdentityCandidates,
   runtimeTokenHash,
 } from '../verify-firebase-import.mjs'
 import {
@@ -58,6 +66,7 @@ const migrations = [
   '002_legacy_invite_provenance.sql',
   '003_production_data_parity.sql',
   '004_legacy_firestore_user_archives.sql',
+  '005_quarantined_firestore_references.sql',
 ]
 const sourceHash = 'a'.repeat(64)
 
@@ -260,6 +269,7 @@ test('production parity schema supports native APIs and Firebase provenance rows
       'notification_receipts', 'jobs', 'applications', 'partnerships', 'archived_mail',
       'announcements', 'knowledge_base_articles', 'invalidated_legacy_email_codes',
       'legacy_firestore_user_archives', 'legacy_firestore_user_archive_references',
+      'legacy_unresolved_firestore_references',
     ]) assert.ok(tableNames.has(table), `missing table ${table}`)
 
     const counts = await database.query(`
@@ -315,6 +325,11 @@ test('production constraints reject mismatched media bytes and active legacy aut
         source_collection, source_id, source_field, legacy_firebase_uid, source_hash
       ) VALUES ('tickets', 'ticket-1', 'user_id', 'firestore-only-profile', '${sourceHash}');
     `), /check constraint/i)
+    await assert.rejects(database.exec(`
+      INSERT INTO legacy_unresolved_firestore_references (
+        source_collection, source_id, source_field, target_ref_sha256, source_hash, reason
+      ) VALUES ('partnerships', 'partnership-1', 'requester_ref', '${'b'.repeat(64)}', '${sourceHash}', 'source_target_absent_from_export');
+    `), /check constraint/i)
   } finally {
     await database.close()
   }
@@ -349,6 +364,54 @@ test('Firestore-only profiles are archived only when no Auth identity candidate 
   assert.deepEqual(classification.identityConflicts.sort(), ['ambiguous-email', 'ambiguous-uid', 'direct-uid'])
 })
 
+test('provider emails prevent a Firebase reference from being treated as absent', () => {
+  const timestamp = '2026-07-13T00:00:00.000Z'
+  const normalized = normalizeUser({
+    record: {
+      id: 'firestore-profile',
+      email: 'profile@example.com',
+      providerUserInfo: [{ email: 'Provider.Identity@example.com' }],
+    },
+    inferredId: null,
+  }, timestamp, 'firestore')
+  assert.equal(normalized.error, undefined)
+  assert.deepEqual(normalized.user.firestoreIdentityCandidateEmails, [
+    'profile@example.com',
+    'provider.identity@example.com',
+  ])
+
+  const restUser = {
+    name: 'projects/test/databases/(default)/documents/users/firestore-profile',
+    fields: {
+      providerUserInfo: {
+        arrayValue: {
+          values: [{
+            mapValue: {
+              fields: { email: { stringValue: 'Provider.Identity@example.com' } },
+            },
+          }],
+        },
+      },
+    },
+  }
+  const importerCandidates = importRawFirestoreUserIdentityCandidates({ users: [restUser] })
+  assert.equal(importerCandidates.emails.has('provider.identity@example.com'), true)
+
+  const verifierCandidates = verifyRawFirestoreUserIdentityCandidates({
+    users: { documents: [restUser] },
+  })
+  assert.equal(verifierCandidates.emails.has('provider.identity@example.com'), true)
+})
+
+test('Firestore cutovers cannot opt into partial commits', () => {
+  assert.throws(
+    () => assertPartialFirestoreImportAllowed('firestore', true),
+    /allow-partial is prohibited/i,
+  )
+  assert.doesNotThrow(() => assertPartialFirestoreImportAllowed('auth', true))
+  assert.doesNotThrow(() => assertPartialFirestoreImportAllowed('firestore', false))
+})
+
 test('only sanctioned Firestore archive references are expected outside runtime foreign keys', () => {
   const archiveId = 'archive-uid'
   const sourceHash = 'b'.repeat(64)
@@ -370,6 +433,48 @@ test('only sanctioned Firestore archive references are expected outside runtime 
     { sourceCollection: 'partnerships', sourceId: 'partnership-1', sourceField: 'requester_ref', legacyFirebaseUid: archiveId, sourceHash },
     { sourceCollection: 'partnerships', sourceId: 'partnership-1', sourceField: 'partner_ref', legacyFirebaseUid: archiveId, sourceHash },
   ])
+})
+
+test('only the frozen, verified-absent reference manifest can enter the quarantine ledger', () => {
+  assert.equal(QUARANTINED_FIRESTORE_REFERENCE_MANIFEST.size, 3)
+  assert.deepEqual(
+    new Set([...QUARANTINED_FIRESTORE_REFERENCE_MANIFEST].map((entry) => {
+      const [collection, , field] = entry.split('\0')
+      return `${collection}\0${field}`
+    })),
+    new Set(['conversations\0participant_ref', 'jobs\0company_ref', 'partnerships\0partner_ref']),
+  )
+  const sourceHash = 'c'.repeat(64)
+  const references = expectedQuarantinedFirestoreReferenceRows({
+    jobs: { records: new Map([
+      ['job-stale', { companyRef: 'missing-company', sourceHash }],
+      ['job-known', { companyRef: 'known-source-document', sourceHash }],
+    ]) },
+    partnerships: { records: new Map([
+      ['partnership-stale', { requesterRef: 'runtime-user', partnerRef: 'missing-partner', sourceHash }],
+    ]) },
+    conversations: { records: new Map([
+      ['conversation-stale', { participants: [{ ref: 'missing-participant' }, { ref: 'runtime-user' }], sourceHash }],
+    ]) },
+  }, new Map([['runtime-user', { id: 'runtime-user' }]]), new Map(), new Set(['known-source-document']), {
+    identities: new Map([['runtime-user', { id: 'runtime-user', email: 'runtime@example.com' }]]),
+  }, { ids: new Set(), emails: new Set() })
+  assert.equal(references.size, 0, 'unreviewed source rows must remain blocking')
+
+  assert.equal(isApprovedQuarantinedFirestoreReference(
+    'jobs',
+    'e7825afd4dba4f8fa840c305377165b2e3cc73d900219eda610ddcd93abf05cc',
+    'company_ref',
+    '3a339982067713c0bdf5632501aaa6018c387411409261f8ba9e970fa9ff71d9',
+    'd85d4a82a8444e8c27328ad9c02cdb7af185b603b06f5398c3985a46b44c14e8',
+  ), true)
+  assert.equal(isApprovedQuarantinedFirestoreReference(
+    'jobs',
+    'e7825afd4dba4f8fa840c305377165b2e3cc73d900219eda610ddcd93abf05cc',
+    'company_ref',
+    sourceHash,
+    'd85d4a82a8444e8c27328ad9c02cdb7af185b603b06f5398c3985a46b44c14e8',
+  ), false)
 })
 
 test('legacy email codes activated with the runtime HMAC are detected', { skip: !PGlite }, async () => {
@@ -420,6 +525,9 @@ test('every production collection importer upsert matches the migrated schema', 
     ])
     await database.query(await importerSql('UPSERT_LEGACY_FIRESTORE_USER_ARCHIVE_REFERENCE_SQL'), [
       'jobs', 'job-1', 'company_ref', 'firestore-only-profile', sourceHash,
+    ])
+    await database.query(await importerSql('UPSERT_LEGACY_UNRESOLVED_FIRESTORE_REFERENCE_SQL'), [
+      'jobs', 'job-1', 'company_ref', 'b'.repeat(64), sourceHash,
     ])
     await database.query(await importerSql('UPSERT_TICKET_SQL'), [
       'ticket-1', 'user-1', 'Account assistance',
@@ -508,7 +616,8 @@ test('every production collection importer upsert matches the migrated schema', 
         (SELECT count(*)::integer FROM knowledge_base_articles WHERE source_hash = '${sourceHash}') AS knowledge,
         (SELECT count(*)::integer FROM invalidated_legacy_email_codes WHERE source_hash = '${sourceHash}') AS invalidated_codes,
         (SELECT count(*)::integer FROM legacy_firestore_user_archives WHERE source_hash = '${sourceHash}') AS archived_profiles,
-        (SELECT count(*)::integer FROM legacy_firestore_user_archive_references WHERE source_hash = '${sourceHash}') AS archived_profile_references
+        (SELECT count(*)::integer FROM legacy_firestore_user_archive_references WHERE source_hash = '${sourceHash}') AS archived_profile_references,
+        (SELECT count(*)::integer FROM legacy_unresolved_firestore_references WHERE source_hash = '${sourceHash}') AS quarantined_references
     `)
     assert.deepEqual(result.rows[0], {
       identities: 1,
@@ -527,6 +636,7 @@ test('every production collection importer upsert matches the migrated schema', 
       invalidated_codes: 1,
       archived_profiles: 1,
       archived_profile_references: 1,
+      quarantined_references: 1,
     })
   } finally {
     await database.close()

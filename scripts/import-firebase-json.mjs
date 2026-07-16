@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import pg from 'pg'
+import { isApprovedQuarantinedFirestoreReference } from './firebase-quarantine-manifest.mjs'
 
 const ROLE_MAP = new Map([
   ['graduate', 'graduate'],
@@ -539,6 +540,72 @@ function assertAccountedFirestoreShape(root, sourceMode) {
   if (Array.isArray(subcollections) && subcollections.length) {
     throw new Error(`Firestore subcollections are not importable without an explicit contract: ${subcollections.slice(0, 20).join(', ')}`)
   }
+}
+
+function rawFirestoreDocumentIds(root) {
+  const ids = new Set()
+  if (!isObject(root)) return ids
+  for (const collectionName of FIRESTORE_COLLECTIONS) {
+    const records = propertyCaseInsensitive(root, collectionName)
+    if (!Array.isArray(records)) continue
+    for (const record of records) {
+      if (!isObject(record)) continue
+      const id = normalizeId(
+        idFromCollectionPath(documentPath(record), collectionName)
+        ?? record.id
+        ?? record.documentId
+        ?? record.__id__
+        ?? record._id,
+      )
+      if (id) ids.add(id)
+    }
+  }
+  return ids
+}
+
+function rawFirestoreUserIdentityCandidates(root) {
+  const ids = new Set()
+  const emails = new Set()
+  const records = propertyCaseInsensitive(root, 'users')
+  if (!Array.isArray(records)) return { ids, emails }
+  for (const record of records) {
+    if (!isObject(record)) continue
+    const materialized = materializeRecord(record) ?? {}
+    for (const candidate of [
+      idFromCollectionPath(documentPath(record), 'users'),
+      record.localId,
+      record.uid,
+      record.userId,
+      record.firebaseUid,
+      record.id,
+      materialized.localId,
+      materialized.uid,
+      materialized.userId,
+      materialized.firebaseUid,
+      materialized.id,
+    ]) {
+      const id = referencedEntityId(candidate)
+      if (id) ids.add(id)
+    }
+    for (const candidate of [
+      record.email,
+      record.emailAddress,
+      materialized.email,
+      materialized.emailAddress,
+    ]) {
+      const email = normalizeEmail(candidate)
+      if (email) emails.add(email)
+    }
+    for (const provider of [
+      ...normalizeArray(record.providerUserInfo),
+      ...normalizeArray(materialized.providerUserInfo),
+    ]) {
+      if (!isObject(provider)) continue
+      const email = normalizeEmail(provider.email ?? provider.emailAddress)
+      if (email) emails.add(email)
+    }
+  }
+  return { ids, emails }
 }
 
 function looksLikeInviteRecord(record) {
@@ -2498,6 +2565,18 @@ const UPSERT_LEGACY_FIRESTORE_USER_ARCHIVE_REFERENCE_SQL = `
   RETURNING source_id
 `
 
+const UPSERT_LEGACY_UNRESOLVED_FIRESTORE_REFERENCE_SQL = `
+  INSERT INTO legacy_unresolved_firestore_references (
+    source_collection, source_id, source_field, target_ref_sha256, source_hash, reason
+  ) VALUES ($1, $2, $3, $4, $5, 'source_target_absent_from_export')
+  ON CONFLICT (source_collection, source_id, source_field, target_ref_sha256) DO UPDATE SET
+    source_hash = EXCLUDED.source_hash,
+    reason = EXCLUDED.reason,
+    updated_at = now()
+  WHERE legacy_unresolved_firestore_references.source_hash <> EXCLUDED.source_hash
+  RETURNING source_id
+`
+
 const UPSERT_BLOG_POST_SQL = `
   INSERT INTO blog_posts (
     id, slug, title, author, excerpt, content_html, status, image_url, created_by,
@@ -2822,6 +2901,7 @@ function baseCollectionSummary(sourceRecords) {
     normalizationWarnings: 0,
     safetyNormalizations: 0,
     archivedReferences: 0,
+    quarantinedReferences: 0,
   }
 }
 
@@ -2830,6 +2910,12 @@ function hasBlockingImportIssues(collections) {
     'skipped', 'invalid', 'orphaned', 'databaseRejected', 'emailConflicts', 'identityConflicts',
     'normalizationWarnings',
   ].some((key) => (collection[key] ?? 0) > 0))
+}
+
+function assertPartialFirestoreImportAllowed(sourceMode, allowPartial) {
+  if (sourceMode === 'firestore' && allowPartial) {
+    throw new Error('--allow-partial is prohibited for Firebase Firestore cutover imports.')
+  }
 }
 
 async function main() {
@@ -2856,6 +2942,7 @@ async function main() {
   }
   const sourceMode = args.source ?? detectedSource
   assertAccountedFirestoreShape(parsed, sourceMode)
+  assertPartialFirestoreImportAllowed(sourceMode, args.allowPartial)
   if (args.preflight && sourceMode !== 'auth') {
     throw new Error('--preflight is available only for Firebase Auth exports. Supply --source auth if auto-detection is ambiguous.')
   }
@@ -2871,6 +2958,12 @@ async function main() {
 
   const connectionString = process.env.DATABASE_URL
   if (!connectionString) throw new Error('DATABASE_URL is required.')
+  const knownFirestoreDocumentIds = sourceMode === 'firestore'
+    ? rawFirestoreDocumentIds(parsed)
+    : new Set()
+  const rawFirestoreUserIdentityValues = sourceMode === 'firestore'
+    ? rawFirestoreUserIdentityCandidates(parsed)
+    : { ids: new Set(), emails: new Set() }
   const extracted = extractPersistedCollections(parsed)
   const totalSourceRecords = Object.values(extracted).reduce((total, records) => total + records.length, 0)
   if (!totalSourceRecords) throw new Error('No supported Firebase records were found in the supplied JSON structure.')
@@ -3524,6 +3617,107 @@ async function main() {
       warn(`${collectionName} ${recordId}: referenced ${label} ${reference} was not found; the source reference was preserved without a foreign key`)
     }
 
+    function isVerifiedAbsentFirestoreReference(
+      collectionName,
+      recordId,
+      fieldName,
+      reference,
+      sourceHash,
+    ) {
+      const targetRefSha256 = reference ? sha256(reference) : null
+      return sourceMode === 'firestore'
+        && Boolean(reference)
+        && !validUserIds.has(reference)
+        && !archivedFirestoreUserIds.has(reference)
+        && !importedAuthIdentityIds.has(reference)
+        && !importedAuthIdentityEmails.has(String(reference).toLowerCase())
+        && !knownFirestoreDocumentIds.has(reference)
+        && !rawFirestoreUserIdentityValues.ids.has(reference)
+        && !rawFirestoreUserIdentityValues.emails.has(String(reference).toLowerCase())
+        && Boolean(targetRefSha256)
+        && isApprovedQuarantinedFirestoreReference(
+          collectionName,
+          sha256(recordId),
+          fieldName,
+          sourceHash,
+          targetRefSha256,
+        )
+    }
+
+    async function reconcileQuarantinedFirestoreReference(
+      collectionName,
+      recordId,
+      fieldName,
+      reference,
+      sourceHash,
+      shouldQuarantine,
+    ) {
+      if (!shouldQuarantine) {
+        await client.query(`
+          DELETE FROM legacy_unresolved_firestore_references
+          WHERE source_collection = $1 AND source_id = $2 AND source_field = $3
+        `, [collectionName, recordId, fieldName])
+        return false
+      }
+      const targetRefSha256 = sha256(reference)
+      await client.query(`
+        DELETE FROM legacy_unresolved_firestore_references
+        WHERE source_collection = $1
+          AND source_id = $2
+          AND source_field = $3
+          AND target_ref_sha256 <> $4
+      `, [collectionName, recordId, fieldName, targetRefSha256])
+      const outcome = await executeRecoverableUpsert(
+        client,
+        'firebase_unresolved_reference',
+        UPSERT_LEGACY_UNRESOLVED_FIRESTORE_REFERENCE_SQL,
+        [collectionName, recordId, fieldName, targetRefSha256, sourceHash],
+      )
+      if (outcome.error) {
+        collections[collectionName].databaseRejected += 1
+        collections[collectionName].skipped += 1
+        warn(`${collectionName} ${recordId}: verified-absent reference quarantine was rejected (${outcome.error.code})`)
+        return true
+      }
+      collections[collectionName].quarantinedReferences += 1
+      return true
+    }
+
+    async function reconcileQuarantinedConversationParticipants(conversation, references) {
+      const targetHashes = [...new Set(references.map((reference) => sha256(reference)))]
+      if (targetHashes.length) {
+        await client.query(`
+          DELETE FROM legacy_unresolved_firestore_references
+          WHERE source_collection = 'conversations'
+            AND source_id = $1
+            AND source_field = 'participant_ref'
+            AND NOT (target_ref_sha256 = ANY($2::text[]))
+        `, [conversation.id, targetHashes])
+      } else {
+        await client.query(`
+          DELETE FROM legacy_unresolved_firestore_references
+          WHERE source_collection = 'conversations'
+            AND source_id = $1
+            AND source_field = 'participant_ref'
+        `, [conversation.id])
+      }
+      for (const targetHash of targetHashes) {
+        const outcome = await executeRecoverableUpsert(
+          client,
+          'firebase_unresolved_participant',
+          UPSERT_LEGACY_UNRESOLVED_FIRESTORE_REFERENCE_SQL,
+          ['conversations', conversation.id, 'participant_ref', targetHash, conversation.sourceHash],
+        )
+        if (outcome.error) {
+          collections.conversations.databaseRejected += 1
+          collections.conversations.skipped += 1
+          warn(`Conversation ${conversation.id}: verified-absent participant quarantine was rejected (${outcome.error.code})`)
+          continue
+        }
+        collections.conversations.quarantinedReferences += 1
+      }
+    }
+
     const existingBlogPostIds = await existingIdSet('SELECT id FROM blog_posts')
     for (const post of blogPosts) {
       noteMissingReference('blogPosts', post.id, 'author', post.authorRef, validUserIds)
@@ -3551,7 +3745,11 @@ async function main() {
     const existingJobIds = await existingIdSet('SELECT id FROM jobs')
     for (const job of jobs) {
       const archivedCompanyReference = archivedFirestoreUserIds.has(job.companyRef)
-      if (!archivedCompanyReference) noteMissingReference('jobs', job.id, 'company', job.companyRef, validUserIds)
+      const quarantinedCompanyReference = !archivedCompanyReference
+        && isVerifiedAbsentFirestoreReference('jobs', job.id, 'company_ref', job.companyRef, job.sourceHash)
+      if (!archivedCompanyReference && !quarantinedCompanyReference) {
+        noteMissingReference('jobs', job.id, 'company', job.companyRef, validUserIds)
+      }
       const jobOutcome = await trackedUpsert('jobs', job.id, existingJobIds, 'firebase_job_import', UPSERT_JOB_SQL, [
         job.id,
         job.companyRef && validUserIds.has(job.companyRef) ? job.companyRef : null,
@@ -3572,6 +3770,14 @@ async function main() {
       ])
       if (jobOutcome.accepted) {
         await reconcileArchivedProfileReference('jobs', job.id, 'company_ref', job.companyRef, job.sourceHash)
+        await reconcileQuarantinedFirestoreReference(
+          'jobs',
+          job.id,
+          'company_ref',
+          job.companyRef,
+          job.sourceHash,
+          quarantinedCompanyReference,
+        )
       }
     }
 
@@ -3613,10 +3819,18 @@ async function main() {
     for (const partnership of partnerships) {
       const archivedRequesterReference = archivedFirestoreUserIds.has(partnership.requesterRef)
       const archivedPartnerReference = archivedFirestoreUserIds.has(partnership.partnerRef)
+      const quarantinedPartnerReference = !archivedPartnerReference
+        && isVerifiedAbsentFirestoreReference(
+          'partnerships',
+          partnership.id,
+          'partner_ref',
+          partnership.partnerRef,
+          partnership.sourceHash,
+        )
       if (!archivedRequesterReference) {
         noteMissingReference('partnerships', partnership.id, 'requester', partnership.requesterRef, validUserIds)
       }
-      if (!archivedPartnerReference) {
+      if (!archivedPartnerReference && !quarantinedPartnerReference) {
         noteMissingReference('partnerships', partnership.id, 'partner', partnership.partnerRef, validUserIds)
       }
       const partnershipOutcome = await trackedUpsert('partnerships', partnership.id, existingPartnershipIds, 'firebase_partnership_import', UPSERT_PARTNERSHIP_SQL, [
@@ -3649,6 +3863,14 @@ async function main() {
           partnership.partnerRef,
           partnership.sourceHash,
         )
+        await reconcileQuarantinedFirestoreReference(
+          'partnerships',
+          partnership.id,
+          'partner_ref',
+          partnership.partnerRef,
+          partnership.sourceHash,
+          quarantinedPartnerReference,
+        )
       }
     }
 
@@ -3656,6 +3878,12 @@ async function main() {
     const existingConversationIds = await existingIdSet('SELECT id FROM conversations')
     for (const conversation of conversations) {
       noteMissingReference('conversations', conversation.id, 'ticket', conversation.ticketRef, validTicketIds)
+      if (!conversation.participants.some((participant) => validUserIds.has(participant.ref))) {
+        collections.conversations.orphaned += 1
+        collections.conversations.skipped += 1
+        warn(`Conversation ${conversation.id}: no participant has an imported runtime account`)
+        continue
+      }
       const conversationOutcome = await trackedUpsert(
         'conversations',
         conversation.id,
@@ -3679,8 +3907,19 @@ async function main() {
       )
       if (!conversationOutcome.accepted) continue
 
+      const quarantinedParticipantReferences = []
       for (const participant of conversation.participants) {
         if (!validUserIds.has(participant.ref)) {
+          if (isVerifiedAbsentFirestoreReference(
+            'conversations',
+            conversation.id,
+            'participant_ref',
+            participant.ref,
+            conversation.sourceHash,
+          )) {
+            quarantinedParticipantReferences.push(participant.ref)
+            continue
+          }
           collections.conversations.orphaned += 1
           collections.conversations.skipped += 1
           warn(`Conversation ${conversation.id}: participant ${participant.ref} has no imported user account`)
@@ -3707,6 +3946,7 @@ async function main() {
           collections.conversations.participants += 1
         }
       }
+      await reconcileQuarantinedConversationParticipants(conversation, quarantinedParticipantReferences)
 
       for (const message of conversation.messages) {
         if (!message.senderRef || !validUserIds.has(message.senderRef)) {
@@ -4052,4 +4292,7 @@ export {
   preflightFirebaseAuthExport,
   isValidatedImportedHtml,
   synthesizedAnnouncementNotification,
+  assertPartialFirestoreImportAllowed,
+  rawFirestoreDocumentIds,
+  rawFirestoreUserIdentityCandidates,
 }

@@ -77,6 +77,8 @@ The final Firestore export dynamically discovers roots and fails closed on unkno
 
 Firebase Auth is authoritative for UID, canonical email, verification, disabled state, and linked providers. Firestore only enriches matching Auth users. Password-like fields are recursively removed, legacy email codes are invalidated, Trigger Email bodies/tokens are not retained, and strict imports roll back on skipped, invalid, orphaned, conflicting, or rejected records. Never use `--allow-partial` in production.
 
+Firestore profile documents without a matching Auth UID or any embedded UID/email candidate are retained only in the legacy archive tables; they never become runtime accounts. A separately audited quarantine ledger can hold only the three hash-pinned, source-absent references from the final export. It cannot create a user or a foreign-key relationship, and any changed, additional, or otherwise unresolved reference fails the import and reconciliation.
+
 ## Cutover runbook
 
 ### 1. Protect source control and rehearse
