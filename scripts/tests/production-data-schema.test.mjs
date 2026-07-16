@@ -24,6 +24,8 @@ import {
   normalizeTicket,
   normalizeUser,
   preflightFirebaseAuthExport,
+  isConversationEligibleForImport,
+  runtimeConversationTicketReference,
   rawFirestoreUserIdentityCandidates as importRawFirestoreUserIdentityCandidates,
   synthesizedAnnouncementNotification,
 } from '../import-firebase-json.mjs'
@@ -410,6 +412,42 @@ test('Firestore cutovers cannot opt into partial commits', () => {
   )
   assert.doesNotThrow(() => assertPartialFirestoreImportAllowed('auth', true))
   assert.doesNotThrow(() => assertPartialFirestoreImportAllowed('firestore', false))
+})
+
+test('a conversation with only frozen verified-absent participants is preserved without a synthetic account', () => {
+  const runtimeUsers = new Set(['active-user'])
+  const isVerifiedAbsent = (participant) => participant.ref === 'frozen-absent-user'
+
+  assert.equal(isConversationEligibleForImport(
+    [{ ref: 'frozen-absent-user' }],
+    runtimeUsers,
+    isVerifiedAbsent,
+  ), true)
+  assert.equal(isConversationEligibleForImport(
+    [{ ref: 'unknown-user' }],
+    runtimeUsers,
+    isVerifiedAbsent,
+  ), false)
+  assert.equal(isConversationEligibleForImport(
+    [{ ref: 'active-user' }, { ref: 'unknown-user' }],
+    runtimeUsers,
+    isVerifiedAbsent,
+  ), true, 'the per-participant gate remains responsible for blocking mixed memberships')
+  assert.equal(isConversationEligibleForImport([], runtimeUsers, isVerifiedAbsent), false)
+})
+
+test('a fully quarantined legacy conversation cannot be linked into a live support ticket', () => {
+  const runtimeUsers = new Set(['active-user'])
+  const runtimeTickets = new Set(['live-ticket'])
+  assert.equal(runtimeConversationTicketReference({
+    ticketRef: 'live-ticket', participants: [{ ref: 'frozen-absent-user' }],
+  }, runtimeUsers, runtimeTickets), null)
+  assert.equal(runtimeConversationTicketReference({
+    ticketRef: 'live-ticket', participants: [{ ref: 'active-user' }],
+  }, runtimeUsers, runtimeTickets), 'live-ticket')
+  assert.equal(runtimeConversationTicketReference({
+    ticketRef: 'unknown-ticket', participants: [{ ref: 'active-user' }],
+  }, runtimeUsers, runtimeTickets), null)
 })
 
 test('only sanctioned Firestore archive references are expected outside runtime foreign keys', () => {

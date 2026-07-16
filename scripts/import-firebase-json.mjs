@@ -2918,6 +2918,24 @@ function assertPartialFirestoreImportAllowed(sourceMode, allowPartial) {
   }
 }
 
+// A legacy conversation that has no current runtime participant is normally
+// unsafe to import: it would be detached from every account. The one narrow
+// exception is a conversation whose every participant is an independently
+// verified, frozen-manifest reference. In that case the conversation payload
+// can be preserved and each absent participant is recorded in the quarantine
+// ledger without creating a synthetic account or a runtime foreign key.
+function isConversationEligibleForImport(participants, validUserIds, isVerifiedAbsentReference) {
+  if (!participants.length) return false
+  if (participants.some((participant) => validUserIds.has(participant.ref))) return true
+  return participants.every((participant) => isVerifiedAbsentReference(participant))
+}
+
+function runtimeConversationTicketReference(conversation, validUserIds, validTicketIds) {
+  const hasRuntimeParticipant = conversation.participants.some((participant) => validUserIds.has(participant.ref))
+  if (!hasRuntimeParticipant || !conversation.ticketRef || !validTicketIds.has(conversation.ticketRef)) return null
+  return conversation.ticketRef
+}
+
 async function main() {
   const args = parseArguments(process.argv.slice(2))
   if (args.help) {
@@ -3878,7 +3896,17 @@ async function main() {
     const existingConversationIds = await existingIdSet('SELECT id FROM conversations')
     for (const conversation of conversations) {
       noteMissingReference('conversations', conversation.id, 'ticket', conversation.ticketRef, validTicketIds)
-      if (!conversation.participants.some((participant) => validUserIds.has(participant.ref))) {
+      if (!isConversationEligibleForImport(
+        conversation.participants,
+        validUserIds,
+        (participant) => isVerifiedAbsentFirestoreReference(
+          'conversations',
+          conversation.id,
+          'participant_ref',
+          participant.ref,
+          conversation.sourceHash,
+        ),
+      )) {
         collections.conversations.orphaned += 1
         collections.conversations.skipped += 1
         warn(`Conversation ${conversation.id}: no participant has an imported runtime account`)
@@ -3897,7 +3925,7 @@ async function main() {
           conversation.legacyAvatarUrlSha256,
           conversation.lastMessage,
           conversation.lastMessageAt,
-          conversation.ticketRef && validTicketIds.has(conversation.ticketRef) ? conversation.ticketRef : null,
+          runtimeConversationTicketReference(conversation, validUserIds, validTicketIds),
           JSON.stringify(conversation.payload),
           conversation.sourceHash,
           conversation.hasSourceTimestamp ? conversation.updatedAt : null,
@@ -4291,6 +4319,8 @@ export {
   firestoreArchivePayload,
   preflightFirebaseAuthExport,
   isValidatedImportedHtml,
+  isConversationEligibleForImport,
+  runtimeConversationTicketReference,
   synthesizedAnnouncementNotification,
   assertPartialFirestoreImportAllowed,
   rawFirestoreDocumentIds,
