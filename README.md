@@ -12,9 +12,9 @@ Yahnu is a Next.js application for graduates, schools, employers, content teams,
 - Render release branch: `agent/render-production-main`
 - Production hostname: `yahnu.org`, with `www.yahnu.org` redirected to it after the Render release is healthy
 - Render region: Frankfurt
-- Budgeted Render footprint: **about $17.50/month** (Starter web service $7, Basic-256 MB PostgreSQL $6, and 15 GB database storage at $0.30/GB). This stays below the owner's $25/month ceiling; no automatic storage scaling is enabled.
+- Budgeted Render footprint: **about $13.30/month** (Starter web service $7, Basic-256 MB PostgreSQL $6, and 1 GB database storage at $0.30/GB). This stays below the owner's $25/month ceiling; no automatic storage scaling is enabled.
 
-`render.yaml` starts in Maintenance Mode, disables automatic deploys, caps storage autoscaling, and pins Node `22.23.1`. No Render resource has been created merely by committing this file.
+`render.yaml` reflects the completed production cutover with Maintenance Mode disabled, automatic deploys disabled, storage autoscaling capped, and Node `22.23.1` pinned. Use Render's dashboard to enable maintenance deliberately before a future high-risk migration.
 
 ## Local setup and verification
 
@@ -104,7 +104,7 @@ gcloud storage buckets list --project yahnu-50c61
 $bucket = '<exact bucket returned by Google Cloud>'
 ```
 
-Always export the full bucket without `--prefix`. The tools cap a single object at 100 MB and the bucket at 10 GB. The proposed database disk is 15 GB, so account for existing tables, bytea overhead, indexes, and transaction/WAL space. As a conservative gate, do not proceed unless current database size plus twice the manifest payload remains below 80% of provisioned disk; otherwise increase the approved plan/disk or redesign the import before downtime.
+Always export the full bucket without `--prefix`. The tools cap a single object at 100 MB and the bucket at 10 GB. The provisioned database disk is 1 GB, so account for existing tables, bytea overhead, indexes, and transaction/WAL space. As a conservative gate, do not proceed unless current database size plus twice the manifest payload remains below 80% of provisioned disk; otherwise increase the approved plan/disk or redesign the import before downtime.
 
 ### 2. Provision Render in maintenance
 
@@ -184,7 +184,7 @@ npm run firebase:import -- --file C:\secure\yahnu-auth.json --source auth --pref
 
 ```powershell
 npm run db:migrate
-$databaseCapacityBytes = 15GB
+$databaseCapacityBytes = 1GB
 
 npm run firebase:import -- --file C:\secure\yahnu-auth.json --source auth --dry-run
 npm run firebase:import -- --file C:\secure\yahnu-firestore.json --source firestore --dry-run

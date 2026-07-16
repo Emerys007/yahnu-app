@@ -159,8 +159,8 @@
   },
   "City": "Ville",
   "City, Country": "Ville, Pays",
-  "City, State/Country": "Ville, État/Pays",
-  "City, state, remote": "Ville, état, à distance",
+  "City in Côte d’Ivoire": "Ville en Côte d’Ivoire",
+  "City, state, remote": "Ville ou télétravail en Côte d’Ivoire",
   "Clear Formatting": "Effacer la mise en forme",
   "Close": "Fermer",
   "Code View": "Vue du code",
@@ -1681,7 +1681,7 @@
   "e": {
     "g": {
       " Abidjan": "ex: Abidjan",
-      " New York, NY": "ex: New York, NY",
+      " Bouaké": "ex: Bouaké",
       " React, TypeScript": "ex: React, TypeScript",
       " Software Engineer": "ex: Ingénieur Logiciel",
       ", Computer Science": "ex: Informatique",
@@ -1938,7 +1938,7 @@
       "adjust_filters": "Essayez d'ajuster vos filtres pour trouver ce que vous cherchez.",
       "all_types": "Tous les types",
       "browse_jobs_description": "Parcourez des centaines d'offres d'emploi des meilleures entreprises en {country}.",
-      "city_state_remote": "Ville, état, à distance",
+      "city_state_remote": "Ville ou télétravail en Côte d’Ivoire",
       "coming_soon": "Les offres d'emploi arrivent bientôt ! Nous travaillons d'arrache-pied pour vous proposer les meilleures opportunités.",
       "contract": "Contrat",
       "create_account_description": "Créez un compte gratuit pour voir tous les détails des offres et postuler directement.",

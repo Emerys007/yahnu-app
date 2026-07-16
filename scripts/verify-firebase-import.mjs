@@ -63,6 +63,69 @@ const FORBIDDEN_IMPORTED_MARKUP = /<\s*(?:script|iframe|object|embed|style|link|
 const IMPORTED_TAG_PATTERN = /<\/?\s*([a-z][a-z0-9-]*)\b[^>]*>/gi
 const IMPORTED_HREF_PATTERN = /\shref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi
 
+const IVORIAN_LAUNCH_BLOG_FINGERPRINTS = new Map([
+  ['okXTCncxBSJrQIYAnIrm', {
+    title: 'Entrepreneuriat numérique : Comment Yahnu soutient la nouvelle génération de créateurs en Afrique',
+    author: 'Yahnu Staff',
+  }],
+  ['nzi7LABXAQ8GHlRpFxiD', {
+    title: "L'avenir du travail en Afrique est à distance",
+    author: 'Yanhu Staff',
+  }],
+])
+const LEGACY_BLOG_EXAMPLE = 'Aïda, diplômée en informatique à Dakar'
+const IVORIAN_BLOG_EXAMPLE = 'Aïda, diplômée en informatique à Abidjan'
+
+const IVORIAN_LAUNCH_JOB_FINGERPRINTS = new Map([
+  ['job1', {
+    companyRef: 'comp1',
+    title: 'Frontend Developer',
+    description: 'We are looking for a skilled Frontend Developer to join our team.',
+    location: 'Remote',
+    salary: 'Competitive',
+  }],
+  ['job2', {
+    companyRef: 'comp2',
+    title: 'Marketing Specialist',
+    description: 'We are seeking a Marketing Specialist to help grow our brand.',
+    location: 'New York, NY',
+    salary: 'Experience Dependent',
+  }],
+])
+
+function expectedBlogAfterIvorianLaunch(id, expected) {
+  const fingerprint = IVORIAN_LAUNCH_BLOG_FINGERPRINTS.get(id)
+  if (!fingerprint
+    || expected.title !== fingerprint.title
+    || expected.authorName !== fingerprint.author
+    || typeof expected.content !== 'string'
+    || !expected.content.includes(LEGACY_BLOG_EXAMPLE)
+    || expected.status !== 'published') return expected
+
+  return {
+    ...expected,
+    authorName: expected.authorName === 'Yanhu Staff' ? 'Yahnu Staff' : expected.authorName,
+    content: expected.content.replaceAll(LEGACY_BLOG_EXAMPLE, IVORIAN_BLOG_EXAMPLE),
+  }
+}
+
+function expectedJobAfterIvorianLaunch(id, expected) {
+  const fingerprint = IVORIAN_LAUNCH_JOB_FINGERPRINTS.get(id)
+  if (!fingerprint
+    || expected.companyRef !== fingerprint.companyRef
+    || expected.companyName !== null
+    || expected.title !== fingerprint.title
+    || expected.description !== fingerprint.description
+    || expected.location !== fingerprint.location
+    || expected.employmentType !== null
+    || expected.applicationUrl !== null
+    || expected.status !== 'open'
+    || expected.payload?.companyId !== fingerprint.companyRef
+    || expected.payload?.salary !== fingerprint.salary) return expected
+
+  return { ...expected, status: 'closed' }
+}
+
 function printHelp() {
   process.stdout.write(`Reconcile a completed Firebase-to-PostgreSQL import.
 
@@ -1291,7 +1354,8 @@ async function main() {
     `, [[...operational.blogPosts.records.keys()]])
     const blogById = new Map(blogRows.rows.map((row) => [row.id, row]))
     const blogFieldMismatches = []
-    for (const [id, expected] of operational.blogPosts.records) {
+    for (const [id, importedExpected] of operational.blogPosts.records) {
+      const expected = expectedBlogAfterIvorianLaunch(id, importedExpected)
       const stored = blogById.get(id)
       const externalImageMatches = expected.legacyImageUrlSha256
         ? stored?.legacy_image_url_sha256 === expected.legacyImageUrlSha256
@@ -1339,7 +1403,8 @@ async function main() {
     `, [[...operational.jobs.records.keys()]])
     const jobById = new Map(jobRows.rows.map((row) => [row.id, row]))
     const jobFieldMismatches = []
-    for (const [id, expected] of operational.jobs.records) {
+    for (const [id, importedExpected] of operational.jobs.records) {
+      const expected = expectedJobAfterIvorianLaunch(id, importedExpected)
       const stored = jobById.get(id)
       const expectedCompanyId = expected.companyRef && allUsers.has(expected.companyRef)
         ? expected.companyRef
@@ -1818,6 +1883,8 @@ export {
   archiveReferenceKey,
   classifyFirestoreUsersForArchive,
   expectedArchiveProfileReferences,
+  expectedBlogAfterIvorianLaunch,
+  expectedJobAfterIvorianLaunch,
   expectedQuarantinedFirestoreReferenceRows,
   rawFirestoreUserIdentityCandidates,
   runtimeTokenHash,
