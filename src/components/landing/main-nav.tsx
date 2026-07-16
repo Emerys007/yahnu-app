@@ -1,161 +1,137 @@
-
 "use client";
 
-import Link from "next/link";
-import { Menu, MoreVertical, Sun, Moon } from "lucide-react";
-import { Logo } from "@/components/ui/logo";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Languages, Menu, Moon, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { Logo } from '@/components/ui/logo';
+import { Button } from '@/components/ui/button';
 import {
   Sheet,
+  SheetClose,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
-} from "@/components/ui/sheet";
-import { Separator } from "@/components/ui/separator";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu"
-import { useTheme } from "next-themes";
+} from '@/components/ui/sheet';
+import { useLocalization } from '@/context/localization-context';
 
 const navLinks = [
-  { href: "/jobs", label: "Emplois" },
-  { href: "/companies", label: "Entreprises" },
-  { href: "/schools", label: "Écoles" },
-  { href: "/blog", label: "Blog" },
-  { href: "/about", label: "À propos" },
+  { href: '/jobs', fr: 'Opportunités', en: 'Opportunities' },
+  { href: '/companies', fr: 'Entreprises', en: 'Employers' },
+  { href: '/schools', fr: 'Établissements', en: 'Institutions' },
+  { href: '/blog', fr: 'Conseils carrière', en: 'Career advice' },
+  { href: '/about', fr: 'Notre mission', en: 'Our mission' },
 ];
 
 export function MainNav() {
-  const { setTheme } = useTheme()
+  const { language, setLanguage } = useLocalization();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const isFrench = language === 'fr';
+  const isDark = mounted && resolvedTheme === 'dark';
+
+  useEffect(() => setMounted(true), []);
+
+  const links = (
+    <>
+      {navLinks.map((link) => (
+        <Link
+          key={link.href}
+          href={link.href}
+          className="rounded-lg px-3 py-2 text-sm font-semibold text-foreground/70 transition-colors hover:bg-primary/[0.07] hover:text-primary"
+        >
+          {isFrench ? link.fr : link.en}
+        </Link>
+      ))}
+    </>
+  );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-20 items-center">
-        <div className="mr-6 flex-1 md:flex-initial">
-          <Link href="/" className="flex items-center gap-3">
-              <Logo className="h-12 w-12" />
-              <div>
-                <p className="font-bold text-xl">Yahnu</p>
-                <p className="text-xs text-muted-foreground">Votre avenir commence ici</p>
-              </div>
-          </Link>
+    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/92 backdrop-blur-xl">
+      <div className="page-shell flex h-[4.75rem] items-center gap-4">
+        <Link href="/" className="group flex items-center gap-2.5" aria-label="Accueil Yahnu">
+          <Logo className="h-11 w-11 text-foreground transition-transform duration-200 group-hover:rotate-3" />
+          <span className="leading-none">
+            <span className="block font-headline text-xl font-bold tracking-[-0.03em]">Yahnu</span>
+            <span className="mt-1 block text-[0.68rem] font-bold uppercase tracking-[0.14em] text-primary">Côte d’Ivoire</span>
+          </span>
+        </Link>
+
+        <nav className="ml-auto hidden items-center gap-0.5 lg:flex" aria-label="Navigation principale">
+          {links}
+        </nav>
+
+        <div className="ml-auto hidden items-center gap-2 lg:ml-3 lg:flex">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setLanguage(isFrench ? 'en' : 'fr')}
+            aria-label={isFrench ? 'Switch to English' : 'Passer en français'}
+          >
+            <Languages />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(isDark ? 'light' : 'dark')}
+            aria-label={mounted
+              ? (isDark ? 'Activer le thème clair' : 'Activer le thème sombre')
+              : 'Changer de thème'}
+          >
+            {isDark ? <Sun /> : <Moon />}
+          </Button>
+          <Button variant="outline" asChild><Link href="/login">{isFrench ? 'Se connecter' : 'Sign in'}</Link></Button>
+          <Button variant="terra" asChild><Link href="/signup">{isFrench ? 'Créer mon profil' : 'Create my profile'}</Link></Button>
         </div>
 
-        <div className="flex items-center gap-2 ml-auto">
-            <nav className="hidden md:flex items-center gap-6 text-sm">
-                {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="group relative font-medium text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {link.label}
-                      <span className="absolute bottom-[-2px] left-0 h-0.5 w-0 rounded-full bg-primary transition-all duration-300 group-hover:w-full" />
-                    </Link>
-                ))}
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="icon" className="ml-auto lg:hidden" aria-label="Ouvrir le menu">
+              <Menu />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="flex w-[min(90vw,24rem)] flex-col bg-background p-0">
+            <SheetHeader className="border-b p-5 text-left">
+              <SheetTitle>
+                <SheetClose asChild>
+                  <Link href="/" className="flex items-center gap-3">
+                    <Logo className="h-10 w-10 text-foreground" />
+                    <span className="font-headline text-xl font-bold">Yahnu Côte d’Ivoire</span>
+                  </Link>
+                </SheetClose>
+              </SheetTitle>
+              <SheetDescription className="sr-only">
+                {isFrench
+                  ? 'Navigation principale, préférences et accès au compte Yahnu.'
+                  : 'Main navigation, preferences, and Yahnu account access.'}
+              </SheetDescription>
+            </SheetHeader>
+            <nav className="flex flex-1 flex-col gap-1 p-4" aria-label="Navigation mobile">
+              {navLinks.map((link) => (
+                <SheetClose asChild key={link.href}>
+                  <Link href={link.href} className="rounded-xl px-4 py-3 text-lg font-semibold hover:bg-primary/[0.08]">
+                    {isFrench ? link.fr : link.en}
+                  </Link>
+                </SheetClose>
+              ))}
             </nav>
-            <div className="hidden items-center gap-2 md:flex md:ml-6">
-                <Button variant="outline" asChild>
-                  <Link href="/login">Connexion</Link>
+            <div className="safe-bottom space-y-3 border-t bg-card/60 p-4">
+              <div className="grid grid-cols-2 gap-2">
+                <Button variant="outline" onClick={() => setLanguage(isFrench ? 'en' : 'fr')}><Languages />{isFrench ? 'English' : 'Français'}</Button>
+                <Button variant="outline" onClick={() => setTheme(isDark ? 'light' : 'dark')}>
+                  {isDark ? <Sun /> : <Moon />}
+                  {mounted ? (isDark ? 'Clair' : 'Sombre') : 'Thème'}
                 </Button>
-                <Button asChild>
-                  <Link href="/signup">S'inscrire</Link>
-                </Button>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <MoreVertical className="h-5 w-5" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setTheme("light")}>
-                        <Sun className="mr-2 h-4 w-4" />
-                        <span>Clair</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setTheme("dark")}>
-                        <Moon className="mr-2 h-4 w-4" />
-                        <span>Sombre</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+              </div>
+              <SheetClose asChild><Button variant="outline" className="w-full" asChild><Link href="/login">{isFrench ? 'Se connecter' : 'Sign in'}</Link></Button></SheetClose>
+              <SheetClose asChild><Button variant="terra" className="w-full" asChild><Link href="/signup">{isFrench ? 'Créer mon profil' : 'Create my profile'}</Link></Button></SheetClose>
             </div>
-            
-            <div className="md:hidden flex items-center gap-1">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <MoreVertical className="h-5 w-5" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setTheme("light")}>
-                        <Sun className="mr-2 h-4 w-4" />
-                        <span>Clair</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setTheme("dark")}>
-                        <Moon className="mr-2 h-4 w-4" />
-                        <span>Sombre</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-                <Sheet>
-                    <SheetTrigger asChild>
-                    <Button variant="outline" size="icon">
-                        <Menu className="h-5 w-5" />
-                        <span className="sr-only">Ouvrir le menu</span>
-                    </Button>
-                    </SheetTrigger>
-                    <SheetContent side="right" className="w-[80%]">
-                    <SheetHeader className="text-left">
-                        <SheetTitle>
-                        <SheetClose asChild>
-                            <Link href="/">
-                            <div className="flex items-center gap-3">
-                                <Logo className="h-10 w-10" />
-                                <div>
-                                    <p className="font-bold text-lg">Yahnu</p>
-                                    <p className="text-xs text-muted-foreground">Votre avenir commence ici</p>
-                                </div>
-                            </div>
-                            </Link>
-                        </SheetClose>
-                        </SheetTitle>
-                    </SheetHeader>
-                    <Separator className="my-4" />
-                    <div className="flex flex-col gap-4">
-                        {navLinks.map((link) => (
-                        <SheetClose asChild key={link.href}>
-                            <Link
-                            href={link.href}
-                            className="text-lg font-medium text-foreground hover:text-muted-foreground"
-                            >
-                            {link.label}
-                            </Link>
-                        </SheetClose>
-                        ))}
-                        <Separator className="my-4" />
-                        <div className="flex flex-col items-center gap-4">
-                        <SheetClose asChild>
-                            <Button variant="outline" className="w-full text-lg" asChild>
-                                <Link href="/login">Connexion</Link>
-                            </Button>
-                        </SheetClose>
-                        <SheetClose asChild>
-                            <Button className="w-full text-lg" asChild>
-                            <Link href="/signup">S'inscrire</Link>
-                            </Button>
-                        </SheetClose>
-                        </div>
-                    </div>
-                    </SheetContent>
-                </Sheet>
-            </div>
-        </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );

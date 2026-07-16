@@ -1,20 +1,20 @@
 "use client";
 
-import { FormEvent, useState } from 'react';
-import Link from 'next/link';
-import { CheckCircle2, Loader2 } from 'lucide-react';
+import { FormEvent, useState } from "react";
+import Link from "next/link";
+import { ArrowRight, CheckCircle2, Loader2, MailCheck } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Logo } from '@/components/ui/logo';
-import { useLocalization } from '@/context/localization-context';
-import { apiFetch } from '@/lib/api-client';
+import { AuthShell } from "@/components/auth/auth-shell";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useLocalization } from "@/context/localization-context";
+import { apiFetch, ApiClientError } from "@/lib/api-client";
 
 export default function ResendVerificationPage() {
-  const { t } = useLocalization();
-  const [email, setEmail] = useState('');
+  const { language } = useLocalization();
+  const fr = language === "fr";
+  const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,44 +25,119 @@ export default function ResendVerificationPage() {
     setSubmitting(true);
     setError(null);
     try {
-      const response = await apiFetch<{ data: { debugUrl?: string } }>('/api/auth/verify/resend', {
-        method: 'POST',
+      const response = await apiFetch<{ data: { debugUrl?: string } }>("/api/auth/verify/resend", {
+        method: "POST",
         body: JSON.stringify({ email }),
       });
       setDebugUrl(response.data.debugUrl ?? null);
       setSent(true);
     } catch (submissionError) {
-      setError(submissionError instanceof Error ? submissionError.message : t('auth.resend_verification.generic_error'));
+      const rateLimited = submissionError instanceof ApiClientError && submissionError.code === "rate_limited";
+      setError(
+        rateLimited
+          ? fr
+            ? "Trop de liens ont été demandés. Patientez avant de réessayer."
+            : "Too many links were requested. Wait before trying again."
+          : fr
+            ? "La demande n’a pas abouti. Vérifiez votre connexion puis réessayez."
+            : "The request did not go through. Check your connection and try again.",
+      );
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <Link href="/" className="mx-auto"><Logo className="h-12 w-12" /></Link>
-          <CardTitle>{t('auth.resend_verification.title')}</CardTitle>
-          <CardDescription>{t('auth.resend_verification.description')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {sent ? (
-            <div className="space-y-4 text-center" role="status">
-              <CheckCircle2 className="mx-auto h-10 w-10 text-primary" />
-              <p className="text-sm text-muted-foreground">{t('auth.resend_verification.success')}</p>
-              {debugUrl && <Button asChild variant="outline" className="w-full"><Link href={debugUrl}>{t('auth.resend_verification.debug_link')}</Link></Button>}
-              <Button asChild className="w-full"><Link href="/login">{t('auth.back_to_login')}</Link></Button>
-            </div>
-          ) : (
-            <form className="space-y-4" onSubmit={submit}>
-              <div className="space-y-2"><Label htmlFor="email">{t('auth.resend_verification.email_address')}</Label><Input id="email" type="email" required autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} disabled={submitting} /></div>
-              {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
-              <Button className="w-full" disabled={submitting}>{submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}{submitting ? t('auth.resend_verification.sending') : t('auth.resend_verification.send')}</Button>
-            </form>
+    <AuthShell
+      eyebrow={{ fr: "Vérification", en: "Verification" }}
+      title={{ fr: "Votre adresse, votre identité.", en: "Your address, your identity." }}
+      description={{
+        fr: "Une adresse vérifiée permet à votre établissement, aux entreprises et à Yahnu de vous retrouver au bon endroit.",
+        en: "A verified address helps your school, employers and Yahnu reach the right person.",
+      }}
+      points={[
+        { fr: "Lien valable pendant 24 heures", en: "Link valid for 24 hours" },
+        { fr: "Envoi neutre pour protéger votre compte", en: "Neutral response to protect your account" },
+        { fr: "Un seul clic pour confirmer", en: "One click to confirm" },
+      ]}
+    >
+      <div className="mb-7">
+        <span className="section-kicker">{fr ? "Adresse e-mail" : "Email address"}</span>
+        <h2 className="mt-4 font-headline text-3xl font-semibold tracking-[-0.04em]">
+          {fr ? "Recevoir un nouveau lien" : "Get a new link"}
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          {fr
+            ? "Indiquez l’adresse utilisée lors de votre inscription à Yahnu."
+            : "Enter the address you used when creating your Yahnu account."}
+        </p>
+      </div>
+
+      {sent ? (
+        <div className="space-y-5" role="status" aria-live="polite">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            <CheckCircle2 className="h-7 w-7" aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="font-headline text-xl font-semibold">{fr ? "La demande est enregistrée" : "Request received"}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              {fr
+                ? "Si un compte non vérifié correspond à cette adresse, un nouveau lien vient d’être envoyé. Vérifiez aussi les indésirables."
+                : "If an unverified account matches that address, a new link has been sent. Check your spam folder too."}
+            </p>
+          </div>
+          {debugUrl && (
+            <Button asChild variant="outline" className="w-full">
+              <Link href={debugUrl}>{fr ? "Ouvrir le lien de test local" : "Open local test link"}</Link>
+            </Button>
           )}
-        </CardContent>
-      </Card>
-    </div>
+          <Button asChild className="w-full">
+            <Link href="/login">
+              {fr ? "Revenir à la connexion" : "Back to sign in"}
+              <ArrowRight aria-hidden="true" />
+            </Link>
+          </Button>
+        </div>
+      ) : (
+        <form className="space-y-5" onSubmit={submit} aria-busy={submitting}>
+          <div className="space-y-2">
+            <Label htmlFor="email">{fr ? "Adresse e-mail" : "Email address"}</Label>
+            <div className="relative">
+              <MailCheck className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+              <Input
+                id="email"
+                type="email"
+                required
+                autoComplete="email"
+                inputMode="email"
+                placeholder="koffi.yao@exemple.ci"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                disabled={submitting}
+                className="pl-10"
+                aria-describedby="verification-email-help"
+              />
+            </div>
+            <p id="verification-email-help" className="text-xs text-muted-foreground">
+              {fr ? "Exemple : koffi.yao@exemple.ci" : "Example: koffi.yao@exemple.ci"}
+            </p>
+          </div>
+          {error && (
+            <p className="rounded-xl border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive" role="alert">
+              {error}
+            </p>
+          )}
+          <Button type="submit" className="w-full" disabled={submitting}>
+            {submitting ? <Loader2 className="animate-spin" aria-hidden="true" /> : <MailCheck aria-hidden="true" />}
+            {submitting ? (fr ? "Envoi en cours…" : "Sending…") : fr ? "Envoyer un nouveau lien" : "Send a new link"}
+          </Button>
+          <p className="text-center text-sm text-muted-foreground">
+            <Link href="/login" className="font-semibold text-primary underline-offset-4 hover:underline">
+              {fr ? "Mon adresse est déjà vérifiée" : "My address is already verified"}
+            </Link>
+          </p>
+        </form>
+      )}
+    </AuthShell>
   );
 }

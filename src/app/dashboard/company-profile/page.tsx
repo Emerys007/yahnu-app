@@ -3,11 +3,11 @@ import { FeatureUnavailable } from "@/components/dashboard/feature-unavailable"
 export default function CompanyProfilePage() {
   return (
     <FeatureUnavailable
-      title="Company profile editing is not ready for production"
-      description="Company details, logos, and profile updates are not connected to a production service yet. The former form used example values and could show a successful save without persisting anything."
+      title="La modification du profil entreprise arrive bientôt"
+      description="Les coordonnées, le logo et la présentation de votre entreprise ne sont pas encore reliés à un service d’enregistrement fiable. Yahnu préfère vous le dire clairement plutôt que d’afficher un faux succès."
       actions={[
-        { href: "/dashboard/job-postings", label: "Manage job postings" },
-        { href: "/dashboard/partnerships", label: "Manage partnerships" },
+        { href: "/dashboard/job-postings", label: "Gérer les offres" },
+        { href: "/dashboard/partnerships", label: "Gérer les partenariats" },
       ]}
     />
   )

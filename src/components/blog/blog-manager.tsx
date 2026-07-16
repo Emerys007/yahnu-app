@@ -90,16 +90,23 @@ const blankPost: EditorValues = {
   imageUrl: '',
 };
 
-const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
+const dateFormatter = new Intl.DateTimeFormat('fr-CI', {
   day: 'numeric',
   month: 'short',
   year: 'numeric',
   hour: '2-digit',
   minute: '2-digit',
+  timeZone: 'Africa/Abidjan',
 });
 
 function errorMessage(error: unknown, fallback: string) {
-  if (error instanceof ApiClientError || error instanceof Error) return error.message || fallback;
+  if (error instanceof ApiClientError) {
+    if (error.status === 401) return 'Votre session a expiré. Reconnectez-vous pour continuer.';
+    if (error.status === 403) return 'Votre compte ne dispose pas de cet accès éditorial.';
+    if (error.status === 409) return 'Un article utilise déjà ce slug. Choisissez-en un autre.';
+    if (error.status === 413) return 'Le contenu ou l’image dépasse la taille autorisée.';
+    if (error.status === 422) return 'Certaines informations doivent être corrigées avant l’enregistrement.';
+  }
   return fallback;
 }
 
@@ -314,24 +321,28 @@ export function BlogManager() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-start">
+      <section className="relative overflow-hidden rounded-[2rem] border border-primary/15 bg-[linear-gradient(135deg,hsl(var(--primary)/0.14),hsl(var(--card))_54%,hsl(var(--accent)/0.16))] p-6 shadow-sm sm:p-8">
+        <div className="pointer-events-none absolute -right-12 -top-16 h-44 w-44 rounded-full border-[28px] border-primary/10" />
+        <div className="relative flex flex-col justify-between gap-5 lg:flex-row lg:items-start">
         <div className="flex items-start gap-4">
-          <div className="rounded-2xl bg-primary/10 p-3"><Newspaper className="h-7 w-7 text-primary" /></div>
+          <div className="rounded-2xl bg-primary p-3 text-primary-foreground shadow-sm"><Newspaper className="h-7 w-7" /></div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Gestion du blog</h1>
-            <p className="mt-1 max-w-2xl text-muted-foreground">Rédigez, prévisualisez et publiez les histoires qui donnent vie à la mission de Yahnu.</p>
+            <p className="section-kicker mb-3 w-fit">Studio éditorial · Côte d’Ivoire</p>
+            <h1 className="font-display text-3xl font-bold tracking-[-0.04em] sm:text-4xl">Les histoires qui font avancer les talents d’ici.</h1>
+            <p className="mt-3 max-w-2xl leading-7 text-muted-foreground">Rédigez, prévisualisez et publiez des conseils utiles aux jeunes diplômés, recruteurs et établissements de Côte d’Ivoire.</p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline"><Link href="/blog" target="_blank" rel="noopener noreferrer">Voir le blog <ExternalLink className="ml-2 h-4 w-4" /></Link></Button>
           {!isEditorOpen && <Button onClick={startCreate}><Plus className="mr-2 h-4 w-4" /> Nouvel article</Button>}
         </div>
-      </div>
+        </div>
+      </section>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card><CardContent className="flex items-center gap-3 p-5"><FileText className="h-5 w-5 text-muted-foreground" /><div><p className="text-2xl font-bold">{posts.length}</p><p className="text-sm text-muted-foreground">Articles chargés</p></div></CardContent></Card>
-        <Card><CardContent className="flex items-center gap-3 p-5"><CheckCircle2 className="h-5 w-5 text-emerald-600" /><div><p className="text-2xl font-bold">{counts.published}</p><p className="text-sm text-muted-foreground">Publiés</p></div></CardContent></Card>
-        <Card><CardContent className="flex items-center gap-3 p-5"><Edit3 className="h-5 w-5 text-amber-600" /><div><p className="text-2xl font-bold">{counts.drafts}</p><p className="text-sm text-muted-foreground">Brouillons</p></div></CardContent></Card>
+        <Card className="border-primary/10"><CardContent className="flex items-center gap-3 p-5"><span className="rounded-xl bg-primary/10 p-2"><FileText className="h-5 w-5 text-primary" /></span><div><p className="font-display text-2xl font-bold">{posts.length}</p><p className="text-sm text-muted-foreground">Articles chargés</p></div></CardContent></Card>
+        <Card className="border-primary/10"><CardContent className="flex items-center gap-3 p-5"><span className="rounded-xl bg-emerald-500/10 p-2"><CheckCircle2 className="h-5 w-5 text-emerald-700 dark:text-emerald-300" /></span><div><p className="font-display text-2xl font-bold">{counts.published}</p><p className="text-sm text-muted-foreground">Publiés</p></div></CardContent></Card>
+        <Card className="border-primary/10"><CardContent className="flex items-center gap-3 p-5"><span className="rounded-xl bg-amber-500/10 p-2"><Edit3 className="h-5 w-5 text-amber-700 dark:text-amber-300" /></span><div><p className="font-display text-2xl font-bold">{counts.drafts}</p><p className="text-sm text-muted-foreground">Brouillons</p></div></CardContent></Card>
       </div>
 
       {isEditorOpen && (
@@ -348,7 +359,7 @@ export function BlogManager() {
                     <FormField control={form.control} name="title" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Titre</FormLabel>
-                        <FormControl><Input {...field} placeholder="Un titre clair et mémorable" onChange={(event) => {
+                        <FormControl><Input {...field} placeholder="Ex. Réussir son premier entretien au Plateau" onChange={(event) => {
                           field.onChange(event);
                           if (!selectedPost && !slugWasEdited) {
                             form.setValue('slug', slugifyBlogTitle(event.target.value), { shouldValidate: true });
@@ -366,7 +377,7 @@ export function BlogManager() {
                       )} />
                     </div>
                     <FormField control={form.control} name="excerpt" render={({ field }) => (
-                      <FormItem><div className="flex items-center justify-between"><FormLabel>Résumé</FormLabel><span className="text-xs text-muted-foreground">{field.value.length}/500</span></div><FormControl><Textarea {...field} rows={4} placeholder="Donnez envie de lire l’article…" /></FormControl><FormMessage /></FormItem>
+                      <FormItem><div className="flex items-center justify-between"><FormLabel>Résumé</FormLabel><span className="text-xs text-muted-foreground">{field.value.length}/500</span></div><FormControl><Textarea {...field} rows={4} placeholder="Expliquez concrètement ce que les talents ivoiriens vont apprendre…" /></FormControl><FormMessage /></FormItem>
                     )} />
                   </div>
 
@@ -393,7 +404,7 @@ export function BlogManager() {
                 </div>
 
                 <FormField control={form.control} name="contentHtml" render={({ field }) => (
-                  <FormItem><div className="flex items-center justify-between"><FormLabel>Contenu</FormLabel><span className="text-xs text-muted-foreground">{blogHtmlToPlainText(field.value).length} caractères</span></div><FormControl><RichTextEditor {...field} placeholder="Rédigez votre article…" /></FormControl><FormMessage /></FormItem>
+                  <FormItem><div className="flex items-center justify-between"><FormLabel>Contenu</FormLabel><span className="text-xs text-muted-foreground">{blogHtmlToPlainText(field.value).length} caractères</span></div><FormControl><RichTextEditor {...field} placeholder="Rédigez un conseil concret, humain et ancré dans les réalités de Côte d’Ivoire…" /></FormControl><FormMessage /></FormItem>
                 )} />
 
                 <div className="flex flex-col justify-between gap-4 border-t pt-6 sm:flex-row sm:items-end">

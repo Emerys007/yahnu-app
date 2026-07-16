@@ -1,383 +1,394 @@
-"use client"
+"use client";
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, CheckCircle, Clock, Loader2, MessageSquare, RefreshCw } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle2,
+  Clock3,
+  Inbox,
+  Loader2,
+  MessageSquareText,
+  RefreshCw,
+} from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useLocalization } from "@/context/localization-context";
 import { useToast } from "@/hooks/use-toast";
-import { ApiClientError, apiFetch } from "@/lib/api-client";
+import { apiFetch } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
 
-type TicketStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
-type TicketPriority = 'low' | 'normal' | 'high' | 'urgent';
+type TicketStatus = "open" | "in_progress" | "resolved" | "closed";
+type TicketPriority = "low" | "normal" | "high" | "urgent";
 
 type Ticket = {
-    id: string;
-    userId: string;
-    userName: string;
-    userEmail: string;
-    type: string;
-    subject: string;
-    description: string;
-    status: TicketStatus;
-    priority: TicketPriority;
-    submittedAt: string;
-    updatedAt: string;
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  type: string;
+  subject: string;
+  description: string;
+  status: TicketStatus;
+  priority: TicketPriority;
+  submittedAt: string;
+  updatedAt: string;
 };
 
-type TicketSummary = {
-    open: number;
-    inProgress: number;
-    resolvedToday: number;
+type TicketSummary = { open: number; inProgress: number; resolvedToday: number };
+type TicketsResponse = { data: { tickets: Ticket[]; summary: TicketSummary } };
+type TicketUpdateResponse = { data: { ticket: Pick<Ticket, "id" | "status" | "updatedAt"> } };
+
+const EMPTY_SUMMARY: TicketSummary = { open: 0, inProgress: 0, resolvedToday: 0 };
+
+const STATUS_LABELS: Record<TicketStatus, string> = {
+  open: "Ouvert",
+  in_progress: "En traitement",
+  resolved: "Résolu",
+  closed: "Clôturé",
 };
 
-type TicketsResponse = {
-    data: {
-        tickets: Ticket[];
-        summary: TicketSummary;
-    };
+const PRIORITY_LABELS: Record<TicketPriority, string> = {
+  low: "Faible",
+  normal: "Normale",
+  high: "Haute",
+  urgent: "Urgente",
 };
-
-type TicketUpdateResponse = {
-    data: {
-        ticket: Pick<Ticket, 'id' | 'status' | 'updatedAt'>;
-    };
-};
-
-const emptySummary: TicketSummary = { open: 0, inProgress: 0, resolvedToday: 0 };
 
 function formatTicketDate(value: string) {
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return 'Unknown';
-    return new Intl.DateTimeFormat(undefined, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-    }).format(date);
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Date indisponible";
+  return new Intl.DateTimeFormat("fr-CI", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Africa/Abidjan",
+  }).format(date);
 }
 
-const TicketStatusBadge = ({ status }: { status: TicketStatus }) => {
-    const { t } = useLocalization();
-    const statusMap: Record<TicketStatus, { label: string; className: string }> = {
-        open: { label: t('common.open'), className: "bg-blue-600 text-white hover:bg-blue-600" },
-        in_progress: { label: t('In progress'), className: "bg-amber-500 text-white hover:bg-amber-500" },
-        resolved: { label: t('common.resolved'), className: "bg-green-600 text-white hover:bg-green-600" },
-        closed: { label: t('Closed'), className: "bg-slate-600 text-white hover:bg-slate-600" },
-    };
-    const detail = statusMap[status];
-    return <Badge className={cn("capitalize", detail.className)}>{detail.label}</Badge>;
-};
+function TicketStatusBadge({ status }: { status: TicketStatus }) {
+  const className: Record<TicketStatus, string> = {
+    open: "border-lagoon/30 bg-lagoon/10 text-lagoon",
+    in_progress: "border-soleil/50 bg-soleil/15 text-cocoa",
+    resolved: "border-primary/30 bg-primary/10 text-primary",
+    closed: "border-border bg-muted text-muted-foreground",
+  };
+  return <Badge variant="outline" className={className[status]}>{STATUS_LABELS[status]}</Badge>;
+}
 
-const PriorityBadge = ({ priority }: { priority: TicketPriority }) => {
-    if (priority === 'normal') return null;
-    const className = priority === 'urgent'
-        ? 'border-red-500/40 bg-red-500/10 text-red-700 dark:text-red-300'
-        : priority === 'high'
-            ? 'border-orange-500/40 bg-orange-500/10 text-orange-700 dark:text-orange-300'
-            : 'text-muted-foreground';
-    return <Badge variant="outline" className={className}>{priority}</Badge>;
-};
+function PriorityBadge({ priority }: { priority: TicketPriority }) {
+  if (priority === "normal") return null;
+  const className = priority === "urgent"
+    ? "border-destructive/30 bg-destructive/10 text-destructive"
+    : priority === "high"
+      ? "border-terra/40 bg-terra/10 text-cocoa"
+      : "text-muted-foreground";
+  return <Badge variant="outline" className={className}>Priorité {PRIORITY_LABELS[priority].toLowerCase()}</Badge>;
+}
 
-const TicketQueue = ({
-    tickets,
-    title,
-    onTicketSelect,
+function TicketQueue({
+  tickets,
+  title,
+  onTicketSelect,
 }: {
-    tickets: Ticket[];
-    title: string;
-    onTicketSelect: (ticket: Ticket) => void;
-}) => {
-    const { t } = useLocalization();
+  tickets: Ticket[];
+  title: string;
+  onTicketSelect: (ticket: Ticket) => void;
+}) {
+  if (tickets.length === 0) {
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>{title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="overflow-x-auto">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>{t('common.User')}</TableHead>
-                                <TableHead>{t('common.Subject')}</TableHead>
-                                <TableHead>{t('common.Status')}</TableHead>
-                                <TableHead>{t('common.Submitted')}</TableHead>
-                                <TableHead><span className="sr-only">{t('Actions')}</span></TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {tickets.length > 0 ? tickets.map((ticket) => (
-                                <TableRow key={ticket.id}>
-                                    <TableCell>
-                                        <div className="font-medium">{ticket.userName}</div>
-                                        <div className="text-sm text-muted-foreground">{ticket.userEmail}</div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex max-w-md items-center gap-2">
-                                            <span className="line-clamp-2">{ticket.subject}</span>
-                                            <PriorityBadge priority={ticket.priority} />
-                                        </div>
-                                    </TableCell>
-                                    <TableCell><TicketStatusBadge status={ticket.status} /></TableCell>
-                                    <TableCell className="whitespace-nowrap">{formatTicketDate(ticket.submittedAt)}</TableCell>
-                                    <TableCell className="text-right">
-                                        <Button variant="outline" size="sm" onClick={() => onTicketSelect(ticket)}>
-                                            {t('common.View Ticket')}
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            )) : (
-                                <TableRow>
-                                    <TableCell colSpan={5} className="h-28 text-center text-muted-foreground">
-                                        {t('dashboard.support.center.no_tickets')}
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
-            </CardContent>
-        </Card>
+      <Card className="border-dashed">
+        <CardContent className="flex min-h-56 flex-col items-center justify-center gap-3 text-center">
+          <span className="rounded-full bg-primary/10 p-3"><Inbox className="h-6 w-6 text-primary" /></span>
+          <div>
+            <p className="font-display text-lg font-semibold">File à jour</p>
+            <p className="mt-1 text-sm text-muted-foreground">Aucun ticket dans la catégorie « {title.toLowerCase()} ».</p>
+          </div>
+        </CardContent>
+      </Card>
     );
-};
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{tickets.length} demande{tickets.length > 1 ? "s" : ""} dans cette file</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-3 md:hidden">
+          {tickets.map((ticket) => (
+            <button
+              key={ticket.id}
+              type="button"
+              onClick={() => onTicketSelect(ticket)}
+              className="rounded-2xl border bg-card p-4 text-left transition-colors hover:border-primary/40 hover:bg-primary/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none"
+            >
+              <div className="flex flex-wrap items-center gap-2">
+                <TicketStatusBadge status={ticket.status} />
+                <PriorityBadge priority={ticket.priority} />
+              </div>
+              <p className="mt-3 font-semibold text-foreground">{ticket.subject}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{ticket.userName}</p>
+              <p className="mt-3 text-xs text-muted-foreground">Reçu le {formatTicketDate(ticket.submittedAt)}</p>
+            </button>
+          ))}
+        </div>
+
+        <div className="hidden md:block">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Utilisateur</TableHead>
+                <TableHead>Sujet</TableHead>
+                <TableHead>Statut</TableHead>
+                <TableHead>Reçu le</TableHead>
+                <TableHead><span className="sr-only">Action</span></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tickets.map((ticket) => (
+                <TableRow key={ticket.id}>
+                  <TableCell>
+                    <div className="font-medium">{ticket.userName}</div>
+                    <div className="text-sm text-muted-foreground">{ticket.userEmail}</div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex max-w-md items-center gap-2">
+                      <span className="line-clamp-2">{ticket.subject}</span>
+                      <PriorityBadge priority={ticket.priority} />
+                    </div>
+                  </TableCell>
+                  <TableCell><TicketStatusBadge status={ticket.status} /></TableCell>
+                  <TableCell className="whitespace-nowrap">{formatTicketDate(ticket.submittedAt)}</TableCell>
+                  <TableCell className="text-right">
+                    <Button variant="outline" size="sm" onClick={() => onTicketSelect(ticket)}>Ouvrir</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function SupportCenterPage() {
-    const { t } = useLocalization();
-    const { toast } = useToast();
-    const router = useRouter();
-    const [activeTab, setActiveTab] = React.useState("open");
-    const [tickets, setTickets] = React.useState<Ticket[]>([]);
-    const [summary, setSummary] = React.useState<TicketSummary>(emptySummary);
-    const [selectedTicket, setSelectedTicket] = React.useState<Ticket | null>(null);
-    const [isLoading, setIsLoading] = React.useState(true);
-    const [isRefreshing, setIsRefreshing] = React.useState(false);
-    const [updatingTicketId, setUpdatingTicketId] = React.useState<string | null>(null);
-    const [error, setError] = React.useState<string | null>(null);
+  const { toast } = useToast();
+  const router = useRouter();
+  const [activeTab, setActiveTab] = React.useState("open");
+  const [tickets, setTickets] = React.useState<Ticket[]>([]);
+  const [summary, setSummary] = React.useState<TicketSummary>(EMPTY_SUMMARY);
+  const [selectedTicket, setSelectedTicket] = React.useState<Ticket | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const [updatingTicketId, setUpdatingTicketId] = React.useState<string | null>(null);
+  const [hasLoadError, setHasLoadError] = React.useState(false);
 
-    const loadTickets = React.useCallback(async (options: { initial?: boolean; signal?: AbortSignal } = {}) => {
-        const { initial = false, signal } = options;
-        if (initial) setIsLoading(true);
-        else setIsRefreshing(true);
-        setError(null);
-        try {
-            const response = await apiFetch<TicketsResponse>('/api/tickets?limit=250', { signal });
-            setTickets(response.data.tickets);
-            setSummary(response.data.summary);
-            setSelectedTicket((current) => current
-                ? response.data.tickets.find((ticket) => ticket.id === current.id) ?? null
-                : null);
-        } catch (requestError) {
-            if (signal?.aborted) return;
-            setError(requestError instanceof ApiClientError
-                ? requestError.message
-                : 'The support queue could not be loaded.');
-        } finally {
-            if (!signal?.aborted) {
-                setIsLoading(false);
-                setIsRefreshing(false);
-            }
-        }
-    }, []);
+  const loadTickets = React.useCallback(async (options: { initial?: boolean; signal?: AbortSignal } = {}) => {
+    const { initial = false, signal } = options;
+    if (initial) setIsLoading(true);
+    else setIsRefreshing(true);
+    setHasLoadError(false);
+    try {
+      const response = await apiFetch<TicketsResponse>("/api/tickets?limit=250", { signal });
+      setTickets(response.data.tickets);
+      setSummary(response.data.summary);
+      setSelectedTicket((current) => current
+        ? response.data.tickets.find((ticket) => ticket.id === current.id) ?? null
+        : null);
+    } catch {
+      if (!signal?.aborted) setHasLoadError(true);
+    } finally {
+      if (!signal?.aborted) {
+        setIsLoading(false);
+        setIsRefreshing(false);
+      }
+    }
+  }, []);
 
-    React.useEffect(() => {
-        const controller = new AbortController();
-        void loadTickets({ initial: true, signal: controller.signal });
-        return () => controller.abort();
-    }, [loadTickets]);
+  React.useEffect(() => {
+    const controller = new AbortController();
+    void loadTickets({ initial: true, signal: controller.signal });
+    return () => controller.abort();
+  }, [loadTickets]);
 
-    const updateTicketStatus = async (ticket: Ticket, status: TicketStatus) => {
-        if (ticket.status === status) return;
-        setUpdatingTicketId(ticket.id);
-        try {
-            const response = await apiFetch<TicketUpdateResponse>(`/api/tickets/${encodeURIComponent(ticket.id)}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ status }),
-            });
-            const nextTicket = { ...ticket, ...response.data.ticket };
-            setTickets((current) => current.map((item) => item.id === ticket.id ? nextTicket : item));
-            setSelectedTicket(nextTicket);
-            toast({
-                title: t('Ticket updated'),
-                description: t('The support ticket status has been saved.'),
-            });
-            await loadTickets();
-        } catch (requestError) {
-            toast({
-                title: t('Ticket update failed'),
-                description: requestError instanceof Error ? requestError.message : t('Please try again.'),
-                variant: 'destructive',
-            });
-        } finally {
-            setUpdatingTicketId(null);
-        }
-    };
+  const updateTicketStatus = async (ticket: Ticket, status: TicketStatus) => {
+    if (ticket.status === status) return;
+    setUpdatingTicketId(ticket.id);
+    try {
+      const response = await apiFetch<TicketUpdateResponse>(`/api/tickets/${encodeURIComponent(ticket.id)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      });
+      const nextTicket = { ...ticket, ...response.data.ticket };
+      setTickets((current) => current.map((item) => item.id === ticket.id ? nextTicket : item));
+      setSelectedTicket(nextTicket);
+      toast({ title: "Statut enregistré", description: `Le ticket est maintenant « ${STATUS_LABELS[status].toLowerCase()} ».` });
+      await loadTickets();
+    } catch {
+      toast({
+        title: "Mise à jour impossible",
+        description: "Le statut n’a pas pu être enregistré. Réessayez dans un instant.",
+        variant: "destructive",
+      });
+    } finally {
+      setUpdatingTicketId(null);
+    }
+  };
 
-    const openConversation = (ticket: Ticket) => {
-        const conversationId = ticket.userId || ticket.userEmail.split('@')[0].replaceAll('.', '-');
-        router.push(`/dashboard/messages?new=${encodeURIComponent(conversationId)}&name=${encodeURIComponent(ticket.userName)}`);
-    };
+  const openConversation = (ticket: Ticket) => {
+    router.push(`/dashboard/messages?ticketId=${encodeURIComponent(ticket.id)}`);
+  };
 
-    const openTickets = tickets.filter((ticket) => ticket.status === 'open');
-    const inProgressTickets = tickets.filter((ticket) => ticket.status === 'in_progress');
-    const resolvedTickets = tickets.filter((ticket) => ticket.status === 'resolved' || ticket.status === 'closed');
+  const openTickets = tickets.filter((ticket) => ticket.status === "open");
+  const inProgressTickets = tickets.filter((ticket) => ticket.status === "in_progress");
+  const resolvedTickets = tickets.filter((ticket) => ticket.status === "resolved" || ticket.status === "closed");
 
-    return (
-        <div className="space-y-8">
-            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
-                <div className="flex items-start gap-4">
-                    <div className="rounded-lg bg-primary/10 p-3">
-                        <MessageSquare className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight">{t('common.Support Center')}</h1>
-                        <p className="mt-1 text-muted-foreground">{t('dashboard.admin.support_center.description')}</p>
-                    </div>
-                </div>
-                <Button variant="outline" onClick={() => void loadTickets()} disabled={isLoading || isRefreshing}>
-                    <RefreshCw className={cn("mr-2 h-4 w-4", isRefreshing && "animate-spin")} />
-                    {t('Refresh queue')}
-                </Button>
-            </div>
+  const summaryCards = [
+    { label: "À prendre en charge", value: summary.open, icon: MessageSquareText, accent: "text-lagoon bg-lagoon/10" },
+    { label: "En traitement", value: summary.inProgress, icon: Clock3, accent: "text-cocoa bg-soleil/20" },
+    { label: "Résolus aujourd’hui", value: summary.resolvedToday, icon: CheckCircle2, accent: "text-primary bg-primary/10" },
+  ];
 
-            {error && (
-                <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>{t('Unable to load support tickets')}</AlertTitle>
-                    <AlertDescription className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <span>{error}</span>
-                        <Button variant="outline" size="sm" onClick={() => void loadTickets()}>{t('Try again')}</Button>
-                    </AlertDescription>
-                </Alert>
-            )}
-
-            {isLoading ? (
-                <Card>
-                    <CardContent className="flex min-h-64 flex-col items-center justify-center gap-3 text-muted-foreground">
-                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                        <p>{t('Loading support queue...')}</p>
-                    </CardContent>
-                </Card>
-            ) : (
-                <>
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">{t('common.Open Tickets')}</CardTitle>
-                                <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent><div className="text-2xl font-bold">{summary.open}</div></CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">{t('Tickets in progress')}</CardTitle>
-                                <Clock className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent><div className="text-2xl font-bold">{summary.inProgress}</div></CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">{t('common.Resolved Today')}</CardTitle>
-                                <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent><div className="text-2xl font-bold">{summary.resolvedToday}</div></CardContent>
-                        </Card>
-                    </div>
-
-                    <div>
-                        <h2 className="mb-4 text-2xl font-bold tracking-tight">{t('common.Ticket Queue')}</h2>
-                        <p className="mb-4 text-muted-foreground">{t('dashboard.admin.support_center.queue_description')}</p>
-                        <Tabs value={activeTab} onValueChange={setActiveTab}>
-                            <TabsList className="h-auto flex-wrap">
-                                <TabsTrigger value="open">{t('common.Open')} ({openTickets.length})</TabsTrigger>
-                                <TabsTrigger value="in_progress">{t('In progress')} ({inProgressTickets.length})</TabsTrigger>
-                                <TabsTrigger value="resolved">{t('common.Resolved')} ({resolvedTickets.length})</TabsTrigger>
-                            </TabsList>
-                            <TabsContent value="open">
-                                <TicketQueue tickets={openTickets} title={t("common.Open Tickets")} onTicketSelect={setSelectedTicket} />
-                            </TabsContent>
-                            <TabsContent value="in_progress">
-                                <TicketQueue tickets={inProgressTickets} title={t("Tickets in progress")} onTicketSelect={setSelectedTicket} />
-                            </TabsContent>
-                            <TabsContent value="resolved">
-                                <TicketQueue tickets={resolvedTickets} title={t("common.Resolved Tickets")} onTicketSelect={setSelectedTicket} />
-                            </TabsContent>
-                        </Tabs>
-                    </div>
-                </>
-            )}
-
-            <Dialog open={Boolean(selectedTicket)} onOpenChange={(open) => !open && setSelectedTicket(null)}>
-                <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
-                    {selectedTicket && (
-                        <>
-                            <DialogHeader>
-                                <div className="flex flex-wrap items-center gap-2 pr-8">
-                                    <DialogTitle>{selectedTicket.subject}</DialogTitle>
-                                    <PriorityBadge priority={selectedTicket.priority} />
-                                </div>
-                                <DialogDescription>
-                                    {selectedTicket.userName} · {selectedTicket.userEmail}
-                                </DialogDescription>
-                            </DialogHeader>
-
-                            <div className="grid gap-4">
-                                <div className="grid grid-cols-1 gap-3 rounded-lg border bg-muted/30 p-4 text-sm sm:grid-cols-3">
-                                    <div><p className="text-muted-foreground">{t('Ticket ID')}</p><p className="break-all font-medium">{selectedTicket.id}</p></div>
-                                    <div><p className="text-muted-foreground">{t('Submitted')}</p><p className="font-medium">{formatTicketDate(selectedTicket.submittedAt)}</p></div>
-                                    <div><p className="text-muted-foreground">{t('Last updated')}</p><p className="font-medium">{formatTicketDate(selectedTicket.updatedAt)}</p></div>
-                                </div>
-                                <div>
-                                    <h3 className="mb-2 text-sm font-semibold">{t('Message')}</h3>
-                                    <div className="whitespace-pre-wrap rounded-lg border p-4 text-sm leading-6">{selectedTicket.description}</div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-semibold" htmlFor="ticket-status">{t('Status')}</label>
-                                    <Select
-                                        value={selectedTicket.status}
-                                        onValueChange={(status: TicketStatus) => void updateTicketStatus(selectedTicket, status)}
-                                        disabled={updatingTicketId === selectedTicket.id}
-                                    >
-                                        <SelectTrigger id="ticket-status">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="open">{t('common.Open')}</SelectItem>
-                                            <SelectItem value="in_progress">{t('In progress')}</SelectItem>
-                                            <SelectItem value="resolved">{t('common.Resolved')}</SelectItem>
-                                            <SelectItem value="closed">{t('Closed')}</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    {updatingTicketId === selectedTicket.id && (
-                                        <p className="flex items-center text-xs text-muted-foreground"><Loader2 className="mr-2 h-3 w-3 animate-spin" />{t('Saving status...')}</p>
-                                    )}
-                                </div>
-                            </div>
-
-                            <DialogFooter>
-                                <Button onClick={() => openConversation(selectedTicket)}>
-                                    <MessageSquare className="mr-2 h-4 w-4" />
-                                    {t('Open conversation')}
-                                </Button>
-                            </DialogFooter>
-                        </>
-                    )}
-                </DialogContent>
-            </Dialog>
+  return (
+    <div className="space-y-6 lg:space-y-8">
+      <section className="dashboard-surface ci-pattern overflow-hidden p-5 sm:p-7">
+        <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+          <div>
+            <p className="section-kicker">Équipe assistance · Côte d’Ivoire</p>
+            <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight sm:text-4xl">Le pouls du support Yahnu</h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+              Suivez les demandes des diplômés, écoles et recruteurs, puis répondez avec clarté et chaleur.
+            </p>
+          </div>
+          <Button variant="outline" onClick={() => void loadTickets()} disabled={isLoading || isRefreshing}>
+            <RefreshCw className={cn("mr-2 h-4 w-4", isRefreshing && "animate-spin motion-reduce:animate-none")} />
+            Actualiser la file
+          </Button>
         </div>
-    );
+      </section>
+
+      {hasLoadError && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>La file de support ne répond pas</AlertTitle>
+          <AlertDescription className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <span>Vérifiez votre connexion, puis relancez le chargement.</span>
+            <Button variant="outline" size="sm" onClick={() => void loadTickets()}>Réessayer</Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {isLoading ? (
+        <Card aria-live="polite">
+          <CardContent className="flex min-h-64 flex-col items-center justify-center gap-3 text-muted-foreground">
+            <Loader2 className="h-8 w-8 animate-spin text-primary motion-reduce:animate-none" />
+            <p>Chargement des demandes en cours…</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {summaryCards.map(({ label, value, icon: Icon, accent }) => (
+              <Card key={label}>
+                <CardContent className="flex items-center justify-between p-5">
+                  <div>
+                    <p className="text-sm text-muted-foreground">{label}</p>
+                    <p className="mt-1 font-display text-3xl font-semibold">{value}</p>
+                  </div>
+                  <span className={cn("rounded-2xl p-3", accent)}><Icon className="h-5 w-5" /></span>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <section aria-labelledby="ticket-queue-title">
+            <div className="mb-4">
+              <h2 id="ticket-queue-title" className="font-display text-2xl font-semibold tracking-tight">File des demandes</h2>
+              <p className="mt-1 text-sm text-muted-foreground">Commencez par les urgences, puis avancez vers les demandes les plus anciennes.</p>
+            </div>
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid h-auto w-full grid-cols-3 sm:w-auto">
+                <TabsTrigger value="open">Ouverts <span className="ml-1 hidden sm:inline">({openTickets.length})</span></TabsTrigger>
+                <TabsTrigger value="in_progress">En cours <span className="ml-1 hidden sm:inline">({inProgressTickets.length})</span></TabsTrigger>
+                <TabsTrigger value="resolved">Terminés <span className="ml-1 hidden sm:inline">({resolvedTickets.length})</span></TabsTrigger>
+              </TabsList>
+              <TabsContent value="open"><TicketQueue tickets={openTickets} title="Tickets ouverts" onTicketSelect={setSelectedTicket} /></TabsContent>
+              <TabsContent value="in_progress"><TicketQueue tickets={inProgressTickets} title="Tickets en traitement" onTicketSelect={setSelectedTicket} /></TabsContent>
+              <TabsContent value="resolved"><TicketQueue tickets={resolvedTickets} title="Tickets terminés" onTicketSelect={setSelectedTicket} /></TabsContent>
+            </Tabs>
+          </section>
+        </>
+      )}
+
+      <Dialog open={Boolean(selectedTicket)} onOpenChange={(open) => !open && setSelectedTicket(null)}>
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+          {selectedTicket && (
+            <>
+              <DialogHeader>
+                <div className="flex flex-wrap items-center gap-2 pr-8">
+                  <DialogTitle>{selectedTicket.subject}</DialogTitle>
+                  <PriorityBadge priority={selectedTicket.priority} />
+                </div>
+                <DialogDescription>{selectedTicket.userName} · {selectedTicket.userEmail}</DialogDescription>
+              </DialogHeader>
+
+              <div className="grid gap-5">
+                <div className="grid gap-3 rounded-2xl border bg-muted/30 p-4 text-sm sm:grid-cols-3">
+                  <div><p className="text-muted-foreground">Référence</p><p className="break-all font-medium">{selectedTicket.id}</p></div>
+                  <div><p className="text-muted-foreground">Reçu le</p><p className="font-medium">{formatTicketDate(selectedTicket.submittedAt)}</p></div>
+                  <div><p className="text-muted-foreground">Dernière activité</p><p className="font-medium">{formatTicketDate(selectedTicket.updatedAt)}</p></div>
+                </div>
+                <div>
+                  <h3 className="mb-2 text-sm font-semibold">Message de l’utilisateur</h3>
+                  <div className="whitespace-pre-wrap rounded-2xl border p-4 text-sm leading-6">{selectedTicket.description}</div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold" htmlFor="ticket-status">Statut du ticket</label>
+                  <Select
+                    value={selectedTicket.status}
+                    onValueChange={(status: TicketStatus) => void updateTicketStatus(selectedTicket, status)}
+                    disabled={updatingTicketId === selectedTicket.id}
+                  >
+                    <SelectTrigger id="ticket-status"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="open">Ouvert</SelectItem>
+                      <SelectItem value="in_progress">En traitement</SelectItem>
+                      <SelectItem value="resolved">Résolu</SelectItem>
+                      <SelectItem value="closed">Clôturé</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {updatingTicketId === selectedTicket.id && (
+                    <p className="flex items-center text-xs text-muted-foreground" aria-live="polite">
+                      <Loader2 className="mr-2 h-3 w-3 animate-spin motion-reduce:animate-none" />Enregistrement du statut…
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button onClick={() => openConversation(selectedTicket)}>
+                  <MessageSquareText className="mr-2 h-4 w-4" />Ouvrir la conversation
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
 }

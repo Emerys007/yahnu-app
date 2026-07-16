@@ -15,13 +15,14 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Blog | Yahnu',
-  description: 'Conseils, analyses et histoires pour faire progresser les talents et les organisations en Afrique.',
+  description: 'Conseils concrets pour les jeunes diplômés, établissements et employeurs de Côte d’Ivoire.',
 };
 
-const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
+const dateFormatter = new Intl.DateTimeFormat('fr-CI', {
   day: 'numeric',
   month: 'long',
   year: 'numeric',
+  timeZone: 'Africa/Abidjan',
 });
 
 function PostMeta({ post }: { post: BlogPost }) {
@@ -102,17 +103,15 @@ export default async function BlogPage({
     <div className="flex min-h-screen flex-col bg-background">
       <MainNav />
       <main className="flex-1">
-        <section className="relative overflow-hidden border-b bg-gradient-to-b from-primary/10 via-background to-background">
-          <div className="pointer-events-none absolute inset-x-0 -top-48 mx-auto h-96 max-w-4xl rounded-full bg-primary/10 blur-3xl" />
+        <section className="ci-pattern relative overflow-hidden border-b bg-gradient-to-b from-primary/10 via-background to-background">
+          <div className="pointer-events-none absolute inset-x-0 -top-48 mx-auto h-96 max-w-4xl rounded-full bg-primary/15 blur-3xl" />
           <div className="container relative mx-auto px-4 py-16 text-center sm:py-24">
-            <Badge variant="outline" className="mb-5 border-primary/30 bg-background/70 px-3 py-1 text-primary backdrop-blur">
-              Le carnet Yahnu
-            </Badge>
-            <h1 className="mx-auto max-w-4xl text-balance text-4xl font-bold tracking-tight sm:text-6xl">
-              Des idées pour transformer le potentiel en impact
+            <p className="section-kicker mx-auto mb-5 w-fit">Le carnet Yahnu · Côte d’Ivoire</p>
+            <h1 className="mx-auto max-w-4xl text-balance font-display text-4xl font-bold tracking-[-0.05em] sm:text-6xl">
+              Des repères d’ici pour construire la suite.
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-8 text-muted-foreground">
-              Analyses, conseils et histoires concrètes sur l’emploi, les talents et l’avenir du travail en Afrique.
+              Premier emploi, entretiens, recrutement et vie professionnelle : des conseils concrets pensés pour la nouvelle génération ivoirienne.
             </p>
           </div>
         </section>

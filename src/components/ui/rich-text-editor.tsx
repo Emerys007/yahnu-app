@@ -14,7 +14,7 @@ interface RichTextEditorProps {
   placeholder?: string
 }
 
-export function RichTextEditor({ value = "", onChange, className, placeholder = "Write content…" }: RichTextEditorProps) {
+export function RichTextEditor({ value = "", onChange, className, placeholder = "Rédigez votre contenu…" }: RichTextEditorProps) {
   const editorRef = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
@@ -41,24 +41,24 @@ export function RichTextEditor({ value = "", onChange, className, placeholder = 
   }
 
   const addLink = () => {
-    const href = window.prompt("Enter a secure URL (https, http, mailto, /, or #)")?.trim()
+    const href = window.prompt("Saisissez une adresse sécurisée (https, http, mailto, / ou #)")?.trim()
     if (!href || !/^(?:(?:https?|mailto):|\/|#)/i.test(href)) return
     runCommand("createLink", href)
   }
 
   return (
     <div className={cn("overflow-hidden rounded-md border border-input bg-background", className)}>
-      <div className="flex flex-wrap gap-1 border-b border-input bg-muted/30 p-1.5" role="toolbar" aria-label="Text formatting">
-        <Button type="button" variant="ghost" size="xs" aria-label="Heading" title="Heading" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("formatBlock", "h2")}><Heading2 /></Button>
-        <Button type="button" variant="ghost" size="xs" aria-label="Bold" title="Bold" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("bold")}><Bold /></Button>
-        <Button type="button" variant="ghost" size="xs" aria-label="Italic" title="Italic" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("italic")}><Italic /></Button>
-        <Button type="button" variant="ghost" size="xs" aria-label="Underline" title="Underline" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("underline")}><Underline /></Button>
-        <Button type="button" variant="ghost" size="xs" aria-label="Bulleted list" title="Bulleted list" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("insertUnorderedList")}><List /></Button>
-        <Button type="button" variant="ghost" size="xs" aria-label="Numbered list" title="Numbered list" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("insertOrderedList")}><ListOrdered /></Button>
-        <Button type="button" variant="ghost" size="xs" aria-label="Quote" title="Quote" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("formatBlock", "blockquote")}><Quote /></Button>
-        <Button type="button" variant="ghost" size="xs" aria-label="Code block" title="Code block" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("formatBlock", "pre")}><Code2 /></Button>
-        <Button type="button" variant="ghost" size="xs" aria-label="Add link" title="Add link" onMouseDown={(event) => event.preventDefault()} onClick={addLink}><Link2 /></Button>
-        <Button type="button" variant="ghost" size="xs" aria-label="Clear formatting" title="Clear formatting" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("removeFormat")}><RemoveFormatting /></Button>
+      <div className="flex flex-wrap gap-1 border-b border-input bg-muted/30 p-1.5" role="toolbar" aria-label="Mise en forme du texte">
+        <Button type="button" variant="ghost" size="xs" aria-label="Titre" title="Titre" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("formatBlock", "h2")}><Heading2 /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Gras" title="Gras" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("bold")}><Bold /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Italique" title="Italique" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("italic")}><Italic /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Souligné" title="Souligné" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("underline")}><Underline /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Liste à puces" title="Liste à puces" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("insertUnorderedList")}><List /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Liste numérotée" title="Liste numérotée" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("insertOrderedList")}><ListOrdered /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Citation" title="Citation" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("formatBlock", "blockquote")}><Quote /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Bloc de code" title="Bloc de code" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("formatBlock", "pre")}><Code2 /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Ajouter un lien" title="Ajouter un lien" onMouseDown={(event) => event.preventDefault()} onClick={addLink}><Link2 /></Button>
+        <Button type="button" variant="ghost" size="xs" aria-label="Effacer la mise en forme" title="Effacer la mise en forme" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand("removeFormat")}><RemoveFormatting /></Button>
       </div>
       <div
         ref={editorRef}

@@ -2,80 +2,180 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Building2, CheckCircle2, GraduationCap, Search, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Building2,
+  GraduationCap,
+  MapPin,
+  School,
+  Search,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocalization } from "@/context/localization-context";
 
-const heroCopy = {
-  en: {
-    eyebrow: "Africa’s opportunity network",
-    title: "The next great career story starts with a stronger connection.",
-    body: "Yahnu brings graduates, institutions, and employers into one trusted space—so potential becomes momentum.",
-    explore: "Explore opportunities",
-    join: "Join Yahnu",
-    proof: "Built for intentional career moves",
-    stats: [["3", "sides of the talent network"], ["1", "shared source of opportunity"], ["∞", "futures worth building"]],
-    graduate: "Graduate",
-    company: "Employer",
-    school: "Institution",
-  },
+const copy = {
   fr: {
-    eyebrow: "Le réseau de l’opportunité en Afrique",
-    title: "La prochaine grande histoire professionnelle commence par une connexion plus forte.",
-    body: "Yahnu réunit diplômés, établissements et employeurs dans un espace de confiance, pour transformer le potentiel en élan.",
-    explore: "Explorer les opportunités",
-    join: "Rejoindre Yahnu",
-    proof: "Conçu pour des choix de carrière intentionnels",
-    stats: [["3", "acteurs du réseau de talents"], ["1", "source partagée d’opportunités"], ["∞", "avenirs à construire"]],
-    graduate: "Diplômé",
-    company: "Employeur",
-    school: "Établissement",
+    eyebrow: "Pensé en Côte d’Ivoire, pour les talents d’ici",
+    title: "Ton diplôme ouvre une porte. Yahnu t’aide à choisir laquelle.",
+    body: "Découvre des opportunités, rends ton parcours lisible et crée les bonnes connexions — d’Abidjan à Korhogo, de Bouaké à San-Pédro.",
+    searchLabel: "Rechercher une opportunité",
+    searchPlaceholder: "Métier, compétence ou secteur",
+    locationLabel: "Choisir une ville",
+    locationPlaceholder: "Abidjan, Bouaké…",
+    searchAction: "Lancer la recherche",
+    profileAction: "Créer mon profil",
+    routesTitle: "Choisis ton point de départ",
+    graduate: "Je démarre ma carrière",
+    company: "Je recrute en Côte d’Ivoire",
+    school: "J’accompagne mes diplômés",
+    photoAlt: "Jeunes diplômés ivoiriens avançant ensemble à Abidjan",
+    imageNote: "Le talent ivoirien, en mouvement",
+    imageBody: "Un même espace pour passer du campus au monde professionnel.",
+  },
+  en: {
+    eyebrow: "Designed in Côte d’Ivoire, for local talent",
+    title: "Your degree opens a door. Yahnu helps you choose the right one.",
+    body: "Find opportunities, make your journey visible and build the right connections — from Abidjan and Bouaké to Korhogo and San-Pédro.",
+    searchLabel: "Search for an opportunity",
+    searchPlaceholder: "Role, skill or sector",
+    locationLabel: "Choose a city",
+    locationPlaceholder: "Abidjan, Bouaké…",
+    searchAction: "Search",
+    profileAction: "Create my profile",
+    routesTitle: "Choose your starting point",
+    graduate: "I am starting my career",
+    company: "I recruit in Côte d’Ivoire",
+    school: "I support our graduates",
+    photoAlt: "Young Ivorian graduates walking together in Abidjan",
+    imageNote: "Ivorian talent in motion",
+    imageBody: "One space to move from campus into professional life.",
   },
 } as const;
 
+const cities = ["Abidjan", "Bouaké", "Yamoussoukro", "San-Pédro"];
+
 export function HeroSection() {
   const { language } = useLocalization();
-  const locale = language === "fr" ? "fr" : "en";
-  const content = heroCopy[locale];
-  const audiences = [
+  const content = copy[language === "fr" ? "fr" : "en"];
+  const routes = [
     { label: content.graduate, icon: GraduationCap, href: "/signup?role=graduate" },
     { label: content.company, icon: Building2, href: "/signup?role=company" },
-    { label: content.school, icon: CheckCircle2, href: "/signup?role=school_administrator" },
+    { label: content.school, icon: School, href: "/signup?role=school" },
   ];
 
   return (
-    <section className="relative isolate overflow-hidden bg-slate-950 text-white">
-      <Image src="/images/dream-job.jpg" alt="A confident graduate looking ahead" fill priority sizes="100vw" className="-z-20 object-cover object-center opacity-40" />
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(104deg,rgba(7,16,32,0.98)_5%,rgba(7,16,32,0.92)_47%,rgba(7,16,32,0.62)_100%)]" />
-      <div className="absolute -right-32 top-20 -z-10 h-96 w-96 rounded-full bg-primary/25 blur-3xl" />
-      <div className="container mx-auto grid min-h-[min(48rem,calc(100vh-5rem))] items-center gap-12 py-20 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
-        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-          <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-primary-foreground backdrop-blur"><Sparkles className="h-3.5 w-3.5 text-primary" />{content.eyebrow}</p>
-          <h1 className="mt-7 max-w-4xl text-4xl font-bold leading-[1.02] tracking-[-0.055em] sm:text-6xl lg:text-7xl">{content.title}</h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-200 sm:text-xl">{content.body}</p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Button className="h-12 rounded-xl px-6 text-base shadow-lg shadow-primary/20" asChild><Link href="/jobs"><Search className="mr-2 h-4 w-4" />{content.explore}<ArrowRight className="ml-2 h-4 w-4" /></Link></Button>
-            <Button variant="outline" className="h-12 rounded-xl border-white/20 bg-white/5 px-6 text-base text-white hover:bg-white/15 hover:text-white" asChild><Link href="/signup">{content.join}</Link></Button>
+    <section className="relative isolate overflow-hidden bg-ivory py-10 text-cocoa dark:bg-background dark:text-foreground sm:py-16 lg:py-20">
+      <div className="lagoon-grid absolute inset-0 -z-20 opacity-35" />
+      <div className="absolute -left-28 top-20 -z-10 h-72 w-72 rounded-full bg-terra/15 blur-3xl" />
+      <div className="absolute -right-24 bottom-0 -z-10 h-80 w-80 rounded-full bg-lagoon/15 blur-3xl" />
+
+      <div className="container mx-auto grid items-center gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
+        <div className="animate-soft-rise">
+          <p className="section-kicker">
+            <Sparkles className="h-4 w-4" aria-hidden="true" />
+            {content.eyebrow}
+          </p>
+          <h1 className="display-title mt-5 max-w-3xl text-4xl leading-[0.98] sm:text-6xl lg:text-[4.5rem]">
+            {content.title}
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-cocoa/75 dark:text-muted-foreground sm:text-xl">
+            {content.body}
+          </p>
+
+          <form action="/jobs" method="get" className="surface-glass mt-8 grid gap-3 rounded-[1.5rem] p-3 shadow-soft sm:grid-cols-[1fr_0.78fr_auto]" role="search">
+            <label className="relative block">
+              <span className="sr-only">{content.searchLabel}</span>
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+              <input
+                name="q"
+                type="search"
+                placeholder={content.searchPlaceholder}
+                className="h-12 w-full rounded-xl border border-border/70 bg-background/90 pl-10 pr-3 text-sm outline-none transition focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              />
+            </label>
+            <label className="relative block">
+              <span className="sr-only">{content.locationLabel}</span>
+              <MapPin className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+              <input
+                name="location"
+                placeholder={content.locationPlaceholder}
+                className="h-12 w-full rounded-xl border border-border/70 bg-background/90 pl-10 pr-3 text-sm outline-none transition focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              />
+            </label>
+            <Button type="submit" className="h-12 rounded-xl px-5" aria-label={content.searchAction}>
+              <span className="sm:hidden xl:inline">{content.searchAction}</span>
+              <Search className="h-4 w-4 sm:ml-0 xl:ml-2" aria-hidden="true" />
+            </Button>
+          </form>
+
+          <div className="mt-4 flex flex-wrap items-center gap-2" aria-label={content.locationLabel}>
+            {cities.map((city) => (
+              <Link
+                key={city}
+                href={`/jobs?location=${encodeURIComponent(city)}`}
+                className="rounded-full border border-cocoa/10 bg-white/70 px-3 py-1.5 text-xs font-semibold text-cocoa/70 transition hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:border-border dark:bg-card dark:text-muted-foreground"
+              >
+                {city}
+              </Link>
+            ))}
           </div>
-          <div className="mt-10 border-t border-white/15 pt-6">
-            <p className="text-sm font-medium text-slate-300">{content.proof}</p>
-            <div className="mt-4 grid max-w-xl grid-cols-3 gap-4">
-              {content.stats.map(([number, label]) => <div key={label}><p className="text-2xl font-semibold tracking-tight text-primary">{number}</p><p className="mt-1 text-xs leading-4 text-slate-300">{label}</p></div>)}
+
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <Button variant="terra" size="lg" asChild>
+              <Link href="/signup?role=graduate">
+                {content.profileAction}
+                <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+              </Link>
+            </Button>
+            <div className="flex -space-x-2" aria-hidden="true">
+              {["bg-terra", "bg-primary", "bg-lagoon"].map((color) => (
+                <span key={color} className={`grid h-9 w-9 place-items-center rounded-full border-2 border-ivory ${color} text-xs font-bold text-white dark:border-background`}>
+                  Y
+                </span>
+              ))}
+            </div>
+            <p className="max-w-xs text-sm leading-5 text-cocoa/65 dark:text-muted-foreground">
+              {content.routesTitle}
+            </p>
+          </div>
+        </div>
+
+        <div className="relative mx-auto w-full max-w-xl lg:mx-0">
+          <div className="ci-pattern absolute -inset-5 -z-10 rounded-[2.25rem] opacity-45" />
+          <div className="relative min-h-[31rem] overflow-hidden rounded-[2rem] border border-white/60 bg-cocoa shadow-lift sm:min-h-[38rem]">
+            <Image
+              src="/images/yahnu-abidjan-hero-v2.webp"
+              alt={content.photoAlt}
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 48vw"
+              className="object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-cocoa/90 via-cocoa/5 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-8">
+              <span className="inline-flex rounded-full bg-terra px-3 py-1 text-xs font-bold text-cocoa">
+                {content.imageNote}
+              </span>
+              <p className="mt-3 max-w-sm font-display text-2xl font-semibold leading-tight">{content.imageBody}</p>
             </div>
           </div>
-        </motion.div>
-        <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.75 }} className="hidden lg:block">
-          <div className="ml-auto max-w-md rounded-[2rem] border border-white/15 bg-slate-900/70 p-3 shadow-2xl shadow-black/30 backdrop-blur-xl">
-            <div className="rounded-[1.55rem] border border-white/10 bg-white/[0.07] p-6">
-              <div className="flex items-center justify-between"><span className="text-sm font-medium text-slate-300">Yahnu</span><span className="rounded-full bg-primary/15 px-2.5 py-1 text-xs font-medium text-primary">Live network</span></div>
-              <p className="mt-10 text-2xl font-semibold leading-tight">{locale === "fr" ? "Choisissez votre point de départ." : "Choose your starting point."}</p>
-              <div className="mt-6 space-y-3">
-                {audiences.map(({ label, icon: Icon, href }, index) => <Link key={label} href={href} className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.05] p-4 transition hover:border-primary/50 hover:bg-white/[0.09]"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary"><Icon className="h-5 w-5" /></span><span className="flex-1 font-medium">{label}</span><ArrowRight className="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-primary" /><span className="sr-only">{label}</span></Link>)}
-              </div>
-            </div>
+
+          <div className="surface-glass relative -mt-5 ml-4 mr-4 grid gap-2 rounded-2xl p-2 shadow-soft sm:-mt-8 sm:ml-8 sm:mr-[-1rem] sm:grid-cols-3">
+            {routes.map(({ label, icon: Icon, href }) => (
+              <Link
+                key={href}
+                href={href}
+                className="group flex min-h-16 items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold transition hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <span>{label}</span>
+              </Link>
+            ))}
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

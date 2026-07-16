@@ -3,11 +3,11 @@ import { FeatureUnavailable } from "@/components/dashboard/feature-unavailable"
 export default function TalentPoolPage() {
   return (
     <FeatureUnavailable
-      title="Talent discovery is not ready for production"
-      description="Candidate search, availability signals, and outreach need a consent-aware production data service before they can be offered. Example graduate profiles and client-side filters have been removed."
+      title="La découverte de talents arrive bientôt"
+      description="La recherche de candidats et la prise de contact exigent un service de production qui respecte le consentement de chaque diplômé. Les faux profils et filtres stockés dans le navigateur ont été retirés."
       actions={[
-        { href: "/dashboard/job-postings", label: "Manage job postings" },
-        { href: "/dashboard/partnerships", label: "Manage partnerships" },
+        { href: "/dashboard/job-postings", label: "Gérer les offres" },
+        { href: "/dashboard/partnerships", label: "Gérer les partenariats" },
       ]}
     />
   )

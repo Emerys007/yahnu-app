@@ -2,6 +2,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { useAuth, type Role } from "@/context/auth-context"
 import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,10 +10,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { PasswordInput } from "@/components/ui/password-input"
 import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, School as SchoolIcon, KeyRound, Check, ChevronsUpDown } from "lucide-react"
+import { ArrowUpRight, User, Shield, Building, School as SchoolIcon, KeyRound } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
 
@@ -68,10 +67,10 @@ const UserAccountSettings = () => {
                     description: t("You haven't made any changes."),
                 });
             }
-        } catch (error: unknown) {
+        } catch {
             toast({
                 title: t('Error'),
-                description: error instanceof Error ? error.message : t('Failed to update profile.'),
+                description: t('Failed to update profile.'),
                 variant: 'destructive',
             });
         } finally {
@@ -88,7 +87,7 @@ const UserAccountSettings = () => {
                 description: t('Check your inbox to create a new password.'),
             });
             if (reset.debugUrl) window.location.assign(reset.debugUrl);
-        } catch (error) {
+        } catch {
             toast({
                 title: t('Error'),
                 description: t('Failed to send password reset email.'),
@@ -150,7 +149,6 @@ const UserAccountSettings = () => {
 
 // #region Graduate Settings
 const GraduateSettings = () => {
-  const { t } = useLocalization()
   return (
     <motion.div 
         className="space-y-8"
@@ -167,42 +165,22 @@ const GraduateSettings = () => {
       <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
         <Card>
           <CardHeader>
-            <CardTitle>{t('Profile Visibility')}</CardTitle>
-            <CardDescription>{t('Control the visibility of your professional profile.')}</CardDescription>
+            <CardTitle>Visibilité du profil</CardTitle>
+            <CardDescription>Votre profil professionnel est utilisé dans les espaces de recrutement réservés aux comptes autorisés.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <Label className="text-base">{t('Public Profile')}</Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('Allow companies to view your full profile.')}
-                </p>
-              </div>
-              <Switch defaultChecked />
-            </div>
+          <CardContent>
+            <Button asChild variant="outline"><Link href="/dashboard/profile">Vérifier les informations visibles<ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link></Button>
           </CardContent>
         </Card>
       </motion.div>
       <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
         <Card>
           <CardHeader>
-            <CardTitle>{t('Job Alerts')}</CardTitle>
-            <CardDescription>{t('Configure your email notifications for new job opportunities.')}</CardDescription>
+            <CardTitle>Alertes d’opportunités</CardTitle>
+            <CardDescription>Les préférences d’alertes personnalisées seront proposées ici lorsqu’elles seront reliées au service d’e-mail Yahnu.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-              <div className="space-y-1">
-                  <Label htmlFor="alert-frequency">{t('Notification Frequency')}</Label>
-                  <Select defaultValue="daily">
-                      <SelectTrigger id="alert-frequency" className="w-[280px]">
-                          <SelectValue placeholder={t('Select frequency')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                          <SelectItem value="daily">{t('Daily')}</SelectItem>
-                          <SelectItem value="weekly">{t('Weekly')}</SelectItem>
-                          <SelectItem value="never">{t('Never')}</SelectItem>
-                      </SelectContent>
-                  </Select>
-              </div>
+          <CardContent>
+              <p className="rounded-xl border border-dashed bg-muted/25 p-4 text-sm leading-6 text-muted-foreground">En attendant, consultez les offres ouvertes depuis votre tableau de bord. Aucun réglage affiché ici ne prétend être enregistré.</p>
           </CardContent>
         </Card>
       </motion.div>
@@ -213,7 +191,6 @@ const GraduateSettings = () => {
 
 // #region Company Settings
 const CompanySettings = () => {
-    const { t } = useLocalization();
     return (
         <motion.div 
             className="space-y-8"
@@ -230,34 +207,22 @@ const CompanySettings = () => {
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
                 <Card>
                     <CardHeader>
-                        <CardTitle>{t('Team Members')}</CardTitle>
-                        <CardDescription>{t('Manage who has access to your company account.')}</CardDescription>
+                        <CardTitle>Profil de l’entreprise</CardTitle>
+                        <CardDescription>Les informations visibles par les candidats sont gérées dans un espace dédié.</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <p className="font-medium">{t('Invite a new team member')}</p>
-                            <Button>{t('Send Invite')}</Button>
-                        </div>
-                         <div className="space-y-2">
-                            <div className="flex items-center justify-between p-3 rounded-lg border">
-                                <div>
-                                    <p className="font-semibold">Jane Smith</p>
-                                    <p className="text-sm text-muted-foreground">jane@innovate.inc</p>
-                                </div>
-                                <Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-destructive" /></Button>
-                            </div>
-                        </div>
+                    <CardContent>
+                        <Button asChild variant="outline"><Link href="/dashboard/company-profile">Mettre à jour le profil<ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link></Button>
                     </CardContent>
                 </Card>
             </motion.div>
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
                 <Card>
                     <CardHeader>
-                        <CardTitle>{t('Billing Information')}</CardTitle>
-                        <CardDescription>{t('Manage your subscription and payment methods.')}</CardDescription>
+                        <CardTitle>Accès de l’équipe</CardTitle>
+                        <CardDescription>La gestion multi-utilisateur n’est pas encore activée. Aucun collaborateur fictif n’est affiché ici.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-muted-foreground">{t('Billing features coming soon.')}</p>
+                        <p className="rounded-xl border border-dashed bg-muted/25 p-4 text-sm leading-6 text-muted-foreground">Pour ajouter un recruteur à votre compte, contactez le support Yahnu depuis votre tableau de bord.</p>
                     </CardContent>
                 </Card>
             </motion.div>
@@ -268,7 +233,6 @@ const CompanySettings = () => {
 
 // #region School Settings
 const SchoolSettings = () => {
-    const { t } = useLocalization();
     return (
         <motion.div 
             className="space-y-8"
@@ -285,27 +249,11 @@ const SchoolSettings = () => {
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
                  <Card>
                     <CardHeader>
-                        <CardTitle>{t('Key Contacts')}</CardTitle>
-                        <CardDescription>{t('Manage primary points of contact for industry partnerships.')}</CardDescription>
+                        <CardTitle>Profil de l’établissement</CardTitle>
+                        <CardDescription>Gardez vos coordonnées et votre présentation à jour pour les diplômés et les partenaires.</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-1">
-                            <Label htmlFor="contact-name">{t('Primary Contact Name')}</Label>
-                            <Input id="contact-name" defaultValue="Dr. Fatou Bamba" />
-                        </div>
-                         <div className="space-y-1">
-                            <Label htmlFor="contact-email">{t('Contact Email')}</Label>
-                            <Input id="contact-email" type="email" defaultValue="partnerships@inphb.ci" />
-                        </div>
-                         <div className="flex items-center justify-between rounded-lg border p-4 mt-4">
-                            <div className="space-y-0.5">
-                            <Label className="text-base">{t('Partnership Requests')}</Label>
-                            <p className="text-sm text-muted-foreground">
-                                {t('Receive email notifications for new company partnership requests.')}
-                            </p>
-                            </div>
-                            <Switch defaultChecked />
-                        </div>
+                    <CardContent>
+                        <Button asChild variant="outline"><Link href="/dashboard/school-profile">Mettre à jour le profil<ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link></Button>
                     </CardContent>
                 </Card>
             </motion.div>
@@ -327,14 +275,14 @@ const settingsComponents: Record<Role, React.ComponentType> = {
 };
 
 const pageConfig: Record<string, { icon: React.ElementType; title: string; description: string }> = {
-    graduate: { icon: User, title: 'Your Settings', description: 'Manage your personal account details, profile visibility, and notifications.' },
-    company: { icon: Building, title: 'Company Settings', description: 'Manage your personal account, team members, and billing.' },
-    school: { icon: SchoolIcon, title: 'School Settings', description: 'Manage your personal account and institution contacts.' },
-    admin: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
-    super_admin: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
-    content_manager: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
-    content_moderator: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
-    support_staff: { icon: Shield, title: 'Admin Settings', description: 'Manage your administrator account details.' },
+    graduate: { icon: User, title: 'Mes paramètres', description: 'Gérez votre compte, la visibilité de votre profil et vos notifications.' },
+    company: { icon: Building, title: 'Paramètres recruteur', description: 'Gérez votre compte personnel et les informations de votre entreprise.' },
+    school: { icon: SchoolIcon, title: 'Paramètres établissement', description: 'Gérez votre compte et les informations de votre établissement.' },
+    admin: { icon: Shield, title: 'Paramètres administrateur', description: 'Gérez les informations et la sécurité de votre compte Yahnu.' },
+    super_admin: { icon: Shield, title: 'Paramètres administrateur', description: 'Gérez les informations et la sécurité de votre compte Yahnu.' },
+    content_manager: { icon: Shield, title: 'Paramètres éditoriaux', description: 'Gérez les informations et la sécurité de votre compte Yahnu.' },
+    content_moderator: { icon: Shield, title: 'Paramètres de modération', description: 'Gérez les informations et la sécurité de votre compte Yahnu.' },
+    support_staff: { icon: Shield, title: 'Paramètres support', description: 'Gérez les informations et la sécurité de votre compte Yahnu.' },
 }
 
 export default function SettingsPage() {
@@ -356,8 +304,8 @@ export default function SettingsPage() {
                 <Icon className="h-6 w-6 text-primary" />
             </div>
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">{t(title)}</h1>
-                <p className="text-muted-foreground mt-1">{t(description)}</p>
+                <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+                <p className="text-muted-foreground mt-1">{description}</p>
             </div>
         </motion.div>
         <Separator />

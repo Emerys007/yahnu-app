@@ -1,7 +1,8 @@
 "use client";
 
-import { Building2, GraduationCap, Handshake, Sparkles, TrendingUp } from "lucide-react";
-import { motion } from "framer-motion";
+import Link from "next/link";
+import { ArrowRight, BriefcaseBusiness, Factory, Landmark, Leaf, MapPinned, Route } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { FeaturesSection } from "@/components/landing/features-section";
 import { FeaturedOpportunities } from "@/components/landing/featured-opportunities";
 import { Footer } from "@/components/landing/footer";
@@ -9,31 +10,134 @@ import { HeroSection } from "@/components/landing/hero-section";
 import { MainNav } from "@/components/landing/main-nav";
 import { useLocalization } from "@/context/localization-context";
 
+const copy = {
+  fr: {
+    sectorsEyebrow: "Des ambitions ancrées dans le réel",
+    sectorsTitle: "Les secteurs qui font bouger la Côte d’Ivoire.",
+    sectorsBody: "Explore des pistes qui parlent à notre économie, à nos villes et aux défis que ta génération veut relever.",
+    sectors: [
+      ["Numérique & fintech", "Abidjan · Cocody · Plateau", "produit digital", Landmark],
+      ["Agro-industrie", "Bouaké · Korhogo · Daloa", "agro-industrie", Leaf],
+      ["Logistique & industrie", "San-Pédro · Vridi · Anyama", "logistique", Factory],
+      ["Services & impact", "Yamoussoukro · National", "impact", BriefcaseBusiness],
+    ],
+    routeEyebrow: "Ton parcours, sans détour",
+    routeTitle: "Du “je ne sais pas par où commencer” au premier vrai échange.",
+    steps: [
+      ["01", "Raconte ton parcours", "Formation, projets, stages, bénévolat : valorise ce que tu sais déjà faire."],
+      ["02", "Trouve ton cap", "Filtre les opportunités par compétence, ville et type de contrat."],
+      ["03", "Crée la connexion", "Candidate, suis la réponse et garde tout ton parcours au même endroit."],
+    ],
+    ctaEyebrow: "Prêt·e à prendre ton élan ?",
+    ctaTitle: "La prochaine étape de ta carrière peut commencer aujourd’hui.",
+    ctaBody: "Crée un profil qui parle de toi, puis découvre les opportunités ouvertes en Côte d’Ivoire.",
+    ctaPrimary: "Créer mon profil",
+    ctaSecondary: "Explorer les offres",
+  },
+  en: {
+    sectorsEyebrow: "Ambition grounded in real life",
+    sectorsTitle: "The sectors moving Côte d’Ivoire forward.",
+    sectorsBody: "Explore paths connected to our economy, our cities and the challenges your generation wants to solve.",
+    sectors: [
+      ["Digital & fintech", "Abidjan · Cocody · Plateau", "digital product", Landmark],
+      ["Agro-industry", "Bouaké · Korhogo · Daloa", "agro-industry", Leaf],
+      ["Logistics & industry", "San-Pédro · Vridi · Anyama", "logistics", Factory],
+      ["Services & impact", "Yamoussoukro · Nationwide", "social impact", BriefcaseBusiness],
+    ],
+    routeEyebrow: "Your path, made clearer",
+    routeTitle: "From “where do I begin?” to the first meaningful conversation.",
+    steps: [
+      ["01", "Tell your story", "Education, projects, internships and volunteering all show what you can already do."],
+      ["02", "Find your direction", "Filter opportunities by skill, city and contract type."],
+      ["03", "Make the connection", "Apply, follow the response and keep your journey in one place."],
+    ],
+    ctaEyebrow: "Ready to build momentum?",
+    ctaTitle: "The next step in your career can start today.",
+    ctaBody: "Build a profile that sounds like you, then explore open opportunities across Côte d’Ivoire.",
+    ctaPrimary: "Create my profile",
+    ctaSecondary: "Explore opportunities",
+  },
+} as const;
+
 export default function HomePage() {
   const { language } = useLocalization();
-  const locale = language === "fr" ? "fr" : "en";
-  const content = locale === "fr"
-    ? { eyebrow: "Un réseau, un progrès partagé", title: "Là où l’ambition trouve une voie claire.", body: "Yahnu rassemble les informations, les relations et les outils nécessaires pour faire de chaque prochaine étape une décision plus confiante.", cards: [["Pour les diplômés", "Transformez vos compétences et votre expérience en un profil qui ouvre des portes.", GraduationCap], ["Pour les employeurs", "Rencontrez des talents prêts à contribuer et à évoluer avec votre équipe.", Building2], ["Pour les établissements", "Restez connectés à ce que le marché recherche et accompagnez mieux vos diplômés.", Handshake]] }
-    : { eyebrow: "One network, shared progress", title: "Where ambition gets a clearer path forward.", body: "Yahnu brings the insight, relationships, and tools together to make every next step a more confident decision.", cards: [["For graduates", "Turn your skills and experience into a profile that opens doors.", GraduationCap], ["For employers", "Meet talent ready to contribute and grow alongside your team.", Building2], ["For institutions", "Stay close to what the market needs and better support your graduates.", Handshake]] };
+  const content = copy[language === "fr" ? "fr" : "en"];
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <MainNav />
       <main className="flex-1">
         <HeroSection />
-        <section className="overflow-hidden bg-slate-950 py-20 text-white sm:py-24">
+
+        <section className="relative overflow-hidden border-y bg-background py-20 sm:py-28">
           <div className="container mx-auto">
-            <div className="max-w-2xl"><p className="inline-flex items-center gap-2 text-sm font-semibold text-primary"><Sparkles className="h-4 w-4" />{content.eyebrow}</p><h2 className="mt-3 text-3xl font-bold tracking-[-0.04em] sm:text-4xl">{content.title}</h2><p className="mt-4 text-lg leading-8 text-slate-300">{content.body}</p></div>
-            <div className="mt-10 grid gap-4 md:grid-cols-3">
-              {content.cards.map(([title, body, Icon], index) => {
-                const CardIcon = Icon as typeof GraduationCap;
-                return <motion.div key={title as string} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.08 }} className="rounded-3xl border border-white/10 bg-white/[0.06] p-6"><span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/15 text-primary"><CardIcon className="h-5 w-5" /></span><h3 className="mt-6 text-lg font-semibold">{title as string}</h3><p className="mt-3 text-sm leading-6 text-slate-300">{body as string}</p><TrendingUp className="mt-6 h-4 w-4 text-primary" /></motion.div>;
+            <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
+              <div>
+                <p className="section-kicker"><MapPinned className="h-4 w-4" aria-hidden="true" />{content.sectorsEyebrow}</p>
+                <h2 className="display-title mt-4 text-4xl sm:text-5xl">{content.sectorsTitle}</h2>
+              </div>
+              <p className="max-w-2xl text-lg leading-8 text-muted-foreground lg:justify-self-end">{content.sectorsBody}</p>
+            </div>
+
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {content.sectors.map(([title, place, query, Icon], index) => {
+                const SectorIcon = Icon as typeof Landmark;
+                return (
+                  <Link
+                    key={title as string}
+                    href={`/jobs?q=${encodeURIComponent(query as string)}`}
+                    className="group relative min-h-64 overflow-hidden rounded-[1.5rem] border bg-card p-5 shadow-soft transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    <span className={`absolute right-[-2rem] top-[-2rem] h-28 w-28 rounded-full ${index % 2 ? "bg-lagoon/10" : "bg-terra/10"}`} />
+                    <span className="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-primary"><SectorIcon className="h-5 w-5" aria-hidden="true" /></span>
+                    <p className="mt-14 font-display text-2xl font-semibold leading-tight">{title as string}</p>
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground">{place as string}</p>
+                    <ArrowRight className="absolute bottom-5 right-5 h-5 w-5 text-primary transition group-hover:translate-x-1" aria-hidden="true" />
+                  </Link>
+                );
               })}
             </div>
           </div>
         </section>
+
         <FeaturesSection />
+
+        <section className="relative overflow-hidden bg-ivory py-20 dark:bg-card sm:py-28">
+          <div className="ci-pattern absolute inset-0 opacity-25" />
+          <div className="container relative mx-auto grid gap-12 lg:grid-cols-[0.75fr_1.25fr]">
+            <div>
+              <p className="section-kicker"><Route className="h-4 w-4" aria-hidden="true" />{content.routeEyebrow}</p>
+              <h2 className="display-title mt-4 max-w-xl text-4xl sm:text-5xl">{content.routeTitle}</h2>
+            </div>
+            <ol className="relative space-y-4 before:absolute before:bottom-10 before:left-[1.35rem] before:top-10 before:w-px before:bg-primary/25 sm:space-y-5">
+              {content.steps.map(([number, title, body]) => (
+                <li key={number} className="surface-glass relative flex gap-5 rounded-[1.4rem] p-5 sm:p-6">
+                  <span className="relative z-10 grid h-11 w-11 shrink-0 place-items-center rounded-full bg-primary font-display text-sm font-bold text-primary-foreground">{number}</span>
+                  <div>
+                    <h3 className="font-display text-xl font-semibold">{title}</h3>
+                    <p className="mt-1.5 leading-7 text-muted-foreground">{body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
         <FeaturedOpportunities />
+
+        <section className="px-4 pb-20 sm:pb-28">
+          <div className="container ci-pattern mx-auto overflow-hidden rounded-[2rem] bg-primary px-6 py-12 text-primary-foreground shadow-lift sm:px-10 lg:flex lg:items-end lg:justify-between lg:gap-12 lg:px-14 lg:py-14">
+            <div className="max-w-3xl">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary-foreground/70">{content.ctaEyebrow}</p>
+              <h2 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-[-0.035em] sm:text-5xl">{content.ctaTitle}</h2>
+              <p className="mt-4 max-w-2xl text-lg leading-8 text-primary-foreground/75">{content.ctaBody}</p>
+            </div>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:mt-0 lg:shrink-0">
+              <Button variant="terra" size="lg" asChild><Link href="/signup?role=graduate">{content.ctaPrimary}</Link></Button>
+              <Button variant="outline" size="lg" className="border-white/25 bg-white/10 text-white hover:bg-white/20 hover:text-white" asChild><Link href="/jobs">{content.ctaSecondary}</Link></Button>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </div>

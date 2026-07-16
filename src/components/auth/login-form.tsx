@@ -1,12 +1,14 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { useRouter, useSearchParams } from "next/navigation"
+import * as React from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,116 +16,180 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { useAuth } from "@/context/auth-context"
-import { useToast } from "@/hooks/use-toast"
-import Link from "next/link"
-import { useLocalization } from "@/context/localization-context"
-import { PasswordInput } from "@/components/ui/password-input"
-import { Separator } from "../ui/separator"
-import { ApiClientError } from "@/lib/api-client"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
+import { useAuth } from "@/context/auth-context";
+import { useLocalization } from "@/context/localization-context";
+import { useToast } from "@/hooks/use-toast";
+import { ApiClientError } from "@/lib/api-client";
 
-const createLoginSchema = (t: (key: string) => string) => z.object({
-  email: z.string().email({ message: t("auth.validation.valid_email") }),
-  password: z.string().min(1, { message: t("auth.validation.password_required") }),
-})
+function createLoginSchema(language: "fr" | "en") {
+  const fr = language === "fr";
+  return z.object({
+    email: z.string().trim().email({
+      message: fr ? "Saisissez une adresse e-mail valide." : "Enter a valid email address.",
+    }),
+    password: z.string().min(1, {
+      message: fr ? "Saisissez votre mot de passe." : "Enter your password.",
+    }),
+  });
+}
+
+type LoginValues = z.infer<ReturnType<typeof createLoginSchema>>;
 
 export function LoginForm() {
-    const { t } = useLocalization();
-    const loginSchema = createLoginSchema(t);
-    const { signIn, signInWithGoogle, googleEnabled } = useAuth();
-    const { toast } = useToast();
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const [isLoading, setIsLoading] = React.useState(false);
+  const { language } = useLocalization();
+  const fr = language === "fr";
+  const schema = React.useMemo(() => createLoginSchema(language), [language]);
+  const { signIn, signInWithGoogle, googleEnabled } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = React.useState(false);
 
-
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<LoginValues>({
+    resolver: zodResolver(schema),
     defaultValues: {
       email: "",
       password: "",
     },
-  })
+  });
 
   React.useEffect(() => {
-    const authError = searchParams.get('auth');
+    const authError = searchParams.get("auth");
     if (!authError) return;
-    const messages: Record<string, string> = {
-      pending_graduate: "Your account is pending approval. Please contact your school's administrator.",
-      pending_org: "Your account is pending approval. Please contact a Yahnu administrator.",
-      suspended: "Your account has been suspended. Please contact support.",
-      declined: "This registration was not approved. Please contact support if you believe this is a mistake.",
-      google_auth_disabled: "Google sign-in is not configured.",
-      google_registration_required: "Create your Yahnu account first, then use Google to sign in with the same email address.",
+
+    const messages: Record<string, { fr: string; en: string }> = {
+      pending_graduate: {
+        fr: "Votre compte attend la validation de votre établissement. Contactez son équipe administrative si nécessaire.",
+        en: "Your account is awaiting approval from your school. Contact its administrative team if needed.",
+      },
+      pending_org: {
+        fr: "Votre organisation attend la validation de l’équipe Yahnu.",
+        en: "Your organisation is awaiting approval from the Yahnu team.",
+      },
+      suspended: {
+        fr: "Ce compte est suspendu. Contactez l’assistance Yahnu pour connaître la marche à suivre.",
+        en: "This account is suspended. Contact Yahnu support for next steps.",
+      },
+      declined: {
+        fr: "Cette inscription n’a pas été validée. Contactez l’assistance si vous pensez qu’il s’agit d’une erreur.",
+        en: "This registration was not approved. Contact support if you believe this is a mistake.",
+      },
+      google_auth_disabled: {
+        fr: "La connexion Google n’est pas disponible pour le moment. Utilisez votre adresse et votre mot de passe.",
+        en: "Google sign-in is not available right now. Use your email address and password.",
+      },
+      google_registration_required: {
+        fr: "Créez d’abord votre compte Yahnu, puis utilisez Google avec la même adresse e-mail.",
+        en: "Create your Yahnu account first, then use Google with the same email address.",
+      },
     };
+    const message = messages[authError] ?? {
+      fr: "La connexion Google n’a pas abouti. Réessayez ou utilisez votre mot de passe.",
+      en: "Google sign-in did not complete. Try again or use your password.",
+    };
+
     toast({
-      title: t("Google sign-in was not completed"),
-      description: t(messages[authError] ?? "Please try Google sign-in again."),
+      title: fr ? "Connexion non terminée" : "Sign-in not completed",
+      description: message[language],
       variant: "destructive",
     });
-    router.replace('/login');
-  }, [router, searchParams, t, toast]);
+    router.replace("/login");
+  }, [fr, language, router, searchParams, toast]);
 
-  async function onSubmit(values: z.infer<typeof loginSchema>) {
+  async function onSubmit(values: LoginValues) {
     setIsLoading(true);
     try {
-        await signIn(values.email, values.password);
-        toast({
-            title: t("Logged In Successfully!"),
-            description: t("Welcome back to Yahnu."),
-        });
-        const requestedPath = searchParams.get('next');
-        router.push(requestedPath?.startsWith('/') && !requestedPath.startsWith('//') ? requestedPath : '/dashboard');
+      await signIn(values.email, values.password);
+      toast({
+        title: fr ? "Connexion réussie" : "Signed in",
+        description: fr ? "Bienvenue dans votre espace Yahnu." : "Welcome to your Yahnu space.",
+      });
+      const requestedPath = searchParams.get("next");
+      router.push(requestedPath?.startsWith("/") && !requestedPath.startsWith("//") ? requestedPath : "/dashboard");
     } catch (error: unknown) {
-        const code = error instanceof ApiClientError ? error.code : undefined;
-        let errorMessage = t("Invalid credentials. Please try again.");
-        if (code === 'invalid_credentials') {
-            errorMessage = t("Invalid email or password. Please check your credentials.");
-        } else if (code === 'rate_limited') {
-            errorMessage = t("Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.")
-        } else if (code === 'pending_graduate') {
-            errorMessage = t("Your account is pending approval. Please contact your school's administrator.");
-        } else if (code === 'pending_org') {
-             errorMessage = t("Your account is pending approval. Please contact a Yahnu administrator.");
-        } else if (code === "suspended") {
-            errorMessage = t("Your account has been suspended. Please contact support.");
-        } else if (code === "declined") {
-            errorMessage = t("This registration was not approved. Please contact support if you believe this is a mistake.");
-        } else if (code === "email_unverified") {
-            errorMessage = t("Please verify your email address before signing in. Check your inbox for the Yahnu verification link.");
-        }
+      const code = error instanceof ApiClientError ? error.code : undefined;
+      const messages: Record<string, { fr: string; en: string }> = {
+        invalid_credentials: {
+          fr: "L’adresse ou le mot de passe est incorrect. Vérifiez-les puis réessayez.",
+          en: "The email address or password is incorrect. Check them and try again.",
+        },
+        rate_limited: {
+          fr: "Trop de tentatives ont été effectuées. Réinitialisez votre mot de passe pour retrouver immédiatement l’accès, ou patientez avant de réessayer.",
+          en: "Too many attempts were made. Reset your password to restore access now, or wait before trying again.",
+        },
+        pending_graduate: {
+          fr: "Votre compte attend la validation de votre établissement. Contactez son équipe administrative si nécessaire.",
+          en: "Your account is awaiting approval from your school. Contact its administrative team if needed.",
+        },
+        pending_org: {
+          fr: "Votre organisation attend la validation de l’équipe Yahnu.",
+          en: "Your organisation is awaiting approval from the Yahnu team.",
+        },
+        suspended: {
+          fr: "Ce compte est suspendu. Contactez l’assistance Yahnu pour connaître la marche à suivre.",
+          en: "This account is suspended. Contact Yahnu support for next steps.",
+        },
+        declined: {
+          fr: "Cette inscription n’a pas été validée. Contactez l’assistance si vous pensez qu’il s’agit d’une erreur.",
+          en: "This registration was not approved. Contact support if you believe this is a mistake.",
+        },
+        email_unverified: {
+          fr: "Vérifiez votre adresse avant de vous connecter. Le lien Yahnu se trouve dans votre boîte mail ou vos indésirables.",
+          en: "Verify your address before signing in. The Yahnu link is in your inbox or spam folder.",
+        },
+      };
+      const message = (code ? messages[code] : undefined) ?? {
+        fr: "La connexion n’a pas abouti. Vérifiez vos informations et votre connexion internet, puis réessayez.",
+        en: "Sign-in did not complete. Check your details and internet connection, then try again.",
+      };
 
-        toast({
-            title: t("Uh oh! Login Failed."),
-            description: errorMessage,
-            variant: "destructive",
-        });
+      toast({
+        title: fr ? "Connexion impossible" : "Unable to sign in",
+        description: message[language],
+        variant: "destructive",
+      });
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   }
 
   async function handleGoogleSignIn() {
     setIsLoading(true);
     try {
-      const requestedPath = searchParams.get('next');
-      await signInWithGoogle(requestedPath?.startsWith('/') && !requestedPath.startsWith('//') ? requestedPath : '/dashboard');
-    } catch (error: any) {
-      let errorMessage = error.message || t("Could not sign in with Google.");
-       if (error.message === "pending_graduate") {
-            errorMessage = t("Your account is pending approval. Please contact your school's administrator.");
-        } else if (error.message === 'pending_org') {
-             errorMessage = t("Your account is pending approval. Please contact a Yahnu administrator.");
-        } else if (error.message === "suspended") {
-            errorMessage = t("Your account has been suspended. Please contact support.");
-        } else if (error.message === "email_unverified") {
-            errorMessage = t("Please verify your email address before signing in. Check your inbox for the Yahnu verification link.");
-        }
+      const requestedPath = searchParams.get("next");
+      await signInWithGoogle(
+        requestedPath?.startsWith("/") && !requestedPath.startsWith("//") ? requestedPath : "/dashboard",
+      );
+    } catch (error: unknown) {
+      const rawMessage = error instanceof Error ? error.message : "request_failed";
+      const messages: Record<string, { fr: string; en: string }> = {
+        pending_graduate: {
+          fr: "Votre compte attend la validation de votre établissement.",
+          en: "Your account is awaiting approval from your school.",
+        },
+        pending_org: {
+          fr: "Votre organisation attend la validation de l’équipe Yahnu.",
+          en: "Your organisation is awaiting approval from the Yahnu team.",
+        },
+        suspended: {
+          fr: "Ce compte est suspendu. Contactez l’assistance Yahnu.",
+          en: "This account is suspended. Contact Yahnu support.",
+        },
+        email_unverified: {
+          fr: "Vérifiez votre adresse e-mail avant de vous connecter.",
+          en: "Verify your email address before signing in.",
+        },
+      };
+      const message = messages[rawMessage] ?? {
+        fr: "La connexion Google n’a pas abouti. Réessayez ou utilisez votre mot de passe.",
+        en: "Google sign-in did not complete. Try again or use your password.",
+      };
       toast({
-        title: t("Uh oh! Something went wrong."),
-        description: errorMessage,
+        title: fr ? "Connexion Google impossible" : "Unable to sign in with Google",
+        description: message[language],
         variant: "destructive",
       });
       setIsLoading(false);
@@ -132,73 +198,109 @@ export function LoginForm() {
 
   return (
     <>
-        <div className="text-center">
-            <h1 className="text-3xl font-bold">{t('auth.welcome_back')}</h1>
-            <p className="text-muted-foreground mt-2">
-                {t('auth.enter_email_to_login')}
-            </p>
-        </div>
-        <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
+      <div className="text-left">
+        <h1 className="font-headline text-3xl font-semibold tracking-[-0.04em]">
+          {fr ? "Ravi de vous revoir" : "Welcome back"}
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          {fr ? "Connectez-vous pour retrouver votre parcours Yahnu." : "Sign in to continue your Yahnu journey."}
+        </p>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" aria-busy={isLoading} noValidate>
+          <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
-                <FormItem>
-                <FormLabel>{t('common.email')}</FormLabel>
+              <FormItem>
+                <FormLabel>{fr ? "Adresse e-mail" : "Email address"}</FormLabel>
                 <FormControl>
-                    <Input type="email" placeholder="you@example.com" {...field} disabled={isLoading} />
+                  <Input
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    placeholder="awa.kone@exemple.ci"
+                    {...field}
+                    disabled={isLoading}
+                  />
                 </FormControl>
                 <FormMessage />
-                </FormItem>
+              </FormItem>
             )}
-            />
-            <FormField
+          />
+
+          <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
-                <FormItem>
-                    <div className="flex items-center">
-                        <FormLabel>{t('common.password')}</FormLabel>
-                        <Link href="/forgot-password" className="ml-auto inline-block text-sm underline">
-                            {t('common.forgot_your_password')}
-                        </Link>
-                    </div>
-                    <FormControl>
-                        <PasswordInput placeholder="••••••••" {...field} disabled={isLoading} hideSuggestions />
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
+              <FormItem>
+                <div className="flex items-center gap-3">
+                  <FormLabel>{fr ? "Mot de passe" : "Password"}</FormLabel>
+                  <Link
+                    href="/forgot-password"
+                    className="ml-auto rounded-md text-sm font-semibold text-primary underline-offset-4 hover:underline"
+                  >
+                    {fr ? "Mot de passe oublié ?" : "Forgot password?"}
+                  </Link>
+                </div>
+                <FormControl>
+                  <PasswordInput {...field} disabled={isLoading} hideSuggestions autoComplete="current-password" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-            />
-            <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? t("auth.logging_in") : t("common.login")}
-            </Button>
-            {googleEnabled && <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">{t('auth.or_continue_with')}</span>
-                </div>
-            </div>}
-            {googleEnabled && <Button variant="outline" type="button" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
-                 <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 21.2 177 60.4L373 124.9c-32.5-30.3-74.2-48.7-125-48.7-93.1 0-170 73.1-170 180s76.9 180 170 180c101.4 0 148.2-73.3 152.8-112.3H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg>
-                 {t('common.login_with_google')}
-            </Button>}
-        </form>
-        </Form>
-        <div className="mt-4 text-center text-sm">
-            {t("auth.dont_have_account")}
-            <Link href="/signup" className="underline ml-1">
-                {t('common.sign_up')}
-            </Link>
-            <div className="mt-2">
-              <Link href="/resend-verification" className="text-muted-foreground underline hover:text-foreground">
-                {t("Didn't receive a verification email?")}
-              </Link>
+          />
+
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? <Loader2 className="animate-spin" aria-hidden="true" /> : <ArrowRight aria-hidden="true" />}
+            {isLoading ? (fr ? "Connexion…" : "Signing in…") : fr ? "Accéder à mon espace" : "Open my space"}
+          </Button>
+
+          {googleEnabled && (
+            <div className="relative py-1" aria-hidden="true">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs font-bold uppercase tracking-[0.12em]">
+                <span className="bg-card px-3 text-muted-foreground">{fr ? "Ou" : "Or"}</span>
+              </div>
             </div>
-        </div>
+          )}
+
+          {googleEnabled && (
+            <Button
+              variant="outline"
+              type="button"
+              className="w-full"
+              onClick={handleGoogleSignIn}
+              disabled={isLoading}
+            >
+              <svg className="h-4 w-4" aria-hidden="true" focusable="false" viewBox="0 0 488 512">
+                <path
+                  fill="currentColor"
+                  d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 21.2 177 60.4L373 124.9c-32.5-30.3-74.2-48.7-125-48.7-93.1 0-170 73.1-170 180s76.9 180 170 180c101.4 0 148.2-73.3 152.8-112.3H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
+                />
+              </svg>
+              {fr ? "Continuer avec Google" : "Continue with Google"}
+            </Button>
+          )}
+        </form>
+      </Form>
+
+      <div className="mt-6 border-t border-border/70 pt-5 text-center text-sm text-muted-foreground">
+        <p>
+          {fr ? "Vous découvrez Yahnu ?" : "New to Yahnu?"}{" "}
+          <Link href="/signup" className="font-semibold text-primary underline-offset-4 hover:underline">
+            {fr ? "Créer un compte" : "Create an account"}
+          </Link>
+        </p>
+        <p className="mt-2">
+          <Link href="/resend-verification" className="font-semibold text-foreground underline-offset-4 hover:text-primary hover:underline">
+            {fr ? "Je n’ai pas reçu mon e-mail de vérification" : "I did not receive my verification email"}
+          </Link>
+        </p>
+      </div>
     </>
-  )
+  );
 }

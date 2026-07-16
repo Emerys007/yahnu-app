@@ -18,20 +18,20 @@ type FeatureUnavailableProps = {
 export function FeatureUnavailable({ title, description, actions = [] }: FeatureUnavailableProps) {
   return (
     <section className="mx-auto flex min-h-[60vh] max-w-3xl items-center py-8">
-      <Card className="w-full border-dashed">
+      <Card className="ci-pattern w-full overflow-hidden border-primary/20">
         <CardHeader className="space-y-4">
-          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-terra/15 text-terra">
             <Construction className="h-6 w-6" aria-hidden="true" />
           </span>
           <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">Production status</p>
+            <p className="section-kicker w-fit">État de la fonctionnalité</p>
             <CardTitle className="text-2xl">{title}</CardTitle>
             <CardDescription className="max-w-2xl text-base leading-7">{description}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
           <p className="rounded-xl border bg-muted/40 p-4 text-sm leading-6 text-muted-foreground">
-            To protect your data, this area does not show sample results and cannot save changes until its production service is connected.
+            Pour protéger vos données, cet espace n’affiche aucun résultat fictif et ne simule aucun enregistrement tant que son service de production n’est pas connecté.
           </p>
           {actions.length > 0 ? (
             <div className="flex flex-wrap gap-3">

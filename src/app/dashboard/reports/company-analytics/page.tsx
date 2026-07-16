@@ -3,11 +3,11 @@ import { FeatureUnavailable } from "@/components/dashboard/feature-unavailable"
 export default function CompanyAnalyticsPage() {
   return (
     <FeatureUnavailable
-      title="Company analytics are not connected to production data yet"
-      description="Applicant funnels, hiring rates, and exports are unavailable until they are calculated from the production database. Sample charts and fictional CSV exports have been removed."
+      title="Les analyses de recrutement arrivent bientôt"
+      description="Les parcours de candidature, les délais de recrutement et les exports seront disponibles une fois calculés depuis les données de production. Les graphiques d’exemple et faux CSV ont été retirés."
       actions={[
-        { href: "/dashboard/job-postings", label: "Manage job postings" },
-        { href: "/dashboard/reports", label: "View reporting status" },
+        { href: "/dashboard/job-postings", label: "Gérer les offres" },
+        { href: "/dashboard/reports", label: "Voir l’état des rapports" },
       ]}
     />
   )
