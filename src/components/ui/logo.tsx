@@ -1,41 +1,27 @@
-
-"use client"
-
-import * as React from 'react';
-import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { useTheme } from 'next-themes';
 
-export const Logo = (props: { className?: string }) => {
-  const { theme, systemTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    // Render a placeholder to avoid layout shifts
-    return <div className={cn(props.className)} style={{ aspectRatio: '1 / 1' }} />;
-  }
-  
-  const currentTheme = theme === 'system' ? systemTheme : theme;
-  const logoSrc = currentTheme === 'dark' ? '/images/YahnuLogoDark.svg' : '/images/YahnuLogoLight.svg';
-
-
+export function Logo({ className }: { className?: string }) {
   return (
-    <div className={cn(props.className, "transition-opacity duration-300")}>
-        <Image 
-            key={logoSrc}
-            src={logoSrc} 
-            alt="Logo Yahnu" 
-            width={100}
-            height={100}
-            sizes="100vw"
-            className="w-full h-full"
-            priority
-            unoptimized // Useful for SVGs that don't need optimization
-        />
-    </div>
+    <svg
+      viewBox="0 0 64 64"
+      role="img"
+      aria-label="Yahnu"
+      className={cn('shrink-0 overflow-visible', className)}
+    >
+      <path
+        d="M15 16.5 32 27l17-10.5M32 27v20"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="5.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="15" cy="16.5" r="8" className="fill-terra" />
+      <circle cx="49" cy="16.5" r="8" className="fill-lagoon" />
+      <circle cx="32" cy="47" r="8" className="fill-primary" />
+      <circle cx="15" cy="16.5" r="2.4" className="fill-terra-foreground" />
+      <circle cx="49" cy="16.5" r="2.4" className="fill-white" />
+      <circle cx="32" cy="47" r="2.4" className="fill-white" />
+    </svg>
   );
-};
+}

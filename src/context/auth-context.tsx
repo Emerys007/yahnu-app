@@ -46,20 +46,6 @@ export function useAuth() {
   return context;
 }
 
-const identifyHubSpotUser = (user: UserProfile) => {
-  if (process.env.NEXT_PUBLIC_ENABLE_HUBSPOT !== 'true') return;
-  const browser = window as typeof window & { _hsq?: unknown[][] };
-  const queue = browser._hsq = browser._hsq ?? [];
-  queue.push(['identify', {
-    id: user.uid,
-    email: user.email,
-    firstname: user.firstName,
-    lastname: user.lastName,
-    role: user.role,
-    company: user.companyName,
-  }]);
-};
-
 type SessionResponse = { data: { user: UserProfile | null; googleEnabled: boolean } };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -69,7 +55,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const setAuthenticatedUser = useCallback((profile: UserProfile | null) => {
     setUser(profile);
-    if (profile) identifyHubSpotUser(profile);
   }, []);
 
   const refreshUser = useCallback(async () => {

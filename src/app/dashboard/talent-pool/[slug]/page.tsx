@@ -3,11 +3,11 @@ import { FeatureUnavailable } from "@/components/dashboard/feature-unavailable"
 export default function TalentProfilePage() {
   return (
     <FeatureUnavailable
-      title="Talent profiles are not available yet"
-      description="Individual candidate profiles, direct contact details, and invite actions have been removed until the talent service is production-backed and enforces the required consent and access controls."
+      title="Les profils individuels ne sont pas encore disponibles"
+      description="Les coordonnées et les invitations directes restent masquées tant que le service de talents ne garantit pas le consentement et les contrôles d’accès nécessaires."
       actions={[
-        { href: "/dashboard/talent-pool", label: "View talent pool status" },
-        { href: "/dashboard/job-postings", label: "Manage job postings" },
+        { href: "/dashboard/talent-pool", label: "Voir l’état du vivier" },
+        { href: "/dashboard/job-postings", label: "Gérer les offres" },
       ]}
     />
   )

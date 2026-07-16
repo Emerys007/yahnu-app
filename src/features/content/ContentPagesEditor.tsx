@@ -21,61 +21,61 @@ import { Separator } from "@/components/ui/separator"
 // --- Schemas and Default Values (Defined at the top level) ---
 
 const teamMemberSchema = z.object({
-  name: z.string().min(1, "Name is required."),
-  role: z.string().min(1, "Role is required."),
-  imageUrl: z.string().refine((value) => value === "" || /^\/(?!\/)(?!\.\.(?:\/|$))(?!.*\/\.\.(?:\/|$))[^?#\\\u0000-\u001f]+$/.test(value), "Use an image from the public folder, such as /images/person.jpg."),
+  name: z.string().min(1, "Le nom est obligatoire."),
+  role: z.string().min(1, "Le rôle est obligatoire."),
+  imageUrl: z.string().refine((value) => value === "" || /^\/(?!\/)(?!\.\.(?:\/|$))(?!.*\/\.\.(?:\/|$))[^?#\\\u0000-\u001f]+$/.test(value), "Utilisez une image du dossier public, par exemple /images/personne.jpg."),
 });
 
 const aboutPageSchema = z.object({
-    aboutTitle: z.string().min(1, "Required"),
-    aboutSubtitle: z.string().min(1, "Required"),
-    storyTitle: z.string().min(1, "Required"),
-    storyContent1: z.string().min(1, "Required"),
-    storyContent2: z.string().min(1, "Required"),
-    missionTitle: z.string().min(1, "Required"),
-    missionContent: z.string().min(1, "Required"),
-    visionTitle: z.string().min(1, "Required"),
-    visionContent: z.string().min(1, "Required"),
-    valuesTitle: z.string().min(1, "Required"),
-    valuesContent: z.string().min(1, "Required"),
+    aboutTitle: z.string().min(1, "Ce champ est obligatoire."),
+    aboutSubtitle: z.string().min(1, "Ce champ est obligatoire."),
+    storyTitle: z.string().min(1, "Ce champ est obligatoire."),
+    storyContent1: z.string().min(1, "Ce champ est obligatoire."),
+    storyContent2: z.string().min(1, "Ce champ est obligatoire."),
+    missionTitle: z.string().min(1, "Ce champ est obligatoire."),
+    missionContent: z.string().min(1, "Ce champ est obligatoire."),
+    visionTitle: z.string().min(1, "Ce champ est obligatoire."),
+    visionContent: z.string().min(1, "Ce champ est obligatoire."),
+    valuesTitle: z.string().min(1, "Ce champ est obligatoire."),
+    valuesContent: z.string().min(1, "Ce champ est obligatoire."),
     teamMembers: z.array(teamMemberSchema).optional(),
 });
 
 const legalPageSchema = z.object({
-    title: z.string().min(1, "Required"),
-    lastUpdated: z.string().min(1, "Required"),
-    content: z.string().min(50, "Content must be at least 50 characters."),
+    title: z.string().min(1, "Ce champ est obligatoire."),
+    lastUpdated: z.string().min(1, "Ce champ est obligatoire."),
+    content: z.string().min(50, "Le contenu doit comporter au moins 50 caractères."),
 })
 
 const defaultAboutValues: z.infer<typeof aboutPageSchema> = {
-    aboutTitle: "About Yahnu",
-    aboutSubtitle: "We are on a mission to bridge the gap between education and employment, creating a thriving ecosystem for talent to connect with opportunity in {country} and beyond.",
-    storyTitle: "Our Story",
-    storyContent1: "<p>Founded by a team of educators and entrepreneurs, Yahnu was born from a shared vision: to unlock the immense potential of graduates by directly connecting them with the industries that need their skills. We saw a disconnect between the classroom and the workplace and set out to build the bridge.</p>",
-    storyContent2: "<p>Today, Yahnu is a dynamic platform that empowers students to launch their careers, helps companies find the right talent efficiently, and enables schools to forge meaningful industry partnerships. We believe in building futures, one connection at a time.</p>",
-    missionTitle: "Our Mission",
-    missionContent: "<p>To empower graduates, companies, and schools by creating a seamless and efficient ecosystem for talent development and career growth.</p>",
-    visionTitle: "Our Vision",
-    visionContent: "<p>To be the leading platform for professional connection and opportunity in Africa, driving economic growth and individual success.</p>",
-    valuesTitle: "Our Values",
-    valuesContent: "<p>Integrity, Innovation, Collaboration, and an unwavering commitment to the success of our users.</p>",
+    aboutTitle: "Faire du diplôme un vrai point de départ.",
+    aboutSubtitle: "Yahnu rapproche les jeunes diplômés, les établissements et les employeurs afin que le talent ivoirien trouve des opportunités concrètes en {country}.",
+    storyTitle: "Une réponse née en Côte d’Ivoire",
+    storyContent1: "<p>À Abidjan comme à Bouaké, Yamoussoukro, Korhogo ou San-Pédro, de jeunes diplômés talentueux cherchent leur première expérience pendant que des entreprises peinent à identifier les bons profils. Yahnu est né de ce constat simple : le potentiel existe déjà, mais les connexions restent trop difficiles à créer.</p>",
+    storyContent2: "<p>Nous construisons un espace où chaque parcours peut être compris, chaque compétence mise en valeur et chaque opportunité rendue accessible. Diplômés, écoles et recruteurs avancent avec des informations utiles, des échanges directs et une même ambition : faire grandir les carrières ivoiriennes et africaines.</p>",
+    missionTitle: "Notre mission",
+    missionContent: "<p>Donner à chaque jeune diplômé les moyens de rendre son potentiel visible, d’accéder aux bonnes opportunités et de bâtir une carrière qui lui ressemble.</p>",
+    visionTitle: "Notre vision",
+    visionContent: "<p>Faire de la Côte d’Ivoire un carrefour africain où les talents, les campus et les entreprises transforment ensemble les diplômes en impact concret.</p>",
+    valuesTitle: "Nos repères",
+    valuesContent: "<p>La confiance, l’audace, l’entraide et le respect des réalités locales guident chaque expérience conçue sur Yahnu.</p>",
     teamMembers: [
-        { name: "Colombe Koffi", role: "Founder & CEO", imageUrl: "/images/Colombe Koffi.jpeg" },
-        { name: "Joël K", role: "Head of Product & Lead Engineer", imageUrl: "/images/Joel K.jpeg" },
-        { name: "Bethel Touman", role: "Data Engineer", imageUrl: "/images/Bethel_Touman.jpeg" },
+        { name: "Colombe Koffi", role: "about.team.roles.founder_ceo", imageUrl: "/images/Colombe Koffi.jpeg" },
+        { name: "Joël K", role: "about.team.roles.head_of_product", imageUrl: "/images/Joel K.jpeg" },
+        { name: "Bethel Touman", role: "about.team.roles.data_engineer", imageUrl: "/images/Bethel_Touman.jpeg" },
     ]
 }
 
 const defaultPrivacyPolicy: z.infer<typeof legalPageSchema> = {
-    title: "Privacy Policy",
-    lastUpdated: "January 15, 2025",
-    content: `<p>This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p><h2>Interpretation and Definitions</h2><h3>Interpretation</h3><p>The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p><h3>Definitions</h3><p>For the purposes of this Privacy Policy:</p><ul><li><strong>Account</strong> means a unique account created for You to access our Service or parts of our Service.</li><li><strong>Company</strong> (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to Yahnu.</li><li><strong>Cookies</strong> are small files that are placed on Your computer, mobile device or any other device by a website, containing the details of Your browsing history on that website among its many uses.</li><li><strong>Country</strong> refers to: Côte d'Ivoire</li><li><strong>Device</strong> means any device that can access the Service such as a computer, a cellphone or a digital tablet.</li><li><strong>Personal Data</strong> is any information that relates to an identified or identifiable individual.</li><li><strong>Service</strong> refers to the Website.</li><li><strong>Usage Data</strong> refers to data collected automatically, either generated by the use of the Service or from the Service infrastructure itself (for example, the duration of a page visit).</li><li><strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li></ul><h2>Collecting and Using Your Personal Data</h2><h3>Types of Data Collected</h3><h4>Personal Data</h4><p>While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:</p><ul><li>Email address</li><li>First name and last name</li><li>Phone number</li><li>Usage Data</li></ul><h2>Use of Your Personal Data</h2><p>The Company may use Personal Data for the following purposes:</p><ul><li>To provide and maintain our Service, including to monitor the usage of our Service.</li><li>To manage Your Account: to manage Your registration as a user of the Service. The Personal Data You provide can give You access to different functionalities of the Service that are available to You as a registered user.</li></ul><h2>Changes to this Privacy Policy</h2><p>We may update Our Privacy Policy from time to time. We will notify You of any changes by posting the new Privacy Policy on this page.</p><p>We will let You know via email and/or a prominent notice on Our Service, prior to the change becoming effective and update the "Last updated" date at the top of this Privacy Policy.</p><p>You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p><h2>Contact Us</h2><p>If you have any questions about this Privacy Policy, You can contact us:</p><ul><li>By email: <strong>contact@yahnu.org</strong></li></ul>`
+    title: "Politique de confidentialité",
+    lastUpdated: "16 juillet 2026",
+    content: `<p>Chez Yahnu, nous accordons de l’importance à la confiance des jeunes diplômés, des établissements et des employeurs qui utilisent notre plateforme en Côte d’Ivoire. Cette politique explique quelles données nous traitons, pourquoi nous les utilisons et quels choix vous pouvez exercer.</p><h2>Les données concernées</h2><p>Selon votre rôle et votre utilisation de Yahnu, nous pouvons traiter :</p><ul><li>vos informations d’identité et de contact, comme votre nom, votre adresse e-mail et votre numéro de téléphone ;</li><li>les informations de votre profil professionnel ou académique, notamment vos compétences, formations, expériences et documents transmis ;</li><li>les candidatures, messages, préférences et autres actions réalisées dans votre espace ;</li><li>des données techniques utiles au fonctionnement et à la sécurité du service.</li></ul><h2>Pourquoi nous les utilisons</h2><p>Ces informations nous permettent de créer et sécuriser votre compte, présenter des opportunités pertinentes, faciliter les candidatures et les échanges, aider les établissements à accompagner leurs diplômés, permettre aux employeurs d’étudier les profils autorisés et améliorer l’expérience Yahnu.</p><h2>Partage des informations</h2><p>Nous partageons uniquement les informations nécessaires avec les diplômés, établissements ou employeurs concernés par une interaction sur Yahnu, avec les prestataires qui contribuent au fonctionnement sécurisé du service, ou lorsque la loi l’exige. Nous ne vendons pas vos données personnelles.</p><h2>Conservation et sécurité</h2><p>Nous conservons les informations pendant la durée utile à votre compte, à nos obligations et à la sécurité de la plateforme. Nous appliquons des mesures techniques et organisationnelles adaptées, tout en rappelant qu’aucun service numérique ne peut garantir un risque nul.</p><h2>Vos choix</h2><p>Vous pouvez consulter et corriger les informations de votre profil depuis votre espace. Pour demander l’accès, la rectification ou la suppression d’autres données, écrivez-nous à <strong>contact@yahnu.org</strong>. Nous pouvons vérifier votre identité avant de traiter la demande.</p><h2>Mises à jour</h2><p>Cette politique peut évoluer avec les fonctionnalités de Yahnu. La date affichée en haut de page indique sa dernière mise à jour.</p><h2>Nous contacter</h2><p>Pour toute question relative à la confidentialité : <strong>contact@yahnu.org</strong>.</p>`
 };
 
 const defaultTerms: z.infer<typeof legalPageSchema> = {
-    title: "Terms of Service",
-    lastUpdated: "January 15, 2025",
-    content: `<p>Please read these terms and conditions carefully before using Our Service.</p><h2>Interpretation and Definitions</h2><h3>Interpretation</h3><p>The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p><h3>Definitions</h3><p>For the purposes of these Terms and Conditions:</p><ul><li><strong>Country</strong> refers to: Côte d'Ivoire</li><li><strong>Company</strong> (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to Yahnu.</li><li><strong>Device</strong> means any device that can access the Service such as a computer, a cellphone or a digital tablet.</li><li><strong>Service</strong> refers to the Website.</li><li><strong>Terms and Conditions</strong> (also referred to as "Terms") mean these Terms and Conditions that form the entire agreement between You and the Company regarding the use of the Service.</li><li><strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li></ul><h2>Acknowledgment</h2><p>These are the Terms and Conditions governing the use of this Service and the agreement that operates between You and the Company. These Terms and Conditions set out the rights and obligations of all users regarding the use of the Service.</p><p>Your access to and use of the Service is conditioned on Your acceptance of and compliance with these Terms and Conditions. These Terms and Conditions apply to all visitors, users and others who access or use the Service.</p><h2>User Accounts</h2><p>When You create an account with Us, You must provide Us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of Your account on Our Service.</p><h2>Termination</h2><p>We may terminate or suspend Your Account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if You breach these Terms and Conditions.</p><h2>Changes to These Terms and Conditions</h2><p>We reserve the right, at Our sole discretion, to modify or replace these Terms at any time. If a revision is material We will make reasonable efforts to provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at Our sole discretion.</p><h2>Contact Us</h2><p>If you have any questions about these Terms and Conditions, You can contact us:</p><ul><li>By email: <strong>contact@yahnu.org</strong></li></ul>`
+    title: "Conditions d’utilisation",
+    lastUpdated: "16 juillet 2026",
+    content: `<p>Les présentes conditions encadrent l’utilisation de Yahnu, une plateforme qui rapproche les jeunes diplômés, les établissements d’enseignement et les employeurs en Côte d’Ivoire. En créant un compte ou en utilisant le service, vous acceptez ces règles.</p><h2>Votre compte</h2><p>Vous devez fournir des informations exactes, maintenir vos coordonnées à jour et protéger vos identifiants. Vous êtes responsable des actions réalisées depuis votre compte et devez nous signaler rapidement toute utilisation suspecte.</p><h2>Des profils et opportunités fiables</h2><ul><li>Les diplômés présentent fidèlement leurs formations, compétences et expériences.</li><li>Les employeurs publient des opportunités réelles, claires et conformes aux règles applicables, sans contenu trompeur ou discriminatoire.</li><li>Les établissements vérifient uniquement les informations qu’ils sont habilités à confirmer.</li></ul><p>Yahnu facilite la rencontre entre les acteurs, mais ne garantit ni recrutement, ni candidature retenue, ni résultat professionnel particulier.</p><h2>Utilisation responsable</h2><p>Il est interdit d’usurper une identité, d’accéder au compte d’une autre personne, de diffuser du contenu illégal ou nuisible, de collecter massivement des données, de contourner les protections techniques ou d’utiliser Yahnu pour envoyer des messages non sollicités.</p><h2>Contenus publiés</h2><p>Vous restez responsable des textes, documents et informations que vous transmettez. Vous nous autorisez à les héberger, les afficher et les traiter uniquement dans la mesure nécessaire au fonctionnement des fonctionnalités que vous utilisez.</p><h2>Disponibilité et évolution du service</h2><p>Nous faisons notre possible pour assurer un service utile et fiable. Certaines fonctions peuvent toutefois être interrompues pour maintenance, sécurité ou amélioration. Nous pouvons faire évoluer Yahnu et vous informerons des changements importants lorsque cela est approprié.</p><h2>Modération et suspension</h2><p>Nous pouvons retirer un contenu ou limiter un compte qui présente un risque, enfreint ces conditions ou porte atteinte à d’autres utilisateurs. Lorsque la situation le permet, nous privilégions une explication et une possibilité de régularisation.</p><h2>Mise à jour des conditions</h2><p>Ces conditions peuvent évoluer. La date affichée en haut de page indique la version en vigueur ; poursuivre l’utilisation du service après une mise à jour vaut acceptation des nouvelles conditions.</p><h2>Nous contacter</h2><p>Une question ou un signalement ? Écrivez-nous à <strong>contact@yahnu.org</strong>.</p>`
 };
 
 type PageResponse = {
@@ -132,12 +132,16 @@ const PageFormWrapper = ({ pageId, schema, defaultValues, children }: { pageId: 
                 body: JSON.stringify({ data: values }),
             });
             toast({
-                title: "Content Updated",
-                description: "The page content has been saved.",
+                title: "Contenu mis à jour",
+                description: "Le contenu de la page a bien été enregistré.",
             });
         } catch (error) {
             console.error("Failed to save content:", error);
-            toast({ title: "Error", description: "Failed to save page content.", variant: "destructive" });
+            toast({
+                title: "Enregistrement impossible",
+                description: "La page n’a pas pu être enregistrée. Vérifiez votre connexion puis réessayez.",
+                variant: "destructive",
+            });
         } finally {
             setIsSaving(false);
         }
@@ -208,14 +212,21 @@ const AboutUsForm = ({ form, isSaving }: { form: UseFormReturn<z.infer<typeof ab
                 </div>
                 <div className="space-y-4">
                     {fields.map((field, index) => (
-                        <div key={field.id} className="p-4 border rounded-lg relative space-y-4 bg-muted/50">
+                        <div key={field.id} className="relative space-y-4 rounded-lg border bg-muted/50 p-4 pr-14">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <FormField control={form.control} name={`teamMembers.${index}.name`} render={({ field }) => (<FormItem><FormLabel>{t('Name')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                                 <FormField control={form.control} name={`teamMembers.${index}.role`} render={({ field }) => (<FormItem><FormLabel>{t('Role')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                             </div>
                             <FormField control={form.control} name={`teamMembers.${index}.imageUrl`} render={({ field }) => (<FormItem><FormLabel>{t('Image path')}</FormLabel><FormControl><Input placeholder="/images/person.jpg" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                            <Button type="button" variant="destructive" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={() => remove(index)}>
-                                <Trash2 className="h-4 w-4" />
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                className="absolute right-2 top-2 h-9 w-9"
+                                onClick={() => remove(index)}
+                                aria-label={`Supprimer ${field.name || `le membre ${index + 1}`}`}
+                            >
+                                <Trash2 className="h-4 w-4" aria-hidden="true" />
                             </Button>
                         </div>
                     ))}
@@ -255,16 +266,18 @@ export function ContentPagesEditor() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Static Page Content</CardTitle>
-                <CardDescription>Edit the content displayed on various public pages of the site.</CardDescription>
+                <CardTitle>Pages publiques</CardTitle>
+                <CardDescription>Modifiez les contenus affichés sur les pages publiques de Yahnu.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Tabs defaultValue="about-us">
-                    <TabsList>
-                        <TabsTrigger value="about-us">{t("About Us")}</TabsTrigger>
-                        <TabsTrigger value="privacy-policy">{t("Privacy Policy")}</TabsTrigger>
-                        <TabsTrigger value="terms-of-service">{t("Terms of Service")}</TabsTrigger>
-                    </TabsList>
+                    <div className="-mx-1 overflow-x-auto px-1 pb-1">
+                        <TabsList className="h-auto min-w-max">
+                            <TabsTrigger value="about-us" className="min-h-11 shrink-0">{t("About Us")}</TabsTrigger>
+                            <TabsTrigger value="privacy-policy" className="min-h-11 shrink-0">{t("Privacy Policy")}</TabsTrigger>
+                            <TabsTrigger value="terms-of-service" className="min-h-11 shrink-0">{t("Terms of Service")}</TabsTrigger>
+                        </TabsList>
+                    </div>
                     <TabsContent value="about-us" className="pt-6">
                         <PageFormWrapper pageId="about-us" schema={aboutPageSchema} defaultValues={defaultAboutValues}>
                              {(form, isSaving) => <AboutUsForm form={form} isSaving={isSaving} />}
@@ -272,12 +285,12 @@ export function ContentPagesEditor() {
                     </TabsContent>
                     <TabsContent value="privacy-policy" className="pt-6">
                         <PageFormWrapper pageId="privacy-policy" schema={legalPageSchema} defaultValues={defaultPrivacyPolicy}>
-                            {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName="Privacy Policy" />}
+                            {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName={t("Privacy Policy")} />}
                         </PageFormWrapper>
                     </TabsContent>
                     <TabsContent value="terms-of-service" className="pt-6">
                         <PageFormWrapper pageId="terms-of-service" schema={legalPageSchema} defaultValues={defaultTerms}>
-                             {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName="Terms of Service" />}
+                             {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName={t("Terms of Service")} />}
                         </PageFormWrapper>
                     </TabsContent>
                 </Tabs>

@@ -1,11 +1,11 @@
-
-"use client";
-
 export function UserManagementHeader() {
-    return (
-        <div>
-            <h1 className="text-3xl font-bold tracking-tight">Gestion des utilisateurs</h1>
-            <p className="text-muted-foreground mt-1">Gérez tous les comptes utilisateurs de la plateforme.</p>
-        </div>
-    );
+  return (
+    <div>
+      <p className="section-kicker">Communauté · Côte d’Ivoire</p>
+      <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight sm:text-4xl">Comptes de la plateforme</h1>
+      <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+        Retrouvez les jeunes diplômés, les recruteurs et les établissements inscrits sur Yahnu.
+      </p>
+    </div>
+  )
 }

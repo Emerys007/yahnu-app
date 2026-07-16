@@ -1,39 +1,43 @@
+import type { ReactNode } from "react"
 
-import * as React from 'react';
-import { cookies } from 'next/headers';
-import { DashboardSidebar, SidebarProvider } from '@/components/dashboard/sidebar';
-import { DashboardHeader } from '@/components/dashboard/header';
-import { DashboardContent } from '@/components/dashboard/dashboard-content';
-import { ScrollToTop } from '@/components/ui/scroll-to-top';
-import { GraduateDashboard } from '@/components/dashboard/graduate-dashboard';
-import { CompanyDashboard } from '@/components/dashboard/company-dashboard';
-import { SchoolDashboard } from '@/components/dashboard/school-dashboard';
-import { type Role } from '@/context/auth-context';
-import { DashboardGuard } from '@/components/dashboard/dashboard-guard';
+import { DashboardContent } from "@/components/dashboard/dashboard-content"
+import { DashboardGuard } from "@/components/dashboard/dashboard-guard"
+import { DashboardHeader } from "@/components/dashboard/header"
+import { DashboardSidebar, SidebarProvider } from "@/components/dashboard/sidebar"
+import { ScrollToTop } from "@/components/ui/scroll-to-top"
 
-// The layout no longer needs to decide which dashboard to show.
-// It will simply render the child page, which will be determined by the URL.
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
-      <DashboardGuard>
-        <SidebarProvider>
-          <div className="relative min-h-screen lg:grid lg:grid-cols-[auto_1fr]">
-              <DashboardSidebar />
-              <div className="flex flex-col">
-                <DashboardHeader />
-                <main className="flex-1 overflow-y-auto p-4 sm:p-6">
-                    <DashboardContent>
-                      {children}
-                    </DashboardContent>
-                </main>
-              </div>
+    <DashboardGuard>
+      <SidebarProvider>
+        <a
+          href="#dashboard-main"
+          className="fixed left-4 top-3 z-[100] -translate-y-24 rounded-xl bg-foreground px-4 py-3 text-sm font-semibold text-background shadow-lg transition-transform focus:translate-y-0"
+        >
+          Aller au contenu principal
+        </a>
+
+        <div className="relative isolate min-h-dvh overflow-x-clip bg-background lg:grid lg:grid-cols-[auto_minmax(0,1fr)]">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_82%_8%,hsl(var(--lagoon)/0.08),transparent_24rem),radial-gradient(circle_at_22%_95%,hsl(var(--terra)/0.07),transparent_22rem)]"
+          />
+          <DashboardSidebar />
+
+          <div className="relative z-10 flex min-h-dvh min-w-0 flex-col">
+            <DashboardHeader />
+            <main
+              id="dashboard-main"
+              className="mx-auto w-full max-w-[1600px] flex-1 px-3 py-4 sm:px-5 sm:py-6 lg:px-7 lg:py-8"
+              tabIndex={-1}
+            >
+              <DashboardContent>{children}</DashboardContent>
+            </main>
           </div>
-          <ScrollToTop />
-        </SidebarProvider>
-      </DashboardGuard>
+        </div>
+
+        <ScrollToTop />
+      </SidebarProvider>
+    </DashboardGuard>
   )
 }

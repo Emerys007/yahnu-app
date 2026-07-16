@@ -12,6 +12,12 @@ const partnershipRoles = new Set<'company' | 'school'>(['company', 'school']);
 const idSchema = z.string().trim().min(1).max(1_500);
 const updateSchema = z.object({ status: z.enum(['accepted', 'declined', 'cancelled']) }).strict();
 
+const partnershipStatusMessages: Record<z.infer<typeof updateSchema>['status'], string> = {
+  accepted: 'Votre demande de partenariat a été acceptée. Vous pouvez maintenant poursuivre les échanges sur Yahnu.',
+  declined: 'Votre demande de partenariat n’a pas été retenue.',
+  cancelled: 'La demande de partenariat a été annulée par l’organisation qui l’avait envoyée.',
+};
+
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     assertSameOrigin(request);
@@ -48,12 +54,12 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
             id, user_id, recipient_ref, created_by, actor_ref, type,
             title, body, link, payload, source_payload, source_hash
           ) VALUES ($1, $2, $2, $3, $3, 'partnership',
-            'Partnership updated', $4, '/dashboard/partnerships', $5::jsonb, $5::jsonb, $6)
+            'Partenariat mis à jour', $4, '/dashboard/partnerships', $5::jsonb, $5::jsonb, $6)
         `, [
           notificationId,
           recipientId,
           actor.uid,
-          `A partnership request is now ${input.status}.`,
+          partnershipStatusMessages[input.status],
           JSON.stringify(notificationSource),
           sourceHash(notificationSource),
         ]);

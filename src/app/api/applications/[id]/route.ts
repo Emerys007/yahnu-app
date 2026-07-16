@@ -15,6 +15,16 @@ const updateSchema = z.object({
 }).strict();
 const companyStatuses = new Set(['submitted', 'reviewing', 'shortlisted', 'interviewing', 'accepted', 'rejected']);
 
+const applicationStatusLabels: Record<z.infer<typeof updateSchema>['status'], string> = {
+  submitted: 'reçue',
+  reviewing: 'en cours d’examen',
+  shortlisted: 'présélectionnée',
+  interviewing: 'à l’étape de l’entretien',
+  accepted: 'retenue',
+  rejected: 'non retenue',
+  withdrawn: 'retirée',
+};
+
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     assertSameOrigin(request);
@@ -63,12 +73,12 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
             id, user_id, recipient_ref, created_by, actor_ref, type,
             title, body, link, payload, source_payload, source_hash
           ) VALUES ($1, $2, $2, $3, $3, 'application',
-            'Application updated', $4, '/dashboard/applications', $5::jsonb, $5::jsonb, $6)
+            'Candidature mise à jour', $4, '/dashboard/applications', $5::jsonb, $5::jsonb, $6)
         `, [
           notificationId,
           current.applicant_id,
           actor.uid,
-          `Your application for ${current.job_title || 'a job'} is now ${input.status.replaceAll('_', ' ')}.`,
+          `Votre candidature à l’offre « ${current.job_title || 'Opportunité professionnelle'} » est maintenant ${applicationStatusLabels[input.status]}.`,
           JSON.stringify(notificationSource),
           sourceHash(notificationSource),
         ]);

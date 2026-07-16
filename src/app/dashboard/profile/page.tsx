@@ -24,15 +24,15 @@ import { Upload, Loader2, PlusCircle, Trash2, Award, User as UserIcon } from "lu
 import { useLocalization } from "@/context/localization-context"
 
 const educationSchema = z.object({
-  degree: z.string().min(2, "Degree is required."),
-  field: z.string().min(2, "Field of study is required."),
-  gradYear: z.string().min(4, "Graduation year is required."),
+  degree: z.string().min(2, "Le diplôme est requis."),
+  field: z.string().min(2, "Le domaine d’études est requis."),
+  gradYear: z.string().min(4, "L’année d’obtention est requise."),
   verified: z.boolean().default(false),
 })
 
 const profileSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email(),
+  name: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères." }),
+  email: z.string().email("Saisissez une adresse e-mail valide."),
   phone: z.string().optional(),
   experience: z.string().optional(),
   education: z.array(educationSchema),
@@ -93,8 +93,8 @@ export default function ProfilePage() {
 
     if (file.type !== "application/pdf") {
       toast({
-        title: "PDF required",
-        description: "Please upload your resume as a PDF file.",
+        title: "Format PDF requis",
+        description: "Ajoutez votre CV au format PDF.",
         variant: "destructive",
       })
       event.target.value = ""
@@ -103,8 +103,8 @@ export default function ProfilePage() {
 
     if (file.size > MAX_RESUME_SIZE_BYTES) {
       toast({
-        title: "Resume is too large",
-        description: "Please upload a PDF smaller than 4 MB.",
+        title: "CV trop volumineux",
+        description: "Choisissez un fichier PDF de moins de 4 Mo.",
         variant: "destructive",
       })
       event.target.value = ""
@@ -113,8 +113,8 @@ export default function ProfilePage() {
 
     setIsParsing(true)
     toast({
-      title: "Parsing Resume...",
-      description: "Our AI is analyzing your resume. This may take a moment.",
+      title: "Lecture du CV en cours…",
+      description: "Yahnu analyse le document pour préremplir votre profil. Cela peut prendre un instant.",
     })
 
     try {
@@ -122,7 +122,6 @@ export default function ProfilePage() {
       const result: ParseResumeOutput = await parseResume({ resumeDataUri })
       
       form.setValue("name", result.name || "")
-      form.setValue("email", result.email || "")
       form.setValue("phone", result.phone || "")
       form.setValue("experience", result.experience?.join("\n\n") || "")
       if (result.education && result.education.length > 0) {
@@ -139,15 +138,15 @@ export default function ProfilePage() {
       form.setValue("skills", result.skills?.join(", ") || "")
 
       toast({
-        title: "Success!",
-        description: "Your profile has been pre-filled from your resume. Please review and save.",
+        title: "Profil prérempli",
+        description: "Relisez les informations extraites de votre CV avant de les enregistrer.",
         variant: "default",
       })
     } catch (error) {
       console.error("Resume parsing failed:", error)
       toast({
-        title: "Uh oh! Something went wrong.",
-        description: "There was a problem with parsing your resume.",
+        title: "Le CV n’a pas pu être lu",
+        description: "Vérifiez le fichier puis réessayez, ou complétez le profil manuellement.",
         variant: "destructive",
       })
     } finally {
@@ -157,29 +156,32 @@ export default function ProfilePage() {
 
   async function onSubmit(values: z.infer<typeof profileSchema>) {
     if (!user) {
-        toast({ title: "Error", description: "You must be logged in to update your profile.", variant: "destructive" });
+        toast({ title: "Connexion requise", description: "Reconnectez-vous pour mettre votre profil à jour.", variant: "destructive" });
         return;
     }
     setIsSaving(true);
     try {
-        const { name, ...updateData } = values;
+        const { name } = values;
         
         const [firstName, ...lastNameParts] = name.trim().split(/\s+/);
         const lastName = lastNameParts.join(' ');
         
         await updateProfile({
-            ...updateData,
+            phone: values.phone,
+            experience: values.experience,
+            education: values.education,
+            skills: values.skills,
             name,
             firstName,
             lastName,
         });
         toast({
-            title: "Profile Updated",
-            description: "Your professional profile has been saved successfully.",
+            title: "Profil mis à jour",
+            description: "Votre profil professionnel a bien été enregistré.",
         });
     } catch (error) {
         console.error("Profile update failed:", error);
-        toast({ title: "Error", description: "Failed to update profile.", variant: "destructive" });
+        toast({ title: "Enregistrement impossible", description: "Votre profil n’a pas été modifié. Réessayez dans un instant.", variant: "destructive" });
     } finally {
         setIsSaving(false);
     }
@@ -197,14 +199,14 @@ export default function ProfilePage() {
                 <UserIcon className="h-6 w-6 text-primary" />
             </div>
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">{t('Professional Profile')}</h1>
-                <p className="text-muted-foreground mt-1">{t('Build and maintain your professional identity.')}</p>
+                <h1 className="text-3xl font-bold tracking-tight">Mon profil professionnel</h1>
+                <p className="text-muted-foreground mt-1">Présentez votre parcours, vos compétences et votre projet avec des mots qui vous ressemblent.</p>
             </div>
         </div>
         <div className="relative shrink-0 w-full sm:w-auto">
             <Button disabled={isParsing} className="w-full">
                 <Upload className="mr-2 h-4 w-4" />
-                {isParsing ? "Parsing..." : "Upload Resume"}
+                {isParsing ? "Lecture en cours…" : "Importer mon CV"}
             </Button>
             <input
                 type="file"
@@ -212,6 +214,7 @@ export default function ProfilePage() {
                 onChange={handleResumeUpload}
                 accept="application/pdf,.pdf"
                 disabled={isParsing}
+                aria-label="Importer un CV au format PDF"
             />
         </div>
       </div>
@@ -221,8 +224,8 @@ export default function ProfilePage() {
             <div className="lg:col-span-2 space-y-8">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('Personal Information')}</CardTitle>
-                  <CardDescription>{t('This information will be visible on your public profile.')}</CardDescription>
+                  <CardTitle>Informations personnelles</CardTitle>
+                  <CardDescription>Ces informations servent à vous identifier auprès des recruteurs autorisés.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-2 gap-6">
                   <FormField
@@ -232,7 +235,7 @@ export default function ProfilePage() {
                       <FormItem>
                         <FormLabel>{t('Full Name')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="John Doe" {...field} />
+                          <Input placeholder="Aïcha Koné" autoComplete="name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -245,8 +248,11 @@ export default function ProfilePage() {
                       <FormItem>
                         <FormLabel>{t('Email Address')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="you@example.com" {...field} disabled />
+                          <Input placeholder="aicha.kone@email.ci" autoComplete="email" {...field} disabled />
                         </FormControl>
+                        <p className="text-xs leading-5 text-muted-foreground">
+                          L’adresse de connexion ne change pas avec un CV. Modifiez-la depuis les paramètres du compte.
+                        </p>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -258,7 +264,7 @@ export default function ProfilePage() {
                       <FormItem>
                         <FormLabel>{t('Phone Number (Optional)')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="(123) 456-7890" {...field} />
+                          <Input placeholder="+225 07 00 00 00 00" autoComplete="tel" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -271,12 +277,12 @@ export default function ProfilePage() {
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <div>
-                            <CardTitle>{t('Education')}</CardTitle>
-                            <CardDescription>{t('Your academic background. Add each degree separately.')}</CardDescription>
+                            <CardTitle>Formation</CardTitle>
+                            <CardDescription>Ajoutez chaque diplôme séparément, du plus récent au plus ancien.</CardDescription>
                         </div>
                         <Button type="button" variant="outline" size="sm" onClick={() => append({ degree: '', field: '', gradYear: '', verified: false })}>
                             <PlusCircle className="mr-2 h-4 w-4" />
-                            {t('Add Degree')}
+                            Ajouter un diplôme
                         </Button>
                     </div>
                 </CardHeader>
@@ -289,8 +295,8 @@ export default function ProfilePage() {
                                     name={`education.${index}.degree`}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>{t('Degree')}</FormLabel>
-                                            <FormControl><Input placeholder="e.g. Bachelor of Science" {...field} /></FormControl>
+                                            <FormLabel>Diplôme</FormLabel>
+                                            <FormControl><Input placeholder="Ex. Licence professionnelle" {...field} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -300,8 +306,8 @@ export default function ProfilePage() {
                                     name={`education.${index}.field`}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>{t('Field of Study')}</FormLabel>
-                                            <FormControl><Input placeholder="e.g. Computer Science" {...field} /></FormControl>
+                                            <FormLabel>Domaine d’études</FormLabel>
+                                            <FormControl><Input placeholder="Ex. Génie logiciel" {...field} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -311,8 +317,8 @@ export default function ProfilePage() {
                                     name={`education.${index}.gradYear`}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>{t('Graduation Year')}</FormLabel>
-                                            <FormControl><Input type="number" placeholder="e.g. 2024" {...field} /></FormControl>
+                                            <FormLabel>Année d’obtention</FormLabel>
+                                            <FormControl><Input type="number" placeholder="Ex. 2026" {...field} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -324,21 +330,22 @@ export default function ProfilePage() {
                                 size="icon"
                                 className="absolute top-2 right-2 h-6 w-6"
                                 onClick={() => remove(index)}
+                                aria-label={`Supprimer le diplôme ${index + 1}`}
                             >
                                 <Trash2 className="h-4 w-4" />
                             </Button>
                         </div>
                     ))}
                     {fields.length === 0 && (
-                        <p className="text-sm text-muted-foreground text-center py-4">{t('No education history added yet.')}</p>
+                        <p className="text-sm text-muted-foreground text-center py-4">Aucune formation ajoutée pour le moment.</p>
                     )}
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('Work Experience')}</CardTitle>
-                  <CardDescription>{t('Detail your professional journey.')}</CardDescription>
+                  <CardTitle>Expériences et projets</CardTitle>
+                  <CardDescription>Stages, missions, projets d’école ou engagements associatifs : tout ce qui montre votre savoir-faire compte.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <FormField
@@ -347,7 +354,7 @@ export default function ProfilePage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Textarea placeholder={t("Describe your work experience...")} rows={10} {...field} />
+                          <Textarea placeholder="Ex. Stage de fin d’études à Cocody : création d’un tableau de bord de suivi…" rows={10} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -357,8 +364,8 @@ export default function ProfilePage() {
               </Card>
                 <Card>
                 <CardHeader>
-                    <CardTitle>{t('Skills')}</CardTitle>
-                    <CardDescription>{t('Your key competencies.')}</CardDescription>
+                    <CardTitle>Compétences</CardTitle>
+                    <CardDescription>Séparez vos compétences par une virgule pour faciliter la recherche.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <FormField
@@ -367,7 +374,7 @@ export default function ProfilePage() {
                     render={({ field }) => (
                         <FormItem>
                         <FormControl>
-                            <Textarea placeholder={t("e.g., JavaScript, Product Management, ...")} rows={5} {...field} />
+                            <Textarea placeholder="Ex. Excel, gestion de projet, relation client, SQL…" rows={5} {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -378,14 +385,14 @@ export default function ProfilePage() {
               
               <div className="flex justify-end">
                 <Button type="submit" disabled={isSaving || isParsing} data-hs-event-name="profile_updated">
-                  {isSaving ? t("Saving...") : t("Save Profile")}
+                  {isSaving ? "Enregistrement…" : "Enregistrer mon profil"}
                 </Button>
               </div>
             </div>
             <div className="lg:col-span-1 space-y-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Award /> {t('Certifications & Badges')}</CardTitle>
+                        <CardTitle className="flex items-center gap-2"><Award /> Certifications et badges</CardTitle>
                         <CardDescription>Les badges vérifiés associés à votre compte apparaîtront ici.</CardDescription>
                     </CardHeader>
                     <CardContent>

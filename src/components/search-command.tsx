@@ -1,27 +1,8 @@
 "use client"
 
 import * as React from "react"
-import {
-  Calendar,
-  Settings,
-  User,
-  Search as SearchIcon,
-  LayoutDashboard,
-  Briefcase,
-  Building,
-  School,
-  FileText,
-  Users2,
-  Handshake,
-  BarChart3,
-  LifeBuoy,
-  Shield,
-  UserCheck,
-  UserCog,
-  BrainCircuit,
-  MessageSquare,
-  Award,
-} from "lucide-react"
+import { Search as SearchIcon } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 import {
   CommandDialog,
@@ -32,110 +13,46 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command"
+import { Button } from "@/components/ui/button"
+import { useAuth } from "@/context/auth-context"
 import { useLocalization } from "@/context/localization-context"
-import { useRouter } from "next/navigation"
-import { Button } from "./ui/button"
-import { useAuth, type Role } from "@/context/auth-context"
-
-type Router = ReturnType<typeof useRouter>;
-type CommandLink = { icon: React.ElementType; text: string; onSelect: (router: Router) => void };
-type CommandGroupDefinition = { group: string; items: CommandLink[]; roles: Role[] };
-
-const getNavItems = (t: (key: string) => string, role: Role) => {
-    const main: CommandGroupDefinition[] = [
-        {
-            group: t('dashboard.nav.dashboard'),
-            items: [
-                { icon: LayoutDashboard, text: t('dashboard.nav.home'), onSelect: (router) => router.push('/dashboard') },
-                { icon: User, text: t('dashboard.nav.profile'), onSelect: (router) => router.push('/dashboard/profile') },
-            ],
-            roles: ['admin', 'graduate', 'company', 'school'],
-        },
-        {
-            group: t('dashboard.nav.job_postings'),
-            items: [
-                { icon: Briefcase, text: t('dashboard.nav.my_applications'), onSelect: (router) => router.push('/dashboard/my-applications') },
-                { icon: Building, text: t('dashboard.nav.company_profiles'), onSelect: (router) => router.push('/dashboard/company-profiles') },
-                { icon: School, text: t('dashboard.nav.school_profiles'), onSelect: (router) => router.push('/dashboard/school-profiles') },
-            ],
-            roles: ['admin', 'graduate'],
-        },
-        {
-            group: t('dashboard.nav.recruitment'),
-            items: [
-                { icon: FileText, text: t('dashboard.nav.post_job'), onSelect: (router) => router.push('/dashboard/job-postings/new') },
-                { icon: Users2, text: t('dashboard.nav.candidates'), onSelect: (router) => router.push('/dashboard/candidates') },
-                { icon: Handshake, text: t('dashboard.nav.partnerships'), onSelect: (router) => router.push('/dashboard/partnerships') },
-            ],
-            roles: ['admin', 'company', 'school'],
-        },
-    ];
-
-    const footer: CommandGroupDefinition[] = [
-        {
-            group: t('dashboard.nav.general'),
-            items: [
-                { icon: Settings, text: t('dashboard.nav.settings'), onSelect: (router) => router.push('/dashboard/settings') },
-                { icon: LifeBuoy, text: t('dashboard.nav.support'), onSelect: (router) => router.push('/dashboard/support') },
-            ],
-            roles: ['admin', 'graduate', 'company', 'school'],
-        },
-        {
-            group: t('dashboard.nav.admin'),
-            items: [
-                { icon: Shield, text: t('dashboard.nav.security'), onSelect: (router) => router.push('/dashboard/admin/security') },
-                { icon: UserCheck, text: t('dashboard.nav.approvals'), onSelect: (router) => router.push('/dashboard/admin/approvals') },
-                { icon: UserCog, text: t('dashboard.nav.user_management'), onSelect: (router) => router.push('/dashboard/admin/user-management') },
-            ],
-            roles: ['admin'],
-        },
-        {
-            group: t('dashboard.nav.ai_tools'),
-            items: [
-                { icon: BrainCircuit, text: t('dashboard.nav.ai_insights'), onSelect: (router) => router.push('/dashboard/ai/insights') },
-                { icon: MessageSquare, text: t('dashboard.nav.chatbot_builder'), onSelect: (router) => router.push('/dashboard/ai/chatbot-builder') },
-                { icon: Award, text: t('dashboard.nav.assessment_generator'), onSelect: (router) => router.push('/dashboard/ai/assessment-generator') },
-            ],
-            roles: ['admin', 'company', 'school'],
-        },
-        {
-            group: t('dashboard.nav.reporting'),
-            items: [
-                 { icon: BarChart3, text: t('dashboard.nav.analytics'), onSelect: (router) => router.push('/dashboard/reports') },
-            ],
-             roles: ['admin', 'company', 'school'],
-        }
-    ];
-
-    const filterByRole = (items: CommandGroupDefinition[]) => items.filter(group => group.roles.includes(role));
-
-    return { main: filterByRole(main), footer: filterByRole(footer) };
-}
-
+import {
+  getSearchableDashboardNavigation,
+  resolveDashboardLabel,
+} from "@/lib/dashboard-navigation"
 
 export function SearchCommand() {
   const [open, setOpen] = React.useState(false)
   const router = useRouter()
-  const { role } = useAuth();
-  const { t } = useLocalization();
+  const { role } = useAuth()
+  const { language, t } = useLocalization()
 
-  const {main: mainItems, footer: footerItems} = React.useMemo(() => getNavItems(t, role), [t, role]);
+  const groups = React.useMemo(() => getSearchableDashboardNavigation(role), [role])
 
   React.useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen((open) => !open)
+    const down = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault()
+        setOpen((current) => !current)
       }
     }
+
     document.addEventListener("keydown", down)
     return () => document.removeEventListener("keydown", down)
   }, [])
 
-  const runCommand = React.useCallback((command: () => unknown) => {
+  const navigate = React.useCallback((href: string) => {
     setOpen(false)
-    command()
-  }, [])
+    router.push(href)
+  }, [router])
+
+  const searchLabel = t("common.search") === "common.search" ? (language === "en" ? "Search" : "Rechercher") : t("common.search")
+  const searchPlaceholder = t("common.search_placeholder") === "common.search_placeholder"
+    ? (language === "en" ? "Search your workspace..." : "Rechercher dans votre espace...")
+    : t("common.search_placeholder")
+  const emptyLabel = t("common.no_results_found") === "common.no_results_found"
+    ? (language === "en" ? "No results found." : "Aucun résultat trouvé.")
+    : t("common.no_results_found")
 
   return (
     <>
@@ -143,50 +60,38 @@ export function SearchCommand() {
         variant="outline"
         className="w-full justify-start text-muted-foreground sm:w-64"
         onClick={() => setOpen(true)}
+        aria-label={searchLabel}
       >
-        <SearchIcon className="mr-2 h-4 w-4" />
-        <span className="hidden lg:inline-flex">{t('common.search')}</span>
+        <SearchIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+        <span className="hidden lg:inline-flex">{searchLabel}</span>
         <span className="ml-auto hidden lg:inline-flex">
-          <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-            <span className="text-xs">⌘</span>K
+          <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+            Ctrl K
           </kbd>
         </span>
       </Button>
+
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder={t('common.search_placeholder')} />
+        <CommandInput placeholder={searchPlaceholder} />
         <CommandList>
-          <CommandEmpty>{t('common.no_results_found')}</CommandEmpty>
+          <CommandEmpty>{emptyLabel}</CommandEmpty>
 
-          {mainItems.map((group) => (
-            <CommandGroup key={group.group} heading={group.group}>
-              {group.items.map((item) => (
-                <CommandItem
-                  key={item.text}
-                  value={item.text}
-                  onSelect={() => runCommand(() => item.onSelect(router))}
-                >
-                  <item.icon className="mr-2 h-4 w-4" />
-                  {item.text}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          ))}
-
-          <CommandSeparator />
-
-          {footerItems.map((group) => (
-            <CommandGroup key={group.group} heading={group.group}>
-              {group.items.map((item) => (
-                <CommandItem
-                  key={item.text}
-                  value={item.text}
-                  onSelect={() => runCommand(() => item.onSelect(router))}
-                >
-                  <item.icon className="mr-2 h-4 w-4" />
-                  {item.text}
-                </CommandItem>
-              ))}
-            </CommandGroup>
+          {groups.map((group, groupIndex) => (
+            <React.Fragment key={`${group.id}-${groupIndex}`}>
+              {groupIndex > 0 ? <CommandSeparator /> : null}
+              <CommandGroup heading={resolveDashboardLabel(group.label, t, language)}>
+                {group.items.map((item) => (
+                  <CommandItem
+                    key={item.id}
+                    value={`${resolveDashboardLabel(item.label, t, language)} ${item.path}`}
+                    onSelect={() => navigate(item.path)}
+                  >
+                    <item.icon className="mr-2 h-4 w-4" aria-hidden="true" />
+                    {resolveDashboardLabel(item.label, t, language)}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </React.Fragment>
           ))}
         </CommandList>
       </CommandDialog>

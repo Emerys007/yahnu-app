@@ -1,9 +1,13 @@
 
-import SystemHealth from '@/components/dashboard/support/system-health';
-import { FC } from 'react';
+import type { Metadata } from "next"
 
-const SystemHealthPage: FC = () => {
-  return <SystemHealth />;
-};
+import SystemHealth from "@/components/dashboard/support/system-health"
 
-export default SystemHealthPage;
+export const metadata: Metadata = {
+  title: "État de la plateforme · Yahnu",
+  description: "Diagnostic en direct de l’infrastructure Yahnu.",
+}
+
+export default function SystemHealthPage() {
+  return <SystemHealth />
+}

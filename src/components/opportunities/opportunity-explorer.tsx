@@ -200,7 +200,12 @@ export function OpportunityExplorer({ language = "en" }: { language?: Language }
                         {opportunity.featured && <Badge className="rounded-full bg-primary/10 px-2.5 text-primary hover:bg-primary/10">{labels.featured}</Badge>}
                         <span className="text-xs text-muted-foreground">{relativeDate(opportunity.posted, language)}</span>
                       </div>
-                      <h2 className="mt-2 text-xl font-semibold tracking-tight text-foreground"><Link className="outline-none after:absolute after:inset-0 focus-visible:ring-2 focus-visible:ring-ring" href={`/jobs/${opportunity.slug}`}>{opportunity.title[language]}</Link></h2>
+                      {opportunity.illustrative && (
+                        <Badge variant="outline" className="mt-2 rounded-full">
+                          {language === "fr" ? "Exemple illustratif" : "Illustrative example"}
+                        </Badge>
+                      )}
+                      <h2 className="mt-2 text-xl font-semibold tracking-tight text-foreground"><Link className="outline-none after:absolute after:inset-0 focus-visible:ring-2 focus-visible:ring-ring" href={opportunity.href}>{opportunity.title[language]}</Link></h2>
                       <p className="mt-1 font-medium text-muted-foreground">{opportunity.company}</p>
                       <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">{opportunity.summary[language]}</p>
                       <div className="mt-4 flex flex-wrap gap-2">
@@ -213,7 +218,7 @@ export function OpportunityExplorer({ language = "en" }: { language?: Language }
                       <Button variant="ghost" size="icon" className={cn("rounded-full", isSaved && "text-primary") } onClick={() => toggleSaved(opportunity.slug)} aria-label={isSaved ? labels.saved : labels.save}>
                         {isSaved ? <Heart className="h-4 w-4 fill-current" /> : <Heart className="h-4 w-4" />}
                       </Button>
-                      <Button asChild variant="outline" className="rounded-xl"><Link href={`/jobs/${opportunity.slug}`}>{labels.view}<ArrowRight className="ml-2 h-4 w-4" /></Link></Button>
+                      <Button asChild variant="outline" className="rounded-xl"><Link href={opportunity.href}>{labels.view}<ArrowRight className="ml-2 h-4 w-4" /></Link></Button>
                     </div>
                   </div>
                 </article>

@@ -263,12 +263,12 @@ export async function POST(request: Request) {
             id, user_id, recipient_ref, created_by, actor_ref, type,
             title, body, link, payload, source_payload, source_hash
           ) VALUES ($1, $2, $2, $3, $3, 'application',
-            'New job application', $4, $5, $6::jsonb, $6::jsonb, $7)
+            'Nouvelle candidature', $4, $5, $6::jsonb, $6::jsonb, $7)
         `, [
           notificationId,
           job.company_id,
           actor.uid,
-          `${actor.name || 'A graduate'} applied for ${job.title}.`,
+          `${actor.name || 'Un jeune diplômé'} a postulé à l’offre « ${job.title} » sur Yahnu.`,
           `/dashboard/applicants?jobId=${encodeURIComponent(job.id)}`,
           JSON.stringify(notificationSource),
           sourceHash(notificationSource),

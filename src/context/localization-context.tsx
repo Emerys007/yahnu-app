@@ -8,6 +8,7 @@ import fr from '@/locales/fr.json';
 type Locale = 'en' | 'fr';
 
 const translations: Record<Locale, Record<string, unknown>> = { en, fr };
+const documentLanguage: Record<Locale, string> = { en: 'en-CI', fr: 'fr-CI' };
 
 interface LocalizationContextType {
   language: Locale;
@@ -36,13 +37,15 @@ export const LocalizationProvider = ({ children }: { children: React.ReactNode }
       ?.split('=')[1];
     const preferred: Locale = saved === 'en' ? 'en' : 'fr';
     setLanguageState(preferred);
+    document.documentElement.lang = documentLanguage[preferred];
     document.cookie = `language=${preferred}; Max-Age=31536000; Path=/; SameSite=Lax`;
   }, []);
 
-  const setLanguage = (lang: Locale) => {
+  const setLanguage = useCallback((lang: Locale) => {
     setLanguageState(lang);
+    document.documentElement.lang = documentLanguage[lang];
     document.cookie = `language=${lang}; Max-Age=31536000; Path=/; SameSite=Lax`;
-  };
+  }, []);
   
   const t = useCallback((key: string, params?: { [key: string]: string | number }) => {
       const keys = key.split('.');
@@ -72,7 +75,7 @@ export const LocalizationProvider = ({ children }: { children: React.ReactNode }
     countryName: "Côte d'Ivoire",
     setLanguage,
     t,
-  }), [language, t]);
+  }), [language, setLanguage, t]);
 
   return (
     <LocalizationContext.Provider value={value}>

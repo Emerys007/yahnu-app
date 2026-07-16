@@ -127,7 +127,7 @@ function BroadcastDialog({ recipients, recipientsLoading, onSent }: BroadcastDia
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="w-full sm:w-auto">
           <Send className="mr-2 h-4 w-4" />
           Diffuser un message
         </Button>
@@ -745,7 +745,7 @@ function MessagesContent() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-10rem)] flex-col">
+    <div className="flex h-[calc(100dvh-10rem)] min-h-[32rem] flex-col">
       <DirectMessageDialog
         recipientId={directRecipientId}
         recipientName={directRecipientName}
@@ -756,7 +756,7 @@ function MessagesContent() {
           await refreshConversations(false);
         }}
       />
-      <div className="mb-8 flex shrink-0 items-start justify-between gap-4">
+      <div className="mb-6 flex shrink-0 flex-col gap-4 sm:mb-8 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-4">
           <div className="rounded-lg bg-primary/10 p-3">
             <MessageSquare className="h-6 w-6 text-primary" />

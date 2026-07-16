@@ -118,12 +118,12 @@ export async function POST(request: Request) {
           id, user_id, recipient_ref, created_by, actor_ref, type,
           title, body, link, payload, source_payload, source_hash
         ) VALUES ($1, $2, $2, $3, $3, 'partnership',
-          'Partnership request', $4, '/dashboard/partnerships', $5::jsonb, $5::jsonb, $6)
+          'Nouvelle demande de partenariat', $4, '/dashboard/partnerships', $5::jsonb, $5::jsonb, $6)
       `, [
         notificationId,
         target.id,
         actor.uid,
-        `${organizationName} sent your organization a partnership request.`,
+        `${organizationName} propose un partenariat à votre organisation sur Yahnu.`,
         JSON.stringify(notificationSource),
         sourceHash(notificationSource),
       ]);

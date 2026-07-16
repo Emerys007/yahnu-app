@@ -3,9 +3,9 @@ import { FeatureUnavailable } from "@/components/dashboard/feature-unavailable"
 export default function ReportsPage() {
   return (
     <FeatureUnavailable
-      title="Reporting is not connected to production data yet"
-      description="Analytics, generated reports, and file exports will return when they are backed by the production database and access controls. No fabricated metrics, report history, or downloads are shown here."
-      actions={[{ href: "/dashboard", label: "Return to dashboard" }]}
+      title="Les rapports seront bientôt reliés aux données réelles"
+      description="Les analyses et les exports reviendront lorsqu’ils seront calculés depuis PostgreSQL avec les bons contrôles d’accès. Yahnu n’affiche ici aucun graphique ou téléchargement fabriqué."
+      actions={[{ href: "/dashboard", label: "Retour au tableau de bord" }]}
     />
   )
 }
