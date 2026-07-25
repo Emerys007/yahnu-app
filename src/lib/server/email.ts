@@ -1,22 +1,26 @@
 import 'server-only';
 
+import {
+  emailAppOrigin,
+  isEmailDeliveryConfigured,
+  isLocalEmailDebugEnabled,
+} from './email-config.mjs';
 import { ApiError } from '@/lib/server/http';
 
 type EmailMessage = { to: string; subject: string; html: string; text: string };
 
+const emailUnavailableMessage = 'L’envoi d’e-mail est momentanément indisponible. Contactez le support Yahnu.';
+
+export function assertEmailDeliveryConfigured() {
+  if (!isEmailDeliveryConfigured()) {
+    throw new ApiError(503, 'email_unavailable', emailUnavailableMessage);
+  }
+}
+
 function appUrl() {
-  const value = process.env.APP_URL ?? (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000');
-  if (!value) throw new Error('APP_URL is required in production.');
-  let parsed: URL;
-  try {
-    parsed = new URL(value);
-  } catch {
-    throw new Error('APP_URL must be a valid absolute URL.');
-  }
-  if (!['http:', 'https:'].includes(parsed.protocol) || (process.env.NODE_ENV === 'production' && parsed.protocol !== 'https:')) {
-    throw new Error('APP_URL must use HTTPS in production.');
-  }
-  return parsed.origin;
+  const origin = emailAppOrigin();
+  if (!origin) throw new Error('APP_URL must be a safe absolute application origin.');
+  return origin;
 }
 
 function escapeHtml(value: string) {
@@ -29,14 +33,16 @@ export function externalUrl(path: string) {
   return `${appUrl()}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
+function localDebugUrl(url: string) {
+  return isLocalEmailDebugEnabled() ? url : undefined;
+}
+
 export async function sendEmail(message: EmailMessage) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM;
+  assertEmailDeliveryConfigured();
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const from = process.env.EMAIL_FROM?.trim();
 
   if (!apiKey || !from) {
-    if (process.env.NODE_ENV === 'production') {
-      throw new ApiError(503, 'email_unavailable', 'L’envoi d’e-mail est momentanément indisponible. Contactez le support Yahnu.');
-    }
     return { delivered: false as const };
   }
 
@@ -74,7 +80,7 @@ export async function sendVerificationEmail(to: string, name: string, token: str
     html: layout('Confirmez votre adresse e-mail', copy, 'Confirmer mon adresse', url),
     text: `${copy}\n\nConfirmer mon adresse : ${url}`,
   });
-  return { ...delivery, debugUrl: process.env.NODE_ENV === 'production' ? undefined : url };
+  return { ...delivery, debugUrl: localDebugUrl(url) };
 }
 
 export async function sendPasswordResetEmail(to: string, name: string, token: string) {
@@ -86,7 +92,7 @@ export async function sendPasswordResetEmail(to: string, name: string, token: st
     html: layout('Choisissez un nouveau mot de passe', copy, 'Créer mon mot de passe', url),
     text: `${copy}\n\nRéinitialiser mon mot de passe : ${url}`,
   });
-  return { ...delivery, debugUrl: process.env.NODE_ENV === 'production' ? undefined : url };
+  return { ...delivery, debugUrl: localDebugUrl(url) };
 }
 
 export async function sendInvitationEmail(to: string, role: string, token: string) {
@@ -100,7 +106,7 @@ export async function sendInvitationEmail(to: string, role: string, token: strin
     html: layout('Rejoignez l’équipe Yahnu', copy, 'Accepter l’invitation', url),
     text: `${copy}\n\nAccepter l’invitation : ${url}`,
   });
-  return { ...delivery, debugUrl: process.env.NODE_ENV === 'production' ? undefined : url };
+  return { ...delivery, debugUrl: localDebugUrl(url) };
 }
 
 export async function sendEmailChangeNotice(to: string, name: string, newEmail: string) {

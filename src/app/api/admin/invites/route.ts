@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     return jsonOk({
       invite: { id, email: input.email, role: input.role, expiresAt: expiresAt.toISOString() },
       emailDelivery: delivery.delivered ? 'sent' : 'development_link',
-      ...(process.env.NODE_ENV !== 'production' && delivery.debugUrl ? { debugUrl: delivery.debugUrl } : {}),
+      ...(delivery.debugUrl ? { debugUrl: delivery.debugUrl } : {}),
     }, { status: 201 });
   } catch (error) {
     return handleApiError(error);

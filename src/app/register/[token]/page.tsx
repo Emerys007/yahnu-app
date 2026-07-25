@@ -65,7 +65,7 @@ export default function AdminRegistrationPage() {
   const { toast } = useToast();
   const router = useRouter();
   const params = useParams();
-  const tokenParam = params.token;
+  const tokenParam = params?.token;
   const token = Array.isArray(tokenParam) ? tokenParam[0] : tokenParam ?? "";
   const schema = React.useMemo(() => createAdminRegisterSchema(language), [language]);
 

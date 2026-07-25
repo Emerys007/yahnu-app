@@ -106,7 +106,9 @@ export function DashboardSidebar() {
 
   const renderRoute = (item: DashboardNavigationRoute) => {
     const label = resolveDashboardLabel(item.label, t, language)
-    const isActive = pathname === item.path || (item.path !== "/dashboard" && pathname.startsWith(`${item.path}/`))
+    const isActive =
+      pathname === item.path ||
+      (item.path !== "/dashboard" && pathname?.startsWith(`${item.path}/`) === true)
 
     return (
       <TooltipProvider key={item.id} delayDuration={0}>

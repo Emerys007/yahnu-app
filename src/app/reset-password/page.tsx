@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, Suspense, useState } from "react";
+import { FormEvent, Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ArrowRight, Check, CheckCircle2, KeyRound, Loader2, ShieldAlert } from "lucide-react";
@@ -16,12 +16,23 @@ function ResetPasswordForm() {
   const { language } = useLocalization();
   const fr = language === "fr";
   const searchParams = useSearchParams();
-  const token = searchParams.get("token") ?? "";
+  const [token] = useState(() => searchParams?.get("token") ?? "");
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!token || typeof window === "undefined") return;
+    const sanitized = new URL(window.location.href);
+    sanitized.searchParams.delete("token");
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${sanitized.pathname}${sanitized.search}${sanitized.hash}`,
+    );
+  }, [token]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

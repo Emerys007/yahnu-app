@@ -24,7 +24,7 @@ services:
   - type: web
     name: yahnu-web
     runtime: node
-    branch: agent/render-production-main
+    branch: main
     plan: starter
     region: frankfurt
     buildCommand: npm ci --include=dev && npm run build
@@ -63,6 +63,8 @@ services:
         sync: false
       - key: EMAIL_FROM
         sync: false
+      - key: YAHNU_ALLOW_LOCAL_EMAIL_DEBUG
+        value: "false"
       - key: GOOGLE_CLIENT_ID
         sync: false
       - key: GOOGLE_CLIENT_SECRET

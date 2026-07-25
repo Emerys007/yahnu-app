@@ -78,9 +78,9 @@ export function OpportunityExplorer({ language = "en" }: { language?: Language }
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [query, setQuery] = React.useState(searchParams.get("q") || "");
-  const [workplace, setWorkplace] = React.useState(searchParams.get("workplace") || "all");
-  const [employmentType, setEmploymentType] = React.useState(searchParams.get("type") || "all");
+  const [query, setQuery] = React.useState(searchParams?.get("q") || "");
+  const [workplace, setWorkplace] = React.useState(searchParams?.get("workplace") || "all");
+  const [employmentType, setEmploymentType] = React.useState(searchParams?.get("type") || "all");
   const [saved, setSaved] = React.useState<string[]>([]);
 
   React.useEffect(() => {
@@ -95,6 +95,7 @@ export function OpportunityExplorer({ language = "en" }: { language?: Language }
   }, []);
 
   React.useEffect(() => {
+    if (!pathname) return;
     const params = new URLSearchParams();
     if (query.trim()) params.set("q", query.trim());
     if (workplace !== "all") params.set("workplace", workplace);

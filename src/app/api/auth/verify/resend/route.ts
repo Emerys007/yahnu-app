@@ -36,7 +36,7 @@ export async function POST(request: Request) {
       }
     }
 
-    return jsonOk({ accepted: true, ...(process.env.NODE_ENV !== 'production' && debugUrl ? { debugUrl } : {}) });
+    return jsonOk({ accepted: true, ...(debugUrl ? { debugUrl } : {}) });
   } catch (error) {
     return handleApiError(error);
   }

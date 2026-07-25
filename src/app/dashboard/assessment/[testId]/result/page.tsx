@@ -105,7 +105,8 @@ function scoreGuidance(score: number) {
 
 export default function AssessmentResultPage() {
   const params = useParams<{ testId: string }>();
-  const rawTestId = Array.isArray(params.testId) ? params.testId[0] : params.testId;
+  const testIdParam = params?.testId;
+  const rawTestId = (Array.isArray(testIdParam) ? testIdParam[0] : testIdParam) ?? "";
   const [result, setResult] = useState<PracticeResult | null>(null);
   const [loaded, setLoaded] = useState(false);
 

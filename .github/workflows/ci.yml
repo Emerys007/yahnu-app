@@ -1,0 +1,82 @@
+name: CI
+
+"on":
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  NEXT_TELEMETRY_DISABLED: "1"
+  APP_URL: https://yahnu.invalid
+  NEXT_PUBLIC_APP_URL: https://yahnu.invalid
+  AUTH_SECRET: ci-only-placeholder-not-valid-for-production-2026
+  DATABASE_URL: postgresql://yahnu_ci:yahnu_ci@127.0.0.1:5432/yahnu_ci
+  PGSSLMODE: disable
+  YAHNU_ENABLE_AI: "false"
+
+jobs:
+  validate:
+    name: Validate application
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22.23.1
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Lint application
+        run: npm run lint
+
+      - name: Validate translations
+        run: npm run lint:i18n
+
+      - name: Test production data schema
+        run: npm run test:migration
+
+      - name: Test database configuration
+        run: npm run test:db-config
+
+      - name: Test Firebase authentication export
+        run: npm run test:firebase-auth-export
+
+      - name: Test production image processing
+        run: npm run test:image-processing
+
+      - name: Test legacy account recovery
+        run: npm run test:password-recovery
+
+      - name: Build production application
+        env:
+          NODE_ENV: production
+        run: npm run build

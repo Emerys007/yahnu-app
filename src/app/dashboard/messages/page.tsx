@@ -397,8 +397,8 @@ function MessagesContent() {
   const isMobile = useIsMobile();
   const { toast } = useToast();
   const handledRoute = useRef<string | null>(null);
-  const directRecipientId = searchParams.get('recipientId')?.slice(0, 200) || null;
-  const directRecipientName = searchParams.get('recipientName')?.slice(0, 160) || 'cet utilisateur';
+  const directRecipientId = searchParams?.get('recipientId')?.slice(0, 200) || null;
+  const directRecipientName = searchParams?.get('recipientName')?.slice(0, 160) || 'cet utilisateur';
 
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -495,8 +495,8 @@ function MessagesContent() {
 
   useEffect(() => {
     if (!user) return;
-    const ticketId = searchParams.get('ticketId');
-    const conversationId = searchParams.get('convoId');
+    const ticketId = searchParams?.get('ticketId');
+    const conversationId = searchParams?.get('convoId');
     const routeKey = `${ticketId || ''}:${conversationId || ''}`;
     if (!ticketId && !conversationId) {
       handledRoute.current = null;

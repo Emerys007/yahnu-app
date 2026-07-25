@@ -38,12 +38,14 @@ npm run lint
 npm run lint:i18n
 npm run test:migration
 npm run test:db-config
+npm run test:image-processing
+npm run test:password-recovery
 npm run build
 npm audit
 git diff --check
 ```
 
-The build script also prepares Next.js standalone output. Run `npm start` to test that exact production artifact at `http://localhost:3000`. Without `RESEND_API_KEY` and `EMAIL_FROM`, development-only verification/reset links are shown in the UI; production fails closed.
+The build script also prepares Next.js standalone output. Run `npm start` to test that exact production artifact at `http://localhost:3000`; like Render, that production-mode artifact requires working email configuration. During `npm run dev`, you may test verification/reset links without Resend by explicitly setting `YAHNU_ALLOW_LOCAL_EMAIL_DEBUG=true`. The escape hatch works only with `NODE_ENV=development` and a loopback `APP_URL`, and it must remain false or unset in every hosted environment.
 
 Important environment variables:
 
@@ -57,6 +59,7 @@ Important environment variables:
 - `AUTH_SECRET`: at least 32 random characters; the same value must be available to import and runtime
 - `APP_URL`: the exact public origin, without a trailing slash
 - `RESEND_API_KEY` and `EMAIL_FROM`: mandatory production email configuration
+- `YAHNU_ALLOW_LOCAL_EMAIL_DEBUG`: optional explicit local-development escape hatch. It is ignored unless `NODE_ENV=development` and `APP_URL` points to `localhost`, `127.0.0.1`, or `::1`; never enable it on Render or staging.
 - `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`: optional Google sign-in; callback is `${APP_URL}/api/auth/google/callback`
 - `NEXT_PUBLIC_OPENCAGE_API_KEY`: optional address autocomplete
 - `YAHNU_ENABLE_AI`, `GEMINI_API_KEY`, and `YAHNU_GEMINI_MODEL`: optional AI features
@@ -246,5 +249,6 @@ After Render accepts writes: a simple DNS rollback can lose production data. Fre
 - Sessions use opaque hashed tokens in `HttpOnly`, `Secure`, `SameSite=Lax` cookies.
 - Passwords use memory-hard scrypt; reset, verification, and invitation tokens are hashed and single-use.
 - State-changing routes enforce same-origin checks, body limits, strict schemas, rate limits, and audit logging.
+- `/api/health` reports only the non-secret `emailReady` boolean and returns `503` until both PostgreSQL and account-recovery email are ready.
 - Public media is image-signature checked and immutable; migrated private objects remain non-public and require explicit authorization paths.
 - Production responses set restrictive security headers in `next.config.ts`.

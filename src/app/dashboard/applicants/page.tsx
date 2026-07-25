@@ -11,7 +11,7 @@ function ApplicantsContent() {
   const { user, loading } = useAuth();
   if (loading) return <p className="text-sm text-muted-foreground">Loading your account…</p>;
   if (user?.role !== 'company') return <p className="text-sm text-muted-foreground">Applicant management is available to company accounts.</p>;
-  return <CompanyApplicants initialJobId={search.get('jobId')?.slice(0, 1_500) || ''} />;
+  return <CompanyApplicants initialJobId={search?.get('jobId')?.slice(0, 1_500) || ''} />;
 }
 
 export default function ApplicantsPage() {

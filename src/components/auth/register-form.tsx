@@ -175,8 +175,8 @@ export function RegisterForm() {
     return () => controller.abort();
   }, [fr, toast]);
 
-  const requestedRole = searchParams.get("role");
-  const requestedType = searchParams.get("type");
+  const requestedRole = searchParams?.get("role");
+  const requestedType = searchParams?.get("type");
   const defaultRole: RegisterValues["role"] =
     requestedRole === "school_administrator" || requestedType === "school"
       ? "school"

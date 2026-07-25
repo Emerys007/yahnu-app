@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, KeyRound, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -57,7 +57,7 @@ export function LoginForm() {
   });
 
   React.useEffect(() => {
-    const authError = searchParams.get("auth");
+    const authError = searchParams?.get("auth");
     if (!authError) return;
 
     const messages: Record<string, { fr: string; en: string }> = {
@@ -107,7 +107,7 @@ export function LoginForm() {
         title: fr ? "Connexion réussie" : "Signed in",
         description: fr ? "Bienvenue dans votre espace Yahnu." : "Welcome to your Yahnu space.",
       });
-      const requestedPath = searchParams.get("next");
+      const requestedPath = searchParams?.get("next");
       router.push(requestedPath?.startsWith("/") && !requestedPath.startsWith("//") ? requestedPath : "/dashboard");
     } catch (error: unknown) {
       const code = error instanceof ApiClientError ? error.code : undefined;
@@ -159,7 +159,7 @@ export function LoginForm() {
   async function handleGoogleSignIn() {
     setIsLoading(true);
     try {
-      const requestedPath = searchParams.get("next");
+      const requestedPath = searchParams?.get("next");
       await signInWithGoogle(
         requestedPath?.startsWith("/") && !requestedPath.startsWith("//") ? requestedPath : "/dashboard",
       );
@@ -207,8 +207,35 @@ export function LoginForm() {
         </p>
       </div>
 
+      <aside
+        className="mt-6 rounded-2xl border border-primary/20 bg-primary/[0.07] p-4 shadow-sm"
+        aria-labelledby="legacy-account-title"
+      >
+        <div className="flex items-start gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <KeyRound className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <div className="min-w-0">
+            <p id="legacy-account-title" className="font-headline text-base font-semibold text-foreground">
+              {fr ? "Votre compte date d’avant la migration ?" : "Was your account created before the migration?"}
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+              {fr
+                ? "Pour protéger vos données, les anciens mots de passe n’ont pas été transférés. Utilisez votre adresse habituelle pour en créer un nouveau."
+                : "To protect your data, old passwords were not transferred. Use your usual email address to create a new one."}
+            </p>
+            <Button asChild variant="outline" size="sm" className="mt-3 w-full bg-card/80 sm:w-auto">
+              <Link href="/forgot-password">
+                {fr ? "Réactiver mon accès" : "Restore my access"}
+                <ArrowRight aria-hidden="true" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </aside>
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" aria-busy={isLoading} noValidate>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 space-y-5" aria-busy={isLoading} noValidate>
           <FormField
             control={form.control}
             name="email"

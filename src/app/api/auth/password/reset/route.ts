@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { hashToken, writeAuditLog } from '@/lib/server/auth';
-import { transaction } from '@/lib/server/db';
+import { query, transaction } from '@/lib/server/db';
 import { ApiError, assertSameOrigin, handleApiError, jsonOk, readJson } from '@/lib/server/http';
 import { hashPassword, validatePassword } from '@/lib/server/password';
 import { enforceRateLimit } from '@/lib/server/rate-limit';
@@ -11,6 +11,12 @@ const schema = z.object({
   password: z.string().min(1).max(128),
 }).strict();
 
+const invalidResetToken = () => new ApiError(
+  400,
+  'invalid_reset_token',
+  'This reset link is invalid or has expired.',
+);
+
 export async function POST(request: Request) {
   try {
     assertSameOrigin(request);
@@ -18,6 +24,23 @@ export async function POST(request: Request) {
     const passwordError = validatePassword(input.password);
     if (passwordError) throw new ApiError(422, 'weak_password', passwordError);
     await enforceRateLimit(request, 'password_reset', 8, 60 * 60);
+    const tokenHash = hashToken(input.token);
+
+    // Reject random tokens before doing memory-hard password hashing. The
+    // transaction below locks and revalidates the token after hashing.
+    const candidate = await query(`
+      SELECT 1
+      FROM auth_tokens t
+      JOIN users u ON u.id = t.user_id
+      WHERE t.token_hash = $1
+        AND t.purpose = 'reset_password'
+        AND t.used_at IS NULL
+        AND t.expires_at > now()
+        AND u.deleted_at IS NULL
+      LIMIT 1
+    `, [tokenHash]);
+    if (!candidate.rowCount) throw invalidResetToken();
+
     const passwordHash = await hashPassword(input.password);
 
     await transaction(async (client) => {
@@ -25,9 +48,9 @@ export async function POST(request: Request) {
         SELECT user_id FROM auth_tokens
         WHERE token_hash = $1 AND purpose = 'reset_password' AND used_at IS NULL AND expires_at > now()
         FOR UPDATE
-      `, [hashToken(input.token)]);
+      `, [tokenHash]);
       const record = token.rows[0];
-      if (!record) throw new ApiError(400, 'invalid_reset_token', 'This reset link is invalid or has expired.');
+      if (!record) throw invalidResetToken();
 
       const updatedUser = await client.query(`
         UPDATE users
@@ -38,7 +61,7 @@ export async function POST(request: Request) {
         WHERE id = $2 AND deleted_at IS NULL
       `, [passwordHash, record.user_id]);
       if (updatedUser.rowCount !== 1) {
-        throw new ApiError(400, 'invalid_reset_token', 'This reset link is invalid or has expired.');
+        throw invalidResetToken();
       }
       await client.query('UPDATE auth_tokens SET used_at = now() WHERE user_id = $1 AND used_at IS NULL', [record.user_id]);
       await client.query('DELETE FROM sessions WHERE user_id = $1', [record.user_id]);

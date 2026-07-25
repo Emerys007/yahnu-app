@@ -13,7 +13,7 @@ import { apiFetch, ApiClientError } from "@/lib/api-client";
 function VerificationAction() {
   const { language } = useLocalization();
   const fr = language === "fr";
-  const token = useSearchParams().get("token") ?? "";
+  const token = useSearchParams()?.get("token") ?? "";
   const [state, setState] = useState<"ready" | "loading" | "done">("ready");
   const [error, setError] = useState<string | null>(null);
   const [reauthenticationRequired, setReauthenticationRequired] = useState(false);

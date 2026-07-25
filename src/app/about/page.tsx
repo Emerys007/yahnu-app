@@ -34,11 +34,16 @@ const copy = {
     visionBody: "Créer des connexions professionnelles qui reflètent les villes, les secteurs et l’énergie de la Côte d’Ivoire.",
     valuesTitle: "La dignité d’abord",
     valuesBody: "Concevoir une expérience simple, transparente et respectueuse pour chaque candidat, recruteur et établissement.",
-    bridgeTitle: "Trois acteurs. Un même passage vers l’emploi.",
-    bridgeBody: "Le progrès est plus rapide quand chacun voit la même information et peut agir au bon moment.",
-    graduate: "Les diplômés rendent leurs compétences visibles.",
-    company: "Les employeurs rencontrent des profils prêts à apprendre.",
-    school: "Les établissements prolongent leur accompagnement.",
+    pactLabel: "Le Pacte Yahnu",
+    bridgeTitle: "L’insertion se construit à trois, ici.",
+    bridgeBody: "À Abidjan comme dans les villes de l’intérieur, aucun jeune ne devrait porter seul le passage du diplôme à l’emploi. Chacun prend un engagement simple et vérifiable.",
+    graduateTitle: "Jeune diplômé",
+    graduate: "Je présente clairement mes compétences, mes projets et la direction que je veux prendre.",
+    companyTitle: "Employeur",
+    company: "Je publie des attentes lisibles et je considère chaque candidature avec respect.",
+    schoolTitle: "Établissement",
+    school: "Je garde le lien avec mes diplômés et je les rapproche du monde professionnel.",
+    pactClosing: "Yahnu relie ces engagements pour que chaque connexion mène à une prochaine action utile.",
     teamLabel: "L’équipe Yahnu",
     teamTitle: "Des personnes qui connaissent le terrain.",
     teamBody: "Une équipe produit attachée à une idée simple : la technologie doit rendre une carrière plus humaine, pas plus froide.",
@@ -61,11 +66,16 @@ const copy = {
     visionBody: "Create professional connections that reflect the cities, sectors and energy of Côte d’Ivoire.",
     valuesTitle: "Dignity first",
     valuesBody: "Design a simple, transparent and respectful experience for every candidate, recruiter and institution.",
-    bridgeTitle: "Three actors. One shared path into work.",
-    bridgeBody: "Progress happens faster when everyone sees the same information and can act at the right time.",
-    graduate: "Graduates make their skills visible.",
-    company: "Employers meet people ready to learn.",
-    school: "Institutions keep supporting their alumni.",
+    pactLabel: "The Yahnu Pact",
+    bridgeTitle: "Three partners build the path into work, together.",
+    bridgeBody: "In Abidjan and cities across the country, no graduate should carry the transition into work alone. Each participant makes one clear, practical commitment.",
+    graduateTitle: "Young graduate",
+    graduate: "I present my skills, projects and intended direction clearly.",
+    companyTitle: "Employer",
+    company: "I publish understandable expectations and treat every application with respect.",
+    schoolTitle: "Institution",
+    school: "I stay connected with graduates and help bring them closer to professional life.",
+    pactClosing: "Yahnu connects these commitments so every introduction leads to a useful next action.",
     teamLabel: "The Yahnu team",
     teamTitle: "People who understand the local journey.",
     teamBody: "A product team committed to one simple idea: technology should make a career feel more human, not less.",
@@ -109,7 +119,11 @@ export default function AboutPage() {
     [managedText("visionTitle", text.visionTitle), managedText("visionContent", text.visionBody), Handshake],
     [managedText("valuesTitle", text.valuesTitle), managedText("valuesContent", text.valuesBody), Heart],
   ] as const;
-  const bridge = [[text.graduate, GraduationCap], [text.company, Building2], [text.school, School]] as const;
+  const pact = [
+    [text.graduateTitle, text.graduate, GraduationCap],
+    [text.companyTitle, text.company, Building2],
+    [text.schoolTitle, text.school, School],
+  ] as const;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -124,7 +138,14 @@ export default function AboutPage() {
               <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">{managedText("aboutSubtitle", text.subtitle)}</p>
             </div>
             <div className="relative min-h-[25rem] overflow-hidden rounded-[2rem] shadow-lift sm:min-h-[34rem]">
-              <Image src="/images/yahnu-career-workshop-v2.webp" alt="Atelier Yahnu à Abidjan" fill priority sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" />
+              <Image
+                src="/images/yahnu-career-workshop-v2.webp"
+                alt={language === "fr" ? "Atelier Yahnu à Abidjan" : "Yahnu career workshop in Abidjan"}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 55vw"
+                className="object-cover"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-cocoa/70 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 flex items-center gap-2 text-sm font-semibold text-white"><MapPin className="h-4 w-4" aria-hidden="true" />Abidjan · Côte d’Ivoire</div>
             </div>
@@ -161,20 +182,39 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="overflow-hidden bg-cocoa py-20 text-white sm:py-24">
-          <div className="container mx-auto grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:items-center">
-            <div>
-              <h2 className="font-display text-4xl font-semibold leading-tight sm:text-5xl">{text.bridgeTitle}</h2>
-              <p className="mt-4 text-lg leading-8 text-white/65">{text.bridgeBody}</p>
+        <section className="relative overflow-hidden bg-cocoa py-20 text-white dark:bg-card sm:py-24" aria-labelledby="yahnu-pact-title">
+          <div className="ci-pattern absolute inset-0 opacity-30" aria-hidden="true" />
+          <div className="container relative mx-auto">
+            <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
+              <div>
+                <p className="inline-flex rounded-full border border-white/15 bg-white/[0.07] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-soleil">
+                  {text.pactLabel}
+                </p>
+                <h2 id="yahnu-pact-title" className="mt-5 font-display text-4xl font-semibold leading-tight sm:text-5xl">
+                  {text.bridgeTitle}
+                </h2>
+              </div>
+              <p className="max-w-3xl text-lg leading-8 text-white/70">{text.bridgeBody}</p>
             </div>
-            <div className="grid gap-3 sm:grid-cols-3">
-              {bridge.map(([label, Icon], index) => (
-                <div key={label} className="rounded-[1.4rem] border border-white/10 bg-white/[0.06] p-5">
-                  <span className={index === 1 ? "text-terra" : "text-primary"}><Icon className="h-6 w-6" aria-hidden="true" /></span>
-                  <p className="mt-8 font-display text-xl font-semibold leading-snug">{label}</p>
-                </div>
+
+            <div className="mt-10 grid overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.055] sm:grid-cols-3">
+              {pact.map(([title, body, Icon], index) => (
+                <article
+                  key={title}
+                  className={`p-6 sm:p-7 ${index > 0 ? "border-t border-white/10 sm:border-l sm:border-t-0" : ""}`}
+                >
+                  <span className={index === 1 ? "text-terra" : index === 2 ? "text-soleil" : "text-white"}>
+                    <Icon className="h-6 w-6" aria-hidden="true" />
+                  </span>
+                  <h3 className="mt-8 font-display text-xl font-semibold">{title}</h3>
+                  <p className="mt-3 leading-7 text-white/70">{body}</p>
+                </article>
               ))}
             </div>
+
+            <p className="mt-6 max-w-3xl border-l-2 border-terra pl-4 text-sm font-semibold leading-6 text-white/75">
+              {text.pactClosing}
+            </p>
           </div>
         </section>
 

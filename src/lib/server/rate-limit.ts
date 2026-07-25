@@ -5,7 +5,14 @@ import { query } from '@/lib/server/db';
 
 type RateLimitRow = { count: number; reset_at: Date };
 
-export async function enforceRateLimitSubject(scope: string, limit: number, windowSeconds: number, subject: string) {
+export type RateLimitDecision = { allowed: boolean; retryAfter: number };
+
+export async function consumeRateLimitSubject(
+  scope: string,
+  limit: number,
+  windowSeconds: number,
+  subject: string,
+): Promise<RateLimitDecision> {
   const subjectHash = privacyHash(subject.toLowerCase());
   await query(`DELETE FROM rate_limits WHERE reset_at < now() - interval '1 day'`);
   const result = await query<RateLimitRow>(`
@@ -18,8 +25,16 @@ export async function enforceRateLimitSubject(scope: string, limit: number, wind
   `, [scope, subjectHash, windowSeconds]);
 
   const current = result.rows[0];
-  if (current && current.count > limit) {
-    const retryAfter = Math.max(1, Math.ceil((new Date(current.reset_at).getTime() - Date.now()) / 1000));
+  const retryAfter = current
+    ? Math.max(1, Math.ceil((new Date(current.reset_at).getTime() - Date.now()) / 1000))
+    : windowSeconds;
+  return { allowed: !current || current.count <= limit, retryAfter };
+}
+
+export async function enforceRateLimitSubject(scope: string, limit: number, windowSeconds: number, subject: string) {
+  const decision = await consumeRateLimitSubject(scope, limit, windowSeconds, subject);
+  if (!decision.allowed) {
+    const retryAfter = decision.retryAfter;
     throw new ApiError(429, 'rate_limited', `Too many attempts. Try again in ${retryAfter} seconds.`);
   }
 }

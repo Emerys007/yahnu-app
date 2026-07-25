@@ -553,7 +553,8 @@ function PracticeInterface({ practiceId, practice }: { practiceId: PracticeId; p
 export default function TakeAssessmentPage() {
   const params = useParams<{ testId: string }>();
   const [started, setStarted] = useState(false);
-  const rawTestId = Array.isArray(params.testId) ? params.testId[0] : params.testId;
+  const testIdParam = params?.testId;
+  const rawTestId = (Array.isArray(testIdParam) ? testIdParam[0] : testIdParam) ?? "";
   const practiceId = useMemo(() => (isPracticeId(rawTestId) ? rawTestId : null), [rawTestId]);
 
   if (!practiceId) {
