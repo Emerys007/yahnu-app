@@ -9,7 +9,7 @@ import { Logo } from "@/components/ui/logo"
 
 export function Footer() {
   const pathname = usePathname();
-  const isDashboard = pathname.startsWith("/dashboard");
+  const isDashboard = pathname?.startsWith("/dashboard") ?? false;
 
   return (
     <footer className="bg-background border-t">

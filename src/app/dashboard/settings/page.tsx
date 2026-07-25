@@ -2,116 +2,75 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { useAuth, type Role } from "@/context/auth-context"
+import { useLocalization } from "@/context/localization-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { User, Shield, Bell, Building, CreditCard, Users, Contact, FileText, Trash2, School as SchoolIcon, KeyRound, Check, ChevronsUpDown, Loader2 } from "lucide-react"
+import { ArrowUpRight, User, Shield, Building, School as SchoolIcon, KeyRound } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 
 // #region Shared Settings
-
-const EmailVerificationDialog = ({
-  isOpen,
-  onClose,
-  onConfirm
-}: {
-  isOpen: boolean,
-  onClose: () => void,
-  onConfirm: (code: string) => void
-}) => {
-    const [code, setCode] = useState("");
-    const [isConfirming, setIsConfirming] = useState(false);
-
-    const handleConfirm = async () => {
-        setIsConfirming(true);
-        await onConfirm(code);
-        setIsConfirming(false);
-    }
-
-    return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Vérifiez votre adresse e-mail</DialogTitle>
-                    <DialogDescription>
-                        Nous avons envoyé un code de vérification à votre ancienne adresse e-mail. Veuillez saisir le code ci-dessous pour confirmer le changement.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="py-4">
-                    <Label htmlFor="verification-code">Code de vérification</Label>
-                    <Input 
-                        id="verification-code" 
-                        value={code} 
-                        onChange={(e) => setCode(e.target.value)} 
-                        placeholder="Entrez le code à 6 chiffres"
-                        disabled={isConfirming}
-                    />
-                </div>
-                <DialogFooter>
-                    <Button variant="outline" onClick={onClose} disabled={isConfirming}>Annuler</Button>
-                    <Button onClick={handleConfirm} disabled={!code || isConfirming}>
-                        {isConfirming && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Confirmer
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-    )
-}
-
-
 const UserAccountSettings = () => {
-    const { user, createPassword, isGoogleProvider, updateProfile, verifyEmailChange } = useAuth();
+    const { t } = useLocalization();
+    const { user, createPassword, updateProfile } = useAuth();
     const { toast } = useToast();
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
+    const [currentPassword, setCurrentPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isVerificationOpen, setIsVerificationOpen] = useState(false);
+    const emailChanged = Boolean(user && email.trim().toLowerCase() !== (user.email ?? '').toLowerCase());
 
     const handleSaveChanges = async () => {
         if (!user) return;
-        
-        const nameChanged = name !== user.name;
-        const emailChanged = email !== user.email;
-
-        if (!nameChanged && !emailChanged) {
-             toast({
-                title: "Aucune modification",
-                description: "Vous n'avez effectué aucune modification.",
-            });
-            return;
-        }
-        
         setIsSubmitting(true);
-        
         try {
-            const result = await updateProfile({ name, email });
-            if (result.emailChanged) {
-                setIsVerificationOpen(true);
+            const updates: { name?: string; email?: string; currentPassword?: string } = {};
+            if (name !== user.name) {
+                updates.name = name;
+            }
+            if (emailChanged) {
+                updates.email = email.trim().toLowerCase();
+                updates.currentPassword = currentPassword;
+            }
+
+            if (Object.keys(updates).length > 0) {
+                const result = await updateProfile(updates);
+                toast({
+                    title: t('Profile Updated'),
+                    description: t('Your changes have been saved successfully.'),
+                });
+                if (updates.email && result.emailChangeDelivery === 'failed') {
+                    toast({
+                        title: t('Verification email could not be sent'),
+                        description: t('Your email change is pending. Try again later or contact support.'),
+                        variant: 'destructive',
+                    });
+                } else if (updates.email && result.emailChangeDelivery) {
+                    toast({
+                        title: t('Verification email sent'),
+                        description: t('Please check your new email address to verify the change.'),
+                    });
+                }
+                if (updates.email) {
+                    setCurrentPassword('');
+                    setEmail(user.email ?? '');
+                }
             } else {
                  toast({
-                    title: "Profil mis à jour",
-                    description: "Vos modifications ont été enregistrées avec succès.",
+                    title: t('No Changes'),
+                    description: t("You haven't made any changes."),
                 });
             }
-        } catch (error: any) {
+        } catch {
             toast({
-                title: "Erreur",
-                description: error.message || "La mise à jour du profil a échoué.",
+                title: t('Error'),
+                description: t('Failed to update profile.'),
                 variant: 'destructive',
             });
         } finally {
@@ -119,77 +78,71 @@ const UserAccountSettings = () => {
         }
     };
 
-    const onConfirmVerification = async (code: string) => {
-        try {
-            await verifyEmailChange(code);
-            toast({
-                title: "Adresse e-mail mise à jour !",
-                description: "Votre adresse e-mail a été modifiée avec succès.",
-            });
-            setIsVerificationOpen(false);
-        } catch (error: any) {
-             toast({
-                title: "Erreur de vérification",
-                description: error.message || "Le code est incorrect ou a expiré.",
-                variant: 'destructive',
-            });
-        }
-    };
-
-
     const handleCreatePassword = async () => {
         if (!user || !user.email) return;
         try {
-            await createPassword();
+            const reset = await createPassword();
             toast({
-                title: "E-mail de réinitialisation de mot de passe envoyé",
-                description: "Consultez votre boîte de réception pour créer un nouveau mot de passe.",
+                title: t('Password reset email sent'),
+                description: t('Check your inbox to create a new password.'),
             });
-        } catch (error) {
+            if (reset.debugUrl) window.location.assign(reset.debugUrl);
+        } catch {
             toast({
-                title: "Erreur",
-                description: "L'envoi de l'e-mail de réinitialisation de mot de passe a échoué.",
+                title: t('Error'),
+                description: t('Failed to send password reset email.'),
                 variant: 'destructive',
             });
         }
     };
 
     return (
-        <>
         <Card>
             <CardHeader>
-              <CardTitle>Informations sur le compte</CardTitle>
-              <CardDescription>Gérez vos informations personnelles et de connexion.</CardDescription>
+              <CardTitle>{t('Account Information')}</CardTitle>
+              <CardDescription>{t('Manage your personal and login details.')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label htmlFor="name">Nom complet</Label>
+                  <Label htmlFor="name">{t('Full Name')}</Label>
                   <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="email">Adresse e-mail</Label>
-                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <Label htmlFor="email">{t('Email Address')}</Label>
+                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
                 </div>
               </div>
+              {emailChanged && (user?.hasPassword ? (
+                <div className="max-w-md space-y-1">
+                  <Label htmlFor="current-password">{t('Current Password')}</Label>
+                  <PasswordInput
+                    id="current-password"
+                    value={currentPassword}
+                    onChange={(event) => setCurrentPassword(event.target.value)}
+                    autoComplete="current-password"
+                    hideSuggestions
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    {t('Re-enter your password to authorize this email change. You will be signed out after the new address is verified.')}
+                  </p>
+                </div>
+              ) : (
+                <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100">
+                  {t('Create a password before changing your email address. Use the button below, then return here after setting it.')}
+                </div>
+              ))}
               <div className="flex flex-wrap gap-2">
-                <Button onClick={handleSaveChanges} disabled={isSubmitting}>
-                    {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    {isSubmitting ? "Enregistrement..." : "Enregistrer les modifications"}
+                <Button onClick={handleSaveChanges} disabled={isSubmitting || (emailChanged && (!user?.hasPassword || !currentPassword))}>
+                    {isSubmitting ? t('Saving...') : t('Save Changes')}
                 </Button>
                 <Button variant="outline" onClick={handleCreatePassword}>
                     <KeyRound className="mr-2 h-4 w-4" />
-                    {isGoogleProvider() ? "Créer un mot de passe" : "Changer le mot de passe"}
+                    {user?.hasPassword ? t('Change Password') : t('Create Password')}
                 </Button>
               </div>
             </CardContent>
         </Card>
-         <EmailVerificationDialog 
-            isOpen={isVerificationOpen}
-            onClose={() => setIsVerificationOpen(false)}
-            onConfirm={onConfirmVerification}
-         />
-        </>
     )
 }
 // #endregion
@@ -212,42 +165,22 @@ const GraduateSettings = () => {
       <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
         <Card>
           <CardHeader>
-            <CardTitle>Visibilité du Profil</CardTitle>
-            <CardDescription>Contrôlez la visibilité de votre profil professionnel.</CardDescription>
+            <CardTitle>Visibilité du profil</CardTitle>
+            <CardDescription>Votre profil professionnel est utilisé dans les espaces de recrutement réservés aux comptes autorisés.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <Label className="text-base">Profil Public</Label>
-                <p className="text-sm text-muted-foreground">
-                  Autoriser les entreprises à voir votre profil complet.
-                </p>
-              </div>
-              <Switch defaultChecked />
-            </div>
+          <CardContent>
+            <Button asChild variant="outline"><Link href="/dashboard/profile">Vérifier les informations visibles<ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link></Button>
           </CardContent>
         </Card>
       </motion.div>
       <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
         <Card>
           <CardHeader>
-            <CardTitle>Alertes d'emploi</CardTitle>
-            <CardDescription>Configurez vos notifications par e-mail pour les nouvelles opportunités d'emploi.</CardDescription>
+            <CardTitle>Alertes d’opportunités</CardTitle>
+            <CardDescription>Les préférences d’alertes personnalisées seront proposées ici lorsqu’elles seront reliées au service d’e-mail Yahnu.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-              <div className="space-y-1">
-                  <Label htmlFor="alert-frequency">Fréquence des notifications</Label>
-                  <Select defaultValue="daily">
-                      <SelectTrigger id="alert-frequency" className="w-[280px]">
-                          <SelectValue placeholder="Sélectionner la fréquence" />
-                      </SelectTrigger>
-                      <SelectContent>
-                          <SelectItem value="daily">Quotidien</SelectItem>
-                          <SelectItem value="weekly">Hebdomadaire</SelectItem>
-                          <SelectItem value="never">Jamais</SelectItem>
-                      </SelectContent>
-                  </Select>
-              </div>
+          <CardContent>
+              <p className="rounded-xl border border-dashed bg-muted/25 p-4 text-sm leading-6 text-muted-foreground">En attendant, consultez les offres ouvertes depuis votre tableau de bord. Aucun réglage affiché ici ne prétend être enregistré.</p>
           </CardContent>
         </Card>
       </motion.div>
@@ -274,34 +207,22 @@ const CompanySettings = () => {
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
                 <Card>
                     <CardHeader>
-                        <CardTitle>Membres de l'équipe</CardTitle>
-                        <CardDescription>Gérez qui a accès au compte de votre entreprise.</CardDescription>
+                        <CardTitle>Profil de l’entreprise</CardTitle>
+                        <CardDescription>Les informations visibles par les candidats sont gérées dans un espace dédié.</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <p className="font-medium">Inviter un nouveau membre</p>
-                            <Button>Envoyer une invitation</Button>
-                        </div>
-                         <div className="space-y-2">
-                            <div className="flex items-center justify-between p-3 rounded-lg border">
-                                <div>
-                                    <p className="font-semibold">Jane Smith</p>
-                                    <p className="text-sm text-muted-foreground">jane@innovate.inc</p>
-                                </div>
-                                <Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-destructive" /></Button>
-                            </div>
-                        </div>
+                    <CardContent>
+                        <Button asChild variant="outline"><Link href="/dashboard/company-profile">Mettre à jour le profil<ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link></Button>
                     </CardContent>
                 </Card>
             </motion.div>
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
                 <Card>
                     <CardHeader>
-                        <CardTitle>Informations de facturation</CardTitle>
-                        <CardDescription>Gérez votre abonnement et vos moyens de paiement.</CardDescription>
+                        <CardTitle>Accès de l’équipe</CardTitle>
+                        <CardDescription>La gestion multi-utilisateur n’est pas encore activée. Aucun collaborateur fictif n’est affiché ici.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-muted-foreground">Les fonctionnalités de facturation seront bientôt disponibles.</p>
+                        <p className="rounded-xl border border-dashed bg-muted/25 p-4 text-sm leading-6 text-muted-foreground">Pour ajouter un recruteur à votre compte, contactez le support Yahnu depuis votre tableau de bord.</p>
                     </CardContent>
                 </Card>
             </motion.div>
@@ -328,27 +249,11 @@ const SchoolSettings = () => {
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
                  <Card>
                     <CardHeader>
-                        <CardTitle>Contacts Clés</CardTitle>
-                        <CardDescription>Gérez les points de contact principaux pour les partenariats industriels.</CardDescription>
+                        <CardTitle>Profil de l’établissement</CardTitle>
+                        <CardDescription>Gardez vos coordonnées et votre présentation à jour pour les diplômés et les partenaires.</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-1">
-                            <Label htmlFor="contact-name">Nom du contact principal</Label>
-                            <Input id="contact-name" defaultValue="Dr. Fatou Bamba" />
-                        </div>
-                         <div className="space-y-1">
-                            <Label htmlFor="contact-email">Email du contact</Label>
-                            <Input id="contact-email" type="email" defaultValue="partnerships@inphb.ci" />
-                        </div>
-                         <div className="flex items-center justify-between rounded-lg border p-4 mt-4">
-                            <div className="space-y-0.5">
-                            <Label className="text-base">Demandes de partenariat</Label>
-                            <p className="text-sm text-muted-foreground">
-                                Recevoir des notifications par e-mail pour les nouvelles demandes de partenariat d'entreprises.
-                            </p>
-                            </div>
-                            <Switch defaultChecked />
-                        </div>
+                    <CardContent>
+                        <Button asChild variant="outline"><Link href="/dashboard/school-profile">Mettre à jour le profil<ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link></Button>
                     </CardContent>
                 </Card>
             </motion.div>
@@ -365,21 +270,24 @@ const settingsComponents: Record<Role, React.ComponentType> = {
   admin: UserAccountSettings,
   super_admin: UserAccountSettings,
   content_manager: UserAccountSettings,
+  content_moderator: UserAccountSettings,
   support_staff: UserAccountSettings,
 };
 
 const pageConfig: Record<string, { icon: React.ElementType; title: string; description: string }> = {
-    graduate: { icon: User, title: 'Vos Paramètres', description: 'Gérez les détails de votre compte personnel, la visibilité de votre profil et les notifications.' },
-    company: { icon: Building, title: 'Paramètres de l\'entreprise', description: 'Gérez votre compte personnel, les membres de l\'équipe et la facturation.' },
-    school: { icon: SchoolIcon, title: 'Paramètres de l\'école', description: 'Gérez votre compte personnel et les contacts de votre établissement.' },
-    admin: { icon: Shield, title: 'Paramètres Administrateur', description: 'Gérez les détails de votre compte administrateur.' },
-    super_admin: { icon: Shield, title: 'Paramètres Administrateur', description: 'Gérez les détails de votre compte administrateur.' },
-    content_manager: { icon: Shield, title: 'Paramètres Administrateur', description: 'Gérez les détails de votre compte administrateur.' },
-    support_staff: { icon: Shield, title: 'Paramètres Administrateur', description: 'Gérez les détails de votre compte administrateur.' },
+    graduate: { icon: User, title: 'Mes paramètres', description: 'Gérez votre compte, la visibilité de votre profil et vos notifications.' },
+    company: { icon: Building, title: 'Paramètres recruteur', description: 'Gérez votre compte personnel et les informations de votre entreprise.' },
+    school: { icon: SchoolIcon, title: 'Paramètres établissement', description: 'Gérez votre compte et les informations de votre établissement.' },
+    admin: { icon: Shield, title: 'Paramètres administrateur', description: 'Gérez les informations et la sécurité de votre compte Yahnu.' },
+    super_admin: { icon: Shield, title: 'Paramètres administrateur', description: 'Gérez les informations et la sécurité de votre compte Yahnu.' },
+    content_manager: { icon: Shield, title: 'Paramètres éditoriaux', description: 'Gérez les informations et la sécurité de votre compte Yahnu.' },
+    content_moderator: { icon: Shield, title: 'Paramètres de modération', description: 'Gérez les informations et la sécurité de votre compte Yahnu.' },
+    support_staff: { icon: Shield, title: 'Paramètres support', description: 'Gérez les informations et la sécurité de votre compte Yahnu.' },
 }
 
 export default function SettingsPage() {
   const { role } = useAuth()
+  const { t } = useLocalization()
 
   const ActiveSettingsComponent = settingsComponents[role] || GraduateSettings;
   const { icon: Icon, title, description } = pageConfig[role] || pageConfig.graduate;
@@ -401,7 +309,7 @@ export default function SettingsPage() {
             </div>
         </motion.div>
         <Separator />
-        {ActiveSettingsComponent ? <ActiveSettingsComponent /> : <p>Aucun paramètre disponible pour ce rôle.</p>}
+        {ActiveSettingsComponent ? <ActiveSettingsComponent /> : <p>{t('No settings available for this role.')}</p>}
     </div>
   );
 }

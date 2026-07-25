@@ -1,6 +1,5 @@
+import { redirect } from "next/navigation"
 
-import { redirect } from 'next/navigation'
-
-export default function AdminTeamRedirect() {
-  redirect('/dashboard/admin/manage-team')
+export default function TeamRedirectPage() {
+  redirect("/dashboard/admin/manage-team")
 }

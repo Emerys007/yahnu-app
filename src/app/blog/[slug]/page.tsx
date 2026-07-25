@@ -1,77 +1,93 @@
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { ArrowLeft, Clock3, RefreshCw } from 'lucide-react';
 
-import { MainNav } from "@/components/landing/main-nav";
-import { Footer } from "@/components/landing/footer";
-import { notFound } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import { db } from "@/lib/firebase";
-import { collection, query, where, getDocs, DocumentData } from "firebase/firestore";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { BlogCoverImage } from '@/components/blog/blog-cover-image';
+import { Footer } from '@/components/landing/footer';
+import { MainNav } from '@/components/landing/main-nav';
+import { SafeRichText } from '@/components/ui/safe-rich-text';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { blogHtmlToPlainText } from '@/lib/blog';
+import { getPublishedBlogPostBySlug } from '@/lib/blog-server';
 
 export const dynamic = 'force-dynamic';
 
-type Post = {
-    id: string;
-    title: string;
-    slug: string;
-    author: string;
-    content: string;
-    excerpt?: string;
-    imageUrl?: string;
-    createdAt: any;
-};
+const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
 
-async function getPostBySlug(slug: string): Promise<Post | null> {
-    const postsCollection = collection(db, "blogPosts");
-    const q = query(postsCollection, where("slug", "==", slug), where("status", "==", "published"));
-    const querySnapshot = await getDocs(q);
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  let post;
+  let loadFailed = false;
 
-    if (querySnapshot.empty) {
-        return null;
-    }
-
-    const doc = querySnapshot.docs[0];
-    const data = doc.data() as DocumentData;
-    
-    return {
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt?.toDate(),
-    } as Post;
-}
-
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
-  const post = await getPostBySlug(slug);
-
-  if (!post) {
-    notFound();
+  try {
+    post = await getPublishedBlogPostBySlug(slug);
+  } catch (error) {
+    console.error(`Unable to load blog post ${slug}:`, error);
+    loadFailed = true;
   }
 
+  if (!loadFailed && !post) notFound();
+
+  if (loadFailed || !post) {
+    return (
+      <div className="flex min-h-screen flex-col bg-background">
+        <MainNav />
+        <main className="container mx-auto flex flex-1 items-center justify-center px-4 py-16">
+          <Card className="w-full max-w-xl border-destructive/30 bg-destructive/5">
+            <CardContent className="flex flex-col items-center p-10 text-center">
+              <RefreshCw className="h-9 w-9 text-destructive" />
+              <h1 className="mt-4 text-2xl font-semibold">Article momentanément indisponible</h1>
+              <p className="mt-2 text-muted-foreground">Nous n’avons pas pu charger cet article. Réessayez dans quelques instants.</p>
+              <Button asChild variant="outline" className="mt-6"><Link href={`/blog/${slug}`}>Réessayer</Link></Button>
+            </CardContent>
+          </Card>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  const date = post.publishedAt ?? post.createdAt;
+  const wordCount = blogHtmlToPlainText(post.contentHtml).split(/\s+/).filter(Boolean).length;
+  const readingMinutes = Math.max(1, Math.ceil(wordCount / 220));
+
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <MainNav />
-      <main className="flex-1 container mx-auto py-12">
-        <div className="max-w-4xl mx-auto mb-8">
-            <Link href="/blog" className="text-primary hover:underline">← Retour au blog</Link>
-        </div>
-        <article className="prose lg:prose-xl max-w-4xl mx-auto">
-          <div className="relative w-full h-96 mb-8 rounded-lg overflow-hidden">
-            <Image
-              src={post.imageUrl || `https://source.unsplash.com/random/800x600?sig=${post.id}`}
-              alt={post.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              priority
-            />
+      <main className="flex-1">
+        <header className="border-b bg-gradient-to-b from-primary/10 to-background">
+          <div className="container mx-auto max-w-5xl px-4 pb-12 pt-10 sm:pb-16">
+            <Button asChild variant="ghost" className="-ml-3 mb-8 text-muted-foreground hover:text-foreground">
+              <Link href="/blog"><ArrowLeft className="mr-2 h-4 w-4" /> Retour au blog</Link>
+            </Button>
+            <Badge variant="secondary">Ressource Yahnu</Badge>
+            <h1 className="mt-5 max-w-4xl text-balance text-4xl font-bold tracking-tight sm:text-6xl">{post.title}</h1>
+            <p className="mt-6 max-w-3xl text-pretty text-lg leading-8 text-muted-foreground">{post.excerpt}</p>
+            <div className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">Par {post.author}</span>
+              <span aria-hidden="true">•</span>
+              <time dateTime={date}>{dateFormatter.format(new Date(date))}</time>
+              <span aria-hidden="true">•</span>
+              <span className="inline-flex items-center gap-1.5"><Clock3 className="h-4 w-4" /> {readingMinutes} min de lecture</span>
+            </div>
           </div>
-          <h1 className="text-4xl font-bold tracking-tight">{post.title}</h1>
-          <p className="text-muted-foreground mb-6">
-            Par {post.author} • {post.createdAt ? format(post.createdAt, "d MMMM yyyy", { locale: fr }) : ''}
-          </p>
-          <div className="mt-8" dangerouslySetInnerHTML={{ __html: post.content }} />
+        </header>
+
+        <article className="container mx-auto max-w-5xl px-4 py-10 sm:py-14">
+          <BlogCoverImage src={post.imageUrl} alt={post.title} eager className="mb-10 aspect-[16/8] rounded-3xl shadow-sm" />
+          <SafeRichText
+            html={post.contentHtml}
+            className="mx-auto max-w-3xl text-base leading-8 prose-headings:scroll-mt-24 prose-headings:tracking-tight prose-a:text-primary sm:text-lg"
+          />
+          <div className="mx-auto mt-12 max-w-3xl border-t pt-8">
+            <Button asChild variant="outline"><Link href="/blog"><ArrowLeft className="mr-2 h-4 w-4" /> Voir tous les articles</Link></Button>
+          </div>
         </article>
       </main>
       <Footer />

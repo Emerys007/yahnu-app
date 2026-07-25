@@ -1,6 +1,6 @@
 
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation';
 
-export default function TicketManagementRedirect() {
-  redirect('/dashboard/support/center')
+export default function TicketManagementPage() {
+  redirect('/dashboard/support/center');
 }

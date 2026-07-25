@@ -1,0 +1,46 @@
+import 'server-only';
+
+import { ApiError, clientAddress, privacyHash } from '@/lib/server/http';
+import { query } from '@/lib/server/db';
+
+type RateLimitRow = { count: number; reset_at: Date };
+
+export type RateLimitDecision = { allowed: boolean; retryAfter: number };
+
+export async function consumeRateLimitSubject(
+  scope: string,
+  limit: number,
+  windowSeconds: number,
+  subject: string,
+): Promise<RateLimitDecision> {
+  const subjectHash = privacyHash(subject.toLowerCase());
+  await query(`DELETE FROM rate_limits WHERE reset_at < now() - interval '1 day'`);
+  const result = await query<RateLimitRow>(`
+    INSERT INTO rate_limits (scope, subject_hash, count, reset_at)
+    VALUES ($1, $2, 1, now() + ($3 * interval '1 second'))
+    ON CONFLICT (scope, subject_hash) DO UPDATE SET
+      count = CASE WHEN rate_limits.reset_at <= now() THEN 1 ELSE rate_limits.count + 1 END,
+      reset_at = CASE WHEN rate_limits.reset_at <= now() THEN now() + ($3 * interval '1 second') ELSE rate_limits.reset_at END
+    RETURNING count, reset_at
+  `, [scope, subjectHash, windowSeconds]);
+
+  const current = result.rows[0];
+  const retryAfter = current
+    ? Math.max(1, Math.ceil((new Date(current.reset_at).getTime() - Date.now()) / 1000))
+    : windowSeconds;
+  return { allowed: !current || current.count <= limit, retryAfter };
+}
+
+export async function enforceRateLimitSubject(scope: string, limit: number, windowSeconds: number, subject: string) {
+  const decision = await consumeRateLimitSubject(scope, limit, windowSeconds, subject);
+  if (!decision.allowed) {
+    const retryAfter = decision.retryAfter;
+    throw new ApiError(429, 'rate_limited', `Too many attempts. Try again in ${retryAfter} seconds.`);
+  }
+}
+
+export async function enforceRateLimit(request: Request, scope: string, limit: number, windowSeconds: number, identity?: string) {
+  const address = clientAddress(request);
+  const subject = identity ? `${address}:${identity}` : address;
+  await enforceRateLimitSubject(scope, limit, windowSeconds, subject);
+}

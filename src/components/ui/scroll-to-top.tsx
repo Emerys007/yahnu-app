@@ -12,7 +12,7 @@ export function ScrollToTop() {
   const pathname = usePathname()
   const [isVisible, setIsVisible] = useState(false)
 
-  const isDashboard = pathname.startsWith("/dashboard")
+  const isDashboard = pathname?.startsWith("/dashboard") ?? false
 
   const toggleVisibility = () => {
     // This assumes the main scrollable element is the window or a specific container

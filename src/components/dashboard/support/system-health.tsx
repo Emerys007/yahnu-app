@@ -1,183 +1,172 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Activity, Server, Database, Cpu, HardDrive, RefreshCw, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
-import { useTranslations } from '@/context/localization-context';
-import { useLocalization } from '@/context/localization-context';
+import { useCallback, useEffect, useState } from "react";
+import {
+  Activity,
+  CheckCircle2,
+  Clock3,
+  Cpu,
+  Database,
+  HardDrive,
+  Loader2,
+  RefreshCw,
+  Server,
+  TriangleAlert,
+} from "lucide-react";
 
-type SystemStatus = 'operational' | 'degraded' | 'major_outage';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { apiFetch } from "@/lib/api-client";
 
-type Metric = {
-  name: string;
-  value: number;
-  unit: string;
-  status: 'good' | 'warning' | 'critical';
-  icon: React.ElementType;
+type Health = {
+  status: "operational" | "degraded";
+  checkedAt: string;
+  metrics: {
+    databaseLatencyMs: number;
+    processUptimeSeconds: number;
+    residentMemoryBytes: number;
+    heapUsedBytes: number;
+  };
+  release: { commit: string | null; region: string | null; node: string };
 };
 
-type Incident = {
-  id: string;
-  title: string;
-  description: string;
-  status: 'investigating' | 'identified' | 'monitoring' | 'resolved';
-  timestamp: string;
-};
+type HealthResponse = { data: Health };
+
+function formatBytes(bytes: number) {
+  return new Intl.NumberFormat("fr-CI", {
+    style: "unit",
+    unit: "megabyte",
+    maximumFractionDigits: 1,
+  }).format(bytes / 1024 / 1024);
+}
+
+function formatUptime(seconds: number) {
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  return days > 0 ? `${days} j ${hours} h` : `${hours} h ${minutes} min`;
+}
+
+function formatCheckDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Heure du contrôle indisponible";
+  return new Intl.DateTimeFormat("fr-CI", {
+    dateStyle: "long",
+    timeStyle: "short",
+    timeZone: "Africa/Abidjan",
+  }).format(date);
+}
 
 export default function SystemHealth() {
-  const { t } = useLocalization();
-  const [systemStatus, setSystemStatus] = useState<SystemStatus>('operational');
-  const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [metrics, setMetrics] = useState<Metric[]>([
-    { name: t('dashboard.support.system_health.server_uptime'), value: 99.9, unit: '%', status: 'good', icon: Server },
-    { name: t('dashboard.support.system_health.response_time'), value: 245, unit: 'ms', status: 'good', icon: Activity },
-    { name: t('dashboard.support.system_health.error_rate'), value: 0.1, unit: '%', status: 'good', icon: AlertTriangle },
-    { name: t('dashboard.support.system_health.active_users'), value: 1247, unit: '', status: 'good', icon: Activity },
-    { name: t('dashboard.support.system_health.database_connections'), value: 45, unit: '', status: 'good', icon: Database },
-    { name: t('dashboard.support.system_health.memory_usage'), value: 67, unit: '%', status: 'warning', icon: Activity },
-    { name: t('dashboard.support.system_health.cpu_usage'), value: 34, unit: '%', status: 'good', icon: Cpu },
-    { name: t('dashboard.support.system_health.disk_usage'), value: 78, unit: '%', status: 'warning', icon: HardDrive },
-  ]);
-  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [health, setHealth] = useState<Health | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
-  const getStatusColor = (status: SystemStatus) => {
-    switch (status) {
-      case 'operational': return 'bg-green-500';
-      case 'degraded': return 'bg-yellow-500';
-      case 'major_outage': return 'bg-red-500';
-      default: return 'bg-gray-500';
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await apiFetch<HealthResponse>("/api/system-health");
+      setHealth(response.data);
+      setHasError(false);
+    } catch {
+      setHasError(true);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const getStatusIcon = (status: SystemStatus) => {
-    switch (status) {
-      case 'operational': return CheckCircle;
-      case 'degraded': return AlertTriangle;
-      case 'major_outage': return XCircle;
-      default: return AlertTriangle;
-    }
-  };
+  useEffect(() => { void refresh(); }, [refresh]);
 
-  const getMetricStatusColor = (status: string) => {
-    switch (status) {
-      case 'good': return 'text-green-600';
-      case 'warning': return 'text-yellow-600';
-      case 'critical': return 'text-red-600';
-      default: return 'text-gray-600';
-    }
-  };
-
-  const refreshMetrics = () => {
-    setLastUpdated(new Date());
-    // Simulate metric updates
-    setMetrics(prevMetrics =>
-      prevMetrics.map(metric => ({
-        ...metric,
-        value: metric.value + (Math.random() - 0.5) * 10
-      }))
-    );
-  };
+  const metrics = health ? [
+    { label: "Réponse PostgreSQL", value: `${health.metrics.databaseLatencyMs} ms`, icon: Database, note: "Base principale" },
+    { label: "Durée de service", value: formatUptime(health.metrics.processUptimeSeconds), icon: Clock3, note: "Depuis le dernier redémarrage" },
+    { label: "Mémoire du service", value: formatBytes(health.metrics.residentMemoryBytes), icon: HardDrive, note: "Mémoire résidente" },
+    { label: "Mémoire JavaScript", value: formatBytes(health.metrics.heapUsedBytes), icon: Cpu, note: "Tas utilisé" },
+  ] : [];
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-start justify-between">
-        <div className="flex items-start gap-4">
-          <div className="bg-primary/10 p-3 rounded-lg">
-            <Activity className="h-6 w-6 text-primary" />
-          </div>
+    <div className="space-y-6 lg:space-y-8">
+      <section className="dashboard-surface lagoon-grid overflow-hidden p-5 sm:p-7">
+        <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.support.system_health.title')}</h1>
-            <p className="text-muted-foreground mt-1">{t('dashboard.support.system_health.description')}</p>
+            <p className="section-kicker">Infrastructure · Abidjan</p>
+            <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight sm:text-4xl">État de la plateforme</h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+              Un diagnostic en direct du service Render et de la base PostgreSQL de Yahnu.
+            </p>
           </div>
+          <Button variant="outline" onClick={() => void refresh()} disabled={loading}>
+            {loading
+              ? <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
+              : <RefreshCw className="mr-2 h-4 w-4" />}
+            Relancer le contrôle
+          </Button>
         </div>
-        <Button variant="outline" onClick={refreshMetrics}>
-          <RefreshCw className="mr-2 h-4 w-4" />
-          {t('dashboard.support.system_health.refresh')}
-        </Button>
-      </div>
+      </section>
 
-      {/* Overall Status */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            {React.createElement(getStatusIcon(systemStatus), { className: `h-5 w-5 ${getStatusColor(systemStatus).replace('bg-', 'text-')}` })}
-            {t('dashboard.support.system_health.overall_status')}
-          </CardTitle>
-          <CardDescription>
-            Last updated: {lastUpdated.toLocaleString()}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Badge className={`${getStatusColor(systemStatus)} text-white`}>
-            {t(`dashboard.support.system_health.${systemStatus}`)}
-          </Badge>
-        </CardContent>
-      </Card>
+      {hasError ? (
+        <Alert variant="destructive">
+          <TriangleAlert className="h-4 w-4" />
+          <AlertTitle>Diagnostic indisponible</AlertTitle>
+          <AlertDescription>
+            Les mesures n’ont pas pu être récupérées. Vérifiez la connexion au service puis réessayez.
+          </AlertDescription>
+        </Alert>
+      ) : null}
 
-      {/* System Metrics */}
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight mb-4">{t('dashboard.support.system_health.system_metrics')}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {metrics.map((metric, index) => (
-            <Card key={index}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{metric.name}</CardTitle>
-                <metric.icon className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className={`text-2xl font-bold ${getMetricStatusColor(metric.status)}`}>
-                  {typeof metric.value === 'number' ? metric.value.toFixed(metric.unit === '%' ? 1 : 0) : metric.value}
-                  {metric.unit}
+      {loading && !health ? (
+        <Card aria-live="polite">
+          <CardContent className="flex min-h-64 flex-col items-center justify-center gap-3 text-muted-foreground">
+            <Loader2 className="h-8 w-8 animate-spin text-primary motion-reduce:animate-none" />
+            <p>Contrôle de la plateforme en cours…</p>
+          </CardContent>
+        </Card>
+      ) : health ? (
+        <>
+          <Card className={health.status === "degraded" ? "border-terra/50" : "border-primary/30"}>
+            <CardHeader>
+              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    {health.status === "operational"
+                      ? <CheckCircle2 className="h-5 w-5 text-primary" />
+                      : <TriangleAlert className="h-5 w-5 text-terra" />}
+                    {health.status === "operational" ? "Tous les services répondent" : "Service partiellement dégradé"}
+                  </CardTitle>
+                  <CardDescription className="mt-1">Dernier contrôle : {formatCheckDate(health.checkedAt)} (heure d’Abidjan)</CardDescription>
                 </div>
-                {metric.unit === '%' && (
-                  <Progress
-                    value={metric.value}
-                    className="mt-2"
-                  />
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
+                <Badge variant="outline" className={health.status === "operational" ? "border-primary/30 bg-primary/10 text-primary" : "border-terra/40 bg-terra/10 text-cocoa"}>
+                  <Activity className="mr-1.5 h-3.5 w-3.5" />
+                  {health.status === "operational" ? "Opérationnel" : "À surveiller"}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-2">
+              <Badge variant="outline"><Server className="mr-1 h-3 w-3" />{health.release.region ?? "Région Render"}</Badge>
+              <Badge variant="outline">Moteur {health.release.node}</Badge>
+              {health.release.commit ? <Badge variant="outline">Version {health.release.commit.slice(0, 10)}</Badge> : null}
+            </CardContent>
+          </Card>
 
-      {/* Recent Incidents */}
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight mb-4">{t('dashboard.support.system_health.recent_incidents')}</h2>
-        {incidents.length > 0 ? (
-          <div className="space-y-4">
-            {incidents.map((incident) => (
-              <Card key={incident.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg">{incident.title}</CardTitle>
-                      <CardDescription>{incident.timestamp}</CardDescription>
-                    </div>
-                    <Badge variant="outline">{incident.status}</Badge>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {metrics.map((metric) => (
+              <Card key={metric.label}>
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between">
+                    <span className="rounded-xl bg-muted p-2.5"><metric.icon className="h-4 w-4 text-primary" /></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{incident.description}</p>
-                  <Button variant="link" className="mt-2 h-auto p-0">
-                    {t('dashboard.support.system_health.view_details')}
-                  </Button>
+                  <p className="mt-5 text-sm font-medium text-muted-foreground">{metric.label}</p>
+                  <p className="mt-1 font-display text-2xl font-semibold tracking-tight">{metric.value}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{metric.note}</p>
                 </CardContent>
               </Card>
             ))}
           </div>
-        ) : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
-              <p className="text-lg font-medium text-muted-foreground">{t('dashboard.support.system_health.no_incidents')}</p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+        </>
+      ) : null}
     </div>
   );
 }

@@ -1,61 +1,66 @@
-
-import type {Metadata} from 'next';
-import { Inter } from 'next/font/google'
-import Script from 'next/script';
+import type { Metadata } from 'next';
+import { Afacad_Flux, Bricolage_Grotesque } from 'next/font/google';
 import './globals.css';
-import { Toaster } from "@/components/ui/toaster"
-import { ThemeProvider } from "@/components/ui/theme-provider";
+import { Toaster } from '@/components/ui/toaster';
+import { ThemeProvider } from '@/components/ui/theme-provider';
 import { cn } from '@/lib/utils';
 import { AuthProvider } from '@/context/auth-context';
 import { ConfettiProvider } from '@/context/confetti-context';
 import { LocalizationProvider } from '@/context/localization-context';
 import { CountryProvider } from '@/context/country-context';
 
-const inter = Inter({
+const bodyFont = Afacad_Flux({
   subsets: ['latin'],
-  variable: '--font-inter',
-})
+  variable: '--font-body',
+  display: 'swap',
+});
+
+const displayFont = Bricolage_Grotesque({
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: 'Yahnu',
-  description: 'Une plateforme pour les diplômés, les entreprises et les écoles pour se connecter et trouver des opportunités d\'emploi.',
+  title: {
+    default: 'Yahnu — Le talent ivoirien en mouvement',
+    template: '%s | Yahnu',
+  },
+  description: 'La plateforme carrière qui relie les jeunes diplômés, les entreprises et les établissements de Côte d’Ivoire.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://yahnu.org'),
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr" className={cn(inter.variable)}>
+    <html
+      lang="fr-CI"
+      data-theme="ivory-coast"
+      suppressHydrationWarning
+      className={cn(bodyFont.variable, displayFont.variable)}
+    >
       <head />
-      <body suppressHydrationWarning>
+      <body className="font-body antialiased selection:bg-terra/25 selection:text-foreground" suppressHydrationWarning>
         <AuthProvider>
           <CountryProvider>
             <LocalizationProvider>
               <ConfettiProvider>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-                disableTransitionOnChange
-              >
-                <div vaul-drawer-wrapper="">
-                  <div className="relative flex min-h-screen flex-col bg-background">
-                    {children}
+                <ThemeProvider
+                  attribute="class"
+                  defaultTheme="light"
+                  enableSystem
+                  disableTransitionOnChange
+                >
+                  <div vaul-drawer-wrapper="">
+                    <div className="relative flex min-h-screen flex-col bg-background">
+                      {children}
+                    </div>
                   </div>
-                </div>
-                <Toaster />
-              </ThemeProvider>
-            </ConfettiProvider>
+                  <Toaster />
+                </ThemeProvider>
+              </ConfettiProvider>
             </LocalizationProvider>
           </CountryProvider>
         </AuthProvider>
-        <Script
-          id="hs-script-loader"
-          src="//js.hs-scripts.com/8886743.js?businessUnitId=2764550"
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   );

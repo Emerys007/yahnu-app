@@ -1,242 +1,189 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Image from "next/image"
-import { motion, useInView, AnimatePresence } from "framer-motion"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { GraduationCap, Building, School } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { AnimatedGradientBackground } from "../ui/animated-gradient-background"
+import * as React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ArrowRight, Building2, Check, GraduationCap, School, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useLocalization } from "@/context/localization-context";
 
-const getFeaturesData = () => ({
-  graduates: {
-    title: "Pour les Diplômés",
-    icon: <GraduationCap className="h-8 w-8 mb-4 text-primary" />,
-    image: "/images/hero/uni-partnership.jpg",
-    imageHint: "african graduate students",
-    items: [
-      {
-        title: "Créateur de Profil IA",
-        description: "Générez un profil professionnel et un CV qui se démarquent en quelques minutes.",
+type Audience = "graduates" | "companies" | "schools";
+
+const content = {
+  fr: {
+    eyebrow: "Un réseau, trois façons d’avancer",
+    title: "Le pont entre le campus et la vie professionnelle.",
+    body: "Yahnu réunit les personnes qui font vivre l’emploi des jeunes en Côte d’Ivoire, avec des parcours clairs pour chacun.",
+    imageAlt: "Atelier de carrière réunissant de jeunes diplômés ivoiriens à Abidjan",
+    tabs: {
+      graduates: {
+        label: "Diplômés",
+        title: "Construis un profil qui te ressemble vraiment.",
+        body: "Présente tes compétences, tes projets et tes ambitions avec des mots simples. Puis explore les rôles qui correspondent à ton niveau et à ta ville.",
+        points: ["Un profil lisible, même sans longue expérience", "Des recherches par métier, compétence et ville", "Un suivi clair de chaque candidature"],
+        action: "Commencer mon profil",
+        href: "/signup?role=graduate",
       },
-      {
-        title: "Correspondance d'Emploi Intelligente",
-        description: "Recevez des recommandations d'emploi personnalisées en fonction de vos compétences et de vos aspirations.",
+      companies: {
+        label: "Entreprises",
+        title: "Rencontre les jeunes talents qui feront grandir ton équipe.",
+        body: "Publie une opportunité, centralise les candidatures et garde une relation humaine avec les profils prometteurs, partout en Côte d’Ivoire.",
+        points: ["Des offres structurées et faciles à comprendre", "Un vivier de profils ivoiriens émergents", "Un suivi d’équipe sans tableurs dispersés"],
+        action: "Découvrir l’espace recruteur",
+        href: "/signup?role=company",
       },
-      {
-        title: "Développement des Compétences",
-        description: "Accédez à des évaluations pour valider vos compétences et gagner des badges pour votre profil.",
+      schools: {
+        label: "Établissements",
+        title: "Prolonge l’accompagnement bien après la remise du diplôme.",
+        body: "Crée des passerelles avec les employeurs, partage les événements utiles et garde un lien concret avec l’insertion de tes diplômés.",
+        points: ["Des partenariats école–entreprise centralisés", "Un espace pour orienter les diplômés", "Des actions d’insertion visibles et suivies"],
+        action: "Découvrir l’espace établissement",
+        href: "/signup?role=school",
       },
-    ],
+    },
   },
-  companies: {
-    title: "Pour les Entreprises",
-    icon: <Building className="h-8 w-8 mb-4 text-primary" />,
-    image: "/images/IndustryPartnership.jpeg",
-    imageHint: "recruitment dashboard",
-    items: [
-      {
-        title: "Sourcing de Talents Efficace",
-        description: "Accédez à un vivier de diplômés qualifiés issus des meilleures universités.",
+  en: {
+    eyebrow: "One network, three ways forward",
+    title: "The bridge between campus and professional life.",
+    body: "Yahnu connects the people shaping youth employment in Côte d’Ivoire, with a clear path for every role.",
+    imageAlt: "Career workshop with young Ivorian graduates in Abidjan",
+    tabs: {
+      graduates: {
+        label: "Graduates",
+        title: "Build a profile that genuinely sounds like you.",
+        body: "Present your skills, projects and ambitions in plain language, then explore roles that fit your level and your city.",
+        points: ["A clear profile, even without years of experience", "Search by role, skill and Ivorian city", "A simple view of every application"],
+        action: "Start my profile",
+        href: "/signup?role=graduate",
       },
-      {
-        title: "Recrutement Simplifié",
-        description: "Utilisez des outils IA pour filtrer les candidats et gérer votre pipeline de recrutement.",
+      companies: {
+        label: "Companies",
+        title: "Meet the young talent that will help your team grow.",
+        body: "Publish an opportunity, centralize applications and keep a human connection with promising candidates across Côte d’Ivoire.",
+        points: ["Structured, easy-to-understand listings", "A pipeline of emerging Ivorian talent", "Team follow-up without scattered spreadsheets"],
+        action: "Explore the recruiter space",
+        href: "/signup?role=company",
       },
-      {
-        title: "Aperçus Basés sur les Données",
-        description: "Suivez vos métriques de recrutement et comprenez les tendances du marché des talents.",
+      schools: {
+        label: "Institutions",
+        title: "Keep supporting graduates long after graduation day.",
+        body: "Create bridges with employers, share useful events and maintain a practical connection with graduate employment outcomes.",
+        points: ["School–company partnerships in one place", "A dedicated graduate guidance space", "Visible, trackable employability actions"],
+        action: "Explore the institution space",
+        href: "/signup?role=school",
       },
-    ],
+    },
   },
-  schools: {
-    title: "Pour les Écoles",
-    icon: <School className="h-8 w-8 mb-4 text-primary" />,
-    image: "/images/University.png",
-    imageHint: "academic analytics",
-    items: [
-      {
-        title: "Liens avec l'Industrie",
-        description: "Établissez des partenariats avec des entreprises de premier plan pour des stages et des opportunités d'emploi.",
-      },
-      {
-        title: "Améliorez l'Employabilité des Diplômés",
-        description: "Suivez le succès de vos anciens élèves et obtenez des informations pour améliorer vos programmes.",
-      },
-      {
-        title: "Mettez en Valeur Votre Institution",
-        description: "Présentez vos programmes et vos réussites à un public plus large.",
-      },
-    ],
-  },
-});
+} as const;
 
-function FeatureCard({ feature }: { feature: { title: string; description: string } }) {
-    const ref = React.useRef(null);
-    const isInView = useInView(ref, { once: true, amount: 0.5 });
-
-    const variants = {
-      hidden: { opacity: 0, y: 20 },
-      visible: { opacity: 1, y: 0 },
-    };
-
-    return (
-      <motion.div
-        ref={ref}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        variants={variants}
-        transition={{ duration: 0.5 }}
-      >
-        <Card className="h-full bg-background/80 backdrop-blur-sm border-border/50 shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <CardHeader>
-            <CardTitle>{feature.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">{feature.description}</p>
-          </CardContent>
-        </Card>
-      </motion.div>
-    );
-  }
-
-const AnimatedTabs = () => {
-  const [activeTab, setActiveTab] = React.useState("graduates");
-  const featuresData = getFeaturesData();
-
-  const tabs = [
-    { id: 'graduates', label: "Pour les Diplômés", icon: GraduationCap },
-    { id: 'companies', label: "Pour les Entreprises", icon: Building },
-    { id: 'schools', label: "Pour les Écoles", icon: School },
-  ];
-
-  const imageVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1 },
-  };
-
-  return (
-    <div className="w-full">
-      <div className="flex justify-center mb-12">
-        {/* Desktop Tabs */}
-        <div className="hidden sm:flex relative w-full max-w-lg items-center justify-center rounded-lg border bg-background/50 p-1">
-            {tabs.map((tab) => (
-                <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                    "relative z-10 flex-1 rounded-md px-4 py-2.5 text-md font-medium transition-colors duration-300",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-muted",
-                    activeTab === tab.id ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-                )}
-                >
-                <div className="flex items-center justify-center gap-2">
-                    <tab.icon className="h-5 w-5" />
-                    <span>{tab.label}</span>
-                </div>
-                </button>
-            ))}
-            <motion.div
-                layoutId="active-features-tab-highlight"
-                className="absolute inset-0 z-0 h-full p-1"
-                style={{
-                    width: `${100 / tabs.length}%`,
-                    left: `${tabs.findIndex(t => t.id === activeTab) * (100 / tabs.length)}%`,
-                }}
-                transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
-            >
-                <div className="h-full w-full rounded-md bg-primary shadow-md" />
-            </motion.div>
-        </div>
-        {/* Mobile Tabs */}
-        <div className="sm:hidden flex flex-col w-full gap-2">
-            {tabs.map((tab) => (
-                 <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={cn(
-                        "relative w-full rounded-lg px-4 py-3 text-md font-medium transition-colors duration-300 border",
-                        activeTab === tab.id ? "bg-primary text-primary-foreground border-transparent" : "bg-background/50 text-muted-foreground hover:bg-muted/80"
-                    )}
-                    >
-                    <div className="flex items-center justify-center gap-2">
-                        <tab.icon className="h-5 w-5" />
-                        <span>{tab.label}</span>
-                    </div>
-                </button>
-            ))}
-        </div>
-      </div>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.3 }}
-        >
-          {Object.entries(featuresData).map(([key, data]) =>
-            key === activeTab ? (
-              <div key={key}>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                  <motion.div
-                    key={`${activeTab}-image`}
-                    initial="hidden"
-                    animate="visible"
-                    variants={imageVariants}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="relative w-full h-80 lg:h-96 rounded-2xl overflow-hidden shadow-2xl"
-                  >
-                    <Image
-                      src={data.image}
-                      alt={`${data.title} features`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover"
-                      data-ai-hint={data.imageHint}
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                  </motion.div>
-                  <div className="space-y-6">
-                    {data.items.map((feature, index) => (
-                      <FeatureCard key={index} feature={feature} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : null
-          )}
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
-};
-
+const tabIcons = { graduates: GraduationCap, companies: Building2, schools: School } as const;
 
 export function FeaturesSection() {
-    const ref = React.useRef(null);
-    const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const { language } = useLocalization();
+  const reducedMotion = useReducedMotion();
+  const page = content[language === "fr" ? "fr" : "en"];
+  const [active, setActive] = React.useState<Audience>("graduates");
+  const selected = page.tabs[active];
+  const tabs = Object.keys(page.tabs) as Audience[];
 
   return (
-    <section ref={ref} className="py-24 relative overflow-hidden" id="features">
-      <AnimatedGradientBackground />
-      <div className="container mx-auto relative z-10">
-        <motion.div
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-            variants={{ hidden: { opacity: 0, y: -20 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-        >
-          <h2 className="text-4xl font-bold tracking-tight">Une Plateforme, Trois Solutions</h2>
-          <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-            Que vous soyez un jeune diplômé, une entreprise en croissance ou une institution académique de premier plan, Yahnu est conçu pour vous.
-          </p>
-        </motion.div>
+    <section id="features" className="relative overflow-hidden bg-cocoa py-20 text-white sm:py-28">
+      <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,.25)_1px,transparent_0)] [background-size:24px_24px]" />
+      <div className="container relative mx-auto">
+        <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-end">
+          <div>
+            <p className="section-kicker border-white/15 bg-white/10 text-[#ffd5b3]">
+              <Users className="h-4 w-4" aria-hidden="true" />
+              {page.eyebrow}
+            </p>
+            <h2 className="mt-5 max-w-xl font-display text-4xl font-semibold leading-[1.04] tracking-[-0.04em] sm:text-5xl">
+              {page.title}
+            </h2>
+          </div>
+          <p className="max-w-2xl text-lg leading-8 text-white/70 lg:justify-self-end">{page.body}</p>
+        </div>
 
-        <AnimatedTabs />
+        <div className="mt-12 grid overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.06] shadow-2xl shadow-black/20 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="relative min-h-[22rem] lg:min-h-[38rem]">
+            <Image
+              src="/images/yahnu-career-workshop-v2.webp"
+              alt={page.imageAlt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 45vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-cocoa/75 via-transparent to-transparent" />
+            <div className="absolute bottom-5 left-5 right-5 flex flex-wrap gap-2">
+              {["Abidjan", "Bouaké", "Yamoussoukro", "Korhogo", "San-Pédro"].map((city) => (
+                <span key={city} className="rounded-full border border-white/25 bg-cocoa/65 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur">
+                  {city}
+                </span>
+              ))}
+            </div>
+          </div>
 
+          <div className="p-5 sm:p-8 lg:p-10">
+            <div className="flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label={page.eyebrow}>
+              {tabs.map((tab) => {
+                const Icon = tabIcons[tab];
+                const isActive = active === tab;
+                return (
+                  <button
+                    key={tab}
+                    id={`feature-tab-${tab}`}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    aria-controls={`feature-panel-${tab}`}
+                    onClick={() => setActive(tab)}
+                    className={cn(
+                      "flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-terra focus-visible:ring-offset-2 focus-visible:ring-offset-cocoa",
+                      isActive ? "border-terra bg-terra text-cocoa" : "border-white/15 bg-white/5 text-white/65 hover:bg-white/10 hover:text-white",
+                    )}
+                  >
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                    {page.tabs[tab].label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={active}
+                id={`feature-panel-${active}`}
+                role="tabpanel"
+                aria-labelledby={`feature-tab-${active}`}
+                initial={reducedMotion ? false : { opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reducedMotion ? undefined : { opacity: 0, y: -8 }}
+                transition={{ duration: reducedMotion ? 0 : 0.22 }}
+                className="pt-10"
+              >
+                <h3 className="max-w-xl font-display text-3xl font-semibold leading-tight sm:text-4xl">{selected.title}</h3>
+                <p className="mt-5 max-w-xl text-base leading-7 text-white/70">{selected.body}</p>
+                <ul className="mt-7 space-y-4">
+                  {selected.points.map((point) => (
+                    <li key={point} className="flex gap-3 text-sm leading-6 text-white/90 sm:text-base">
+                      <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground">
+                        <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                      </span>
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+                <Button variant="terra" size="lg" className="mt-9" asChild>
+                  <Link href={selected.href}>
+                    {selected.action}
+                    <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                  </Link>
+                </Button>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
       </div>
     </section>
   );

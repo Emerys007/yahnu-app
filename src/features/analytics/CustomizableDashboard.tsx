@@ -5,8 +5,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Responsive, WidthProvider, type Layout } from "react-grid-layout";
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
-import { db } from "@/lib/firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Loader2, Trash2 } from "lucide-react";
 import { ReportWidget, type Report as ReportType } from "./ReportWidget";
@@ -17,6 +16,16 @@ import 'react-resizable/css/styles.css';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 type ReportMap = { [key: string]: ReportType };
+
+type DashboardPreferencesResponse = {
+    data: {
+        preferences: {
+            layouts: { lg?: Layout[] };
+            reports: ReportMap;
+            updatedAt: string;
+        } | null;
+    };
+}
 
 interface CustomizableDashboardProps {
     initialLayout: Layout[];
@@ -31,45 +40,61 @@ export const CustomizableDashboard = ({ initialLayout, initialReports }: Customi
     const [reports, setReports] = useState<ReportMap>(initialReports);
     const [isSaving, setIsSaving] = useState(false);
     const hasMounted = useRef(false);
+    const pendingSaves = useRef(0);
+    const saveQueue = useRef<Promise<void>>(Promise.resolve());
 
     useEffect(() => {
         setIsMounted(true);
-        // Load layout from DB on initial mount
         const loadDashboard = async () => {
-            if (!user) return;
-            const dashboardDocRef = doc(db, "dashboards", user.uid);
-            const docSnap = await getDoc(dashboardDocRef);
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                setLayouts(data.layouts || { lg: [] });
-                setReports(data.reports || {});
+            if (!user) {
+                hasMounted.current = true;
+                return;
             }
-            // Set hasMounted to true after the first attempt to load data
-            hasMounted.current = true;
+            try {
+                const response = await apiFetch<DashboardPreferencesResponse>('/api/dashboard-preferences');
+                const preferences = response.data.preferences;
+                if (preferences) {
+                    setLayouts({ lg: preferences.layouts.lg ?? [] });
+                    setReports(preferences.reports ?? {});
+                }
+            } catch (error) {
+                console.error("Error loading dashboard:", error);
+                toast({
+                    title: "Dashboard unavailable",
+                    description: "Your saved layout could not be loaded. The default layout is shown instead.",
+                    variant: "destructive",
+                });
+            } finally {
+                hasMounted.current = true;
+            }
         };
-        loadDashboard();
-    }, [user]);
+        void loadDashboard();
+    }, [user, toast]);
 
-    const saveDashboard = async (newLayouts: { lg: Layout[] }, newReports: ReportMap) => {
+    const saveDashboard = (newLayouts: { lg: Layout[] }, newReports: ReportMap) => {
         if (!user) return;
+        pendingSaves.current += 1;
         setIsSaving(true);
-        try {
-            const dashboardDocRef = doc(db, "dashboards", user.uid);
-            await setDoc(dashboardDocRef, { layouts: newLayouts, reports: newReports });
-            toast({
-                title: "Dashboard Saved",
-                description: "Your dashboard layout has been saved.",
+        const task = saveQueue.current.then(async () => {
+            await apiFetch('/api/dashboard-preferences', {
+                method: 'PUT',
+                body: JSON.stringify({ layouts: newLayouts, reports: newReports }),
             });
-        } catch (error) {
-            console.error("Error saving dashboard:", error);
-            toast({
-                title: "Error",
-                description: "Could not save your dashboard layout.",
-                variant: "destructive",
+        });
+        saveQueue.current = task.catch(() => undefined);
+        void task
+            .catch((error) => {
+                console.error("Error saving dashboard:", error);
+                toast({
+                    title: "Error",
+                    description: "Could not save your dashboard layout.",
+                    variant: "destructive",
+                });
+            })
+            .finally(() => {
+                pendingSaves.current -= 1;
+                if (pendingSaves.current === 0) setIsSaving(false);
             });
-        } finally {
-            setIsSaving(false);
-        }
     };
 
     const onLayoutChange = (layout: Layout[], allLayouts: { lg: Layout[] }) => {
@@ -96,10 +121,11 @@ export const CustomizableDashboard = ({ initialLayout, initialReports }: Customi
 
         const newReports = { ...reports, [reportId]: report };
         
+        const nextRow = layouts.lg.reduce((bottom, item) => Math.max(bottom, item.y + item.h), 0);
         const newLayoutItem: Layout = {
             i: reportId,
             x: (layouts.lg.length * 4) % 12, // Cascade new reports
-            y: Infinity, // Puts it at the bottom
+            y: nextRow,
             w: 4,
             h: 2,
         };
@@ -127,7 +153,8 @@ export const CustomizableDashboard = ({ initialLayout, initialReports }: Customi
 
     return (
         <div>
-            <div className="flex justify-end mb-4">
+            <div className="flex items-center justify-end gap-3 mb-4">
+                {isSaving && <span className="text-sm text-muted-foreground">Saving layout...</span>}
                 <CreateReportDialog onAddReport={addReport} />
             </div>
              <ResponsiveGridLayout

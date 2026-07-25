@@ -1,145 +1,74 @@
-"use client"
+import Link from 'next/link';
+import { ArrowUpRight, Mail, MapPin } from 'lucide-react';
+import { Logo } from '@/components/ui/logo';
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Facebook, Twitter, Linkedin, Mail, Phone } from "lucide-react"
-import { useLocalization } from "@/context/localization-context"
-
-import { Logo } from "@/components/ui/logo"
+const linkGroups = [
+  {
+    title: 'Explorer',
+    links: [
+      ['Opportunités', '/jobs'],
+      ['Entreprises', '/companies'],
+      ['Établissements', '/schools'],
+      ['Conseils carrière', '/blog'],
+    ],
+  },
+  {
+    title: 'Yahnu',
+    links: [
+      ['Notre mission', '/about'],
+      ['Créer un profil', '/signup'],
+      ['Se connecter', '/login'],
+      ['Centre d’aide', '/dashboard/support'],
+    ],
+  },
+  {
+    title: 'Confiance',
+    links: [
+      ['Confidentialité', '/privacy-policy'],
+      ['Conditions d’utilisation', '/terms-of-service'],
+    ],
+  },
+] as const;
 
 export function Footer() {
-  const pathname = usePathname();
-  const isDashboard = pathname.startsWith("/dashboard");
-  const { t } = useLocalization();
-
   return (
-    <footer className="bg-background border-t">
-      <div className="w-full py-16 px-4 sm:px-6 lg:px-8">
-        {!isDashboard && (
-          <>
-            <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-12">
-                {/* Brand Section */}
-                <div className="lg:col-span-2 space-y-6">
-                  <div className="flex items-center gap-3">
-                    <Logo className="h-10 w-10 text-primary" />
-                    <span className="text-2xl font-bold text-foreground">Yahnu</span>
-                  </div>
-                  <p className="text-muted-foreground max-w-md leading-relaxed text-sm">
-                    Connecter les talents, les entreprises et les écoles en Côte d'Ivoire pour un avenir professionnel brillant.
-                  </p>
-                </div>
-
-                {/* Platform Links */}
-                <div className="space-y-6">
-                  <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Plateforme</h3>
-                  <ul className="space-y-4">
-                    <li>
-                      <Link href="/jobs" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 font-medium">
-                        Emplois
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/companies" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 font-medium">
-                        Entreprises
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/schools" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 font-medium">
-                        Écoles
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 font-medium">
-                        Blog
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Legal Links */}
-                <div className="space-y-6">
-                  <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Légal</h3>
-                  <ul className="space-y-4">
-                    <li>
-                      <Link href="/privacy-policy" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 font-medium">
-                        Politique de confidentialité
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/terms-of-service" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 font-medium">
-                        Conditions d'utilisation
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Contact Section */}
-                <div className="space-y-6">
-                  <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Nous contacter</h3>
-                  <ul className="space-y-4">
-                    <li>
-                      <a href="mailto:contact@yahnu.org" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors duration-200 group font-medium">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted group-hover:bg-primary/10 transition-colors">
-                          <Mail className="h-4 w-4" />
-                        </div>
-                        <span>contact@yahnu.org</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="tel:+2250102030405" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors duration-200 group font-medium">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted group-hover:bg-primary/10 transition-colors">
-                          <Phone className="h-4 w-4" />
-                        </div>
-                        <span>+225 0102030405</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Social Media */}
-                <div className="space-y-6">
-                  <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Suivez-nous</h3>
-                  <div className="flex gap-4">
-                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" 
-                       className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
-                      <Twitter className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                      <span className="sr-only">Twitter</span>
-                    </a>
-                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" 
-                       className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
-                      <Linkedin className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                      <span className="sr-only">LinkedIn</span>
-                    </a>
-                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
-                       className="flex items-center justify-center w-10 h-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-200 group">
-                      <Facebook className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                      <span className="sr-only">Facebook</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
+    <footer className="relative overflow-hidden bg-[hsl(165_48%_10%)] text-[hsl(42_45%_95%)]">
+      <div className="ci-pattern absolute inset-0 opacity-20" aria-hidden="true" />
+      <div className="page-shell relative py-14 sm:py-20">
+        <div className="grid gap-12 border-b border-white/12 pb-12 lg:grid-cols-[1.35fr_2fr]">
+          <div className="max-w-md">
+            <Link href="/" className="inline-flex items-center gap-3">
+              <Logo className="h-12 w-12 text-white" />
+              <span className="font-headline text-2xl font-bold">Yahnu</span>
+            </Link>
+            <p className="mt-5 text-lg leading-7 text-white/70">
+              Le point de rencontre entre le potentiel des jeunes diplômés et les opportunités qui font avancer la Côte d’Ivoire.
+            </p>
+            <div className="mt-6 space-y-3 text-sm text-white/70">
+              <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-terra" />Abidjan, Côte d’Ivoire</p>
+              <a className="flex items-center gap-2 transition-colors hover:text-white" href="mailto:contact@yahnu.org"><Mail className="h-4 w-4 text-terra" />contact@yahnu.org</a>
             </div>
-
-            {/* Bottom Section */}
-            <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-border/60">
-              <div className="text-center space-y-2">
-                <p className="text-sm text-muted-foreground font-medium">
-                  &copy; {new Date().getFullYear()} Yahnu. Tous droits réservés.
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Fait avec ❤️ par Look Time Life
-                </p>
-              </div>
-            </div>
-          </>
-        )}
-        {isDashboard && (
-          <div className="text-center text-sm text-muted-foreground max-w-6xl mx-auto">
-            <p>&copy; {new Date().getFullYear()} Yahnu. {t('footer.rights_reserved')}</p>
           </div>
-        )}
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+            {linkGroups.map((group) => (
+              <div key={group.title}>
+                <h2 className="text-xs font-bold uppercase tracking-[0.16em] text-terra">{group.title}</h2>
+                <ul className="mt-4 space-y-3">
+                  {group.links.map(([label, href]) => (
+                    <li key={href}>
+                      <Link href={href} className="inline-flex items-center gap-1 text-sm text-white/70 transition-colors hover:text-white">{label}<ArrowUpRight className="h-3.5 w-3.5" /></Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 pt-7 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} Yahnu. Tous droits réservés.</p>
+          <p>Conçu pour la nouvelle génération de talents ivoiriens.</p>
+        </div>
       </div>
     </footer>
-  )
+  );
 }

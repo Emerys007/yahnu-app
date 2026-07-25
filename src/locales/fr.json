@@ -1,324 +1,2069 @@
 {
-  "common": {
-    "slogan": "Connecter. Grandir. Réussir.",
-    "toggle_nav": "Basculer le menu de navigation",
-    "more_options": "Plus d'options",
-    "english": "Anglais",
-    "french": "Français",
-    "support": "Assistance",
-    "knowledge_base": {
-      "title": "Base de connaissances",
-      "description": "Gérer les articles d'aide et la documentation",
-      "create_article": "Créer un article",
-      "edit_article": "Modifier l'article",
-      "article_title": "Titre de l'article",
-      "article_content": "Contenu de l'article",
-      "visibility": "Visibilité",
-      "public": "Public",
-      "private": "Privé",
-      "category": "Catégorie",
-      "general": "Général",
-      "technical": "Technique",
-      "billing": "Facturation",
-      "account": "Compte",
-      "save": "Enregistrer",
-      "cancel": "Annuler",
-      "delete": "Supprimer",
-      "existing_articles": "Articles existants",
-      "no_articles": "Aucun article trouvé.",
-      "last_updated": "Dernière mise à jour",
-      "edit": "Modifier"
+  "": "",
+  "+1 this week": "+1 cette semaine",
+  "+10% from last quarter": "+10% par rapport au trimestre dernier",
+  "+15% from last month": "+15% par rapport au mois dernier",
+  "+2 in the last 7 days": "+2 ces 7 derniers jours",
+  "+20% from last month": "+20% par rapport au mois dernier",
+  "+25 this semester": "+25 ce semestre",
+  "+{count} more": "+{count} de plus",
+  ",": ",",
+  "-5 days from last quarter": "-5 jours par rapport au trimestre dernier",
+  "/dashboard/admin/overview": "/dashboard/admin/overview",
+  "/dashboard/content": "/dashboard/content",
+  "/dashboard/reports/company-analytics": "/dashboard/reports/company-analytics",
+  "/dashboard/reports/school-analytics": "/dashboard/reports/school-analytics",
+  "/dashboard/support/center": "/dashboard/support/center",
+  "10:00 AM - 4:00 PM": "10:00 - 16:00",
+  "1:00 PM - 5:00 PM": "13:00 - 17:00",
+  "3 new partnerships": "3 nouveaux partenariats",
+  "75% completion rate": "75% de taux d'achèvement",
+  "7:00 PM onwards": "À partir de 19h00",
+  "@": "@",
+  "A hands-on workshop covering the fundamentals of AI and Machine Learning": {
+    " Led by industry experts from Google": {
+      "": "Atelier pratique couvrant les fondamentaux de l'IA et de l'apprentissage automatique. Animé par des experts de Google."
+    }
+  },
+  "A list of all events you have scheduled": {
+    "": "Une liste de tous les événements que vous avez programmés."
+  },
+  "A list of all jobs you have posted on the platform": {
+    "": "Une liste de toutes les offres d'emploi que vous avez publiées sur la plateforme."
+  },
+  "A short, catchy phrase for your company": {
+    "": "Une phrase courte et accrocheuse pour votre entreprise."
+  },
+  "AI & Assessments": "IA & Évaluations",
+  "AI & Machine Learning Workshop": "Atelier IA et Apprentissage Automatique",
+  "AI Insights": "Statistiques IA",
+  "AI Interview Prep": "Préparation à l'entretien par l'IA",
+  "AI Tools": "Outils d'IA",
+  "About": "À propos",
+  "About Us": "À propos de nous",
+  "About Your Company": "À propos de votre entreprise",
+  "About Your School": "À propos de votre école",
+  "Access to this account has been temporarily disabled due to many failed login attempts": {
+    " You can immediately restore it by resetting your password or you can try again later": {
+      "": "L'accès à ce compte a été temporairement désactivé en raison de nombreuses tentatives de connexion infructueuses. Vous pouvez le restaurer immédiatement en réinitialisant votre mot de passe ou réessayer plus tard."
+    }
+  },
+  "Account Created!": "Compte créé !",
+  "Account Information": "Informations du compte",
+  "Account Type": "Type de compte",
+  "Action": "Action",
+  "Action Forbidden": "Action Interdite",
+  "Actions": "Actions",
+  "Activate": "Activer",
+  "Activate accounts and verify academic credentials": {
+    "": "Activer les comptes et vérifier les diplômes académiques."
+  },
+  "Active Accounts": "Comptes Actifs",
+  "Active Graduates": "Diplômés Actifs",
+  "Active Job Postings": "Offres d'emploi actives",
+  "Add Degree": "Ajouter un diplôme",
+  "Add Member": "Ajouter un membre",
+  "Add New Job Posting": "Ajouter une nouvelle offre d'emploi",
+  "Add new job": "Ajouter un nouvel emploi",
+  "Admin": "Administrateur",
+  "Admin Removed": "Administrateur supprimé",
+  "Admin account created": {
+    " You can now log in": {
+      "": "Compte administrateur créé. Vous pouvez maintenant vous connecter."
+    }
+  },
+  "Administrator Invitation Link": "Lien d'invitation pour l'administrateur",
+  "Agriculture": "Agriculture",
+  "All Graduates": "Tous les diplômés",
+  "All Types": "Tous types",
+  "All rights reserved": {
+    "": "Tous droits réservés."
+  },
+  "All types": "Tous types",
+  "Allow companies to view your full profile": {
+    "": "Autoriser les entreprises à voir votre profil complet."
+  },
+  "Alumni Networking Night": "Soirée de réseautage des anciens",
+  "An invitation to apply has been sent to": "Une invitation à postuler a été envoyée à",
+  "An overview of all the jobs you have applied for": {
+    "": "Un aperçu de toutes les offres d'emploi auxquelles vous avez postulé."
+  },
+  "Analytics": "Analyses",
+  "Annual Tech Career Fair": "Salon annuel des carrières technologiques",
+  "Applicant Funnel": "Entonnoir de candidatures",
+  "Applicant Name": "Nom du candidat",
+  "Applicant Pipeline": "Pipeline des candidats",
+  "Applicants": "Candidats",
+  "Applicants by School": "Candidats par école",
+  "Application Tracking": "Suivi des candidatures",
+  "Application Views": "Vues des candidatures",
+  "Application Volume": "Volume des candidatures",
+  "Applications": "Candidatures",
+  "Apply": "Postuler",
+  "Apply Now": "Postuler maintenant",
+  "Approvals": "Approbations",
+  "Assesses soft skills, cultural fit, and situational judgment": {
+    "": "Évalue les compétences non techniques, l'adéquation culturelle et le jugement situationnel."
+  },
+  "Assessment Complete": "Évaluation terminée",
+  "Assessment Generator": "Générateur d'évaluations",
+  "Assessment Rules": "Règles de l'évaluation",
+  "Assessment Setup": "Configuration de l'évaluation",
+  "Assessments Sent": "Évaluations envoyées",
+  "Available": "Disponible",
+  "Available for hire": "Disponible pour l'embauche",
+  "Avg": {
+    " Time to Hire": "Temps moyen d'embauche"
+  },
+  "Basic information about your organization": {
+    "": "Informations de base sur votre organisation."
+  },
+  "Basic information about your school": {
+    "": "Informations de base sur votre école."
+  },
+  "Behavioral Questions": "Questions comportementales",
+  "Billing Information": "Informations de facturation",
+  "Billing features coming soon": {
+    "": "Fonctionnalités de facturation bientôt disponibles."
+  },
+  "Blog": "Blog",
+  "Bold": "Gras",
+  "Broadcast Message": "Message de diffusion",
+  "Broadcast Sent": "Diffusion envoyée",
+  "Build and maintain your professional identity": {
+    "": "Construisez et maintenez votre identité professionnelle."
+  },
+  "Camera Access": "Accès caméra",
+  "Camera Access Denied": "Accès caméra refusé",
+  "Candidates": "Candidats",
+  "Career Fair": "Salon de l'emploi",
+  "Certifications": "Certifications",
+  "Certifications & Badges": "Certifications & Badges",
+  "Change Password": "Changer le mot de passe",
+  "Chatbot Builder": "Constructeur de Chatbot",
+  "Check back later for events from your school and companies": {
+    "": "Revenez plus tard pour les événements de votre école et des entreprises."
+  },
+  "Check your inbox to create a new password": {
+    "": "Vérifiez votre boîte de réception pour créer un nouveau mot de passe."
+  },
+  "Choose a job": {
+    "": {
+      "": {
+        "": "Choisissez une offre d'emploi"
+      }
+    }
+  },
+  "Choose who to invite to this event": {
+    "": "Choisissez qui inviter à cet événement."
+  },
+  "City": "Ville",
+  "City, Country": "Ville, Pays",
+  "City in Côte d’Ivoire": "Ville en Côte d’Ivoire",
+  "City, state, remote": "Ville ou télétravail en Côte d’Ivoire",
+  "Clear Formatting": "Effacer la mise en forme",
+  "Close": "Fermer",
+  "Code View": "Vue du code",
+  "Coming Soon to {country}": "Bientôt disponible en {country}",
+  "Companies": "Entreprises",
+  "Companies that have hired the most graduates from your institution": {
+    "": "Entreprises qui ont embauché le plus de diplômés de votre institution."
+  },
+  "Companies you are currently partnered with": {
+    "": "Entreprises avec lesquelles vous êtes actuellement en partenariat."
+  },
+  "Company": "Entreprise",
+  "Company Address": "Adresse de l'entreprise",
+  "Company Dashboard": "Tableau de bord de l'entreprise",
+  "Company Details": "Détails de l'entreprise",
+  "Company Events": "Événements d'entreprise",
+  "Company Info": "Informations sur l'entreprise",
+  "Company Logo": "Logo de l'entreprise",
+  "Company Name": "Nom de l'entreprise",
+  "Company Profile": "Profil de l'entreprise",
+  "Company Profile Updated": "Profil d'entreprise mis à jour",
+  "Company Profiles": "Profils d'entreprise",
+  "Complete Your Admin Registration": "Terminez votre inscription d'administrateur",
+  "Complete your profile to stand out": "Complétez votre profil pour vous démarquer",
+  "Compose a message to send to multiple graduates at once": {
+    " They will receive it as an individual message": {
+      "": "Rédigez un message à envoyer à plusieurs diplômés à la fois. Ils le recevront comme un message individuel."
+    }
+  },
+  "Configure your email notifications for new job opportunities": {
+    "": "Configurez vos notifications par e-mail pour les nouvelles opportunités d'emploi."
+  },
+  "Confirm Password": "Confirmer le mot de passe",
+  "Congratulations!": "Félicitations !",
+  "Connect with fellow alumni and expand your professional network": {
+    " An evening of great conversations and opportunities": {
+      "": "Rencontrez d'anciens étudiants et développez votre réseau professionnel. Une soirée de conversations et d'opportunités."
+    }
+  },
+  "Connecting talent, companies, and schools in {country}": {
+    "": "Connecter les talents, les entreprises et les écoles en {country}."
+  },
+  "Contact Email": "E-mail de contact",
+  "Contact Graduate": "Contacter le diplômé",
+  "Contact Initiated": "Contact initié",
+  "Contact Us": "Nous contacter",
+  "Contact Your School": "Contactez votre école",
+  "Content": "Contenu",
+  "Content Management": "Gestion de contenu",
+  "Content Manager": "Gestionnaire de contenu",
+  "Content Paragraph 1": "Paragraphe de contenu 1",
+  "Content Paragraph 2": "Paragraphe de contenu 2",
+  "Contract": "Contrat",
+  "Control the visibility of your professional profile": {
+    "": "Contrôlez la visibilité de votre profil professionnel."
+  },
+  "Copy": "Copier",
+  "Could not create invitation link": {
+    "": "Impossible de créer le lien d'invitation."
+  },
+  "Could not sign in with Google": {
+    "": "Impossible de se connecter avec Google."
+  },
+  "Country": "Pays",
+  "Create Admin Account": "Créer un compte administrateur",
+  "Create Event": "Créer un événement",
+  "Create Password": "Créer un mot de passe",
+  "Create a New Event": "Créer un nouvel événement",
+  "Create and manage events to engage with potential candidates": {
+    "": "Créez et gérez des événements pour interagir avec les candidats potentiels."
+  },
+  "Creating Account": {
+    "": {
+      "": {
+        "": "Création du compte..."
+      }
+    }
+  },
+  "Current Partners": "Partenaires actuels",
+  "Daily": "Quotidiennement",
+  "Dashboard": "Tableau de bord",
+  "Date": "Date",
+  "Deactivate": "Désactiver",
+  "Degree": "Diplôme",
+  "Describe your company": "Décrivez votre entreprise",
+  "Describe your school": "Décrivez votre école",
+  "Describe your work experience": {
+    "": {
+      "": {
+        "": "Décrivez votre expérience professionnelle"
+      }
+    }
+  },
+  "Description": "Description",
+  "Detail your professional journey": {
+    "": "Détaillez votre parcours professionnel."
+  },
+  "Disabled": "Désactivé",
+  "Didn't receive a verification email?": "Vous n'avez pas reçu l'e-mail de vérification ?",
+  "Discover Schools": "Découvrir les écoles",
+  "Discover companies hiring on the Yahnu platform": {
+    "": "Découvrez les entreprises qui recrutent sur la plateforme Yahnu."
+  },
+  "Discover exclusive events hosted by your school and top companies": {
+    "": "Découvrez des événements exclusifs organisés par votre école et les meilleures entreprises."
+  },
+  "Distribution of graduate placements across different industries": {
+    "": "Répartition des placements de diplômés dans différents secteurs."
+  },
+  "Down from 32 days last quarter": "Moins que les 32 jours du trimestre dernier",
+  "Education": "Formation",
+  "Education Details": "Détails de la formation",
+  "Education Verified": "Formation vérifiée",
+  "Email": "E-mail",
+  "Email Address": "Adresse e-mail",
+  "Email required": "E-mail requis",
+  "Enabled": "Activé",
+  "Enrolled Graduates": "Diplômés inscrits",
+  "Error": "Erreur",
+  "Event Created": "Événement créé",
+  "Event Deleted": "Événement supprimé",
+  "Event Management": "Gestion d'événements",
+  "Event Title": "Titre de l'événement",
+  "Event Type": "Type d'événement",
+  "Events": "Événements",
+  "Events hosted by companies on the Yahnu platform": {
+    "": "Événements organisés par des entreprises sur la plateforme Yahnu."
+  },
+  "Explore companies actively recruiting top talent": {
+    "": "Découvrez les entreprises qui recrutent activement les meilleurs talents."
+  },
+  "Export as CSV": "Exporter en CSV",
+  "Failed to send password reset email": {
+    "": "Échec de l'envoi de l'e-mail de réinitialisation du mot de passe."
+  },
+  "Failed to submit your support ticket": {
+    "": "Échec de l'envoi de votre ticket de support."
+  },
+  "Failed to update profile": {
+    "": "Échec de la mise à jour du profil."
+  },
+  "Failed to update status": {
+    "": "Échec de la mise à jour du statut."
+  },
+  "Failed to verify education": {
+    "": "Échec de la vérification de la formation."
+  },
+  "Featured Companies": "Entreprises en vedette",
+  "Field of Study": "Domaine d'études",
+  "Fill in the details below to schedule a new event": {
+    "": "Remplissez les détails ci-dessous pour planifier un nouvel événement."
+  },
+  "Fill in the details for the new position": {
+    "": "Remplissez les détails pour le nouveau poste."
+  },
+  "Filter Jobs": "Filtrer les offres d'emploi",
+  "Filter Talent": "Filtrer les talents",
+  "Filter by badges": {
+    "": {
+      "": {
+        "": "Filtrer par badges"
+      }
+    }
+  },
+  "Finance & Banking": "Finance et Banque",
+  "Finance & Forte": "Finance & Forte",
+  "Finance Graduates": "Diplômés en finance",
+  "Find Address": "Trouver une adresse",
+  "Find and partner with top Ivorian institutions": {
+    "": "Trouvez et associez-vous aux meilleures institutions ivoiriennes."
+  },
+  "Find answers to common questions here": {
+    "": "Trouvez ici les réponses aux questions fréquentes."
+  },
+  "Find answers to common questions or get in touch with our team": {
+    "": "Trouvez des réponses aux questions fréquentes ou contactez notre équipe."
+  },
+  "Find the ideal candidates for your company": {
+    "": "Trouvez les candidats idéaux pour votre entreprise."
+  },
+  "Finish & Submit": "Terminer et soumettre",
+  "Fintech Webinar": "Webinaire sur la Fintech",
+  "First Name": "Prénom",
+  "Follow Us": "Suivez-nous",
+  "Frequently Asked Questions": "Foire Aux Questions",
+  "Full Name": "Nom complet",
+  "Full name": "Nom complet",
+  "Full-time": "Temps plein",
+  "General": "Général",
+  "Generate Prep Questions": "Générer des questions de préparation",
+  "Generating": {
+    "": {
+      "": {
+        "": "Génération en cours..."
+      }
+    }
+  },
+  "Generating Questions": {
+    "": {
+      "": {
+        "": "Génération des questions..."
+      }
+    }
+  },
+  "Generation Failed": "Échec de la génération",
+  "Get started with common tasks quickly": {
+    "": "Démarrez rapidement avec les tâches courantes."
+  },
+  "Go back to the homepage": "Retour à la page d'accueil",
+  "Going": "Participe",
+  "Google": "Google",
+  "Graduate Management": "Gestion des diplômés",
+  "Graduate Placement Analytics": "Analyses du placement des diplômés",
+  "Graduate Placement Trends": "Tendances du placement des diplômés",
+  "Graduated": "Diplômé(e)",
+  "Graduates from your school have been notified": {
+    "": "Les diplômés de votre école ont été notifiés."
+  },
+  "Graduation Year": "Année de diplomation",
+  "Grand Auditorium, INP-HB": "Grand Auditorium, INP-HB",
+  "Groups": "Groupes",
+  "Header Style": "Style d'en-tête",
+  "Headquarters": "Siège social",
+  "Here": "Ici",
+  "Hero Section": "Section principale",
+  "Hide password": "Masquer le mot de passe",
+  "Hires by Industry": "Embauches par secteur",
+  "Home": "Accueil",
+  "Host": "Hôte",
+  "Hosted by": "Organisé par",
+  "Hybrid": "Hybride",
+  "INP-HB": "INP-HB",
+  "Image URL": "URL de l'image",
+  "Incoming Requests": "Demandes entrantes",
+  "Individuals": "Individus",
+  "Industry": "Secteur",
+  "Industry Sector": "Secteur d'activité",
+  "Insert Link": "Insérer un lien",
+  "Insights into the success of your graduates in the job market": {
+    "": "Aperçu du succès de vos diplômés sur le marché du travail."
+  },
+  "Insights into your hiring funnel and applicant data": {
+    "": "Aperçu de votre entonnoir de recrutement et des données des candidats."
+  },
+  "Institution Details": "Détails de l'établissement",
+  "Interested": "Intéressé(e)",
+  "Internship": "Stage",
+  "Interview Prep": "Préparation à l'entretien",
+  "Interview Rate": "Taux d'entretiens",
+  "Invalid credentials": {
+    " Please try again": {
+      "": "Identifiants invalides. Veuillez réessayer."
+    }
+  },
+  "Invalid email or password": {
+    " Please check your credentials": {
+      "": "E-mail ou mot de passe invalide. Veuillez vérifier vos informations."
+    }
+  },
+  "Invitation Error": "Erreur d'invitation",
+  "Invitation Sent": "Invitation envoyée",
+  "Invite New Administrator": "Inviter un nouvel administrateur",
+  "Invite a new team member": "Inviter un nouveau membre d'équipe",
+  "Invite to Apply": "Inviter à postuler",
+  "Invite {name} to a Job": "Inviter {name} à une offre d'emploi",
+  "Italic": "Italique",
+  "Job Alerts": "Alertes d'emploi",
+  "Job Applications": "Candidatures",
+  "Job Description": "Description du poste",
+  "Job Details": "Détails du poste",
+  "Job Opportunities": "Opportunités d'emploi",
+  "Job Posted": "Offre d'emploi publiée",
+  "Job Postings": "Offres d'emploi",
+  "Job Removed": "Offre d'emploi supprimée",
+  "Job Search": "Recherche d'emploi",
+  "Job Title": "Titre du poste",
+  "Job Type": "Type de poste",
+  "Job title, skills": {
+    "": {
+      "": {
+        "": "Titre du poste, compétences"
+      }
+    }
+  },
+  "Jobs": "Emplois",
+  "Key Contacts": "Contacts clés",
+  "Keywords": "Mots-clés",
+  "Last Name": "Nom de famille",
+  "Last Updated Date": "Date de dernière mise à jour",
+  "Legal": "Légal",
+  "Link": "Lien",
+  "Link Copied": "Lien copié",
+  "List": "Liste",
+  "Loading": {
+    "": {
+      "": {
+        "": "Chargement..."
+      }
+    }
+  },
+  "Location": "Lieu",
+  "Location / Link": "Lieu / Lien",
+  "Logged In Successfully!": "Connexion réussie !",
+  "Logo Selected": "Logo sélectionné",
+  "Main Campus Location": "Emplacement du campus principal",
+  "Manage Events": "Gérer les événements",
+  "Manage Graduates": "Gérer les diplômés",
+  "Manage Partnerships": "Gérer les partenariats",
+  "Manage applicants for your job postings": {
+    "": "Gérez les candidatures pour vos offres d'emploi."
+  },
+  "Manage primary points of contact for industry partnerships": {
+    "": "Gérez les contacts principaux pour les partenariats industriels."
+  },
+  "Manage the visibility of your earned skill badges": {
+    "": "Gérez la visibilité de vos badges de compétences obtenus."
+  },
+  "Manage users with administrative privileges": {
+    "": "Gérer les utilisateurs avec des privilèges administratifs."
+  },
+  "Manage who has access to your company account": {
+    "": "Gérez qui a accès au compte de votre entreprise."
+  },
+  "Manage your events and see what companies are hosting": {
+    "": "Gérez vos événements et découvrez quelles entreprises les organisent."
+  },
+  "Manage your institution\\": "Gérez votre établissement\\",
+  "Manage your open positions": {
+    "": "Gérez vos postes vacants."
+  },
+  "Manage your open positions to attract top talent": {
+    "": "Gérez vos postes vacants pour attirer les meilleurs talents."
+  },
+  "Manage your personal and login details": {
+    "": "Gérez vos informations personnelles et de connexion."
+  },
+  "Manage your recruitment pipeline and find top talent": {
+    "": "Gérez votre pipeline de recrutement et trouvez les meilleurs talents."
+  },
+  "Manage your subscription and payment methods": {
+    "": "Gérez votre abonnement et vos modes de paiement."
+  },
+  "Meet the Team Section": "Section 'Rencontrez l'équipe'",
+  "Meet with top tech companies hiring for various roles": {
+    " Bring your resume and be prepared for on-the-spot interviews": {
+      "": "Rencontrez les meilleures entreprises technologiques qui recrutent pour divers rôles. Apportez votre CV et soyez prêt à passer des entretiens sur place."
+    }
+  },
+  "Message": "Message",
+  "Messages": "Messages",
+  "Mission Card": "Carte de mission",
+  "Mission, Vision & Values": "Mission, Vision & Valeurs",
+  "My Applications": "Mes candidatures",
+  "Name": "Nom",
+  "Name, skills": {
+    "": {
+      "": {
+        "": "Nom, compétences"
+      }
+    }
+  },
+  "Need to contact your school about your account?": "Besoin de contacter votre école à propos de votre compte ?",
+  "Networking": "Réseautage",
+  "Never": "Jamais",
+  "New Applicants": "Nouveaux candidats",
+  "New Job Posting": "Nouvelle offre d'emploi",
+  "New admin": "Nouvel administrateur",
+  "Next Question": "Question suivante",
+  "No Changes": "Aucune modification",
+  "No Upcoming Events": "Aucun événement à venir",
+  "No active job postings": {
+    "": "Aucune offre d'emploi active."
+  },
+  "No address found": {
+    "": "Aucune adresse trouvée."
+  },
+  "No badges earned yet": {
+    " Take an assessment to get started!": "Aucun badge obtenu pour le moment. Passez une évaluation pour commencer !"
+  },
+  "No country found": {
+    "": "Aucun pays trouvé."
+  },
+  "No education details provided": {
+    "": "Aucun détail sur la formation fourni."
+  },
+  "No education history added yet": {
+    "": "Aucun historique de formation ajouté pour le moment."
+  },
+  "No events created yet": {
+    "": "Aucun événement créé pour le moment."
+  },
+  "No events found": {
+    "": "Aucun événement trouvé."
+  },
+  "No graduates found": "Aucun diplômé trouvé.",
+  "No jobs found": "Aucune offre d'emploi trouvée.",
+  "No jobs posted yet": {
+    "": "Aucune offre d'emploi publiée pour le moment."
+  },
+  "No pending requests": {
+    "": "Aucune demande en attente."
+  },
+  "No results found": {
+    "": "Aucun résultat trouvé."
+  },
+  "No settings available for this role": {
+    "": "Aucun paramètre disponible pour ce rôle."
+  },
+  "No tickets in this queue": {
+    "": "Aucun ticket dans cette file d'attente."
+  },
+  "Not Going": "Ne participe pas",
+  "Notification Frequency": "Fréquence des notifications",
+  "Notifications have been sent to the target audience": {
+    "": "Des notifications ont été envoyées au public cible."
+  },
+  "Notify Me": "M'avertir",
+  "Number of applications received over time": {
+    "": "Nombre de candidatures reçues au fil du temps."
+  },
+  "Number of graduates placed in jobs over the last 6 months": {
+    "": "Nombre de diplômés placés dans un emploi au cours des 6 derniers mois."
+  },
+  "On-site": "Sur site",
+  "Online (Zoom Link will be shared)": "En ligne (le lien Zoom sera partagé)",
+  "Open Jobs": "Postes ouverts",
+  "Open Positions": "Postes vacants",
+  "Our AI is crafting your interview prep questions": {
+    "": "Notre IA prépare vos questions pour l'entretien."
+  },
+  "Part-time": "Temps partiel",
+  "Partner Companies": "Entreprises partenaires",
+  "Partnership Requests": "Demandes de partenariat",
+  "Partnership requests from companies": {
+    "": "Demandes de partenariat d'entreprises."
+  },
+  "Partnerships": "Partenariats",
+  "Password": "Mot de passe",
+  "Password Copied": "Mot de passe copié",
+  "Password reset email sent": "E-mail de réinitialisation du mot de passe envoyé",
+  "Paste a job description to generate tailored interview questions and tips": {
+    "": "Collez une description de poste pour générer des questions d'entretien et des conseils personnalisés."
+  },
+  "Paste the full job description here": {
+    "": {
+      "": {
+        "": "Collez la description complète du poste ici."
+      }
+    }
+  },
+  "Pending Activation": "En attente d'activation",
+  "Pending Graduates": "Diplômés en attente",
+  "Personal Information": "Informations personnelles",
+  "Phone Number": "Numéro de téléphone",
+  "Phone Number (Optional)": "Numéro de téléphone (facultatif)",
+  "Placement Rate": "Taux de placement",
+  "Platform": "Plateforme",
+  "Platform Administrators": "Administrateurs de la plateforme",
+  "Please check your new email address to verify the change": {
+    "": "Veuillez vérifier votre nouvelle adresse e-mail pour valider le changement."
+  },
+  "Please complete the following steps to begin your proctored assessment": {
+    "": "Veuillez suivre les étapes suivantes pour commencer votre évaluation surveillée."
+  },
+  "Please enable camera and microphone permissions in your browser settings to continue": {
+    "": "Veuillez activer les autorisations de caméra et de microphone dans les paramètres de votre navigateur pour continuer."
+  },
+  "Please enter an email to send an invite": {
+    "": "Veuillez saisir une adresse e-mail pour envoyer une invitation."
+  },
+  "Position": "Poste",
+  "Post Job": "Publier l'offre",
+  "Post a Job": "Publier une offre d'emploi",
+  "Post a New Job": "Publier une nouvelle offre d'emploi",
+  "Practice for Interview": "S'entraîner pour l'entretien",
+  "Prep Material Generated!": "Matériel de préparation généré !",
+  "Primary Contact Name": "Nom du contact principal",
+  "Privacy Policy": "Politique de confidentialité",
+  "Proctoring Enabled": "Surveillance activée",
+  "Professional Profile": "Profil professionnel",
+  "Profile": "Profil",
+  "Profile Completion": "Achèvement du profil",
+  "Profile Updated": "Profil mis à jour",
+  "Profile Visibility": "Visibilité du profil",
+  "Progression of candidates through hiring stages": {
+    "": "Progression des candidats à travers les étapes de recrutement."
+  },
+  "Prove your skills by taking our proctored assessments and earn badges for your profile": {
+    "": "Prouvez vos compétences en passant nos évaluations surveillées et obtenez des badges pour votre profil."
+  },
+  "Provide the job description for the role you are interviewing for": {
+    "": "Fournissez la description du poste pour lequel vous passez l'entretien."
+  },
+  "Public Profile": "Profil public",
+  "Question {current} of {total}": "Question {current} sur {total}",
+  "Quick Actions": "Actions rapides",
+  "RSVP": "RSVP",
+  "RSVP Submitted": "RSVP soumis",
+  "RSVPs": "Inscriptions",
+  "Receive email notifications for new company partnership requests": {
+    "": "Recevoir des notifications par e-mail pour les nouvelles demandes de partenariat d'entreprise."
+  },
+  "Recipients": "Destinataires",
+  "Recruitment": "Recrutement",
+  "Recruitment Analytics": "Analyses de recrutement",
+  "Recruitment Day": "Journée de recrutement",
+  "Redirecting to messages": {
+    "": {
+      "": {
+        "": "Redirection vers les messages..."
+      }
+    }
+  },
+  "Refine your search to find the perfect fit": {
+    "": "Affinez votre recherche pour trouver la correspondance parfaite."
+  },
+  "Remote": "Télétravail",
+  "Report Generator": "Générateur de rapports",
+  "Reporting": "Rapports",
+  "Request": "Demander",
+  "Request Already Sent": "Demande déjà envoyée",
+  "Request Sent": "Demande envoyée",
+  "Return to Homepage": "Retour à la page d'accueil",
+  "Return to My Profile": "Retour à mon profil",
+  "Review and update the status of candidates who have applied to your roles": {
+    "": "Examinez et mettez à jour le statut des candidats qui ont postulé à vos offres."
+  },
+  "Rich Text View": "Vue texte riche",
+  "Role": "Rôle",
+  "Save About Page": "Enregistrer la page 'À propos'",
+  "Save Changes": "Enregistrer les modifications",
+  "Save Event": "Enregistrer l'événement",
+  "Save Profile": "Enregistrer le profil",
+  "Save {pageName}": "Enregistrer {pageName}",
+  "Saving": {
+    "": {
+      "": {
+        "": "Enregistrement en cours..."
+      }
+    }
+  },
+  "School": "École",
+  "School Address": "Adresse de l'école",
+  "School Dashboard": "Tableau de bord de l'école",
+  "School Logo": "Logo de l'école",
+  "School Name": "Nom de l'école",
+  "School Profile": "Profil de l'école",
+  "School Profile Updated": "Profil de l'école mis à jour",
+  "School Profiles": "Profils des écoles",
+  "School Support": "Support de l'école",
+  "Schools": "Écoles",
+  "Screened to interview ratio": "Ratio présélectionnés/entretiens",
+  "Search": {
+    "": {
+      "": {
+        "": "Rechercher"
+      }
+    }
+  },
+  "Search and manage all graduates associated with your school": {
+    "": "Rechercher et gérer tous les diplômés associés à votre école."
+  },
+  "Search by name or email": {
+    "": {
+      "": {
+        "": "Recherche par nom ou e-mail"
+      }
+    }
+  },
+  "Search country": {
+    "": {
+      "": {
+        "": "Rechercher un pays"
+      }
+    }
+  },
+  "Search for Jobs": "Rechercher des emplois",
+  "Search for an address": {
+    "": {
+      "": {
+        "": "Rechercher une adresse"
+      }
+    }
+  },
+  "Search for schools": {
+    "": {
+      "": {
+        "": "Rechercher des écoles"
+      }
+    }
+  },
+  "Search graduates or groups": {
+    "": {
+      "": {
+        "": "Rechercher des diplômés ou des groupes"
+      }
+    }
+  },
+  "Search skills": {
+    "": {
+      "": {
+        "": "Rechercher des compétences"
+      }
+    }
+  },
+  "Security": "Sécurité",
+  "Select a Job Posting": "Sélectionner une offre d'emploi",
+  "Select a country": "Sélectionner un pays",
+  "Select a job type": "Sélectionner un type d'emploi",
+  "Select a state": "Sélectionner un état/une province",
+  "Select an industry": "Sélectionner un secteur",
+  "Select frequency": "Sélectionner la fréquence",
+  "Select one of your open positions to invite this candidate to apply": {
+    "": "Sélectionnez l'un de vos postes ouverts pour inviter ce candidat à postuler."
+  },
+  "Select recipients": {
+    "": {
+      "": {
+        "": "Sélectionner les destinataires"
+      }
+    }
+  },
+  "Select role": "Sélectionner un rôle",
+  "Self-Reported Skills": "Compétences auto-déclarées",
+  "Send Broadcast": "Envoyer la diffusion",
+  "Send Invitation": "Envoyer l'invitation",
+  "Send Invite": "Envoyer l'invitation",
+  "Send a Broadcast Message": "Envoyer un message de diffusion",
+  "Sending": {
+    "": {
+      "": {
+        "": "Envoi en cours..."
+      }
+    }
+  },
+  "Settings": "Paramètres",
+  "Share this link with the new administrator to allow them to register": {
+    "": "Partagez ce lien avec le nouvel administrateur pour lui permettre de s'inscrire."
+  },
+  "Show password": "Afficher le mot de passe",
+  "Showcase your company to attract top talent": {
+    "": "Mettez en valeur votre entreprise pour attirer les meilleurs talents."
+  },
+  "Showing": "Affichage de",
+  "Signed In Successfully!": "Connecté avec succès !",
+  "Skill Certifications": "Certifications de compétences",
+  "Skills": "Compétences",
+  "Skills & Certifications": "Compétences & Certifications",
+  "Source of applicants by academic institution": {
+    "": "Provenance des candidats par établissement d'enseignement."
+  },
+  "Specific Group": "Groupe spécifique",
+  "Start Assessment": "Commencer l'évaluation",
+  "Start typing an address": {
+    "": {
+      "": {
+        "": "Commencez à taper une adresse"
+      }
+    }
+  },
+  "State / Province": "État / Province",
+  "Status": "Statut",
+  "Status of partnership requests you have sent to schools": {
+    "": "Statut des demandes de partenariat envoyées aux écoles."
+  },
+  "Story Section": "Section 'Notre histoire'",
+  "Street Address": "Adresse",
+  "Strikethrough": "Barré",
+  "Subject": "Sujet",
+  "Submitting": {
+    "": {
+      "": {
+        "": "Envoi en cours..."
+      }
+    }
+  },
+  "Subtitle": "Sous-titre",
+  "Suggest strong password": "Suggérer un mot de passe fort",
+  "Support": "Support",
+  "Support & FAQ": "Support & FAQ",
+  "Support Staff": "Équipe de support",
+  "T": "T",
+  "Tagline": "Slogan",
+  "Take a New Assessment": "Passer une nouvelle évaluation",
+  "Take an Assessment": "Passer une évaluation",
+  "Talent Pool": "Vivier de talents",
+  "Target": "Cible",
+  "Target Audience": "Public cible",
+  "Team Members": "Membres de l'équipe",
+  "Tech Recruitment Day": "Journée de recrutement tech",
+  "Tech Solutions Abidjan": "Tech Solutions Abidjan",
+  "Technical Questions": "Questions techniques",
+  "Telecommunications": "Télécommunications",
+  "Terms of Service": "Conditions d'utilisation",
+  "Test not found": "Test non trouvé",
+  "Tests specific hard skills and role-related knowledge": {
+    "": "Teste les compétences techniques spécifiques et les connaissances liées au rôle."
+  },
+  "Thank you! We will notify you when Yahnu is available in {country}": {
+    "": "Merci ! Nous vous informerons lorsque Yahnu sera disponible en {country}."
+  },
+  "The": "Le/La",
+  "The Super Admin account cannot be deleted": {
+    "": "Le compte Super Admin ne peut pas être supprimé."
+  },
+  "The degree has been marked as verified": {
+    "": "Le diplôme a été marqué comme vérifié."
+  },
+  "The invite link has been copied to your clipboard": {
+    "": "Le lien d'invitation a été copié dans votre presse-papiers."
+  },
+  "The suggested password has been copied to your clipboard": {
+    "": "Le mot de passe suggéré a été copié dans votre presse-papiers."
+  },
+  "There was a problem creating the prep material": {
+    "": "Un problème est survenu lors de la création du matériel de préparation."
+  },
+  "There was a problem with your request": {
+    "": "Un problème est survenu avec votre demande."
+  },
+  "This information will be visible on your public profile": {
+    "": "Ces informations seront visibles sur votre profil public."
+  },
+  "This page is not available for your account type": {
+    "": "Cette page n'est pas disponible pour votre type de compte."
+  },
+  "Time": "Heure",
+  "Tip": "Conseil",
+  "Title": "Titre",
+  "Top Hiring Companies": "Meilleures entreprises qui recrutent",
+  "Top Partner Company": "Meilleure entreprise partenaire",
+  "Top Skills": "Compétences principales",
+  "Total Applicants": "Nombre total de candidats",
+  "Total Graduates Hired": "Nombre total de diplômés embauchés",
+  "Track Applications": "Suivre les candidatures",
+  "Track My Applications": "Suivre mes candidatures",
+  "Track graduate success and industry partnerships": {
+    "": "Suivez le succès des diplômés et les partenariats avec l'industrie."
+  },
+  "Track the status of your job applications": {
+    "": "Suivez le statut de vos candidatures."
+  },
+  "Transportation & Logistics": "Transport et Logistique",
+  "Try adjusting your filters to find what you": "Essayez d'ajuster vos filtres pour trouver ce que vous cherchez",
+  "Type": "Type",
+  "Type your message here": {
+    "": {
+      "": {
+        "": "Écrivez votre message ici"
+      }
+    }
+  },
+  "Uh oh! Login Failed": {
+    "": "Oh non ! La connexion a échoué."
+  },
+  "Uh oh! Something went wrong": {
+    "": "Oh non ! Quelque chose s'est mal passé."
+  },
+  "Unavailable": "Indisponible",
+  "Underline": "Souligné",
+  "University Social Hall": "Foyer social de l'université",
+  "Up 5% from last year": "+5% par rapport à l'année dernière",
+  "Upcoming Events": "Événements à venir",
+  "Update My Profile": "Mettre à jour mon profil",
+  "Upload Logo": "Télécharger le logo",
+  "User Management": "Gestion des utilisateurs",
+  "Validating invitation": {
+    "": {
+      "": {
+        "": "Validation de l'invitation..."
+      }
+    }
+  },
+  "Values Card": "Carte des valeurs",
+  "Verification email sent": "E-mail de vérification envoyé",
+  "Verified": "Vérifié",
+  "Verified Skills": "Compétences vérifiées",
+  "Verified by School": "Vérifié par l'école",
+  "Verify": "Vérifier",
+  "View Analytics": "Voir les analyses",
+  "View Details": "Voir les détails",
+  "View Full Profile": "Voir le profil complet",
+  "View Profile": "Voir le profil",
+  "View Talent Pool": "Voir le vivier de talents",
+  "Vision Card": "Carte de vision",
+  "Waiting for permissions": {
+    "": {
+      "": {
+        "": "En attente des autorisations..."
+      }
+    }
+  },
+  "Webinar": "Webinaire",
+  "Website": "Site web",
+  "Weekly": "Hebdomadaire",
+  "Welcome back to Yahnu": {
+    "": "Bon retour sur Yahnu."
+  },
+  "Welcome to Yahnu": {
+    "": "Bienvenue sur Yahnu."
+  },
+  "Welcome to your Dashboard": "Bienvenue sur votre tableau de bord",
+  "Work Experience": "Expérience professionnelle",
+  "Workplace": "Lieu de travail",
+  "Workshop": "Atelier",
+  "Yahnu is not yet available in your country": {
+    " Enter your email to be notified when we launch!": "Yahnu n'est pas encore disponible dans votre pays. Entrez votre e-mail pour être averti lors de notre lancement !"
+  },
+  "You": "Vous",
+  "You did not meet the passing score of 70%": {
+    " You can try again in 30 days": {
+      "": "Vous n'avez pas atteint le score de passage de 70 %. Vous pouvez réessayer dans 30 jours."
+    }
+  },
+  "You have already sent a request to this school": {
+    "": "Vous avez déjà envoyé une demande à cette école."
+  },
+  "You have been invited to join Yahnu as a {role}": {
+    "": "Vous avez été invité à rejoindre Yahnu en tant que {role}."
+  },
+  "You have completed the {testTitle} assessment": {
+    "": "Vous avez terminé l'évaluation {testTitle}."
+  },
+  "You have no active partners yet": {
+    "": "Vous n'avez pas encore de partenaires actifs."
+  },
+  "You haven": "Vous n'avez pas",
+  "You must be logged in to submit a ticket": {
+    "": "Vous devez être connecté pour soumettre un ticket."
+  },
+  "You must remain in the browser window for the duration of the test": {
+    " Navigating away will be flagged": {
+      "": "Vous devez rester dans la fenêtre du navigateur pendant toute la durée du test. Toute navigation en dehors sera signalée."
+    }
+  },
+  "You passed! A new badge has been added to your profile": {
+    "": "Vous avez réussi ! Un nouveau badge a été ajouté à votre profil."
+  },
+  "Your Company LLC": "Votre Entreprise SARL",
+  "Your Events": "Vos événements",
+  "Your Job Postings": "Vos offres d'emploi",
+  "Your Partnership Requests": "Vos demandes de partenariat",
+  "Your University": "Votre Université",
+  "Your academic background": {
+    " Add each degree separately": {
+      "": "Votre parcours académique. Ajoutez chaque diplôme séparément."
+    }
+  },
+  "Your account has been suspended": {
+    " Please contact support": {
+      "": "Votre compte a été suspendu. Veuillez contacter le support."
+    }
+  },
+  "Your account is pending approval": {
+    " Please contact a Yahnu administrator": {
+      "": "Votre compte est en attente d'approbation. Veuillez contacter un administrateur Yahnu."
     },
-    "notifications": {
-      "title": "Notifications",
-      "no_new": "Aucune nouvelle notification",
-      "mark_all_read": "Tout marquer comme lu",
-      "new_company_approval": "La nouvelle entreprise \"{name}\" nécessite une approbation.",
-      "new_school_approval": "La nouvelle école \"{name}\" nécessite une approbation.",
-      "new_graduate_activation": "Le nouveau diplômé \"{name}\" nécessite une activation."
+    " Please contact your school": "Veuillez contacter votre école"
+  },
+  "Your account is pending approval from your school": "Votre compte est en attente d'approbation de la part de votre école",
+  "Your administrator account has been created": {
+    " You can now log in": {
+      "": "Votre compte administrateur a été créé. Vous pouvez maintenant vous connecter."
+    }
+  },
+  "Your changes have been saved successfully": {
+    "": "Vos modifications ont été enregistrées avec succès."
+  },
+  "Your company": "Votre entreprise",
+  "Your future starts here": "Votre avenir commence ici",
+  "Your interview questions are ready below": {
+    "": "Vos questions d'entretien sont prêtes ci-dessous."
+  },
+  "Your key competencies": {
+    "": "Vos compétences clés."
+  },
+  "Your message is being sent to the selected graduates": {
+    "": "Votre message est en cours d'envoi aux diplômés sélectionnés."
+  },
+  "Your partnership request to": "Votre demande de partenariat à",
+  "Your registration is pending approval from a Yahnu administrator": {
+    " We": "Votre inscription est en attente d'approbation par un administrateur de Yahnu."
+  },
+  "Your response has been recorded": {
+    "": "Votre réponse a été enregistrée."
+  },
+  "Your school": "Votre école",
+  "Your session is being monitored": {
+    " Please remain focused on the test": {
+      "": "Votre session est surveillée. Veuillez rester concentré(e) sur le test."
+    }
+  },
+  "ZIP / Postal Code": "Code postal",
+  "a": "un/une",
+  "about": {
+    "mission_statement": "Nous avons pour mission de combler le fossé entre l'éducation et l'emploi, créant un écosystème florissant pour que les talents se connectent avec les opportunités en {country} et au-delà.",
+    "our_mission_content": "Autonomiser les diplômés, les entreprises et les écoles en créant un écosystème transparent et efficace pour le développement des talents et la croissance de carrière.",
+    "our_mission_title": "Notre mission",
+    "our_values_content": "Intégrité, Innovation, Collaboration, et un engagement inébranlable envers le succès de nos utilisateurs.",
+    "our_values_title": "Nos valeurs",
+    "our_vision_content": "Être la plateforme leader pour la connexion professionnelle et les opportunités en Afrique, stimulant la croissance économique et le succès individuel.",
+    "our_vision_title": "Notre vision",
+    "story_content_1": "Fondé par une équipe d'éducateurs et d'entrepreneurs, Yahnu est né d'une vision partagée : débloquer l'immense potentiel des diplômés en les connectant directement avec les industries qui ont besoin de leurs compétences. Nous avons vu une déconnexion entre la salle de classe et le lieu de travail et avons entrepris de construire le pont.",
+    "story_content_2": "Aujourd'hui, Yahnu est une plateforme dynamique qui permet aux étudiants de lancer leurs carrières, aide les entreprises à trouver efficacement les bons talents, et permet aux écoles de forger des partenariats industriels significatifs. Nous croyons en la construction d'avenirs, une connexion à la fois.",
+    "story_title": "Notre histoire",
+    "team": {
+      "roles": {
+        "data_engineer": "Ingénieur de données",
+        "founder_ceo": "Fondateur et PDG",
+        "head_of_product": "Chef de produit et ingénieur principal",
+        "partnerships_manager": "Gestionnaire de partenariats"
+      },
+      "subtitle": "Les individus passionnés dédiés à la construction de Yahnu.",
+      "title": "Rencontrez l'équipe"
     },
-    "back_to_schools": "Retour aux écoles",
-    "back_to_companies": "Retour aux entreprises",
-    "search": "Rechercher...",
-    "search_placeholder": "Tapez une commande ou recherchez...",
-    "until": "jusqu'au",
-    "new": "Nouveau",
-    "open": "Ouvert",
-    "resolved": "Résolu",
+    "title": "À propos de Yahnu"
+  },
+  "auth": {
+    "back_to_login": "Retour à la connexion",
+    "company_representative": "Représentant d'entreprise",
+    "contact_person_name": "Nom de la personne de contact",
+    "create_account": "Créer un compte",
+    "create_account_unlock_opportunities": "Créez votre compte pour débloquer un monde d'opportunités et de connexions.",
+    "creating_account": "Création du compte...",
+    "dont_have_account": "Vous n'avez pas de compte ?",
+    "enter_email_to_login": "Entrez votre email ci-dessous pour vous connecter à votre compte",
+    "enter_info_to_create_account": "Entrez vos informations pour créer un compte",
+    "forgot_password_desc": "Pas de problème. Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+    "get_started_now": "Commencez maintenant",
     "graduate": "Diplômé",
-    "company": "Entreprise",
-    "school": "École",
+    "i_am_a": "Je suis un...",
+    "join_thriving_community": "Rejoignez une communauté florissante",
+    "logging_in": "Connexion en cours...",
+    "logout": "Se déconnecter",
+    "or_continue_with": "Ou continuer avec",
+    "school_administrator": "Administrateur d'école",
+    "search_placeholder": "Tapez une commande ou recherchez...",
+    "resend_verification": {
+      "title": "Renvoyer l'e-mail de vérification",
+      "description": "Saisissez l'adresse utilisée pour votre compte Yahnu.",
+      "generic_error": "La demande n'a pas pu être traitée.",
+      "success": "Si un compte non vérifié existe pour cette adresse, un nouveau lien vient d'être envoyé.",
+      "debug_link": "Ouvrir le lien de vérification local",
+      "email_address": "Adresse e-mail",
+      "send": "Envoyer un nouveau lien",
+      "sending": "Envoi…"
+    },
+    "validation": {
+      "valid_email": "Saisissez une adresse e-mail valide.",
+      "password_required": "Le mot de passe est requis."
+    },
+    "select_account_type": "Sélectionnez votre type de compte",
+    "send_reset_link": "Envoyer le lien de réinitialisation",
+    "welcome_back": "Bon retour",
+    "your_future_starts_here": "Votre avenir commence ici",
+    "your_journey_perfect_career": "Votre parcours vers la carrière parfaite ou le candidat idéal commence ici."
+  },
+  "blog": {
+    "author_name": "L'équipe Yahnu"
+  },
+  "blog_author": "L'équipe Yahnu",
+  "by companies this week": "par les entreprises cette semaine",
+  "common": {
+    "Address incoming support requests from users": {
+      "": "Traiter les demandes de support entrantes des utilisateurs."
+    },
+    "Manage user inquiries and resolve support tickets": {
+      "": "Gérer les demandes des utilisateurs et résoudre les tickets de support."
+    },
+    "New": "Nouveau",
+    "New Tickets": "Nouveaux tickets",
+    "Open": "Ouvert",
+    "Open Tickets": "Tickets ouverts",
+    "Resolved": "Résolu",
+    "Resolved Tickets": "Tickets résolus",
+    "Resolved Today": "Résolus aujourd'hui",
+    "Status": "Statut",
+    "Subject": "Sujet",
+    "Submitted": "Soumis",
+    "Support Center": "Centre de support",
+    "Ticket Queue": "File d'attente des tickets",
+    "User": "Utilisateur",
+    "View Ticket": "Voir le ticket",
+    "about": "À propos",
+    "address": "Adresse",
+    "all_rights_reserved": "Tous droits réservés.",
+    "already_have_an_account": "Vous avez déjà un compte ?",
     "announcements": "Annonces",
     "back_to_blogs": "Retour aux blogs",
-    "view_profile": "Voir le profil",
-    "reject": "Rejeter",
-    "job_title": "Titre du poste",
-    "location": "Lieu",
-    "job_type": "Type de poste",
-    "full_time": "Temps plein",
-    "part_time": "Temps partiel",
-    "contract": "Contrat",
-    "internship": "Stage",
-    "admin": "Administrateur",
-    "super_admin": "Super Administrateur",
-    "content_moderator": "Modérateur de contenu",
-    "content_manager": "Gestionnaire de contenu",
-    "support_staff": "Personnel de support",
-    "time": {
-        "years_ago": "il y a {count} ans",
-        "months_ago": "il y a {count} mois",
-        "days_ago": "il y a {count} jours",
-        "hours_ago": "il y a {count} heures",
-        "minutes_ago": "il y a {count} minutes",
-        "seconds_ago": "il y a {count} secondes",
-        "now": "À l'instant"
-    },
     "applications": "Candidatures",
+    "apply_now": "Postuler maintenant",
+    "assessments": "Évaluations",
+    "back_to_companies": "Retour aux entreprises",
+    "back_to_schools": "Retour aux écoles",
+    "become_a_partner": "Devenir partenaire",
+    "blog": "Blog",
+    "by": "Par",
+    "cancel": "Annuler",
+    "city": "Ville",
+    "close": "Fermer",
+    "coming_soon": "Bientôt disponible !",
+    "companies": "Entreprises",
+    "company": "Entreprise",
+    "company_name": "Nom de l'entreprise",
+    "confirm_password": "Confirmer le mot de passe",
+    "contact_us": "Nous contacter",
+    "contract": "Contrat",
+    "copy": "Copier",
+    "country": "Pays",
+    "create_an_account": "Créer un compte",
+    "dark": "Sombre",
+    "dashboard": "Tableau de bord",
+    "date": "Date",
+    "description": "Description",
+    "email": "E-mail",
+    "english": "Anglais",
+    "error": "Erreur",
+    "find_top_talent": "Trouver les meilleurs talents",
+    "first_name": "Prénom",
+    "follow_us": "Suivez-nous",
+    "forgot_your_password": "Mot de passe oublié ?",
+    "french": "Français",
+    "full_time": "Temps plein",
+    "get_started_now": "Commencer maintenant",
+    "go_back_to_homepage": "Retourner à l'accueil",
+    "graduate": "Diplômé",
+    "graduates": "Diplômés",
+    "hide_password": "Masquer le mot de passe",
+    "industry_sector": "Secteur d'activité",
+    "info": "Information",
+    "internship": "Stage",
+    "job_search": "Recherche d'emploi",
+    "jobs": "Emplois",
+    "knowledge_base": {
+      "account": "Compte",
+      "article_content": "Contenu de l'article",
+      "article_title": "Titre de l'article",
+      "billing": "Facturation",
+      "cancel": "Annuler",
+      "category": "Catégorie",
+      "create_article": "Créer un article",
+      "delete": "Supprimer",
+      "description": "Gérer les articles d'aide et la documentation",
+      "edit": "Modifier",
+      "edit_article": "Modifier l'article",
+      "existing_articles": "Articles existants",
+      "general": "Général",
+      "last_updated": "Dernière mise à jour",
+      "no_articles": "Aucun article trouvé.",
+      "private": "Privé",
+      "public": "Public",
+      "save": "Enregistrer",
+      "technical": "Technique",
+      "title": "Base de connaissances",
+      "visibility": "Visibilité"
+    },
+    "language": "Langue",
+    "last_name": "Nom",
     "learn_more": "En savoir plus",
-    "full_name": "Nom complet",
-    "email": "Adresse e-mail",
-    "apply_now": "Postuler"
+    "legal": "Légal",
+    "light": "Clair",
+    "link": "Lien",
+    "loading": "Chargement...",
+    "location": "Lieu",
+    "login": "Connexion",
+    "login_with_google": "Se connecter avec Google",
+    "message": "Message",
+    "messages": "Messages",
+    "more_options": "Plus d'options",
+    "name": "Nom",
+    "new": "nouveau",
+    "no_results_found": "Aucun résultat trouvé.",
+    "notifications": {
+      "mark_all_read": "Tout marquer comme lu",
+      "new_company_approval": "Nouvelle entreprise \"{name}\" nécessite une approbation",
+      "new_graduate_activation": "Nouveau diplômé \"{name}\" nécessite une activation",
+      "new_school_approval": "Nouvelle école \"{name}\" nécessite une approbation",
+      "no_new": "Aucune nouvelle notification",
+      "title": "Notifications"
+    },
+    "notify_me": "Me notifier",
+    "open": "ouvert",
+    "open_menu": "Ouvrir le menu",
+    "part_time": "Temps partiel",
+    "password": "Mot de passe",
+    "password_copied": "Mot de passe copié",
+    "platform": "Plateforme",
+    "post_a_job_opening": "Publier une offre d'emploi",
+    "post_job": "Publier un emploi",
+    "privacy_policy": "Politique de confidentialité",
+    "profile": "Profil",
+    "read_more": "Lire la suite",
+    "request_partnership": "Demander un partenariat",
+    "resolved": "résolu",
+    "save": "Enregistrer",
+    "school": "École",
+    "school_name": "Nom de l'école",
+    "school_university": "École/Université",
+    "schools": "Écoles",
+    "search": "Rechercher...",
+    "search_for_jobs": "Rechercher des emplois",
+    "search_placeholder": "Tapez une commande ou recherchez...",
+    "select_a_country": "Sélectionner un pays",
+    "select_an_industry": "Sélectionnez une industrie",
+    "select_your_school": "Sélectionnez votre école",
+    "send": "Envoyer",
+    "settings": "Paramètres",
+    "show_password": "Afficher le mot de passe",
+    "sign_in": "Se connecter",
+    "sign_up": "S'inscrire",
+    "sign_up_with_google": "S'inscrire avec Google",
+    "skills": "Compétences",
+    "slogan": "Connecter. Grandir. Réussir.",
+    "state_province": "État / Province",
+    "subject": "Sujet",
+    "success": "Succès",
+    "suggest_strong_password": "Suggérer un mot de passe fort",
+    "support": "Assistance",
+    "system": "Système",
+    "terms_of_service": "Conditions d'utilisation",
+    "theme": "Thème",
+    "time": {
+      "days_ago": "il y a des jours",
+      "hours_ago": "il y a des heures",
+      "minutes_ago": "il y a des minutes",
+      "months_ago": "il y a des mois",
+      "seconds_ago": "il y a des secondes",
+      "years_ago": "il y a des années"
+    },
+    "toggle_nav": "Basculer le menu de navigation",
+    "type": "Type",
+    "until": "jusqu'à",
+    "view_profile": "Voir le profil",
+    "warning": "Avertissement",
+    "yes_delete": "Oui, supprimer",
+    "zip_postal_code": "Code postal"
+  },
+  "company_1_description": "<p>Orange Côte d'Ivoire est le premier fournisseur de télécommunications en Afrique de l'Ouest, offrant des services mobiles, internet et de paiement mobile innovants. Nous connectons les communautés et permettons la transformation numérique dans toute la région.</p><p>Rejoignez notre équipe dynamique et contribuez à façonner l'avenir des télécommunications en Afrique. Nous recherchons des talents passionnés pour nous aider à poursuivre notre mission de connecter tout le monde.</p>",
+  "company_1_job_1": "Ingénieur logiciel",
+  "company_1_job_2": "Chef de produit",
+  "company_1_job_3": "Analyste de données",
+  "company_1_tagline": "Fournisseur de télécommunications leader en Afrique de l'Ouest",
+  "company_2_description": "<p>SIFCA est la première entreprise agro-industrielle d'Afrique, spécialisée dans l'huile de palme, le caoutchouc naturel et le sucre. Nous nous engageons pour une agriculture durable et l'innovation sur tout le continent africain.</p><p>Rejoignez notre équipe et aidez à nourrir l'Afrique tout en préservant notre environnement. Nous offrons des opportunités de carrière passionnantes dans l'agriculture moderne et durable.</p>",
+  "company_2_job_1": "Agronome",
+  "company_2_job_2": "Gestionnaire de chaîne d'approvisionnement",
+  "company_2_job_3": "Spécialiste assurance qualité",
+  "company_2_tagline": "Entreprise agroalimentaire leader en Afrique",
+  "company_3_description": "<p>Bridge Bank Group est une banque moderne qui révolutionne les services financiers en Afrique. Nous proposons des solutions bancaires numériques innovantes adaptées aux besoins uniques du marché africain.</p><p>Faites partie de notre mission de démocratiser l'accès aux services financiers et de stimuler la croissance économique à travers l'Afrique grâce à des solutions bancaires innovantes.</p>",
+  "company_3_job_1": "Analyste financier",
+  "company_3_job_2": "Gestionnaire de risques",
+  "company_3_job_3": "Gestionnaire de succès client",
+  "company_3_tagline": "Banque moderne pour l'Afrique moderne",
+  "company_4_description": "<p>Ceva Logistics est un leader mondial des solutions de chaîne d'approvisionnement et de logistique avec une forte présence en Afrique. Nous connectons l'Afrique au monde grâce à nos solutions logistiques intégrées et notre expertise locale.</p><p>Rejoignez notre équipe internationale et contribuez à faciliter le commerce et le développement économique à travers l'Afrique grâce à nos solutions logistiques de pointe.</p>",
+  "company_4_job_1": "Coordinateur logistique",
+  "company_4_job_2": "Gestionnaire des opérations",
+  "company_4_job_3": "Spécialiste portuaire",
+  "company_4_tagline": "Leader mondial des solutions de chaîne d'approvisionnement et de logistique",
+  "contact_form_desc": "Description du formulaire de contact",
+  "contact_form_title": "Titre du formulaire de contact",
+  "countries": {
+    "CD": "RD Congo",
+    "CI": "Côte d'Ivoire",
+    "CM": "Cameroun",
+    "GH": "Ghana",
+    "NG": "Nigeria",
+    "SN": "Sénégal"
   },
   "dashboard": {
-    "system_health": {
-      "uptime_desc": "Disponibilité sur 30 jours"
-    },
-    "overview": {
-      "title": "Tableau de Bord d'Administration",
-      "description": "Vue d'ensemble de l'activité et des métriques de la plateforme.",
-      "totalUsers": "Utilisateurs Totaux",
-      "activeCompanies": "Entreprises Actives",
-      "partnerSchools": "Écoles Partenaires",
-      "pendingRequests": "Demandes en Attente",
-      "pendingRequestsDescription": "Approuvez ou rejetez les nouvelles inscriptions d'entreprises et d'écoles.",
-      "noPendingRequests": "Aucune demande en attente pour le moment.",
-      "recentActivity": "Activité Récente",
-      "signedUpAs": "{name} s'est inscrit en tant que {role}",
-      "postedNewJob": "{name} a publié une nouvelle offre : {jobTitle}"
-    },
-    "user_management": {
-      "title": "Gestion des Utilisateurs",
-      "description": "Gérez tous les comptes utilisateurs sur la plateforme.",
-      "activate": "Activer",
-      "status_updated": "Statut mis à jour",
-      "status_now": "a maintenant le statut",
-      "error": "Erreur",
-      "failed_update_status": "Échec de la mise à jour du statut.",
-      "user_deleted": "Utilisateur supprimé",
-      "removed_from_platform": "a été supprimé de la plateforme.",
-      "failed_delete_user": "Échec de la suppression de l'utilisateur.",
-      "manage_user": "Gérer l'utilisateur : {{name}}",
-      "manage_user_description": "Mettez à jour le statut de l'utilisateur ou supprimez-le de la plateforme.",
-      "change_status": "Changer le statut",
-      "suspend": "Suspendre",
-      "delete_user": "Supprimer l'utilisateur",
-      "are_you_sure": "Êtes-vous sûr ?",
-      "delete_warning": "Cette action est irréversible et supprimera définitivement l'utilisateur.",
-      "cancel": "Annuler",
-      "yes_delete": "Oui, supprimer",
-      "search_users": "Rechercher par nom ou email...",
-      "filter_role": "Filtrer par rôle",
-      "all_roles": "Tous les rôles",
-      "filter_status": "Filtrer par statut",
-      "all_statuses": "Tous les statuts",
-      "active": "Actif",
-      "pending": "En attente",
-      "rejected": "Rejeté",
-      "suspended": "Suspendu",
-      "name": "Nom",
-      "role": "Rôle",
-      "status": "Statut",
-      "date": "Date d'inscription",
-      "actions": "Actions",
-      "no_users_found": "Aucun utilisateur trouvé.",
-      "manage": "Gérer",
-      "user_list_title": "Liste des Utilisateurs",
-      "user_list_description": "Parcourez et gérez tous les utilisateurs de la plateforme."
-    },
     "admin": {
-        "system_health": "Santé du système"
+      "announcements": "Annonces",
+      "content_moderation": "Modération de contenu",
+      "knowledge_base": "Base de connaissances",
+      "manage_team": "Gérer l'équipe",
+      "overview": {
+        "actions": "Actions",
+        "activeCompanies": "Entreprises actives",
+        "activeCompaniesDescription": "Description des entreprises actives",
+        "description": "Description",
+        "noPendingRequests": "Aucune demande en attente",
+        "organizationName": "Nom de l'organisation",
+        "partnerSchools": "Écoles partenaires",
+        "partnerSchoolsDescription": "Description des écoles partenaires",
+        "postedNewJob": "Nouvelle offre publiée",
+        "signedUpAs": "Inscrit en tant que",
+        "title": "Titre",
+        "totalUsers": "Nombre total d'utilisateurs",
+        "totalUsersDescription": "Description du nombre total d'utilisateurs"
+      },
+      "pending_approvals": "Approbations en attente",
+      "report_generator": "Générateur de rapports",
+      "reports": {
+        "custom_generator": {
+          "description": "Créer et générer des rapports d'analyse personnalisés.",
+          "title": "Générateur de rapports personnalisés"
+        }
+      },
+      "support": {
+        "announcements": {
+          "description": "Gérer les annonces et notifications de la plateforme.",
+          "title": "Annonces"
+        },
+        "knowledge_base_editor": {
+          "description": "Créer et modifier les articles d'aide et la documentation.",
+          "title": "Éditeur de la base de connaissances"
+        },
+        "system_health": {
+          "description": "Surveiller les performances et métriques de santé du système.",
+          "title": "Santé du système"
+        },
+        "ticket_management": {
+          "description": "Gérer et résoudre les tickets de support.",
+          "title": "Gestion des tickets"
+        }
+      },
+      "support_center": {
+        "description": "Gérer les demandes des utilisateurs et résoudre les tickets de support.",
+        "queue_description": "Traiter les demandes de support entrantes des utilisateurs."
+      },
+      "support_tools": "Outils de support",
+      "system_analytics": "Analyses du système",
+      "system_health": "Santé du système",
+      "ticket_management": "Gestion des tickets",
+      "tools": "Outils",
+      "total_users": "Total des utilisateurs",
+      "user_lookup": "Recherche d'utilisateur",
+      "user_management": "Gestion des utilisateurs",
+      "welcome_message": "Bienvenue sur le tableau de bord admin ! Surveillez et gérez la plateforme."
     },
-    "nav": {
-        "home": "Accueil",
-        "about": "À propos",
-        "features": "Fonctionnalités",
-        "blog": "Blog",
-        "login": "Connexion",
-        "signup": "S'inscrire",
-        "jobs": "Emplois",
-        "companies": "Entreprises",
-        "schools": "Écoles",
-        "dashboard": "Tableau de bord"
+    "analytics": {
+      "+180_this_month": "+180 ce mois-ci",
+      "+1_this_month": "+1 ce mois-ci",
+      "+5_this_month": "+5 ce mois-ci",
+      "active_companies": "Entreprises actives",
+      "active_graduates": "Diplômés actifs",
+      "active_schools": "Écoles actives",
+      "april": "Avril",
+      "breakdown_user_types": "Répartition des types d'utilisateurs sur la plateforme.",
+      "companies": "Entreprises",
+      "description": "Aperçus de haut niveau de l'utilisation et de la croissance de la plateforme.",
+      "export_as_csv": "Exporter en CSV",
+      "february": "Février",
+      "graduates": "Diplômés",
+      "january": "Janvier",
+      "june": "Juin",
+      "march": "Mars",
+      "may": "Mai",
+      "new_users_this_month": "Nouveaux utilisateurs ce mois-ci",
+      "on_the_platform": "Sur la plateforme",
+      "schools": "Écoles",
+      "title": "Analyses de la plateforme",
+      "total": "Total",
+      "total_users": "Total des utilisateurs",
+      "total_users_platform": "Total des utilisateurs sur la plateforme au cours des 6 derniers mois.",
+      "user_count": "Nombre d'utilisateurs",
+      "user_distribution": "Répartition des utilisateurs",
+      "user_growth": "Croissance des utilisateurs"
+    },
+    "company": {
+      "active_job_postings": "Offres d'emploi actives",
+      "applications_received": "Candidatures reçues",
+      "candidates_shortlisted": "Candidats présélectionnés",
+      "manage_jobs": "Gérer les emplois",
+      "post_new_job": "Publier une nouvelle offre",
+      "view_talent_pool": "Voir le vivier de talents",
+      "welcome_message": "Bienvenue sur le tableau de bord de votre entreprise ! Gérez vos offres d'emploi et trouvez des talents."
+    },
+    "content": {
+      "active": "Actif",
+      "all_users": "Tous les utilisateurs",
+      "announcements": "Annonces",
+      "blog_posts": "Articles de blog",
+      "create_content": "Créer du contenu",
+      "days": "jours",
+      "days_ago": "il y a quelques jours",
+      "description": "Gérer le contenu du blog et des pages de votre plateforme.",
+      "expires_in": "Expire dans",
+      "last_updated": "Dernière mise à jour",
+      "new_announcement": "Nouvelle annonce",
+      "new_blog_post": "Nouvel article de blog",
+      "new_page": "Nouvelle page",
+      "public_page": "Page publique",
+      "published": "Publié",
+      "search_announcements": "Rechercher des annonces...",
+      "search_blog_posts": "Rechercher des articles de blog...",
+      "search_pages": "Rechercher des pages...",
+      "static": "Statique",
+      "static_pages": "Pages statiques",
+      "title": "Gestion de contenu",
+      "until": "jusqu'à",
+      "views": "vues"
     },
     "graduate": {
-        "welcome_message_personalized": "Bienvenue, {name} !",
-        "welcome_subtitle": "Voici un aperçu de votre parcours professionnel sur Yahnu.",
-        "profile_completion_title": "Complétion du Profil",
-        "profile_completion_desc": "Un profil complet attire plus de recruteurs. Mettez le vôtre en valeur !",
-        "update_profile": "Mettre à jour le profil",
-        "application_tracking_title": "Suivi des Candidatures",
-        "application_tracking_desc": "Suivez la progression de vos candidatures au cours des 6 derniers mois.",
-        "profile_views": "Vues du Profil",
-        "quick_actions_title": "Actions Rapides",
-        "quick_actions_desc": "Accédez rapidement aux fonctionnalités clés.",
-        "upcoming_event_title": "Événement à Venir"
+      "applications_submitted": "Candidatures soumises",
+      "find_jobs": "Trouver un emploi",
+      "profile_views": "Vues du profil",
+      "saved_jobs": "Emplois sauvegardés",
+      "update_profile": "Mettre à jour le profil",
+      "view_applications": "Voir les candidatures",
+      "welcome_message": "Bienvenue sur votre tableau de bord Yahnu ! Commencez à explorer les opportunités d'emploi."
     },
     "messages": {
-        "description": "Communiquez directement avec les candidats, les entreprises et les écoles.",
-        "search_conversations": "Rechercher des conversations...",
-        "type_message": "Tapez votre message...",
-        "select_conversation_title": "Sélectionnez une Conversation",
-        "select_conversation_desc": "Choisissez une conversation dans la liste pour afficher les messages ici.",
-        "online": "En ligne",
-        "favorite": "Ajouter aux favoris",
-        "archive": "Archiver",
-        "block": "Bloquer",
-        "delete": "Supprimer",
-        "start_conversation": "Commencez la conversation...",
-        "conversations": {
-            "amina_diallo": {
-                "name": "Amina Diallo",
-                "last_message": "Merci pour cette opportunité ! J'ai hâte de...",
-                "messages": {
-                    "interview_offer": "Bonjour ! Nous avons été très impressionnés par votre profil...",
-                    "availability_response": "C'est une excellente nouvelle ! Je suis disponible la semaine prochaine.",
-                    "schedule_confirmation": "Parfait. Est-ce que mercredi à 14h vous convient ?",
-                    "thank_you_response": "Merci pour cette opportunité ! J'ai hâte de passer l'entretien."
-                }
-            },
-            "tech_solutions": {
-                "name": "Tech Solutions Abidjan",
-                "last_message": "Pouvez-vous me parler davantage de la culture...",
-                "messages": {
-                    "initial_interest": "Bonjour, je suis intéressé(e) par le poste de Développeur Frontend Senior.",
-                    "culture_question": "Pouvez-vous me parler davantage de la culture d'équipe ?"
-                }
-            },
-            "inp_hb_admin": {
-                "name": "Admin INP-HB",
-                "last_message": "D'accord, je vois. Laissez-moi vérifier cela...",
-                "messages": {
-                    "degree_verification": "Bonjour, j'ai remarqué qu'un de mes diplômes n'est toujours pas vérifié.",
-                    "admin_response": "D'accord, je vois. Laissez-moi vérifier cela pour vous."
-                }
-            }
+      "conversations": {
+        "amina_diallo": {
+          "last_message": "Merci pour cette opportunité ! J'ai hâte de passer l'entretien.",
+          "messages": {
+            "availability_response": "C'est une excellente nouvelle ! Je suis disponible la semaine prochaine.",
+            "interview_offer": "Bonjour ! Nous avons été très impressionnés par votre profil et aimerions programmer un entretien pour le poste de Développeur Frontend.",
+            "schedule_confirmation": "Parfait. Est-ce que mercredi à 14h vous convient ?",
+            "thank_you_response": "Merci pour cette opportunité ! J'ai hâte de passer l'entretien."
+          },
+          "name": "Amina Diallo"
+        },
+        "inp_hb_admin": {
+          "last_message": "D'accord, je vois. Laissez-moi vérifier cela pour vous.",
+          "messages": {
+            "admin_response": "D'accord, je vois. Laissez-moi vérifier cela pour vous.",
+            "degree_verification": "Bonjour, j'ai remarqué qu'un de mes diplômes n'est toujours pas vérifié."
+          },
+          "name": "Admin INP-HB"
+        },
+        "tech_solutions": {
+          "last_message": "Pouvez-vous me parler davantage de la culture d'équipe ?",
+          "messages": {
+            "culture_question": "Pouvez-vous me parler davantage de la culture d'équipe ?",
+            "initial_interest": "Bonjour, je suis intéressé(e) par le poste de Développeur Frontend Senior."
+          },
+          "name": "Tech Solutions Abidjan"
         }
+      },
+      "description": "Communiquez directement avec les candidats et les entreprises.",
+      "search_conversations": "Rechercher des conversations...",
+      "select_conversation": "Sélectionnez une conversation pour commencer à discuter.",
+      "type_message": "Tapez votre message..."
+    },
+    "nav": {
+      "admin": "Administration",
+      "ai_insights": "Statistiques IA",
+      "ai_tools": "Outils d'IA",
+      "analytics": "Analyses",
+      "approvals": "Approbations",
+      "assessment_generator": "Générateur d'évaluations",
+      "candidates": "Candidats",
+      "chatbot_builder": "Constructeur de Chatbot",
+      "company_profiles": "Profils d'entreprise",
+      "dashboard": "Tableau de bord",
+      "general": "Général",
+      "graduates": "Diplômés",
+      "home": "Accueil",
+      "job_postings": "Offres d'emploi",
+      "my_applications": "Mes candidatures",
+      "partnerships": "Partenariats",
+      "post_job": "Publier une offre",
+      "profile": "Profil",
+      "recruitment": "Recrutement",
+      "report_generator": "Générateur de rapports",
+      "reporting": "Rapports",
+      "school_profiles": "Profils d'école",
+      "security": "Sécurité",
+      "settings": "Paramètres",
+      "support": "Support",
+      "user_management": "Gestion des utilisateurs"
+    },
+    "overview": {
+      "actions": "Actions",
+      "activeCompanies": "Entreprises actives",
+      "activeCompaniesDescription": "Entreprises avec des offres d'emploi actives",
+      "description": "Surveillez l'activité de la plateforme et gérez les paramètres à l'échelle du système.",
+      "noPendingRequests": "Aucune demande en attente.",
+      "organizationName": "Nom de l'organisation",
+      "partnerSchools": "Écoles partenaires",
+      "partnerSchoolsDescription": "Partenaires d'établissements d'enseignement",
+      "pendingRequests": "Demandes d'inscription en attente",
+      "pendingRequestsDescription": "Approuvez ou rejetez les nouvelles inscriptions d'entreprises et d'écoles.",
+      "postedNewJob": "a publié une nouvelle offre d'emploi",
+      "recentActivity": "Activité récente",
+      "signedUpAs": "s'est inscrit en tant que",
+      "title": "Aperçu de l'administration",
+      "totalUsers": "Total des utilisateurs",
+      "totalUsersDescription": "Utilisateurs inscrits sur la plateforme"
+    },
+    "reports": {
+      "custom_generator": {
+        "description": "Description",
+        "title": "Titre"
+      }
+    },
+    "school": {
+      "manage_graduates": "Gérer les diplômés",
+      "partner_companies": "Entreprises partenaires",
+      "partner_companies_action": "Action des entreprises partenaires",
+      "placed_graduates": "Diplômés placés",
+      "total_graduates": "Total des diplômés",
+      "view_analytics": "Voir les analyses",
+      "welcome_message": "Bienvenue sur le tableau de bord de votre école ! Suivez vos diplômés et vos partenariats."
+    },
+    "support": {
+      "announcements": {
+        "active_announcements": "Annonces actives",
+        "admins": "Administrateurs",
+        "all_users": "Tous les utilisateurs",
+        "cancel": "Annuler",
+        "companies": "Entreprises",
+        "content_label": "Contenu du libellé",
+        "create": "Créer",
+        "create_announcement": "Créer une annonce",
+        "description": "Description",
+        "expires": "Expire le",
+        "expiry_date": "Date d'expiration",
+        "graduates": "Diplômés",
+        "high": "Élevée",
+        "low": "Faible",
+        "medium": "Moyenne",
+        "no_announcements": "Aucune annonce",
+        "priority": "Priorité",
+        "publish_date": "Date de publication",
+        "schools": "Écoles",
+        "target_audience": "Public cible",
+        "title": "Titre",
+        "title_label": "Titre du libellé",
+        "urgent": "Urgent"
+      },
+      "center": {
+        "no_tickets": "Aucun ticket"
+      },
+      "knowledge_base": {
+        "account_management": "Gestion de compte",
+        "billing": "Facturation",
+        "cancel": "Annuler",
+        "category": "Catégorie",
+        "content_label": "Contenu du libellé",
+        "create_article": "Créer un article",
+        "description": "Description",
+        "existing_articles": "Articles existants",
+        "general": "Général",
+        "getting_started": "Pour commencer",
+        "internal": "Interne",
+        "last_updated": "Dernière mise à jour",
+        "no_articles": "Aucun article",
+        "public": "Public",
+        "save": "Enregistrer",
+        "search_articles": "Rechercher des articles",
+        "tags": "Mots-clés",
+        "title": "Titre",
+        "title_label": "Titre du libellé",
+        "troubleshooting": "Dépannage",
+        "visibility": "Visibilité"
+      },
+      "knowledge_base_editor": {
+        "description": "Description",
+        "title": "Titre"
+      },
+      "system_health": {
+        "active_users": "Utilisateurs actifs",
+        "cpu_usage": "Utilisation du CPU",
+        "database_connections": "Connexions à la base de données",
+        "description": "Description",
+        "disk_usage": "Utilisation du disque",
+        "error_rate": "Taux d'erreur",
+        "memory_usage": "Utilisation de la mémoire",
+        "no_incidents": "Aucun incident",
+        "overall_status": "État général",
+        "recent_incidents": "Incidents récents",
+        "refresh": "Actualiser",
+        "response_time": "Temps de réponse",
+        "server_uptime": "Disponibilité du serveur",
+        "system_metrics": "Métriques système",
+        "title": "Titre",
+        "view_details": "Voir les détails"
+      },
+      "ticket_management": {
+        "description": "Gérer et résoudre les tickets de support des utilisateurs.",
+        "title": "Gestion des tickets"
+      }
+    },
+    "title": "Tableau de bord",
+    "user_management": {
+      "actions": "Actions",
+      "activate": "Activer",
+      "active": "Actif",
+      "all_roles": "Tous les rôles",
+      "all_statuses": "Tous les statuts",
+      "are_you_sure": "Êtes-vous absolument certain ?",
+      "change_status": "Changer le statut",
+      "company": "Entreprise",
+      "date": "Date d'inscription",
+      "declined": "Refusé",
+      "delete_user": "Supprimer l'utilisateur",
+      "delete_warning": "Cette action est irréversible. Elle supprimera définitivement le compte de l'utilisateur et ses données de nos serveurs.",
+      "description": "Gérer tous les comptes utilisateurs sur la plateforme.",
+      "failed_delete_user": "Échec de la suppression de l'utilisateur.",
+      "failed_update_status": "Échec de la mise à jour du statut de l'utilisateur.",
+      "filter_role": "Filtrer par rôle",
+      "filter_status": "Filtrer par statut",
+      "graduate": "Diplômé",
+      "manage": "Gérer",
+      "manage_user": "Gérer l'utilisateur",
+      "manage_user_description": "Mettre à jour le statut de l'utilisateur ou le supprimer de la plateforme.",
+      "name": "Nom",
+      "no_users_found": "Aucun utilisateur trouvé.",
+      "pending": "En attente",
+      "rejected": "Rejeté",
+      "removed_from_platform": "a été supprimé de la plateforme.",
+      "role": "Rôle",
+      "school": "École",
+      "search_users": "Rechercher des utilisateurs...",
+      "status": "Statut",
+      "status_now": "a maintenant le statut",
+      "status_updated": "Statut mis à jour",
+      "suspend": "Suspendre",
+      "suspended": "Suspendu",
+      "title": "Gestion des utilisateurs",
+      "user_deleted": "Utilisateur supprimé",
+      "yes_delete": "Oui, supprimer l'utilisateur"
     }
   },
-   "profile": {
-    "title": "Mon Profil Professionnel",
-    "description": "Gardez vos informations à jour pour attirer les meilleures opportunités.",
-    "autofill_button": "Remplir avec le CV",
-    "parsing_button": "Analyse en cours...",
-    "personal_info_title": "Informations Personnelles",
-    "tagline_label": "Titre / Slogan",
-    "tagline_placeholder": "Ex: Développeur Full-Stack passionné",
-    "phone_optional": "Numéro de téléphone (facultatif)",
-    "education_title": "Formation",
-    "degree": "Diplôme",
-    "degree_placeholder": "Ex: Licence en Informatique",
-    "field_of_study": "Domaine d'études",
-    "field_of_study_placeholder": "Ex: Génie Logiciel",
-    "school_name": "Nom de l'école",
-    "school_name_placeholder": "Ex: Université Félix Houphouët-Boigny",
-    "grad_year": "Année d'obtention",
-    "add_degree_button": "Ajouter une formation",
-    "experience_title": "Expérience Professionnelle",
-    "job_title_placeholder": "Ex: Ingénieur Logiciel Senior",
-    "company_name": "Nom de l'entreprise",
-    "company_name_placeholder": "Ex: Google",
-    "duration": "Durée",
-    "duration_placeholder": "Ex: Janv. 2022 - Présent",
-    "add_experience_button": "Ajouter une expérience",
-    "skills_title": "Compétences",
-    "skills_placeholder": "Ajoutez une compétence et appuyez sur Entrée...",
-    "skills_desc": "Séparez les compétences par une virgule ou la touche Entrée.",
-    "completion_title": "Complétion du Profil",
-    "completion_desc": "Un profil plus complet a 90% plus de chances d'être vu par les recruteurs.",
-    "view_public_profile": "Voir le profil public",
-    "badges_title": "Badges & Certifications",
-    "take_assessment_button": "Passer une nouvelle évaluation",
-    "saving_button": "Enregistrement...",
-    "save_button": "Enregistrer les modifications",
-    "parsing_resume_title": "Analyse de votre CV",
-    "parsing_resume_desc": "Notre IA extrait les informations de votre document. Veuillez patienter...",
-    "parsing_success_title": "CV analysé avec succès !",
-    "parsing_success_desc": "Votre profil a été pré-rempli. Veuillez vérifier les informations.",
-    "parsing_failed_title": "Échec de l'analyse",
-    "parsing_failed_desc": "Impossible d'analyser le CV. Veuillez remplir les champs manuellement.",
-    "must_be_logged_in": "Vous devez être connecté pour mettre à jour votre profil.",
-    "update_success_title": "Profil mis à jour !",
-    "update_success_desc": "Vos informations ont été enregistrées avec succès.",
-    "update_failed_desc": "Échec de la mise à jour du profil.",
-    "no_badges": "Aucun badge pour le moment. Passez une évaluation pour en gagner !",
-    "no_education": "Aucune formation ajoutée.",
-    "verified_by": "Vérifié par {schoolName}"
+  "days": "Jours",
+  "disqualified": "Disqualifié",
+  "e": {
+    "g": {
+      " Abidjan": "ex: Abidjan",
+      " Bouaké": "ex: Bouaké",
+      " React, TypeScript": "ex: React, TypeScript",
+      " Software Engineer": "ex: Ingénieur Logiciel",
+      ", Computer Science": "ex: Informatique",
+      ", INP-HB": "ex: INP-HB",
+      ", JavaScript, Product Management, ": {
+        "": {
+          "": {
+            "": "ex: JavaScript, Gestion de Produit, "
+          }
+        }
+      },
+      ", Upcoming Career Fair": "ex: Prochain salon de l'emploi"
+    }
   },
-  "job_search": {
-    "keywords_placeholder": "Titre du poste, compétences...",
-    "location_placeholder": "Ville, pays...",
-    "type_placeholder": "Type de contrat",
-    "all_types": "Tous les types",
-    "search_button": "Rechercher",
-    "results_text": "{count, plural, =0 {Aucune offre d'emploi trouvée} one {# offre d'emploi trouvée} other {# offres d'emploi trouvées}}",
-    "workplace_label": "Lieu de travail",
-    "all_workplaces": "Tous les lieux",
-    "remote": "Télétravail",
-    "on_site": "Sur site",
-    "hybrid": "Hybride",
-    "featured_badge": "En vedette",
-    "no_jobs_found_title": "Aucune offre d'emploi ne correspond à votre recherche",
-    "no_jobs_found_desc": "Essayez d'ajuster vos filtres ou d'élargir vos termes de recherche.",
-    "clear_filters_button": "Réinitialiser les filtres"
+  "faq_a_approve_graduates": "Réponse pour l'approbation des diplômés",
+  "faq_a_assessment_generator": "Réponse pour le générateur d'évaluations",
+  "faq_a_contact": "Réponse pour le contact",
+  "faq_a_event_management": "Réponse pour la gestion d'événements",
+  "faq_a_find_candidates": "Réponse pour trouver des candidats",
+  "faq_a_info": "Réponse pour les informations",
+  "faq_a_language_theme": "Réponse pour la langue et le thème",
+  "faq_a_matching": "Réponse pour la mise en correspondance",
+  "faq_a_partnerships": "Réponse pour les partenariats",
+  "faq_a_password": "Réponse pour le mot de passe",
+  "faq_a_pending": "Réponse pour le statut en attente",
+  "faq_a_placement_analytics": "Réponse pour les analyses de placement",
+  "faq_a_post_job": "Réponse pour la publication d'une offre d'emploi",
+  "faq_a_profile": "Réponse pour le profil",
+  "faq_a_resume_parser": "Réponse pour l'analyseur de CV",
+  "faq_a_school_partnerships": "Réponse pour les partenariats avec les écoles",
+  "faq_company_title": "Titre de la FAQ pour les entreprises",
+  "faq_general_title": "Titre général de la FAQ",
+  "faq_graduate_title": "Titre de la FAQ pour les diplômés",
+  "faq_q_approve_graduates": "Question sur l'approbation des diplômés",
+  "faq_q_assessment_generator": "Question sur le générateur d'évaluations",
+  "faq_q_contact": "Question sur le contact",
+  "faq_q_event_management": "Question sur la gestion d'événements",
+  "faq_q_find_candidates": "Question sur la recherche de candidats",
+  "faq_q_info": "Question sur les informations",
+  "faq_q_language_theme": "Question sur la langue et le thème",
+  "faq_q_matching": "Question sur la mise en correspondance",
+  "faq_q_partnerships": "Question sur les partenariats",
+  "faq_q_password": "Question sur le mot de passe",
+  "faq_q_pending": "Question sur le statut en attente",
+  "faq_q_placement_analytics": "Question sur les analyses de placement",
+  "faq_q_post_job": "Question sur la publication d'une offre d'emploi",
+  "faq_q_profile": "Question sur le profil",
+  "faq_q_resume_parser": "Question sur l'analyseur de CV",
+  "faq_q_school_partnerships": "Question sur les partenariats avec les écoles",
+  "faq_school_title": "Titre de la FAQ pour les écoles",
+  "features": {
+    "companies": {
+      "item1": {
+        "description": "Description",
+        "title": "Titre"
+      },
+      "item2": {
+        "description": "Description",
+        "title": "Titre"
+      },
+      "item3": {
+        "description": "Description",
+        "title": "Titre"
+      },
+      "title": "Titre"
+    },
+    "graduates": {
+      "item1": {
+        "description": "Description",
+        "title": "Titre"
+      },
+      "item2": {
+        "description": "Description",
+        "title": "Titre"
+      },
+      "item3": {
+        "description": "Description",
+        "title": "Titre"
+      },
+      "title": "Titre"
+    },
+    "headline": "Titre",
+    "schools": {
+      "item1": {
+        "description": "Description",
+        "title": "Titre"
+      },
+      "item2": {
+        "description": "Description",
+        "title": "Titre"
+      },
+      "item3": {
+        "description": "Description",
+        "title": "Titre"
+      },
+      "title": "Titre"
+    },
+    "subtitle": "Sous-titre"
   },
-  "nav": {
-    "home": "Accueil",
-    "about": "À propos",
-    "features": "Fonctionnalités",
-    "blog": "Blog",
-    "login": "Connexion",
-    "signup": "S'inscrire",
-    "jobs": "Emplois",
-    "companies": "Entreprises",
-    "schools": "Écoles",
-    "dashboard": "Tableau de bord"
+  "form_message_label": "Libellé du message",
+  "form_message_placeholder": "Espace réservé pour le message",
+  "form_subject_label": "Libellé du sujet",
+  "form_subject_placeholder": "Espace réservé pour le sujet",
+  "form_submit_button": "Bouton d'envoi",
+  "form_submitted_desc": "Description du formulaire soumis",
+  "form_submitted_title": "Titre du formulaire soumis",
+  "graduates": "Diplômés",
+  "has been removed from administrators": {
+    "": "a été retiré des administrateurs."
+  },
+  "has been sent": {
+    "": "a été envoyé."
   },
   "hero": {
-    "title": "Connecter les Diplômés aux Opportunités",
-    "subtitle": "La plateforme de référence pour que les diplômés, entreprises et écoles se connectent et trouvent des opportunités d'emploi.",
-    "cta": "Commencer",
-    "get_started": "Commencer",
-    "learn_more": "En savoir plus"
-  },
-  "features": {
-    "title": "Nos Fonctionnalités",
-    "subtitle": "Découvrez comment Yahnu transforme la recherche d'emploi et le recrutement",
-    "graduates": {
-      "title": "Pour les Diplômés",
-      "description": "Trouvez l'emploi de vos rêves grâce à notre système de correspondance alimenté par l'IA",
-      "cta": "Rechercher des emplois"
-    },
     "companies": {
-      "title": "Pour les Entreprises", 
-      "description": "Constituez votre équipe avec des diplômés qualifiés des meilleures écoles",
-      "cta": "Publier une offre"
+      "buttonText": "Texte du bouton",
+      "headline": "Titre",
+      "subtitle": "Sous-titre"
     },
-    "schools": {
-      "title": "Pour les Écoles",
-      "description": "Partenariat avec l'industrie pour améliorer les opportunités de vos diplômés",
-      "cta": "Devenir partenaire"
+    "graduates": {
+      "buttonText": "Texte du bouton",
+      "headline": "Titre",
+      "subtitle": "Sous-titre"
+    },
+    "universities": {
+      "buttonText": "Texte du bouton",
+      "headline": "Titre",
+      "subtitle": "Sous-titre"
     }
   },
-  "footer": {
-    "about": "À propos de Yahnu",
-    "privacy": "Politique de confidentialité",
-    "terms": "Conditions d'utilisation",
-    "contact": "Contact",
-    "platform": "Plateforme",
-    "legal": "Légal",
-    "follow_us": "Suivez-nous",
-    "contact_us": "Nous contacter",
-    "description": "Connecter les talents, les entreprises et les écoles en Côte d'Ivoire.",
-    "rights_reserved": "Tous droits réservés."
-  }
+  "in": "en",
+  "is ready to be uploaded": {
+    "": "est prêt à être téléchargé."
+  },
+  "landing": {
+    "cta": {
+      "description": "Créez votre compte aujourd'hui et débloquez un monde d'opportunités. Que vous soyez diplômé, entreprise ou école, Yahnu est votre passerelle vers le succès.",
+      "title": "Prêt à rejoindre l'élite ?"
+    },
+    "features": {
+      "description": "Yahnu est un écosystème complet conçu pour combler le fossé entre l'éducation et l'emploi. Explorez les fonctionnalités puissantes adaptées à chaque utilisateur.",
+      "for_companies": {
+        "data_insights": "Statistiques basées sur les données",
+        "data_insights_desc": "Obtenez des informations précieuses sur le marché du travail et prenez des décisions d'embauche éclairées grâce à nos outils d'analyse.",
+        "streamlined_recruitment": "Recrutement simplifié",
+        "streamlined_recruitment_desc": "Gérez l'ensemble de votre processus de recrutement, de la publication des offres à la planification des entretiens, le tout sur une seule plateforme.",
+        "talent_sourcing": "Recherche de talents ciblée",
+        "talent_sourcing_desc": "Trouvez efficacement des candidats qualifiés parmi un bassin de diplômés présélectionnés des meilleures écoles.",
+        "title": "Pour les entreprises"
+      },
+      "for_graduates": {
+        "ai_profile_builder": "Créateur de profil assisté par IA",
+        "ai_profile_builder_desc": "Créez un profil professionnel qui se démarque en quelques minutes. Notre IA vous aide à mettre en valeur vos compétences et expériences pour attirer les meilleurs employeurs.",
+        "job_matching": "Correspondance d'emplois personnalisée",
+        "job_matching_desc": "Recevez des recommandations d'emploi qui correspondent à vos objectifs de carrière et à vos qualifications. Dites adieu aux recherches interminables.",
+        "skill_development": "Ressources de développement des compétences",
+        "skill_development_desc": "Accédez à une bibliothèque de cours et d'évaluations pour améliorer vos compétences et rester compétitif sur le marché du travail.",
+        "title": "Pour les diplômés"
+      },
+      "for_schools": {
+        "boost_graduate_employability": "Augmentez l'employabilité des diplômés",
+        "boost_graduate_employability_desc": "Suivez et améliorez les résultats d'emploi de vos diplômés grâce à nos rapports et analyses complets.",
+        "industry_ties": "Renforcez les liens avec l'industrie",
+        "industry_ties_desc": "Établissez des partenariats stratégiques avec des entreprises de premier plan pour améliorer vos programmes et créer des opportunités pour vos étudiants.",
+        "showcase_institution": "Mettez en valeur votre établissement",
+        "showcase_institution_desc": "Faites la promotion des programmes et des réalisations de votre école auprès d'un large public d'étudiants potentiels et de partenaires corporatifs.",
+        "title": "Pour les écoles"
+      },
+      "title": "Tout ce dont vous avez besoin pour réussir"
+    },
+    "footer": {
+      "tagline": "Connecter les talents, les entreprises et les écoles en {country}."
+    },
+    "hero": {
+      "companies": {
+        "buttonText": "Publier une offre d'emploi",
+        "headline": "Construisez l'équipe de vos rêves",
+        "subtitle": "Accédez à un bassin diversifié de diplômés talentueux des meilleures écoles. Trouvez la personne idéale pour la culture et les objectifs de votre entreprise."
+      },
+      "graduates": {
+        "buttonText": "Rechercher des emplois",
+        "headline": "Trouvez l'emploi de vos rêves aujourd'hui.",
+        "subtitle": "Explorez des milliers d'opportunités d'emploi sur mesure pour vous en {country}. Votre prochain pas de carrière est à portée de clic."
+      },
+      "promo_text": "Yahnu vous met en relation avec des milliers d'opportunités d'emploi exclusives en {country}, adaptées à vos compétences et aspirations uniques. Votre avenir commence ici.",
+      "subtitle": "Révélez votre potentiel. Trouvez l'emploi de vos rêves aujourd'hui.",
+      "title": "Votre avenir commence ici",
+      "universities": {
+        "buttonText": "Devenir partenaire",
+        "headline": "Établissez des partenariats avec l'industrie",
+        "subtitle": "Collaborez avec des établissements universitaires de premier plan pour façonner l'avenir des talents. Connectez-vous avec les esprits les plus brillants et stimulez l'innovation."
+      }
+    },
+    "why_choose": {
+      "ai_powered": "Correspondance assistée par IA",
+      "ai_powered_desc": "Nos algorithmes avancés garantissent une correspondance parfaite entre les candidats et les opportunités.",
+      "exclusive_opportunities": "Opportunités exclusives",
+      "exclusive_opportunities_desc": "Accédez à des offres d'emploi et à des bassins de talents que vous ne trouverez nulle part ailleurs.",
+      "title": "Pourquoi choisir Yahnu ?",
+      "trusted_platform": "Plateforme de confiance",
+      "trusted_platform_desc": "Rejoignez des milliers de diplômés et d'entreprises qui font confiance à Yahnu pour leur carrière et leurs besoins de recrutement."
+    }
+  },
+  "language": "Langue",
+  "legal": {
+    "back_to_home": "Retour à l'accueil",
+    "privacy_content": "<p>Cette politique de confidentialité décrit nos politiques et procédures concernant la collecte, l'utilisation et la divulgation de vos informations lorsque vous utilisez le service et vous informe de vos droits en matière de confidentialité et de la manière dont la loi vous protège.</p><h2>Interprétation et définitions</h2><h3>Interprétation</h3><p>Les mots dont la première lettre est en majuscule ont des significations définies dans les conditions suivantes. Les définitions suivantes auront le même sens, qu'elles apparaissent au singulier ou au pluriel.</p><h3>Définitions</h3><p>Aux fins de cette politique de confidentialité :</p><ul><li><strong>Compte</strong> désigne un compte unique créé pour vous permettre d'accéder à notre service ou à des parties de notre service.</li><li><strong>Société</strong> (désignée par \"la Société\", \"Nous\", \"Notre\" ou \"Nos\" dans cet accord) fait référence à Yahnu.</li><li><strong>Cookies</strong> sont de petits fichiers placés sur votre ordinateur, appareil mobile ou tout autre appareil par un site web, contenant les détails de votre historique de navigation sur ce site web parmi leurs nombreuses utilisations.</li><li><strong>Pays</strong> fait référence à : Côte d'Ivoire</li><li><strong>Appareil</strong> désigne tout appareil pouvant accéder au service, tel qu'un ordinateur, un téléphone portable ou une tablette numérique.</li><li><strong>Données personnelles</strong> sont toutes les informations relatives à une personne identifiée ou identifiable.</li><li><strong>Service</strong> fait référence au site web.</li><li><strong>Données d'utilisation</strong> désignent les données collectées automatiquement, générées soit par l'utilisation du service, soit par l'infrastructure du service elle-même (par exemple, la durée d'une visite de page).</li><li><strong>Vous</strong> désigne la personne qui accède ou utilise le service, ou la société ou autre entité juridique au nom de laquelle cette personne accède ou utilise le service, le cas échéant.</li></ul><h2>Collecte et utilisation de vos données personnelles</h2><h3>Types de données collectées</h3><h4>Données personnelles</h4><p>Lors de l'utilisation de notre service, nous pouvons vous demander de nous fournir certaines informations personnellement identifiables qui peuvent être utilisées pour vous contacter ou vous identifier. Les informations personnellement identifiables peuvent inclure, sans s'y limiter :</p><ul><li>Adresse e-mail</li><li>Prénom et nom de famille</li><li>Numéro de téléphone</li><li>Données d'utilisation</li></ul><h2>Utilisation de vos données personnelles</h2><p>La Société peut utiliser les données personnelles aux fins suivantes :</p><ul><li>Pour fournir et maintenir notre service, y compris pour surveiller l'utilisation de notre service.</li><li>Pour gérer votre compte : pour gérer votre inscription en tant qu'utilisateur du service. Les données personnelles que vous fournissez peuvent vous donner accès à différentes fonctionnalités du service qui vous sont disponibles en tant qu'utilisateur enregistré.</li></ul><h2>Modifications de cette politique de confidentialité</h2><p>Nous pouvons mettre à jour notre politique de confidentialité de temps à autre. Nous vous informerons de tout changement en publiant la nouvelle politique de confidentialité sur cette page.</p><p>Nous vous informerons par e-mail et/ou par un avis bien visible sur notre service, avant que le changement ne devienne effectif et mettrons à jour la date de \"Dernière mise à jour\" en haut de cette politique de confidentialité.</p><p>Il vous est conseillé de consulter périodiquement cette politique de confidentialité pour tout changement. Les modifications de cette politique de confidentialité entrent en vigueur dès leur publication sur cette page.</p><p>Vous pouvez nous contacter :</p><ul><li>Par e-mail : <strong>contact@yahnu.org</strong></li></ul>",
+    "privacy_last_updated": "Dernière mise à jour : 15 janvier 2025",
+    "privacy_title": "Politique de confidentialité",
+    "terms_content": "<p>Veuillez lire attentivement ces termes et conditions avant d'utiliser notre service.</p><h2>Interprétation et définitions</h2><h3>Interprétation</h3><p>Les mots dont la première lettre est en majuscule ont des significations définies dans les conditions suivantes. Les définitions suivantes auront le même sens, qu'elles apparaissent au singulier ou au pluriel.</p><h3>Définitions</h3><p>Aux fins de ces termes et conditions :</p><ul><li><strong>Pays</strong> fait référence à : Côte d'Ivoire</li><li><strong>Société</strong> (désignée par \"la Société\", \"Nous\", \"Notre\" ou \"Nos\" dans cet accord) fait référence à Yahnu.</li><li><strong>Appareil</strong> désigne tout appareil pouvant accéder au service, tel qu'un ordinateur, un téléphone portable ou une tablette numérique.</li><li><strong>Service</strong> fait référence au site web.</li><li><strong>Termes et conditions</strong> (également désignés par \"Termes\") désignent les présents termes et conditions qui constituent l'intégralité de l'accord entre vous et la Société concernant l'utilisation du service.</li><li><strong>Vous</strong> désigne la personne qui accède ou utilise le service, ou la société ou autre entité juridique au nom de laquelle cette personne accède ou utilise le service, le cas échéant.</li></ul><h2>Reconnaissance</h2><p>Ce sont les termes et conditions régissant l'utilisation de ce service et l'accord qui s'applique entre vous et la Société. Ces termes et conditions définissent les droits et obligations de tous les utilisateurs concernant l'utilisation du service.</p><p>Votre accès et votre utilisation du service sont conditionnés à votre acceptation et à votre respect de ces termes et conditions. Ces termes et conditions s'appliquent à tous les visiteurs, utilisateurs et autres personnes qui accèdent ou utilisent le service.</p><h2>Comptes d'utilisateurs</h2><p>Lorsque vous créez un compte chez nous, vous devez nous fournir des informations exactes, complètes et à jour à tout moment. Le non-respect de cette obligation constitue une violation des termes, ce qui peut entraîner la résiliation immédiate de votre compte sur notre service.</p><h2>Résiliation</h2><p>Nous pouvons résilier ou suspendre votre compte immédiatement, sans préavis ni responsabilité, pour quelque raison que ce soit, y compris, sans limitation, si vous ne respectez pas ces termes et conditions.</p><h2>Modifications de ces termes et conditions</h2><p>Nous nous réservons le droit, à notre seule discrétion, de modifier ou de remplacer ces termes à tout moment. Si une révision est importante, nous ferons des efforts raisonnables pour fournir un préavis d'au moins 30 jours avant l'entrée en vigueur des nouvelles conditions. Ce qui constitue un changement important sera déterminé à notre seule discrétion.</p><p>Vous pouvez nous contacter :</p><ul><li>Par e-mail : <strong>contact@yahnu.org</strong></li></ul>",
+    "terms_last_updated": "Dernière mise à jour : 15 janvier 2025",
+    "terms_title": "Conditions d'utilisation"
+  },
+  "name": "Nom",
+  "nav": {
+    "blog": "Blog",
+    "companies": "Entreprises",
+    "jobs": "Emplois",
+    "schools": "Écoles"
+  },
+  "new": "Nouveau",
+  "open": "Ouvert",
+  "pages": {
+    "companies": {
+      "become_a_partner_company": "Devenir une entreprise partenaire",
+      "coming_soon": "Profils d'entreprises bientôt disponibles ! Nous nous associons aux meilleurs employeurs pour vous offrir des opportunités exclusives.",
+      "coming_soon_to_country": "Bientôt disponible en {country}",
+      "company_1_job_1": "Ingénieur Logiciel",
+      "company_1_job_2": "Chef de Produit",
+      "company_1_job_3": "Analyste de Données",
+      "company_1_tagline": "Principal fournisseur de télécommunications en Afrique de l'Ouest",
+      "company_2_job_1": "Agronome",
+      "company_2_job_2": "Responsable de la chaîne d'approvisionnement",
+      "company_2_job_3": "Spécialiste de l'assurance qualité",
+      "company_2_tagline": "Leader de l'agro-industrie en Afrique",
+      "company_3_job_1": "Analyste Financier",
+      "company_3_job_2": "Gestionnaire de Risques",
+      "company_3_job_3": "Responsable du Succès Client",
+      "company_3_tagline": "La banque moderne pour une Afrique moderne",
+      "company_4_job_1": "Coordinateur Logistique",
+      "company_4_job_2": "Directeur des Opérations",
+      "company_4_job_3": "Spécialiste Portuaire",
+      "company_4_tagline": "Leader mondial des solutions de chaîne d'approvisionnement et de logistique",
+      "discover_companies_description": "Découvrez les entreprises de premier plan en Côte d'Ivoire qui recrutent les meilleurs talents. Votre prochaine opportunité de carrière vous attend.",
+      "featured_companies": "Entreprises en vedette",
+      "featured_positions": "Postes en vedette",
+      "is_your_company_next": "Votre entreprise sera-t-elle la prochaine ?",
+      "join_yahnu_description": "Rejoignez Yahnu pour accéder à un vivier de talents de premier ordre, présélectionnés parmi les meilleures institutions de {country}.",
+      "subtitle": "Connectez-vous avec les principaux employeurs",
+      "title": "Profils d'entreprises",
+      "working_hard_companies": "Nous travaillons dur pour amener les entreprises de Yahnu en {country}. Restez à l'écoute !"
+    },
+    "jobs": {
+      "adjust_filters": "Essayez d'ajuster vos filtres pour trouver ce que vous cherchez.",
+      "all_types": "Tous les types",
+      "browse_jobs_description": "Parcourez des centaines d'offres d'emploi des meilleures entreprises en {country}.",
+      "city_state_remote": "Ville ou télétravail en Côte d’Ivoire",
+      "coming_soon": "Les offres d'emploi arrivent bientôt ! Nous travaillons d'arrache-pied pour vous proposer les meilleures opportunités.",
+      "contract": "Contrat",
+      "create_account_description": "Créez un compte gratuit pour voir tous les détails des offres et postuler directement.",
+      "filter_jobs": "Filtrer les offres",
+      "find_your_next_opportunity": "Trouvez votre prochaine opportunité",
+      "full_time": "Temps plein",
+      "hybrid": "Hybride",
+      "internship": "Stage",
+      "job_title_skills": "Titre du poste, compétences...",
+      "job_type": "Type de poste",
+      "keywords": "Mots-clés",
+      "location": "Lieu",
+      "no_jobs_found": "Aucune offre d'emploi trouvée",
+      "on_site": "Sur site",
+      "part_time": "Temps partiel",
+      "refine_search": "Affinez votre recherche pour trouver la correspondance parfaite.",
+      "remote": "Télétravail",
+      "sign_up_now": "S'inscrire maintenant",
+      "subtitle": "Découvrez votre prochaine opportunité de carrière",
+      "title": "Opportunités d'emploi",
+      "unlock_more_opportunities": "Débloquez plus d'opportunités",
+      "view_job": "Voir l'offre",
+      "workplace": "Lieu de travail"
+    },
+    "schools": {
+      "Featured Programs": "Programmes phares",
+      "Institution Details": "Détails de l'établissement",
+      "collaborating_description": "Collaborer avec les meilleures institutions pour former la prochaine génération de leaders de {country}.",
+      "coming_soon": "Les partenariats avec les écoles arrivent bientôt ! Nous établissons des relations avec les principaux établissements d'enseignement.",
+      "coming_soon_to_country": "Bientôt disponible dans le pays",
+      "explore_programs": "Explorer les programmes",
+      "join_network_description": "Rejoignez notre réseau pour connecter vos diplômés avec des entreprises de premier plan et suivre leur succès.",
+      "partner_schools": "Écoles partenaires",
+      "partner_with_us": "Devenez notre partenaire",
+      "school_1_description": "L'Institut National Polytechnique Félix Houphouët-Boigny (INP-HB) est le premier institut polytechnique de Côte d'Ivoire, créé en 1996. Situé à Yamoussoukro, la capitale politique, l'INP-HB est réputé pour son excellence dans l'enseignement de l'ingénierie, de la technologie et des sciences appliquées. L'institut propose des programmes en génie civil, génie électrique, génie mécanique, informatique et télécommunications, préparant les étudiants à des rôles de leadership dans l'industrie et la fonction publique.",
+      "school_1_name": "Institut National Polytechnique Félix Houphouët-Boigny",
+      "school_1_program_1": "Génie Civil",
+      "school_1_program_2": "Génie Électrique",
+      "school_1_program_3": "Informatique",
+      "school_1_program_4": "Télécommunications",
+      "school_2_description": "L'Université Félix Houphouët-Boigny (UFHB) est l'une des universités publiques les plus prestigieuses de Côte d'Ivoire, située à Abidjan. Fondée en 1964, elle propose des programmes complets dans plusieurs facultés, notamment la Médecine, le Droit, les Sciences Économiques, les Sciences et les Lettres. L'UFHB est reconnue pour son excellence en recherche et a formé de nombreux dirigeants du pays dans divers domaines.",
+      "school_2_name": "Université Félix Houphouët-Boigny",
+      "school_2_program_1": "Médecine",
+      "school_2_program_2": "Droit",
+      "school_2_program_3": "Sciences Économiques",
+      "school_2_program_4": "Sciences Appliquées",
+      "school_3_description": "Le Groupe CSI Pôle Polytechnique est un établissement d'enseignement supérieur privé de premier plan en Côte d'Ivoire, offrant une formation de qualité en ingénierie, commerce et technologie. Situé à Abidjan, le CSI met l'accent sur une formation pratique et axée sur l'industrie qui prépare les étudiants à une insertion professionnelle immédiate dans leurs domaines de prédilection.",
+      "school_3_name": "Groupe CSI Pôle Polytechnique",
+      "school_3_program_1": "Génie Logiciel",
+      "school_3_program_2": "Administration des Affaires",
+      "school_3_program_3": "Génie Industriel",
+      "school_3_program_4": "Marketing Numérique",
+      "school_4_description": "L'École Supérieure Africaine des TIC (ESATIC) est un établissement d'enseignement supérieur spécialisé dans les Technologies de l'Information et de la Communication. Située à Abidjan, l'ESATIC forme la prochaine génération de professionnels de l'informatique pour l'économie numérique en pleine croissance de l'Afrique.",
+      "school_4_name": "École Supérieure Africaine des TIC",
+      "school_4_program_1": "Informatique",
+      "school_4_program_2": "Ingénierie des Réseaux",
+      "school_4_program_3": "Cybersécurité",
+      "school_4_program_4": "Science des Données",
+      "school_5_description": "L'École Nationale Supérieure de Statistique et d'Économie Appliquée (ENSEA) est une institution prestigieuse spécialisée en statistique, économie et mathématiques appliquées. Basée à Abidjan, l'ENSEA forme des professionnels qui deviennent des acteurs clés de la planification économique et de l'analyse statistique à travers l'Afrique.",
+      "school_5_name": "École Nationale Supérieure de Statistique et d'Économie Appliquée",
+      "school_5_program_1": "Statistique",
+      "school_5_program_2": "Économie Appliquée",
+      "school_5_program_3": "Science Actuarielle",
+      "school_5_program_4": "Analyse Commerciale",
+      "school_desc_1": "Principal institut polytechnique spécialisé dans l'enseignement de l'ingénierie et de la technologie en Afrique de l'Ouest.",
+      "subtitle": "Écoles et universités partenaires",
+      "title": "Établissements d'enseignement",
+      "want_to_partner": "Vous voulez devenir partenaire ?",
+      "working_hard_schools": "Nous travaillons d'arrache-pied pour amener les écoles de Yahnu en {country}. Restez à l'écoute !"
+    }
+  },
+  "react-quill": "react-quill",
+  "ready_to_join": {
+    "description": "Créez votre compte aujourd'hui et débloquez un monde d'opportunités. Que vous soyez diplômé, entreprise ou école, Yahnu est votre porte d'entrée vers le succès.",
+    "title": "Prêt à rejoindre l'élite ?"
+  },
+  "resolved": "Résolu",
+  "results": "résultats",
+  "role": "Rôle",
+  "score": "score",
+  "support_center": {
+    "no_tickets": "Aucun ticket trouvé."
+  },
+  "support_tickets": {
+    "1_day_ago": "il y a 1 jour",
+    "2_hours_ago": "il y a 2 heures",
+    "3_days_ago": "il y a 3 jours",
+    "8_hours_ago": "il y a 8 heures",
+    "billing_question": "Question sur la facturation",
+    "cannot_apply_job": "Impossible de postuler à une offre",
+    "password_reset_failed": "Échec de la réinitialisation du mot de passe",
+    "profile_visibility_issue": "Problème de visibilité de mon profil"
+  },
+  "tag_access": "Accès",
+  "tag_admin": "Administration",
+  "tag_beginner": "Débutant",
+  "tag_dashboard": "Tableau de bord",
+  "tag_internal": "Interne",
+  "tag_login": "Connexion",
+  "tag_password": "Mot de passe",
+  "tag_profile": "Profil",
+  "tag_setup": "Configuration",
+  "type": "Type",
+  "userRole": "Rôle de l'utilisateur",
+  "why_choose_yahnu": {
+    "ai_tools": "Outils basés sur l'IA pour un recrutement et une création de profil efficaces",
+    "description": "Nous offrons une solution complète pour combler le fossé entre l'éducation et l'emploi en {country}.",
+    "direct_access": "Accès direct à un vivier de talents pré-qualifiés",
+    "enhanced_opportunities": "Opportunités de carrière améliorées pour les diplômés",
+    "strengthened_ties": "Liens renforcés entre le monde universitaire et l'industrie",
+    "title": "Pourquoi choisir Yahnu ?"
+  },
+  "{count} graduates hired": "{count} diplômés embauchés",
+  "{count} hires this year": "{count} embauches cette année",
+  "{count} minutes": "{count} minutes",
+  "{count} questions": "{count} questions",
+  "{count} total applications": "{count} candidatures au total",
+  "|": "|",
+  "Back to sign in": "Retour à la connexion",
+  "Email address": "Adresse e-mail",
+  "Enter the address used for your Yahnu account.": "Saisissez l'adresse utilisée pour votre compte Yahnu.",
+  "If an unverified account exists for that address, a new link is on its way.": "Si un compte non vérifié existe pour cette adresse, un nouveau lien vient d'être envoyé.",
+  "Open local verification link": "Ouvrir le lien de vérification local",
+  "Resend verification email": "Renvoyer l'e-mail de vérification",
+  "Send a new link": "Envoyer un nouveau lien",
+  "Sending…": "Envoi…",
+  "The request could not be completed.": "La demande n'a pas pu être traitée."
 }

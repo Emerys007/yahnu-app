@@ -1,0 +1,8 @@
+{
+  "firestore": {
+    "rules": "firestore.freeze.rules"
+  },
+  "storage": {
+    "rules": "storage.freeze.rules"
+  }
+}

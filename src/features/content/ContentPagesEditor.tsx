@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react"
 import { useForm, useFieldArray, UseFormReturn } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import { useLocalization } from "@/context/localization-context"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -12,78 +13,85 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Loader2, PlusCircle, Trash2 } from "lucide-react"
-import { doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { apiFetch } from "@/lib/api-client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { Separator } from "@/components/ui/separator"
-import { useAuth } from "@/context/auth-context"
 
 // --- Schemas and Default Values (Defined at the top level) ---
 
 const teamMemberSchema = z.object({
-  name: z.string().min(1, "Le nom est requis."),
-  role: z.string().min(1, "Le rôle est requis."),
-  imageUrl: z.string().url("Doit être une URL valide.").or(z.literal("")),
+  name: z.string().min(1, "Le nom est obligatoire."),
+  role: z.string().min(1, "Le rôle est obligatoire."),
+  imageUrl: z.string().refine((value) => value === "" || /^\/(?!\/)(?!\.\.(?:\/|$))(?!.*\/\.\.(?:\/|$))[^?#\\\u0000-\u001f]+$/.test(value), "Utilisez une image du dossier public, par exemple /images/personne.jpg."),
 });
 
 const aboutPageSchema = z.object({
-    aboutTitle: z.string().min(1, "Requis"),
-    aboutSubtitle: z.string().min(1, "Requis"),
-    storyTitle: z.string().min(1, "Requis"),
-    storyContent1: z.string().min(1, "Requis"),
-    storyContent2: z.string().min(1, "Requis"),
-    missionTitle: z.string().min(1, "Requis"),
-    missionContent: z.string().min(1, "Requis"),
-    visionTitle: z.string().min(1, "Requis"),
-    visionContent: z.string().min(1, "Requis"),
-    valuesTitle: z.string().min(1, "Requis"),
-    valuesContent: z.string().min(1, "Requis"),
+    aboutTitle: z.string().min(1, "Ce champ est obligatoire."),
+    aboutSubtitle: z.string().min(1, "Ce champ est obligatoire."),
+    storyTitle: z.string().min(1, "Ce champ est obligatoire."),
+    storyContent1: z.string().min(1, "Ce champ est obligatoire."),
+    storyContent2: z.string().min(1, "Ce champ est obligatoire."),
+    missionTitle: z.string().min(1, "Ce champ est obligatoire."),
+    missionContent: z.string().min(1, "Ce champ est obligatoire."),
+    visionTitle: z.string().min(1, "Ce champ est obligatoire."),
+    visionContent: z.string().min(1, "Ce champ est obligatoire."),
+    valuesTitle: z.string().min(1, "Ce champ est obligatoire."),
+    valuesContent: z.string().min(1, "Ce champ est obligatoire."),
     teamMembers: z.array(teamMemberSchema).optional(),
 });
 
 const legalPageSchema = z.object({
-    title: z.string().min(1, "Requis"),
-    lastUpdated: z.string().min(1, "Requis"),
+    title: z.string().min(1, "Ce champ est obligatoire."),
+    lastUpdated: z.string().min(1, "Ce champ est obligatoire."),
     content: z.string().min(50, "Le contenu doit comporter au moins 50 caractères."),
 })
 
-export const defaultAboutValues: z.infer<typeof aboutPageSchema> = {
-    aboutTitle: "À propos de Yahnu",
-    aboutSubtitle: "Nous sommes en mission pour combler le fossé entre l'éducation et l'emploi, créant un écosystème prospère pour que les talents se connectent aux opportunités.",
-    storyTitle: "Notre Histoire",
-    storyContent1: "<p>Fondée par une équipe d'éducateurs et d'entrepreneurs, Yahnu est née d'une vision commune : libérer l'immense potentiel des diplômés en les connectant directement aux industries qui ont besoin de leurs compétences.</p>",
-    storyContent2: "<p>Aujourd'hui, Yahnu est une plateforme dynamique qui permet aux étudiants de lancer leur carrière, aide les entreprises à trouver efficacement les bons talents et permet aux écoles de forger des partenariats industriels significatifs. Nous croyons en la construction d'avenirs, une connexion à la fois.</p>",
-    missionTitle: "Notre Mission",
-    missionContent: "<p>Autonomiser les diplômés, les entreprises et les écoles en créant un écosystème transparent et efficace pour le développement des talents et la croissance de carrière.</p>",
-    visionTitle: "Notre Vision",
-    visionContent: "<p>Être la plateforme leader pour la connexion professionnelle et les opportunités en Afrique, stimulant la croissance économique et la réussite individuelle.</p>",
-    valuesTitle: "Nos Valeurs",
-    valuesContent: "<p>Intégrité, Innovation, Collaboration et un engagement inébranlable envers le succès de nos utilisateurs.</p>",
+const defaultAboutValues: z.infer<typeof aboutPageSchema> = {
+    aboutTitle: "Faire du diplôme un vrai point de départ.",
+    aboutSubtitle: "Yahnu rapproche les jeunes diplômés, les établissements et les employeurs afin que le talent ivoirien trouve des opportunités concrètes en {country}.",
+    storyTitle: "Une réponse née en Côte d’Ivoire",
+    storyContent1: "<p>À Abidjan comme à Bouaké, Yamoussoukro, Korhogo ou San-Pédro, de jeunes diplômés talentueux cherchent leur première expérience pendant que des entreprises peinent à identifier les bons profils. Yahnu est né de ce constat simple : le potentiel existe déjà, mais les connexions restent trop difficiles à créer.</p>",
+    storyContent2: "<p>Nous construisons un espace où chaque parcours peut être compris, chaque compétence mise en valeur et chaque opportunité rendue accessible. Diplômés, écoles et recruteurs avancent avec des informations utiles, des échanges directs et une même ambition : faire grandir les carrières ivoiriennes et africaines.</p>",
+    missionTitle: "Notre mission",
+    missionContent: "<p>Donner à chaque jeune diplômé les moyens de rendre son potentiel visible, d’accéder aux bonnes opportunités et de bâtir une carrière qui lui ressemble.</p>",
+    visionTitle: "Notre vision",
+    visionContent: "<p>Faire de la Côte d’Ivoire un carrefour africain où les talents, les campus et les entreprises transforment ensemble les diplômes en impact concret.</p>",
+    valuesTitle: "Nos repères",
+    valuesContent: "<p>La confiance, l’audace, l’entraide et le respect des réalités locales guident chaque expérience conçue sur Yahnu.</p>",
     teamMembers: [
-        { name: "Colombe Koffi", role: "Fondatrice & CEO", imageUrl: "/images/Colombe Koffi.jpeg" },
-        { name: "Joël K", role: "Chef de Produit", imageUrl: "/images/Joel K.jpeg" },
-        { name: "Bethel Touman", role: "Ingénieur de Données", imageUrl: "/images/Bethel_Touman.jpeg" },
+        { name: "Colombe Koffi", role: "about.team.roles.founder_ceo", imageUrl: "/images/Colombe Koffi.jpeg" },
+        { name: "Joël K", role: "about.team.roles.head_of_product", imageUrl: "/images/Joel K.jpeg" },
+        { name: "Bethel Touman", role: "about.team.roles.data_engineer", imageUrl: "/images/Bethel_Touman.jpeg" },
     ]
 }
 
-export const defaultPrivacyPolicy: z.infer<typeof legalPageSchema> = {
+const defaultPrivacyPolicy: z.infer<typeof legalPageSchema> = {
     title: "Politique de confidentialité",
-    lastUpdated: "15 janvier 2025",
-    content: `<p>Cette Politique de Confidentialité décrit Nos politiques et procédures sur la collecte, l'utilisation et la divulgation de Vos informations lorsque Vous utilisez le Service et Vous informe sur Vos droits à la vie privée et comment la loi Vous protège.</p><h2>Interprétation et Définitions</h2><h3>Interprétation</h3><p>Les mots dont la lettre initiale est en majuscule ont des significations définies dans les conditions suivantes. Les définitions suivantes auront la même signification qu'elles apparaissent au singulier ou au pluriel.</p><h3>Définitions</h3><p>Aux fins de la présente Politique de Confidentialité :</p><ul><li><strong>Compte</strong> signifie un compte unique créé pour Vous permettre d'accéder à notre Service ou à des parties de notre Service.</li><li><strong>Société</strong> (désignée comme "la Société", "Nous", "Notre" ou "Nos" dans le présent Contrat) se réfère à Yahnu.</li><li><strong>Cookies</strong> sont de petits fichiers qui sont placés sur Votre ordinateur, appareil mobile ou tout autre appareil par un site web, contenant les détails de Votre historique de navigation sur ce site web parmi ses nombreuses utilisations.</li><li><strong>Pays</strong> se réfère à : Côte d'Ivoire</li><li><strong>Appareil</strong> signifie tout appareil pouvant accéder au Service tel qu'un ordinateur, un téléphone portable ou une tablette numérique.</li><li><strong>Données Personnelles</strong> sont toutes les informations qui se rapportent à un individu identifié ou identifiable.</li><li><strong>Service</strong> se réfère au Site Web.</li><li><strong>Données d'Utilisation</strong> se réfèrent aux données collectées automatiquement, soit générées par l'utilisation du Service, soit à partir de l'infrastructure du Service elle-même (par exemple, la durée d'une visite de page).</li><li><strong>Vous</strong> signifie la personne accédant ou utilisant le Service, ou la société, ou toute autre entité juridique au nom de laquelle cette personne accède ou utilise le Service, selon le cas.</li></ul><h2>Collecte et Utilisation de Vos Données Personnelles</h2><h3>Types de Données Collectées</h3><h4>Données Personnelles</h4><p>Lors de l'utilisation de Notre Service, Nous pouvons Vous demander de Nous fournir certaines informations personnelles identifiables qui peuvent être utilisées pour Vous contacter ou Vous identifier. Les informations personnelles identifiables peuvent inclure, mais ne sont pas limitées à :</p><ul><li>Adresse e-mail</li><li>Prénom et nom</li><li>Numéro de téléphone</li><li>Données d'Utilisation</li></ul><h2>Utilisation de Vos Données Personnelles</h2><p>La Société peut utiliser les Données Personnelles aux fins suivantes :</p><ul><li>Pour fournir et maintenir notre Service, y compris pour surveiller l'utilisation de notre Service.</li><li>Pour gérer Votre Compte : pour gérer Votre inscription en tant qu'utilisateur du Service. Les Données Personnelles que Vous fournissez peuvent Vous donner accès à différentes fonctionnalités du Service qui sont disponibles pour Vous en tant qu'utilisateur enregistré.</li></ul><h2>Modifications de cette Politique de Confidentialité</h2><p>Nous pouvons mettre à jour Notre Politique de Confidentialité de temps à autre. Nous Vous informerons de tout changement en publiant la nouvelle Politique de Confidentialité sur cette page.</p><p>Nous Vous informerons par e-mail et/ou par un avis visible sur Notre Service, avant que le changement ne devienne effectif et mettrons à jour la date de "Dernière mise à jour" en haut de cette Politique de Confidentialité.</p><p>Il Vous est conseillé de consulter périodiquement cette Politique de Confidentialité pour tout changement. Les changements à cette Politique de Confidentialité sont effectifs lorsqu'ils sont publiés sur cette page.</p><h2>Contactez-nous</h2><p>Si vous avez des questions sur cette Politique de Confidentialité, Vous pouvez nous contacter :</p><ul><li>Par email: <strong>contact@yahnu.org</strong></li></ul>`
+    lastUpdated: "16 juillet 2026",
+    content: `<p>Chez Yahnu, nous accordons de l’importance à la confiance des jeunes diplômés, des établissements et des employeurs qui utilisent notre plateforme en Côte d’Ivoire. Cette politique explique quelles données nous traitons, pourquoi nous les utilisons et quels choix vous pouvez exercer.</p><h2>Les données concernées</h2><p>Selon votre rôle et votre utilisation de Yahnu, nous pouvons traiter :</p><ul><li>vos informations d’identité et de contact, comme votre nom, votre adresse e-mail et votre numéro de téléphone ;</li><li>les informations de votre profil professionnel ou académique, notamment vos compétences, formations, expériences et documents transmis ;</li><li>les candidatures, messages, préférences et autres actions réalisées dans votre espace ;</li><li>des données techniques utiles au fonctionnement et à la sécurité du service.</li></ul><h2>Pourquoi nous les utilisons</h2><p>Ces informations nous permettent de créer et sécuriser votre compte, présenter des opportunités pertinentes, faciliter les candidatures et les échanges, aider les établissements à accompagner leurs diplômés, permettre aux employeurs d’étudier les profils autorisés et améliorer l’expérience Yahnu.</p><h2>Partage des informations</h2><p>Nous partageons uniquement les informations nécessaires avec les diplômés, établissements ou employeurs concernés par une interaction sur Yahnu, avec les prestataires qui contribuent au fonctionnement sécurisé du service, ou lorsque la loi l’exige. Nous ne vendons pas vos données personnelles.</p><h2>Conservation et sécurité</h2><p>Nous conservons les informations pendant la durée utile à votre compte, à nos obligations et à la sécurité de la plateforme. Nous appliquons des mesures techniques et organisationnelles adaptées, tout en rappelant qu’aucun service numérique ne peut garantir un risque nul.</p><h2>Vos choix</h2><p>Vous pouvez consulter et corriger les informations de votre profil depuis votre espace. Pour demander l’accès, la rectification ou la suppression d’autres données, écrivez-nous à <strong>contact@yahnu.org</strong>. Nous pouvons vérifier votre identité avant de traiter la demande.</p><h2>Mises à jour</h2><p>Cette politique peut évoluer avec les fonctionnalités de Yahnu. La date affichée en haut de page indique sa dernière mise à jour.</p><h2>Nous contacter</h2><p>Pour toute question relative à la confidentialité : <strong>contact@yahnu.org</strong>.</p>`
 };
 
-export const defaultTerms: z.infer<typeof legalPageSchema> = {
-    title: "Conditions d'utilisation",
-    lastUpdated: "15 janvier 2025",
-    content: `<p>Veuillez lire attentivement ces termes et conditions avant d'utiliser Notre Service.</p><h2>Interprétation et Définitions</h2><h3>Interprétation</h3><p>Les mots dont la lettre initiale est en majuscule ont des significations définies dans les conditions suivantes. Les définitions suivantes auront la même signification qu'elles apparaissent au singulier ou au pluriel.</p><h3>Définitions</h3><p>Aux fins de ces Termes et Conditions :</p><ul><li><strong>Pays</strong> se réfère à : Côte d'Ivoire</li><li><strong>Société</strong> (désignée comme "la Société", "Nous", "Notre" ou "Nos" dans le présent Contrat) se réfère à Yahnu.</li><li><strong>Appareil</strong> signifie tout appareil pouvant accéder au Service tel qu'un ordinateur, un téléphone portable ou une tablette numérique.</li><li><strong>Service</strong> se réfère au Site Web.</li><li><strong>Termes et Conditions</strong> (également appelés "Termes") signifient ces Termes et Conditions qui forment l'intégralité de l'accord entre Vous et la Société concernant l'utilisation du Service.</li><li><strong>Vous</strong> signifie la personne accédant ou utilisant le Service, ou la société, ou toute autre entité juridique au nom de laquelle cette personne accède ou utilise le Service, selon le cas.</li></ul><h2>Reconnaissance</h2><p>Ce sont les Termes et Conditions régissant l'utilisation de ce Service et l'accord qui opère entre Vous et la Société. Ces Termes et Conditions énoncent les droits et obligations de tous les utilisateurs concernant l'utilisation du Service.</p><p>Votre accès et votre utilisation du Service sont conditionnés à Votre acceptation et à Votre conformité avec ces Termes et Conditions. Ces Termes et Conditions s'appliquent à tous les visiteurs, utilisateurs et autres personnes qui accèdent ou utilisent le Service.</p><h2>Comptes d'Utilisateur</h2><p>Lorsque Vous créez un compte avec Nous, Vous devez Nous fournir des informations exactes, complètes et à jour en tout temps. Le non-respect de cette obligation constitue une violation des Termes, ce qui peut entraîner la résiliation immédiate de Votre compte sur Notre Service.</p><h2>Résiliation</h2><p>Nous pouvons résilier ou suspendre Votre Compte immédiatement, sans préavis ni responsabilité, pour quelque raison que ce soit, y compris, sans limitation, si Vous enfreignez ces Termes et Conditions.</p><h2>Modifications de ces Termes et Conditions</h2><p>Nous nous réservons le droit, à Notre seule discrétion, de modifier ou de remplacer ces Termes à tout moment. Si une révision est importante, Nous ferons des efforts raisonnables pour fournir un préavis d'au moins 30 jours avant que les nouvelles conditions n'entrent en vigueur. Ce qui constitue un changement important sera déterminé à Notre seule discrétion.</p><h2>Contactez-nous</h2><p>Si vous avez des questions sur ces Termes et Conditions, Vous pouvez nous contacter :</p><ul><li>Par email: <strong>contact@yahnu.org</strong></li></ul>`
+const defaultTerms: z.infer<typeof legalPageSchema> = {
+    title: "Conditions d’utilisation",
+    lastUpdated: "16 juillet 2026",
+    content: `<p>Les présentes conditions encadrent l’utilisation de Yahnu, une plateforme qui rapproche les jeunes diplômés, les établissements d’enseignement et les employeurs en Côte d’Ivoire. En créant un compte ou en utilisant le service, vous acceptez ces règles.</p><h2>Votre compte</h2><p>Vous devez fournir des informations exactes, maintenir vos coordonnées à jour et protéger vos identifiants. Vous êtes responsable des actions réalisées depuis votre compte et devez nous signaler rapidement toute utilisation suspecte.</p><h2>Des profils et opportunités fiables</h2><ul><li>Les diplômés présentent fidèlement leurs formations, compétences et expériences.</li><li>Les employeurs publient des opportunités réelles, claires et conformes aux règles applicables, sans contenu trompeur ou discriminatoire.</li><li>Les établissements vérifient uniquement les informations qu’ils sont habilités à confirmer.</li></ul><p>Yahnu facilite la rencontre entre les acteurs, mais ne garantit ni recrutement, ni candidature retenue, ni résultat professionnel particulier.</p><h2>Utilisation responsable</h2><p>Il est interdit d’usurper une identité, d’accéder au compte d’une autre personne, de diffuser du contenu illégal ou nuisible, de collecter massivement des données, de contourner les protections techniques ou d’utiliser Yahnu pour envoyer des messages non sollicités.</p><h2>Contenus publiés</h2><p>Vous restez responsable des textes, documents et informations que vous transmettez. Vous nous autorisez à les héberger, les afficher et les traiter uniquement dans la mesure nécessaire au fonctionnement des fonctionnalités que vous utilisez.</p><h2>Disponibilité et évolution du service</h2><p>Nous faisons notre possible pour assurer un service utile et fiable. Certaines fonctions peuvent toutefois être interrompues pour maintenance, sécurité ou amélioration. Nous pouvons faire évoluer Yahnu et vous informerons des changements importants lorsque cela est approprié.</p><h2>Modération et suspension</h2><p>Nous pouvons retirer un contenu ou limiter un compte qui présente un risque, enfreint ces conditions ou porte atteinte à d’autres utilisateurs. Lorsque la situation le permet, nous privilégions une explication et une possibilité de régularisation.</p><h2>Mise à jour des conditions</h2><p>Ces conditions peuvent évoluer. La date affichée en haut de page indique la version en vigueur ; poursuivre l’utilisation du service après une mise à jour vaut acceptation des nouvelles conditions.</p><h2>Nous contacter</h2><p>Une question ou un signalement ? Écrivez-nous à <strong>contact@yahnu.org</strong>.</p>`
 };
+
+type PageResponse = {
+    data: {
+        page: {
+            id: string;
+            data: Record<string, unknown>;
+            updatedAt: string;
+        } | null;
+    };
+}
 
 // --- Helper Component ---
 
-const PageFormWrapper = ({ pageId, schema, defaultValues, pageName, children }: { pageId: string, schema: any, defaultValues: any, pageName: string, children: (form: any, isSaving: boolean) => React.ReactNode }) => {
+const PageFormWrapper = ({ pageId, schema, defaultValues, children }: { pageId: string, schema: any, defaultValues: any, children: (form: any, isSaving: boolean) => React.ReactNode }) => {
     const { toast } = useToast();
-    const { user } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -96,10 +104,9 @@ const PageFormWrapper = ({ pageId, schema, defaultValues, pageName, children }: 
         const fetchContent = async () => {
             setIsLoading(true);
             try {
-                const docRef = doc(db, "pages", pageId);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
+                const response = await apiFetch<PageResponse>(`/api/pages/${encodeURIComponent(pageId)}`);
+                if (response.data.page) {
+                    const data = response.data.page.data;
                     if (pageId === 'about-us' && (!data.teamMembers || !Array.isArray(data.teamMembers))) {
                         data.teamMembers = defaultValues.teamMembers;
                     }
@@ -120,26 +127,21 @@ const PageFormWrapper = ({ pageId, schema, defaultValues, pageName, children }: 
     const onSubmit = async (values: z.infer<any>) => {
         setIsSaving(true);
          try {
-            const docRef = doc(db, "pages", pageId);
-            await setDoc(docRef, values, { merge: true });
-            
-            // Create notification
-            await addDoc(collection(db, "notifications"), {
-                recipientRole: 'content_manager',
-                text: `La page "${pageName}" a été mise à jour par ${user?.name || 'un administrateur'}.`,
-                link: '/dashboard/content/static-pages',
-                type: 'static_page',
-                createdAt: serverTimestamp(),
-                createdBy: user?.uid,
+            await apiFetch(`/api/pages/${encodeURIComponent(pageId)}`, {
+                method: 'PUT',
+                body: JSON.stringify({ data: values }),
             });
-
             toast({
                 title: "Contenu mis à jour",
-                description: "Le contenu de la page a été enregistré.",
+                description: "Le contenu de la page a bien été enregistré.",
             });
         } catch (error) {
             console.error("Failed to save content:", error);
-            toast({ title: "Erreur", description: "La sauvegarde du contenu de la page a échoué.", variant: "destructive" });
+            toast({
+                title: "Enregistrement impossible",
+                description: "La page n’a pas pu être enregistrée. Vérifiez votre connexion puis réessayez.",
+                variant: "destructive",
+            });
         } finally {
             setIsSaving(false);
         }
@@ -159,6 +161,7 @@ const PageFormWrapper = ({ pageId, schema, defaultValues, pageName, children }: 
 };
 
 const AboutUsForm = ({ form, isSaving }: { form: UseFormReturn<z.infer<typeof aboutPageSchema>>, isSaving: boolean }) => {
+    const { t } = useLocalization();
     const { fields, append, remove } = useFieldArray({
         control: form.control,
         name: "teamMembers"
@@ -167,56 +170,63 @@ const AboutUsForm = ({ form, isSaving }: { form: UseFormReturn<z.infer<typeof ab
     return (
         <div className="space-y-8">
             <div className="space-y-4 p-4 border rounded-lg">
-                <h3 className="text-lg font-semibold">Section Héro</h3>
-                <FormField control={form.control} name="aboutTitle" render={({ field }) => (<FormItem><FormLabel>Titre</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={form.control} name="aboutSubtitle" render={({ field }) => (<FormItem><FormLabel>Sous-titre</FormLabel><FormControl><Textarea rows={2} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <h3 className="text-lg font-semibold">{t('Hero Section')}</h3>
+                <FormField control={form.control} name="aboutTitle" render={({ field }) => (<FormItem><FormLabel>{t('Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="aboutSubtitle" render={({ field }) => (<FormItem><FormLabel>{t('Subtitle')}</FormLabel><FormControl><Textarea rows={2} {...field} /></FormControl><FormMessage /></FormItem>)} />
             </div>
             <Separator />
              <div className="space-y-4 p-4 border rounded-lg">
-                <h3 className="text-lg font-semibold">Section Histoire</h3>
-                <FormField control={form.control} name="storyTitle" render={({ field }) => (<FormItem><FormLabel>Titre</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={form.control} name="storyContent1" render={({ field }) => (<FormItem><FormLabel>Paragraphe de contenu 1</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={form.control} name="storyContent2" render={({ field }) => (<FormItem><FormLabel>Paragraphe de contenu 2</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <h3 className="text-lg font-semibold">{t('Story Section')}</h3>
+                <FormField control={form.control} name="storyTitle" render={({ field }) => (<FormItem><FormLabel>{t('Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="storyContent1" render={({ field }) => (<FormItem><FormLabel>{t('Content Paragraph 1')}</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="storyContent2" render={({ field }) => (<FormItem><FormLabel>{t('Content Paragraph 2')}</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
             </div>
             <Separator />
              <div className="space-y-4 p-4 border rounded-lg">
-                <h3 className="text-lg font-semibold">Mission, Vision & Valeurs</h3>
+                <h3 className="text-lg font-semibold">{t('Mission, Vision & Values')}</h3>
                 <div className="grid md:grid-cols-3 gap-6">
                     <div className="space-y-4">
-                        <h4 className="text-md font-semibold">Carte Mission</h4>
-                        <FormField control={form.control} name="missionTitle" render={({ field }) => (<FormItem><FormLabel>Titre</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name="missionContent" render={({ field }) => (<FormItem><FormLabel>Contenu</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <h4 className="text-md font-semibold">{t('Mission Card')}</h4>
+                        <FormField control={form.control} name="missionTitle" render={({ field }) => (<FormItem><FormLabel>{t('Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name="missionContent" render={({ field }) => (<FormItem><FormLabel>{t('Content')}</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
                     </div>
                     <div className="space-y-4">
-                        <h4 className="text-md font-semibold">Carte Vision</h4>
-                        <FormField control={form.control} name="visionTitle" render={({ field }) => (<FormItem><FormLabel>Titre</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name="visionContent" render={({ field }) => (<FormItem><FormLabel>Contenu</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <h4 className="text-md font-semibold">{t('Vision Card')}</h4>
+                        <FormField control={form.control} name="visionTitle" render={({ field }) => (<FormItem><FormLabel>{t('Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name="visionContent" render={({ field }) => (<FormItem><FormLabel>{t('Content')}</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
                     </div>
                     <div className="space-y-4">
-                        <h4 className="text-md font-semibold">Carte Valeurs</h4>
-                        <FormField control={form.control} name="valuesTitle" render={({ field }) => (<FormItem><FormLabel>Titre</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name="valuesContent" render={({ field }) => (<FormItem><FormLabel>Contenu</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <h4 className="text-md font-semibold">{t('Values Card')}</h4>
+                        <FormField control={form.control} name="valuesTitle" render={({ field }) => (<FormItem><FormLabel>{t('Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name="valuesContent" render={({ field }) => (<FormItem><FormLabel>{t('Content')}</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
                     </div>
                 </div>
              </div>
              <Separator />
              <div className="space-y-4 p-4 border rounded-lg">
                 <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold">Section "Rencontrez l'équipe"</h3>
+                    <h3 className="text-lg font-semibold">{t('Meet the Team Section')}</h3>
                     <Button type="button" size="sm" variant="outline" onClick={() => append({ name: '', role: '', imageUrl: '' })}>
-                        <PlusCircle className="mr-2 h-4 w-4" /> Ajouter un membre
+                        <PlusCircle className="mr-2 h-4 w-4" /> {t('Add Member')}
                     </Button>
                 </div>
                 <div className="space-y-4">
                     {fields.map((field, index) => (
-                        <div key={field.id} className="p-4 border rounded-lg relative space-y-4 bg-muted/50">
+                        <div key={field.id} className="relative space-y-4 rounded-lg border bg-muted/50 p-4 pr-14">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <FormField control={form.control} name={`teamMembers.${index}.name`} render={({ field }) => (<FormItem><FormLabel>Nom</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                <FormField control={form.control} name={`teamMembers.${index}.role`} render={({ field }) => (<FormItem><FormLabel>Rôle</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name={`teamMembers.${index}.name`} render={({ field }) => (<FormItem><FormLabel>{t('Name')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField control={form.control} name={`teamMembers.${index}.role`} render={({ field }) => (<FormItem><FormLabel>{t('Role')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                             </div>
-                            <FormField control={form.control} name={`teamMembers.${index}.imageUrl`} render={({ field }) => (<FormItem><FormLabel>URL de l'image</FormLabel><FormControl><Input placeholder="https://example.com/image.png" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                            <Button type="button" variant="destructive" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={() => remove(index)}>
-                                <Trash2 className="h-4 w-4" />
+                            <FormField control={form.control} name={`teamMembers.${index}.imageUrl`} render={({ field }) => (<FormItem><FormLabel>{t('Image path')}</FormLabel><FormControl><Input placeholder="/images/person.jpg" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                className="absolute right-2 top-2 h-9 w-9"
+                                onClick={() => remove(index)}
+                                aria-label={`Supprimer ${field.name || `le membre ${index + 1}`}`}
+                            >
+                                <Trash2 className="h-4 w-4" aria-hidden="true" />
                             </Button>
                         </div>
                     ))}
@@ -225,7 +235,7 @@ const AboutUsForm = ({ form, isSaving }: { form: UseFormReturn<z.infer<typeof ab
 
             <div className="flex justify-end">
                 <Button type="submit" disabled={isSaving}>
-                    {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Enregistrer la page "À propos"
+                    {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} {t('Save About Page')}
                 </Button>
             </div>
         </div>
@@ -233,14 +243,15 @@ const AboutUsForm = ({ form, isSaving }: { form: UseFormReturn<z.infer<typeof ab
 }
 
 const LegalPageForm = ({ form, isSaving, pageName }: { form: UseFormReturn<z.infer<typeof legalPageSchema>>, isSaving: boolean, pageName: string }) => {
+    const { t } = useLocalization();
     return (
         <div className="space-y-4">
-            <FormField control={form.control} name="title" render={({ field }) => (<FormItem><FormLabel>Titre</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={form.control} name="lastUpdated" render={({ field }) => (<FormItem><FormLabel>Date de dernière mise à jour</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={form.control} name="content" render={({ field }) => (<FormItem><FormLabel>Contenu</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="title" render={({ field }) => (<FormItem><FormLabel>{t('Title')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="lastUpdated" render={({ field }) => (<FormItem><FormLabel>{t('Last Updated Date')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="content" render={({ field }) => (<FormItem><FormLabel>{t('Content')}</FormLabel><FormControl><RichTextEditor {...field} /></FormControl><FormMessage /></FormItem>)} />
              <div className="flex justify-end">
                  <Button type="submit" disabled={isSaving}>
-                    {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Enregistrer {pageName}
+                    {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} {t('Save {pageName}', { pageName })}
                 </Button>
             </div>
         </div>
@@ -250,32 +261,36 @@ const LegalPageForm = ({ form, isSaving, pageName }: { form: UseFormReturn<z.inf
 // --- Main Component ---
 
 export function ContentPagesEditor() {
+    const { t } = useLocalization();
+    
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Contenu des pages statiques</CardTitle>
-                <CardDescription>Modifiez le contenu affiché sur diverses pages publiques du site.</CardDescription>
+                <CardTitle>Pages publiques</CardTitle>
+                <CardDescription>Modifiez les contenus affichés sur les pages publiques de Yahnu.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Tabs defaultValue="about-us">
-                    <TabsList>
-                        <TabsTrigger value="about-us">À propos de nous</TabsTrigger>
-                        <TabsTrigger value="privacy-policy">Politique de confidentialité</TabsTrigger>
-                        <TabsTrigger value="terms-of-service">Conditions d'utilisation</TabsTrigger>
-                    </TabsList>
+                    <div className="-mx-1 overflow-x-auto px-1 pb-1">
+                        <TabsList className="h-auto min-w-max">
+                            <TabsTrigger value="about-us" className="min-h-11 shrink-0">{t("About Us")}</TabsTrigger>
+                            <TabsTrigger value="privacy-policy" className="min-h-11 shrink-0">{t("Privacy Policy")}</TabsTrigger>
+                            <TabsTrigger value="terms-of-service" className="min-h-11 shrink-0">{t("Terms of Service")}</TabsTrigger>
+                        </TabsList>
+                    </div>
                     <TabsContent value="about-us" className="pt-6">
-                        <PageFormWrapper pageId="about-us" schema={aboutPageSchema} defaultValues={defaultAboutValues} pageName="À Propos">
+                        <PageFormWrapper pageId="about-us" schema={aboutPageSchema} defaultValues={defaultAboutValues}>
                              {(form, isSaving) => <AboutUsForm form={form} isSaving={isSaving} />}
                         </PageFormWrapper>
                     </TabsContent>
                     <TabsContent value="privacy-policy" className="pt-6">
-                        <PageFormWrapper pageId="privacy-policy" schema={legalPageSchema} defaultValues={defaultPrivacyPolicy} pageName="Politique de Confidentialité">
-                            {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName="la politique de confidentialité" />}
+                        <PageFormWrapper pageId="privacy-policy" schema={legalPageSchema} defaultValues={defaultPrivacyPolicy}>
+                            {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName={t("Privacy Policy")} />}
                         </PageFormWrapper>
                     </TabsContent>
                     <TabsContent value="terms-of-service" className="pt-6">
-                        <PageFormWrapper pageId="terms-of-service" schema={legalPageSchema} defaultValues={defaultTerms} pageName="Conditions d'Utilisation">
-                             {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName="les conditions d'utilisation" />}
+                        <PageFormWrapper pageId="terms-of-service" schema={legalPageSchema} defaultValues={defaultTerms}>
+                             {(form, isSaving) => <LegalPageForm form={form} isSaving={isSaving} pageName={t("Terms of Service")} />}
                         </PageFormWrapper>
                     </TabsContent>
                 </Tabs>

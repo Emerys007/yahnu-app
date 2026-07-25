@@ -54,6 +54,7 @@ export function UserNav() {
       admin: { label: 'Admin', icon: Shield, profileLabel: 'Profil', profileLink: '/dashboard/settings' },
       super_admin: { label: 'Super Admin', icon: Shield, profileLabel: 'Profil', profileLink: '/dashboard/settings' },
       content_manager: { label: 'Gestionnaire de contenu', icon: Shield, profileLabel: 'Profil', profileLink: '/dashboard/settings' },
+      content_moderator: { label: 'Modérateur de contenu', icon: Shield, profileLabel: 'Profil', profileLink: '/dashboard/settings' },
       support_staff: { label: 'Support', icon: Shield, profileLabel: 'Profil', profileLink: '/dashboard/settings' },
     };
     return roleMap[role] || { label: role, icon: User, profileLabel: 'Profil', profileLink: '/dashboard/settings' };

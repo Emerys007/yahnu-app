@@ -1,0 +1,79 @@
+databases:
+  # This resource is provisioned independently during the Firebase cutover.
+  # Its name is intentionally different from the retired database so a later
+  # Blueprint sync can adopt the clean target without touching rollback data.
+  - name: yahnu-postgres-live
+    # Render generated this name for the independently provisioned live target.
+    databaseName: yahnu_pq9g
+    user: yahnu_app
+    # Keeps the initial Render deployment below the owner's $25/month ceiling.
+    plan: basic-256mb
+    # Proposed production region. Confirm before first Blueprint creation; Render
+    # does not allow an in-place region change after provisioning.
+    region: frankfurt
+    postgresMajorVersion: "17"
+    # The Firebase source export is small; 1 GB is the minimum durable volume
+    # and keeps the clean-target overlap within the owner's monthly ceiling.
+    diskSizeGB: 1
+    # Keep spend capped until a separate capacity/budget decision is approved.
+    storageAutoscalingEnabled: false
+    connectionPool: none
+    ipAllowList: []
+
+services:
+  - type: web
+    name: yahnu-web
+    runtime: node
+    branch: main
+    plan: starter
+    region: frankfurt
+    buildCommand: npm ci --include=dev && npm run build
+    preDeployCommand: npm run db:migrate
+    startCommand: npm start
+    healthCheckPath: /api/health
+    maxShutdownDelaySeconds: 30
+    # Production releases are promoted deliberately during the migration.
+    autoDeployTrigger: off
+    maintenanceMode:
+      # The Firebase cutover is complete. Keep the committed Blueprint aligned
+      # with the live service so a future sync cannot put Yahnu back offline.
+      enabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: "22.23.1"
+      - key: NODE_ENV
+        value: production
+      - key: HOSTNAME
+        value: 0.0.0.0
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: DATABASE_URL
+        # Set only after the verified import.  This prevents a Blueprint sync
+        # from attaching the service to a target the importer has not sealed.
+        sync: false
+      - key: PGSSLMODE
+        value: verify-full
+      - key: AUTH_SECRET
+        # Rotation is bound to the import approval; never regenerate it as an
+        # incidental side effect of a Blueprint sync.
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: YAHNU_ALLOW_LOCAL_EMAIL_DEBUG
+        value: "false"
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: NEXT_PUBLIC_OPENCAGE_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: YAHNU_ENABLE_AI
+        value: "false"
+      - key: YAHNU_GEMINI_MODEL
+        value: gemini-3.5-flash

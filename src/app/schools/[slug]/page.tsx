@@ -1,102 +1,64 @@
-
-"use client";
-
-import { MainNav } from "@/components/landing/main-nav";
-import { Footer } from "@/components/landing/footer";
-import { notFound } from "next/navigation";
-import { SchoolProfileClient } from "@/components/schools/school-profile-client";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ArrowLeft, GraduationCap, RefreshCw } from "lucide-react";
 
-interface School {
-    id: string;
-    name: string;
-    acronym: string;
-    logoUrl: string;
-    location: string;
-    website: string;
-    description: string;
-    programs: string[];
-    slug: string;
-}
+import { Footer } from "@/components/landing/footer";
+import { MainNav } from "@/components/landing/main-nav";
+import { PublicOrganizationProfile } from "@/components/organizations/public-organization-profile";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { getPublicOrganizationById } from "@/lib/public-organizations-server";
 
-const schoolsData: School[] = [
-    {
-        id: "1",
-        name: "Institut National Polytechnique Félix Houphouët-Boigny",
-        acronym: "INP-HB",
-        logoUrl: "https://www.adminsite.inphb.app/Imagessiteprincipal/Icon.png",
-        location: "Yamoussoukro",
-        website: "https://www.inphb.ci",
-        description: "L'INP-HB est une institution d'excellence reconnue en Afrique, formant des ingénieurs et des techniciens supérieurs dans les domaines de l'industrie, du commerce, et de l'administration. Elle est réputée pour sa rigueur et la qualité de ses programmes académiques.",
-        programs: ["Génie Civil", "Génie Électrique et Électronique", "Informatique et Télécommunications", "Sciences et Techniques Commerciales"],
-        slug: "inp-hb",
-    },
-    {
-        id: "2",
-        name: "Université Félix Houphouët-Boigny",
-        acronym: "UFHB",
-        logoUrl: "https://w.univ-fhb.edu.ci/wp-content/uploads/2023/11/logo-UFHB-e1699536639348-1024x747.png",
-        location: "Abidjan",
-        website: "https://www.univ-fhb.edu.ci",
-        description: "L'Université Félix Houphouët-Boigny est la plus grande et la plus ancienne université de Côte d'Ivoire. Elle offre une vaste gamme de formations dans les sciences humaines, juridiques, économiques, et de la santé, contribuant de manière significative à la formation des cadres du pays.",
-        programs: ["Droit", "Sciences Économiques et de Gestion", "Médecine", "Lettres, Langues et Civilisations"],
-        slug: "ufhb",
-    },
-    {
-        id: "3",
-        name: "Groupe CSI Pôle Polytechnique",
-        acronym: "CSI",
-        logoUrl: "https://groupecsi-pp.com/wp-content/uploads/2023/05/nouveau-logo.jpeg",
-        location: "Abidjan",
-        website: "https://groupecsi-pp.com/",
-        description: "Le Groupe CSI est un pôle d'enseignement supérieur privé axé sur l'innovation et la technologie. Il propose des formations professionnalisantes en informatique, gestion, et sciences de l'ingénieur, avec un fort accent sur l'employabilité.",
-        programs: ["Réseaux Informatiques et Télécommunications", "Développement d'Applications", "Marketing et Management", "Finance et Comptabilité"],
-        slug: "csi",
-    },
-    {
-        id: "4",
-        name: "École Supérieure Africaine des TIC",
-        acronym: "ESATIC",
-        logoUrl: "https://esatic.ci/wp-content/uploads/2024/07/esatic_logo.jpg",
-        location: "Abidjan",
-        website: "https://esatic.ci/",
-        description: "ESATIC est l'école de référence en Côte d'Ivoire pour les métiers des Technologies de l'Information et de la Communication. Elle forme des experts pour accompagner la transformation numérique de l'Afrique.",
-        programs: ["Sécurité des Systèmes d'Information", "Systèmes et Réseaux Informatiques", "Télécommunications", "Développement d'Applications"],
-        slug: "esatic",
-    },
-    {
-        id: "5",
-        name: "École Nationale Supérieure de Statistique et d'Économie Appliquée",
-        acronym: "ENSEA",
-        logoUrl: "https://media.licdn.com/dms/image/C4D0BAQG3X2b1q7X0ZA/company-logo_200_200/0/163065company-logo_638_359/ensea_abidjan_logo?e=2147483647&v=beta&t=O_2X9Z8c_3b9b3e3j3e3j3e3j3e3j3e3j3e3j3e",
-        location: "Abidjan",
-        website: "https://www.ensea.ed.ci/",
-        description: "L'ENSEA est un centre d'excellence de l'UEMOA pour la formation de statisticiens et d'économistes de haut niveau. Ses diplômés sont très recherchés pour leurs compétences en analyse quantitative et en modélisation économique.",
-        programs: ["Ingénieur Statisticien Économiste", "Analyste Statisticien", "Actuariat", "Data Science"],
-        slug: "ensea",
-    }
-];
+export const dynamic = "force-dynamic";
 
-function getSchoolBySlug(slug: string): School | null {
-    const school = schoolsData.find(s => s.slug === slug);
-    return school || null;
-}
+export default async function SchoolPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  let school: Awaited<ReturnType<typeof getPublicOrganizationById>> = null;
+  let unavailable = false;
 
-export default function SchoolPage({ params }: { params: { slug: string } }) {
-  const school = getSchoolBySlug(params.slug);
-
-  if (!school) {
-    notFound();
+  try {
+    school = await getPublicOrganizationById("school", slug);
+  } catch (error) {
+    unavailable = true;
+    console.error("Unable to load the public school profile.", error);
   }
 
+  if (!unavailable && !school) notFound();
+
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <MainNav />
-      <main className="flex-1 container mx-auto py-12 max-w-4xl">
-         <div className="max-w-4xl mx-auto mb-8">
-          <Link href="/schools" className="text-primary hover:underline">← Retour aux écoles</Link>
+      <main className="container mx-auto flex-1 px-4 py-6 sm:py-10 lg:py-12">
+        <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-emerald-200/70 bg-gradient-to-r from-emerald-50/80 to-orange-50/70 p-4 dark:border-emerald-900/40 dark:from-emerald-950/20 dark:to-orange-950/20 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-600 text-white">
+              <GraduationCap className="h-5 w-5" />
+            </div>
+            <div>
+              <Badge variant="outline" className="border-orange-200 bg-orange-50 text-orange-800 dark:border-orange-900/50 dark:bg-orange-950/30 dark:text-orange-200">Campus & avenir en Côte d’Ivoire</Badge>
+              <p className="mt-1 text-sm text-muted-foreground">Profil établissement sur le réseau Yahnu</p>
+            </div>
+          </div>
+          <Button asChild variant="ghost" className="w-full justify-start sm:w-auto">
+            <Link href="/schools"><ArrowLeft className="mr-2 h-4 w-4" /> Retour aux établissements</Link>
+          </Button>
         </div>
-        <SchoolProfileClient school={school} />
+
+        {unavailable || !school ? (
+          <Card className="mx-auto max-w-xl border-emerald-200/70 dark:border-emerald-900/40">
+            <CardContent className="px-5 py-12 text-center sm:px-8">
+              <RefreshCw className="mx-auto h-9 w-9 text-emerald-600" />
+              <h1 className="mt-4 text-xl font-semibold">Ce profil n’est pas disponible pour le moment</h1>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">La connexion n’a pas abouti. Revenez à l’annuaire ou réessayez dans quelques instants.</p>
+              <Button asChild className="mt-6 w-full sm:w-auto" variant="outline">
+                <Link href="/schools">Retour à l’annuaire</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <PublicOrganizationProfile organization={school} role="school" />
+        )}
       </main>
       <Footer />
     </div>
