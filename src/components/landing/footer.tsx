@@ -6,24 +6,28 @@ const linkGroups = [
   {
     title: 'Explorer',
     links: [
+      ['BE THE CHANGE', '/be-the-change'],
       ['Opportunités', '/jobs'],
-      ['Entreprises', '/companies'],
       ['Établissements', '/schools'],
-      ['Conseils carrière', '/blog'],
+      ['Entreprises', '/companies'],
     ],
   },
   {
-    title: 'Yahnu',
+    title: 'Agir',
     links: [
-      ['Notre mission', '/about'],
+      ['Jeunes diplômés', '/students'],
+      ['Institutions', '/institutions'],
+      ['Impact du pilote', '/impact'],
+      ['Proposer un pilote', '/contact?intent=pilot&source=footer'],
       ['Créer un profil', '/signup'],
-      ['Se connecter', '/login'],
-      ['Centre d’aide', '/dashboard/support'],
     ],
   },
   {
-    title: 'Confiance',
+    title: 'Ressources & confiance',
     links: [
+      ['Ressources carrière', '/blog'],
+      ['Notre mission', '/about'],
+      ['Se connecter', '/login'],
       ['Confidentialité', '/privacy-policy'],
       ['Conditions d’utilisation', '/terms-of-service'],
     ],
@@ -42,11 +46,12 @@ export function Footer() {
               <span className="font-headline text-2xl font-bold">Yahnu</span>
             </Link>
             <p className="mt-5 text-lg leading-7 text-white/70">
-              Le point de rencontre entre le potentiel des jeunes diplômés et les opportunités qui font avancer la Côte d’Ivoire.
+              Transformer la formation en insertion mesurée, avec les jeunes, les établissements, les entreprises et les institutions.
             </p>
             <div className="mt-6 space-y-3 text-sm text-white/70">
               <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-terra" />Abidjan, Côte d’Ivoire</p>
-              <a className="flex items-center gap-2 transition-colors hover:text-white" href="mailto:contact@yahnu.org"><Mail className="h-4 w-4 text-terra" />contact@yahnu.org</a>
+              <Link className="flex items-center gap-2 transition-colors hover:text-white" href="/contact?source=footer"><Mail className="h-4 w-4 text-terra" />Nous contacter</Link>
+              <a className="flex items-center gap-2 transition-colors hover:text-white" href="mailto:contact@yahnu.org"><span className="w-4" aria-hidden="true" />contact@yahnu.org</a>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">

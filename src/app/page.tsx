@@ -4,10 +4,11 @@ import Link from "next/link";
 import { ArrowRight, BriefcaseBusiness, Factory, Landmark, Leaf, MapPinned, Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FeaturesSection } from "@/components/landing/features-section";
-import { FeaturedOpportunities } from "@/components/landing/featured-opportunities";
 import { Footer } from "@/components/landing/footer";
 import { HeroSection } from "@/components/landing/hero-section";
 import { MainNav } from "@/components/landing/main-nav";
+import { PilotStorySection } from "@/components/landing/pilot-story-section";
+import { VerifiedOpportunities } from "@/components/market/verified-opportunities";
 import { useLocalization } from "@/context/localization-context";
 
 const copy = {
@@ -68,6 +69,7 @@ export default function HomePage() {
       <MainNav />
       <main className="flex-1">
         <HeroSection />
+        <PilotStorySection />
 
         <section className="relative overflow-hidden border-y bg-background py-20 sm:py-28">
           <div className="container mx-auto">
@@ -123,7 +125,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <FeaturedOpportunities />
+        <VerifiedOpportunities compact />
 
         <section className="px-4 pb-20 sm:pb-28">
           <div className="container ci-pattern mx-auto overflow-hidden rounded-[2rem] bg-primary px-6 py-12 text-primary-foreground shadow-lift sm:px-10 lg:flex lg:items-end lg:justify-between lg:gap-12 lg:px-14 lg:py-14">

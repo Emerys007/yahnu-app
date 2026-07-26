@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { safeAppReturnTo } from '@/lib/auth-navigation';
 import { hashToken, newOpaqueToken } from '@/lib/server/auth';
 import { query } from '@/lib/server/db';
 import { externalUrl } from '@/lib/server/email';
@@ -8,16 +9,6 @@ import { ApiError, handleApiError } from '@/lib/server/http';
 import { enforceRateLimit } from '@/lib/server/rate-limit';
 
 const OAUTH_COOKIE = 'yahnu_oauth_state';
-
-function safeReturnTo(value: string | null) {
-  return value
-    && value.length <= 2_048
-    && value.startsWith('/')
-    && !value.startsWith('//')
-    && !/[\u0000-\u001f\u007f]/.test(value)
-    ? value
-    : '/dashboard';
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -35,7 +26,12 @@ export async function GET(request: NextRequest) {
     await query(`
       INSERT INTO oauth_flows (state_hash, code_verifier, nonce, return_to, expires_at)
       VALUES ($1, $2, $3, $4, now() + interval '10 minutes')
-    `, [hashToken(state), verifier, nonce, safeReturnTo(request.nextUrl.searchParams.get('returnTo'))]);
+    `, [
+      hashToken(state),
+      verifier,
+      nonce,
+      safeAppReturnTo(request.nextUrl.searchParams.get('returnTo')) ?? '/dashboard',
+    ]);
 
     const parameters = new URLSearchParams({
       client_id: clientId,

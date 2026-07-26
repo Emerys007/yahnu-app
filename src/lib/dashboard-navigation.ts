@@ -7,6 +7,7 @@ import {
   Briefcase,
   Building,
   Calendar,
+  ClipboardList,
   FileText,
   Handshake,
   HeartPulse,
@@ -27,6 +28,11 @@ import {
 } from "lucide-react";
 
 import type { Role } from "@/lib/auth-types";
+import {
+  getRoleDashboardHome,
+  resolveRolePostLoginDestination,
+  resolveRoleDashboardDestination,
+} from "@/lib/auth-navigation";
 
 export type DashboardLocale = "fr" | "en";
 export type DashboardNavPlacement = "main" | "footer";
@@ -163,7 +169,14 @@ export const dashboardRouteRegistry: readonly DashboardRouteDefinition[] = [
     label: { key: "dashboard.nav.content_moderation", fr: "Modération", en: "Content moderation" },
     navigation: { group: "content", order: 20 },
   },
-  { id: "admin-jobs", path: "/dashboard/admin/jobs", roles: ADMIN_ROLES },
+  {
+    id: "admin-jobs",
+    path: "/dashboard/admin/jobs",
+    roles: CONTENT_ROLES,
+    icon: Briefcase,
+    label: { key: "dashboard.nav.market_watch", fr: "Veille emploi", en: "Job watch" },
+    navigation: { group: "content", order: 40 },
+  },
   { id: "admin-knowledge-base", path: "/dashboard/admin/knowledge-base-editor", roles: ADMIN_ROLES },
   {
     id: "admin-manage-team",
@@ -352,7 +365,7 @@ export const dashboardRouteRegistry: readonly DashboardRouteDefinition[] = [
     roles: CONTENT_ROLES,
     icon: FileText,
     label: { key: "dashboard.nav.static_pages", fr: "Pages du site", en: "Website pages" },
-    navigation: { group: "content", order: 30, roles: CONTENT_STAFF_ROLES },
+    navigation: { group: "content", order: 30 },
   },
 
   {
@@ -370,6 +383,14 @@ export const dashboardRouteRegistry: readonly DashboardRouteDefinition[] = [
     icon: LifeBuoy,
     label: { key: "dashboard.nav.support_center", fr: "Centre de support", en: "Support center" },
     navigation: { group: "support", order: 10 },
+  },
+  {
+    id: "support-pilot-inquiries",
+    path: "/dashboard/support/pilot-inquiries",
+    roles: SUPPORT_ROLES,
+    icon: ClipboardList,
+    label: { key: "dashboard.nav.pilot_inquiries", fr: "Demandes pilote", en: "Pilot inquiries" },
+    navigation: { group: "support", order: 15 },
   },
   {
     id: "support-ticket-management",
@@ -448,6 +469,22 @@ export function canAccessDashboardRoute(pathname: string, role: Role) {
   return dashboardRouteRegistry.some(
     (route) => routeMatches(pathname, route.path) && roleIsIncluded(route.roles, role),
   );
+}
+
+export { getRoleDashboardHome };
+
+export function resolveDashboardDestination(
+  role: Role,
+  requestedPath?: string | null,
+) {
+  return resolveRoleDashboardDestination(role, requestedPath, canAccessDashboardRoute);
+}
+
+export function resolvePostLoginDestination(
+  role: Role,
+  requestedPath?: string | null,
+) {
+  return resolveRolePostLoginDestination(role, requestedPath, canAccessDashboardRoute);
 }
 
 export function getDashboardNavigationGroups(

@@ -1,7 +1,7 @@
 
 "use client"
 
-import { LogOut, User, Settings, Building, MessageSquare, BadgeCheck, School, Shield } from "lucide-react"
+import { Building, LayoutDashboard, LogOut, MessageSquare, School, Settings, Shield, User } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -16,11 +16,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useAuth, type Role } from "@/context/auth-context"
+import { useLocalization } from "@/context/localization-context"
 import { useToast } from "@/hooks/use-toast"
 import { Badge } from "../ui/badge"
 
 export function UserNav() {
   const { user, signOut, role } = useAuth()
+  const { language } = useLocalization()
   const router = useRouter()
   const { toast } = useToast()
 
@@ -61,6 +63,7 @@ export function UserNav() {
   };
 
   const hasDistinctProfilePage = role === 'graduate' || role === 'company' || role === 'school';
+  const hasAdminPanel = role === 'admin' || role === 'super_admin';
   const canReceiveMessages = role === 'graduate' || role === 'company' || role === 'school' || role === 'support_staff';
   const { label: roleLabel, icon: RoleIcon, profileLabel, profileLink } = getRoleInfo(role);
 
@@ -91,6 +94,12 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          {hasAdminPanel && (
+            <DropdownMenuItem onClick={() => router.push('/dashboard/admin/overview')}>
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              <span>{language === 'en' ? 'Administration panel' : 'Panneau d’administration'}</span>
+            </DropdownMenuItem>
+          )}
           {hasDistinctProfilePage && (
             <DropdownMenuItem onClick={() => router.push(profileLink)}>
               <User className="mr-2 h-4 w-4" />

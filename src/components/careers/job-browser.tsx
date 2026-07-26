@@ -2,6 +2,7 @@
 
 import { type ChangeEvent, type FormEvent, useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   AlertCircle,
   ArrowLeft,
@@ -214,6 +215,10 @@ function JobCard({ job, dashboard }: { job: Job; dashboard: boolean }) {
   const [applying, setApplying] = useState(false);
   const [applied, setApplied] = useState(false);
   const closingDate = formatDate(job.closesAt);
+  const detailPath = `/jobs/${encodeURIComponent(job.id)}`;
+  const detailHref = user
+    ? detailPath
+    : `/login?next=${encodeURIComponent(detailPath)}`;
 
   return (
     <Card className="group relative overflow-hidden border-border/70 shadow-soft transition-[border-color,box-shadow] duration-200 hover:border-primary/30 hover:shadow-lift motion-reduce:transition-none">
@@ -222,7 +227,7 @@ function JobCard({ job, dashboard }: { job: Job; dashboard: boolean }) {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0 space-y-2">
             <CardTitle className="text-xl sm:text-2xl">
-              <Link className="rounded-sm hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" href={`/jobs/${encodeURIComponent(job.id)}`}>
+              <Link className="rounded-sm hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" href={detailHref}>
                 {job.title}
               </Link>
             </CardTitle>
@@ -241,7 +246,7 @@ function JobCard({ job, dashboard }: { job: Job; dashboard: boolean }) {
         {applying && !applied ? <ApplicationForm job={job} onApplied={() => { setApplied(true); setApplying(false); }} /> : null}
       </CardContent>
       <CardFooter className="flex flex-col-reverse items-stretch justify-between gap-3 border-t bg-muted/15 pt-5 sm:flex-row sm:items-center">
-        <Button variant="ghost" asChild><Link href={`/jobs/${encodeURIComponent(job.id)}`}>Voir l’offre<ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link></Button>
+        <Button variant="ghost" asChild><Link href={detailHref}>Voir l’offre<ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link></Button>
         {!authLoading && user?.role === 'graduate' && !applied ? (
           <Button onClick={() => setApplying((value) => !value)} variant={applying ? 'outline' : 'default'} aria-expanded={applying}>{applying ? 'Fermer le formulaire' : 'Postuler maintenant'}</Button>
         ) : null}
@@ -355,6 +360,7 @@ export function JobBrowser({ dashboard = false }: { dashboard?: boolean }) {
 
 export function JobDetail({ id }: { id: string }) {
   const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -363,6 +369,13 @@ export function JobDetail({ id }: { id: string }) {
   const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace(`/login?next=${encodeURIComponent(`/jobs/${id}`)}`);
+    }
+  }, [authLoading, id, router, user]);
+
+  useEffect(() => {
+    if (authLoading || !user) return;
     const controller = new AbortController();
     setLoading(true);
     setError('');
@@ -371,9 +384,9 @@ export function JobDetail({ id }: { id: string }) {
       .catch((caught) => { if (!controller.signal.aborted) setError(localizedApiError(caught, 'Cette offre n’a pas pu être chargée.')); })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [id, reloadKey]);
+  }, [authLoading, id, reloadKey, user]);
 
-  if (loading) return <div className="grid min-h-[55vh] place-items-center" role="status"><Loader2 className="h-8 w-8 animate-spin text-primary motion-reduce:animate-none" aria-hidden="true" /><span className="sr-only">Chargement de l’offre…</span></div>;
+  if (authLoading || !user || loading) return <div className="grid min-h-[55vh] place-items-center" role="status"><Loader2 className="h-8 w-8 animate-spin text-primary motion-reduce:animate-none" aria-hidden="true" /><span className="sr-only">Chargement de l’offre…</span></div>;
   if (error || !job) return <div className="page-shell py-16"><ErrorNotice message={error || 'Cette offre n’est plus disponible.'} retry={() => setReloadKey((value) => value + 1)} /></div>;
   const closingDate = formatDate(job.closesAt);
 

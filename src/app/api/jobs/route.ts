@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 
 import { employmentTypes } from '@/lib/careers';
-import { jobSelectColumns, publicJobListSelectColumns, serializeJob, type JobRow, safeHttpUrl } from '@/lib/careers-server';
+import { jobSelectColumns, publicJobListSelectColumns, serializeJob, serializePublicJob, type JobRow, safeHttpUrl } from '@/lib/careers-server';
 import { requireUser, writeAuditLog } from '@/lib/server/auth';
 import { query, transaction } from '@/lib/server/db';
 import { ApiError, assertSameOrigin, handleApiError, jsonOk, readJson } from '@/lib/server/http';
@@ -90,7 +90,7 @@ export async function GET(request: Request) {
       input.offset,
     ]);
     return jsonOk({
-      jobs: result.rows.slice(0, input.limit).map(serializeJob),
+      jobs: result.rows.slice(0, input.limit).map(serializePublicJob),
       hasMore: result.rows.length > input.limit,
       nextOffset: input.offset + Math.min(input.limit, result.rows.length),
     });

@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     default: 'Yahnu — Le talent ivoirien en mouvement',
     template: '%s | Yahnu',
   },
-  description: 'La plateforme carrière qui relie les jeunes diplômés, les entreprises et les établissements de Côte d’Ivoire.',
+  description: 'La plateforme ivoirienne qui relie jeunes diplômés, établissements, entreprises et institutions pour transformer la formation en insertion mesurée.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://yahnu.org'),
 };
 
@@ -35,6 +35,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html
       lang="fr-CI"
       data-theme="ivory-coast"
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={cn(bodyFont.variable, displayFont.variable)}
     >

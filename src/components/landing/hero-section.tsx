@@ -6,6 +6,7 @@ import {
   ArrowRight,
   Building2,
   GraduationCap,
+  Landmark,
   MapPin,
   School,
   Search,
@@ -16,9 +17,9 @@ import { useLocalization } from "@/context/localization-context";
 
 const copy = {
   fr: {
-    eyebrow: "Pensé en Côte d’Ivoire, pour les talents d’ici",
-    title: "Ton diplôme ouvre une porte. Yahnu t’aide à choisir laquelle.",
-    body: "Découvre des opportunités, rends ton parcours lisible et crée les bonnes connexions — d’Abidjan à Korhogo, de Bouaké à San-Pédro.",
+    eyebrow: "Phase pilote 2026 · Côte d’Ivoire",
+    title: "BE THE CHANGE — Transformer la formation en insertion mesurée.",
+    body: "Yahnu relie jeunes, établissements, entreprises et institutions pour transformer chaque diplôme en trajectoire suivie, chaque candidature en prochaine étape et chaque engagement en résultat lisible.",
     searchLabel: "Rechercher une opportunité",
     searchPlaceholder: "Métier, compétence ou secteur",
     locationLabel: "Choisir une ville",
@@ -29,14 +30,16 @@ const copy = {
     graduate: "Je démarre ma carrière",
     company: "Je recrute en Côte d’Ivoire",
     school: "J’accompagne mes diplômés",
+    institution: "Je porte un programme d’impact",
     photoAlt: "Jeunes diplômés ivoiriens avançant ensemble à Abidjan",
-    imageNote: "Le talent ivoirien, en mouvement",
-    imageBody: "Un même espace pour passer du campus au monde professionnel.",
+    imageNote: "Une responsabilité partagée",
+    imageBody: "Du campus à l’emploi, chacun change une partie du système.",
+    imageDisclaimer: "Illustration non contractuelle · phase de démonstration",
   },
   en: {
-    eyebrow: "Designed in Côte d’Ivoire, for local talent",
-    title: "Your degree opens a door. Yahnu helps you choose the right one.",
-    body: "Find opportunities, make your journey visible and build the right connections — from Abidjan and Bouaké to Korhogo and San-Pédro.",
+    eyebrow: "2026 pilot · Côte d’Ivoire",
+    title: "BE THE CHANGE — Turn education into measurable employability.",
+    body: "Yahnu connects graduates, education providers, employers and institutions so every degree can become a visible pathway, every application a useful next step and every commitment a measurable result.",
     searchLabel: "Search for an opportunity",
     searchPlaceholder: "Role, skill or sector",
     locationLabel: "Choose a city",
@@ -47,9 +50,11 @@ const copy = {
     graduate: "I am starting my career",
     company: "I recruit in Côte d’Ivoire",
     school: "I support our graduates",
+    institution: "I lead an impact programme",
     photoAlt: "Young Ivorian graduates walking together in Abidjan",
-    imageNote: "Ivorian talent in motion",
-    imageBody: "One space to move from campus into professional life.",
+    imageNote: "A shared responsibility",
+    imageBody: "From campus to work, every actor changes part of the system.",
+    imageDisclaimer: "Illustrative image · demonstration phase",
   },
 } as const;
 
@@ -59,9 +64,10 @@ export function HeroSection() {
   const { language } = useLocalization();
   const content = copy[language === "fr" ? "fr" : "en"];
   const routes = [
-    { label: content.graduate, icon: GraduationCap, href: "/signup?role=graduate" },
-    { label: content.company, icon: Building2, href: "/signup?role=company" },
-    { label: content.school, icon: School, href: "/signup?role=school" },
+    { label: content.graduate, icon: GraduationCap, href: "/students" },
+    { label: content.school, icon: School, href: "/schools" },
+    { label: content.company, icon: Building2, href: "/companies" },
+    { label: content.institution, icon: Landmark, href: "/institutions" },
   ];
 
   return (
@@ -158,10 +164,13 @@ export function HeroSection() {
                 {content.imageNote}
               </span>
               <p className="mt-3 max-w-sm font-display text-2xl font-semibold leading-tight">{content.imageBody}</p>
+              <p className="mt-3 text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-white/55">
+                {content.imageDisclaimer}
+              </p>
             </div>
           </div>
 
-          <div className="surface-glass relative -mt-5 ml-4 mr-4 grid gap-2 rounded-2xl p-2 shadow-soft sm:-mt-8 sm:ml-8 sm:mr-[-1rem] sm:grid-cols-3">
+          <div className="surface-glass relative -mt-5 ml-4 mr-4 grid gap-2 rounded-2xl p-2 shadow-soft sm:-mt-8 sm:ml-8 sm:mr-[-1rem] sm:grid-cols-2">
             {routes.map(({ label, icon: Icon, href }) => (
               <Link
                 key={href}

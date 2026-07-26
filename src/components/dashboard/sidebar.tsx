@@ -15,6 +15,7 @@ import { useLocalization } from "@/context/localization-context"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useToast } from "@/hooks/use-toast"
 import {
+  getRoleDashboardHome,
   getDashboardNavigationGroups,
   resolveDashboardLabel,
   type DashboardNavigationGroup,
@@ -157,7 +158,7 @@ export function DashboardSidebar() {
   const sidebarContent = (
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
       <div className={cn("flex h-[4.75rem] shrink-0 items-center border-b border-sidebar-border px-4", isCollapsed && "justify-center px-0")}>
-        <Link href="/dashboard" className={cn("flex items-center gap-3", isCollapsed && "justify-center")} onClick={closeMobileSidebar}>
+        <Link href={getRoleDashboardHome(role)} className={cn("flex items-center gap-3", isCollapsed && "justify-center")} onClick={closeMobileSidebar}>
           <DashboardLogo className={cn("h-11 w-11 text-sidebar-foreground transition-all", isCollapsed && "h-8 w-8")} />
           <div className={cn("flex flex-col transition-opacity duration-200", isCollapsed && "hidden opacity-0")}>
             <h1 className="font-display text-xl font-bold tracking-tight text-white">Yahnu</h1>

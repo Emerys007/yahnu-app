@@ -3,6 +3,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { apiFetch } from '@/lib/api-client';
+import { safeAppReturnTo } from '@/lib/auth-navigation';
 import type { Role, UserProfile } from '@/lib/auth-types';
 
 export type { EducationEntry, Role, UserProfile, UserStatus } from '@/lib/auth-types';
@@ -13,7 +14,7 @@ interface AuthContextType {
   role: Role;
   googleEnabled: boolean;
   signUp: (profile: Omit<UserProfile, 'uid' | 'status'>, password: string, inviteToken?: string) => Promise<SignUpResult>;
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<UserProfile>;
   signOut: () => Promise<void>;
   signInWithGoogle: (returnTo?: string) => Promise<void>;
   isGoogleProvider: () => boolean;
@@ -103,6 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       body: JSON.stringify({ email, password }),
     });
     setAuthenticatedUser(response.data.user);
+    return response.data.user;
   }, [setAuthenticatedUser]);
 
   const signOut = useCallback(async () => {
@@ -115,7 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signInWithGoogle = useCallback(async (returnTo = '/dashboard') => {
     if (!googleEnabled) throw new Error('Google sign-in is not configured.');
-    const safeReturnTo = returnTo.startsWith('/') && !returnTo.startsWith('//') ? returnTo : '/dashboard';
+    const safeReturnTo = safeAppReturnTo(returnTo) ?? '/dashboard';
     window.location.assign(`/api/auth/google/start?returnTo=${encodeURIComponent(safeReturnTo)}`);
   }, [googleEnabled]);
 

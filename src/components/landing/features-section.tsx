@@ -17,6 +17,7 @@ const content = {
     title: "Le pont entre le campus et la vie professionnelle.",
     body: "Yahnu réunit les personnes qui font vivre l’emploi des jeunes en Côte d’Ivoire, avec des parcours clairs pour chacun.",
     imageAlt: "Atelier de carrière réunissant de jeunes diplômés ivoiriens à Abidjan",
+    imageDisclaimer: "Illustration non contractuelle · phase de démonstration",
     tabs: {
       graduates: {
         label: "Diplômés",
@@ -49,6 +50,7 @@ const content = {
     title: "The bridge between campus and professional life.",
     body: "Yahnu connects the people shaping youth employment in Côte d’Ivoire, with a clear path for every role.",
     imageAlt: "Career workshop with young Ivorian graduates in Abidjan",
+    imageDisclaimer: "Illustrative image · demonstration phase",
     tabs: {
       graduates: {
         label: "Graduates",
@@ -115,6 +117,9 @@ export function FeaturesSection() {
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-cocoa/75 via-transparent to-transparent" />
+            <p className="absolute left-4 right-4 top-4 rounded-xl border border-white/20 bg-cocoa/65 px-3 py-1.5 text-center text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-white/75 backdrop-blur sm:left-auto sm:rounded-full">
+              {page.imageDisclaimer}
+            </p>
             <div className="absolute bottom-5 left-5 right-5 flex flex-wrap gap-2">
               {["Abidjan", "Bouaké", "Yamoussoukro", "Korhogo", "San-Pédro"].map((city) => (
                 <span key={city} className="rounded-full border border-white/25 bg-cocoa/65 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur">

@@ -17,6 +17,7 @@ import { apiFetch } from "@/lib/api-client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { Separator } from "@/components/ui/separator"
+import { defaultImpactPageContent } from "@/lib/impact-content"
 
 // --- Schemas and Default Values (Defined at the top level) ---
 
@@ -45,6 +46,27 @@ const legalPageSchema = z.object({
     title: z.string().min(1, "Ce champ est obligatoire."),
     lastUpdated: z.string().min(1, "Ce champ est obligatoire."),
     content: z.string().min(50, "Le contenu doit comporter au moins 50 caractères."),
+})
+
+const impactMetricSchema = z.object({
+    value: z.string().min(1, "La valeur est obligatoire."),
+    label: z.string().min(1, "Le libellé est obligatoire."),
+    detail: z.string().min(1, "La précision est obligatoire."),
+})
+
+const impactLocaleSchema = z.object({
+    heroTitle: z.string().min(1, "Le titre est obligatoire."),
+    heroSubtitle: z.string().min(1, "Le sous-titre est obligatoire."),
+    metrics: z.array(impactMetricSchema).min(1, "Ajoutez au moins un indicateur.").max(8, "Huit indicateurs maximum."),
+    methodologyTitle: z.string().min(1, "Le titre de la méthode est obligatoire."),
+    methodologyBody: z.string().min(1, "La méthode est obligatoire."),
+    reportingCadence: z.string().min(1, "Le rythme de publication est obligatoire."),
+    currentStatus: z.string().min(1, "Le statut est obligatoire."),
+})
+
+const impactPageSchema = z.object({
+    fr: impactLocaleSchema,
+    en: impactLocaleSchema,
 })
 
 const defaultAboutValues: z.infer<typeof aboutPageSchema> = {
@@ -258,6 +280,132 @@ const LegalPageForm = ({ form, isSaving, pageName }: { form: UseFormReturn<z.inf
     )
 }
 
+type ImpactFormValues = z.infer<typeof impactPageSchema>
+type ImpactLocale = keyof ImpactFormValues
+
+const ImpactLocaleFields = ({
+    form,
+    locale,
+}: {
+    form: UseFormReturn<ImpactFormValues>,
+    locale: ImpactLocale,
+}) => {
+    const metricsName = `${locale}.metrics` as "fr.metrics" | "en.metrics"
+    const { fields, append, remove } = useFieldArray({
+        control: form.control,
+        name: metricsName,
+    })
+    const isFrench = locale === "fr"
+    const fieldName = <Field extends keyof ImpactFormValues[ImpactLocale]>(field: Field) =>
+        `${locale}.${field}` as `fr.${Field}` | `en.${Field}`
+
+    return (
+        <div className="space-y-8 pt-5">
+            <div className="space-y-4 rounded-lg border p-4">
+                <div>
+                    <h3 className="text-lg font-semibold">
+                        {isFrench ? "Introduction en français" : "English introduction"}
+                    </h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        {isFrench
+                            ? "Adaptez le message au contexte du pilote sans présenter les cibles comme des résultats."
+                            : "Adapt the pilot message without presenting targets as achieved results."}
+                    </p>
+                </div>
+                <FormField control={form.control} name={fieldName("heroTitle")} render={({ field }) => (<FormItem><FormLabel>{isFrench ? "Titre principal" : "Main title"}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name={fieldName("heroSubtitle")} render={({ field }) => (<FormItem><FormLabel>{isFrench ? "Sous-titre" : "Subtitle"}</FormLabel><FormControl><Textarea rows={3} {...field} /></FormControl><FormMessage /></FormItem>)} />
+            </div>
+
+            <Separator />
+
+            <div className="space-y-4 rounded-lg border p-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <h3 className="text-lg font-semibold">{isFrench ? "Indicateurs proposés" : "Proposed indicators"}</h3>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                            {isFrench
+                                ? "Un à huit indicateurs, avec une explication compréhensible par tous."
+                                : "One to eight indicators, each with a plain-language explanation."}
+                        </p>
+                    </div>
+                    <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={fields.length >= 8}
+                        onClick={() => append({ value: "", label: "", detail: "" })}
+                    >
+                        <PlusCircle className="mr-2 h-4 w-4" aria-hidden="true" />
+                        {isFrench ? "Ajouter un indicateur" : "Add an indicator"}
+                    </Button>
+                </div>
+                <div className="space-y-4">
+                    {fields.map((metric, index) => (
+                        <div key={metric.id} className="relative grid gap-4 rounded-lg border bg-muted/35 p-4 pr-14 md:grid-cols-[0.45fr_1fr_1.5fr]">
+                            <FormField control={form.control} name={`${locale}.metrics.${index}.value`} render={({ field }) => (<FormItem><FormLabel>{isFrench ? "Valeur" : "Value"}</FormLabel><FormControl><Input placeholder="500" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                            <FormField control={form.control} name={`${locale}.metrics.${index}.label`} render={({ field }) => (<FormItem><FormLabel>{isFrench ? "Libellé" : "Label"}</FormLabel><FormControl><Input placeholder={isFrench ? "jeunes accompagnés" : "young people supported"} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                            <FormField control={form.control} name={`${locale}.metrics.${index}.detail`} render={({ field }) => (<FormItem><FormLabel>{isFrench ? "Précision" : "Detail"}</FormLabel><FormControl><Textarea rows={2} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-2 top-2 h-9 w-9 text-destructive hover:text-destructive"
+                                disabled={fields.length === 1}
+                                onClick={() => remove(index)}
+                                aria-label={isFrench ? `Supprimer l’indicateur ${index + 1}` : `Remove indicator ${index + 1}`}
+                            >
+                                <Trash2 className="h-4 w-4" aria-hidden="true" />
+                            </Button>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <Separator />
+
+            <div className="space-y-4 rounded-lg border p-4">
+                <h3 className="text-lg font-semibold">{isFrench ? "Méthode et redevabilité" : "Method and accountability"}</h3>
+                <FormField control={form.control} name={fieldName("methodologyTitle")} render={({ field }) => (<FormItem><FormLabel>{isFrench ? "Titre de la méthode" : "Method title"}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name={fieldName("methodologyBody")} render={({ field }) => (<FormItem><FormLabel>{isFrench ? "Méthode de mesure" : "Measurement method"}</FormLabel><FormControl><Textarea rows={4} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name={fieldName("reportingCadence")} render={({ field }) => (<FormItem><FormLabel>{isFrench ? "Rythme de publication" : "Reporting cadence"}</FormLabel><FormControl><Textarea rows={3} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name={fieldName("currentStatus")} render={({ field }) => (<FormItem><FormLabel>{isFrench ? "Statut actuel" : "Current status"}</FormLabel><FormControl><Textarea rows={3} {...field} /></FormControl><FormMessage /></FormItem>)} />
+            </div>
+        </div>
+    )
+}
+
+const ImpactPageForm = ({ form, isSaving }: { form: UseFormReturn<ImpactFormValues>, isSaving: boolean }) => {
+    return (
+        <div className="space-y-6">
+            <div className="rounded-lg border border-primary/20 bg-primary/[0.045] p-4">
+                <p className="font-semibold text-primary">Mention de transparence verrouillée</p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                    La page publique affiche toujours « Cibles proposées pour la phase pilote 2026 — pas des résultats observés ».
+                    Cette mention ne peut pas être modifiée depuis le CMS.
+                </p>
+            </div>
+            <Tabs defaultValue="fr">
+                <TabsList className="grid h-auto w-full grid-cols-2">
+                    <TabsTrigger value="fr" className="min-h-11">Français</TabsTrigger>
+                    <TabsTrigger value="en" className="min-h-11">English</TabsTrigger>
+                </TabsList>
+                <TabsContent value="fr">
+                    <ImpactLocaleFields form={form} locale="fr" />
+                </TabsContent>
+                <TabsContent value="en">
+                    <ImpactLocaleFields form={form} locale="en" />
+                </TabsContent>
+            </Tabs>
+            <div className="flex justify-end">
+                <Button type="submit" disabled={isSaving}>
+                    {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Enregistrer la page Impact
+                </Button>
+            </div>
+        </div>
+    )
+}
+
 // --- Main Component ---
 
 export function ContentPagesEditor() {
@@ -274,6 +422,7 @@ export function ContentPagesEditor() {
                     <div className="-mx-1 overflow-x-auto px-1 pb-1">
                         <TabsList className="h-auto min-w-max">
                             <TabsTrigger value="about-us" className="min-h-11 shrink-0">{t("About Us")}</TabsTrigger>
+                            <TabsTrigger value="impact" className="min-h-11 shrink-0">Impact</TabsTrigger>
                             <TabsTrigger value="privacy-policy" className="min-h-11 shrink-0">{t("Privacy Policy")}</TabsTrigger>
                             <TabsTrigger value="terms-of-service" className="min-h-11 shrink-0">{t("Terms of Service")}</TabsTrigger>
                         </TabsList>
@@ -281,6 +430,11 @@ export function ContentPagesEditor() {
                     <TabsContent value="about-us" className="pt-6">
                         <PageFormWrapper pageId="about-us" schema={aboutPageSchema} defaultValues={defaultAboutValues}>
                              {(form, isSaving) => <AboutUsForm form={form} isSaving={isSaving} />}
+                        </PageFormWrapper>
+                    </TabsContent>
+                    <TabsContent value="impact" className="pt-6">
+                        <PageFormWrapper pageId="impact" schema={impactPageSchema} defaultValues={defaultImpactPageContent}>
+                            {(form, isSaving) => <ImpactPageForm form={form} isSaving={isSaving} />}
                         </PageFormWrapper>
                     </TabsContent>
                     <TabsContent value="privacy-policy" className="pt-6">

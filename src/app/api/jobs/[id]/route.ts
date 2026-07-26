@@ -27,6 +27,7 @@ const updateSchema = z.object({
 
 export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
   try {
+    await requireUser();
     const id = idSchema.parse((await context.params).id);
     const result = await query<JobRow>(`
       SELECT ${jobSelectColumns}

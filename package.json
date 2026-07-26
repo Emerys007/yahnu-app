@@ -24,6 +24,9 @@
     "test:firebase-auth-export": "node --test scripts/tests/firebase-auth-export.test.mjs",
     "test:image-processing": "node --test scripts/tests/image-processing.test.mjs",
     "test:password-recovery": "node --test scripts/tests/password-recovery.test.mjs",
+    "test:auth-navigation": "node --experimental-strip-types --test scripts/tests/auth-navigation.test.mjs",
+    "test:market-opportunity-security": "node --experimental-strip-types --test scripts/tests/market-opportunity-security.test.mjs",
+    "test:pilot-inquiries": "node --experimental-strip-types --test scripts/tests/pilot-inquiries.test.mjs",
     "status": "git status",
     "lint:i18n": "node scripts/validate-locales.mjs"
   },

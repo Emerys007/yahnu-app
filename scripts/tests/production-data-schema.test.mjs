@@ -72,6 +72,7 @@ const migrations = [
   '004_legacy_firestore_user_archives.sql',
   '005_quarantined_firestore_references.sql',
   '006_finalize_ivorian_launch_content.sql',
+  '007_pilot_inquiries.sql',
 ]
 const sourceHash = 'a'.repeat(64)
 
@@ -82,6 +83,54 @@ async function migratedDatabase() {
   }
   return database
 }
+
+test('pilot inquiries are retained as a separate privacy-bounded operational queue', { skip: !PGlite }, async () => {
+  const database = await migratedDatabase()
+  await database.exec(`
+    INSERT INTO pilot_inquiries (
+      id, kind, full_name, email, organization_name, organization_type,
+      country_code, timeline, message, locale, source, consented_at
+    ) VALUES (
+      '11111111-1111-4111-8111-111111111111',
+      'pilot',
+      'Aya Nguessan',
+      'aya@example.ci',
+      'Programme Emploi Jeunes',
+      'public_institution',
+      'CI',
+      'three_months',
+      'Nous souhaitons mesurer le passage de la formation au premier emploi.',
+      'fr',
+      'institutions',
+      now()
+    );
+  `)
+  const saved = await database.query(`
+    SELECT status, retention_expires_at > created_at AS retention_bounded
+    FROM pilot_inquiries
+    WHERE id = '11111111-1111-4111-8111-111111111111'
+  `)
+  assert.deepEqual(saved.rows[0], { status: 'new', retention_bounded: true })
+
+  const columns = await database.query(`
+    SELECT column_name
+    FROM information_schema.columns
+    WHERE table_name = 'pilot_inquiries'
+  `)
+  const names = new Set(columns.rows.map((row) => row.column_name))
+  assert.equal(names.has('ip_address'), false)
+  assert.equal(names.has('user_agent'), false)
+  assert.equal(names.has('password'), false)
+
+  await assert.rejects(
+    database.exec(`
+      UPDATE pilot_inquiries
+      SET status = 'unrestricted'
+      WHERE id = '11111111-1111-4111-8111-111111111111'
+    `),
+  )
+  await database.close()
+})
 
 test('the Côte d’Ivoire launch migration changes only exact prototype fingerprints', { skip: !PGlite }, async () => {
   const database = new PGlite()

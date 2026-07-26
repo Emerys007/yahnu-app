@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, KeyRound, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, KeyRound, Loader2, ShieldCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -23,6 +23,9 @@ import { useAuth } from "@/context/auth-context";
 import { useLocalization } from "@/context/localization-context";
 import { useToast } from "@/hooks/use-toast";
 import { ApiClientError } from "@/lib/api-client";
+import { safeAppReturnTo, safeDashboardReturnTo } from "@/lib/auth-navigation";
+import { adminRoles } from "@/lib/auth-types";
+import { resolveDashboardDestination, resolvePostLoginDestination } from "@/lib/dashboard-navigation";
 
 function createLoginSchema(language: "fr" | "en") {
   const fr = language === "fr";
@@ -38,7 +41,11 @@ function createLoginSchema(language: "fr" | "en") {
 
 type LoginValues = z.infer<ReturnType<typeof createLoginSchema>>;
 
-export function LoginForm() {
+type LoginFormProps = {
+  adminEntry?: boolean;
+};
+
+export function LoginForm({ adminEntry = false }: LoginFormProps) {
   const { language } = useLocalization();
   const fr = language === "fr";
   const schema = React.useMemo(() => createLoginSchema(language), [language]);
@@ -47,6 +54,10 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = React.useState(false);
+  const requestedReturnTo = safeAppReturnTo(searchParams.get("next"));
+  const signupHref = requestedReturnTo
+    ? `/signup?next=${encodeURIComponent(requestedReturnTo)}`
+    : "/signup";
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(schema),
@@ -96,19 +107,38 @@ export function LoginForm() {
       description: message[language],
       variant: "destructive",
     });
-    router.replace("/login");
+    const nextParameters = new URLSearchParams(searchParams.toString());
+    nextParameters.delete("auth");
+    const nextQuery = nextParameters.toString();
+    router.replace(nextQuery ? `/login?${nextQuery}` : "/login");
   }, [fr, language, router, searchParams, toast]);
 
   async function onSubmit(values: LoginValues) {
     setIsLoading(true);
     try {
-      await signIn(values.email, values.password);
-      toast({
-        title: fr ? "Connexion réussie" : "Signed in",
-        description: fr ? "Bienvenue dans votre espace Yahnu." : "Welcome to your Yahnu space.",
-      });
+      const authenticatedUser = await signIn(values.email, values.password);
       const requestedPath = searchParams?.get("next");
-      router.push(requestedPath?.startsWith("/") && !requestedPath.startsWith("//") ? requestedPath : "/dashboard");
+      const destination = adminEntry
+        ? resolveDashboardDestination(authenticatedUser.role, requestedPath)
+        : resolvePostLoginDestination(authenticatedUser.role, requestedPath);
+      const lacksAdminAccess = adminEntry && !adminRoles.has(authenticatedUser.role);
+
+      toast(lacksAdminAccess ? {
+        title: fr ? "Accès administrateur réservé" : "Administrator access restricted",
+        description: fr
+          ? "Votre connexion est valide, mais ce compte n’a pas de rôle administrateur. Nous ouvrons son espace autorisé."
+          : "Your sign-in is valid, but this account does not have an administrator role. We are opening its authorized space.",
+      } : {
+        title: adminEntry
+          ? (fr ? "Accès sécurisé" : "Secure access granted")
+          : (fr ? "Connexion réussie" : "Signed in"),
+        description: adminEntry
+          ? (fr ? "Ouverture du panneau d’administration Yahnu." : "Opening the Yahnu administration panel.")
+          : (fr ? "Bienvenue dans votre espace Yahnu." : "Welcome to your Yahnu space."),
+      });
+
+      router.replace(destination);
+      router.refresh();
     } catch (error: unknown) {
       const code = error instanceof ApiClientError ? error.code : undefined;
       const messages: Record<string, { fr: string; en: string }> = {
@@ -161,7 +191,7 @@ export function LoginForm() {
     try {
       const requestedPath = searchParams?.get("next");
       await signInWithGoogle(
-        requestedPath?.startsWith("/") && !requestedPath.startsWith("//") ? requestedPath : "/dashboard",
+        (adminEntry ? safeDashboardReturnTo(requestedPath) : safeAppReturnTo(requestedPath)) ?? "/dashboard",
       );
     } catch (error: unknown) {
       const rawMessage = error instanceof Error ? error.message : "request_failed";
@@ -199,40 +229,76 @@ export function LoginForm() {
   return (
     <>
       <div className="text-left">
-        <h1 className="font-headline text-3xl font-semibold tracking-[-0.04em]">
-          {fr ? "Ravi de vous revoir" : "Welcome back"}
+        <h1 className="font-headline text-3xl font-semibold leading-tight tracking-[-0.04em]">
+          {adminEntry
+            ? (fr ? "Administration Yahnu" : "Yahnu administration")
+            : (fr ? "Ravi de vous revoir" : "Welcome back")}
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          {fr ? "Connectez-vous pour retrouver votre parcours Yahnu." : "Sign in to continue your Yahnu journey."}
+          {adminEntry
+            ? (
+              fr
+                ? "Identifiez-vous pour rejoindre directement votre espace de pilotage."
+                : "Sign in to go directly to your operations workspace."
+            )
+            : (
+              fr
+                ? "Connectez-vous pour retrouver votre parcours Yahnu."
+                : "Sign in to continue your Yahnu journey."
+            )}
         </p>
       </div>
 
-      <aside
-        className="mt-6 rounded-2xl border border-primary/20 bg-primary/[0.07] p-4 shadow-sm"
-        aria-labelledby="legacy-account-title"
-      >
-        <div className="flex items-start gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <KeyRound className="h-5 w-5" aria-hidden="true" />
-          </span>
-          <div className="min-w-0">
-            <p id="legacy-account-title" className="font-headline text-base font-semibold text-foreground">
-              {fr ? "Votre compte date d’avant la migration ?" : "Was your account created before the migration?"}
-            </p>
-            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              {fr
-                ? "Pour protéger vos données, les anciens mots de passe n’ont pas été transférés. Utilisez votre adresse habituelle pour en créer un nouveau."
-                : "To protect your data, old passwords were not transferred. Use your usual email address to create a new one."}
-            </p>
-            <Button asChild variant="outline" size="sm" className="mt-3 w-full bg-card/80 sm:w-auto">
-              <Link href="/forgot-password">
-                {fr ? "Réactiver mon accès" : "Restore my access"}
-                <ArrowRight aria-hidden="true" />
-              </Link>
-            </Button>
+      {adminEntry ? (
+        <aside
+          className="relative mt-6 overflow-hidden rounded-2xl border border-primary/20 bg-[hsl(var(--sidebar-background))] p-4 text-[hsl(var(--sidebar-foreground))] shadow-sm"
+          aria-labelledby="admin-access-title"
+        >
+          <div className="ci-pattern pointer-events-none absolute inset-0 opacity-20" aria-hidden="true" />
+          <div className="relative flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground ring-4 ring-white/5">
+              <ShieldCheck className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <div className="min-w-0">
+              <p id="admin-access-title" className="font-headline text-base font-semibold text-white">
+                {fr ? "Portail de pilotage protégé" : "Protected operations portal"}
+              </p>
+              <p className="mt-1 text-sm leading-relaxed text-white/65">
+                {fr
+                  ? "Après vérification, votre rôle détermine automatiquement les outils et données accessibles."
+                  : "After verification, your role automatically determines which tools and data you can access."}
+              </p>
+            </div>
           </div>
-        </div>
-      </aside>
+        </aside>
+      ) : (
+        <aside
+          className="mt-6 rounded-2xl border border-primary/20 bg-primary/[0.07] p-4 shadow-sm"
+          aria-labelledby="legacy-account-title"
+        >
+          <div className="flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+              <KeyRound className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <div className="min-w-0">
+              <p id="legacy-account-title" className="font-headline text-base font-semibold text-foreground">
+                {fr ? "Votre compte date d’avant la migration ?" : "Was your account created before the migration?"}
+              </p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                {fr
+                  ? "Pour protéger vos données, les anciens mots de passe n’ont pas été transférés. Utilisez votre adresse habituelle pour en créer un nouveau."
+                  : "To protect your data, old passwords were not transferred. Use your usual email address to create a new one."}
+              </p>
+              <Button asChild variant="outline" size="sm" className="mt-3 w-full bg-card/80 sm:w-auto">
+                <Link href="/forgot-password">
+                  {fr ? "Réactiver mon accès" : "Restore my access"}
+                  <ArrowRight aria-hidden="true" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </aside>
+      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 space-y-5" aria-busy={isLoading} noValidate>
@@ -247,7 +313,7 @@ export function LoginForm() {
                     type="email"
                     inputMode="email"
                     autoComplete="email"
-                    placeholder="awa.kone@exemple.ci"
+                    placeholder={adminEntry ? "administration@yahnu.org" : "awa.kone@exemple.ci"}
                     {...field}
                     disabled={isLoading}
                   />
@@ -281,7 +347,11 @@ export function LoginForm() {
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? <Loader2 className="animate-spin" aria-hidden="true" /> : <ArrowRight aria-hidden="true" />}
-            {isLoading ? (fr ? "Connexion…" : "Signing in…") : fr ? "Accéder à mon espace" : "Open my space"}
+            {isLoading
+              ? (fr ? "Connexion…" : "Signing in…")
+              : adminEntry
+                ? (fr ? "Ouvrir l’administration" : "Open administration")
+                : (fr ? "Accéder à mon espace" : "Open my space")}
           </Button>
 
           {googleEnabled && (
@@ -315,19 +385,31 @@ export function LoginForm() {
         </form>
       </Form>
 
-      <div className="mt-6 border-t border-border/70 pt-5 text-center text-sm text-muted-foreground">
-        <p>
-          {fr ? "Vous découvrez Yahnu ?" : "New to Yahnu?"}{" "}
-          <Link href="/signup" className="font-semibold text-primary underline-offset-4 hover:underline">
-            {fr ? "Créer un compte" : "Create an account"}
+      {adminEntry ? (
+        <div className="mt-6 border-t border-border/70 pt-5 text-center text-sm text-muted-foreground">
+          <Link
+            href="/"
+            className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 font-semibold text-foreground underline-offset-4 hover:text-primary hover:underline"
+          >
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            {fr ? "Retour au site public Yahnu" : "Back to the public Yahnu site"}
           </Link>
-        </p>
-        <p className="mt-2">
-          <Link href="/resend-verification" className="font-semibold text-foreground underline-offset-4 hover:text-primary hover:underline">
-            {fr ? "Je n’ai pas reçu mon e-mail de vérification" : "I did not receive my verification email"}
-          </Link>
-        </p>
-      </div>
+        </div>
+      ) : (
+        <div className="mt-6 border-t border-border/70 pt-5 text-center text-sm text-muted-foreground">
+          <p>
+            {fr ? "Vous découvrez Yahnu ?" : "New to Yahnu?"}{" "}
+            <Link href={signupHref} className="font-semibold text-primary underline-offset-4 hover:underline">
+              {fr ? "Créer un compte" : "Create an account"}
+            </Link>
+          </p>
+          <p className="mt-2">
+            <Link href="/resend-verification" className="font-semibold text-foreground underline-offset-4 hover:text-primary hover:underline">
+              {fr ? "Je n’ai pas reçu mon e-mail de vérification" : "I did not receive my verification email"}
+            </Link>
+          </p>
+        </div>
+      )}
     </>
   );
 }

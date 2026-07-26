@@ -1,10 +1,12 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { safeAppReturnTo } from '@/lib/auth-navigation';
 import type { UserRow } from '@/lib/server/auth';
 import { createSession, hashToken, setSessionCookie, writeAuditLog } from '@/lib/server/auth';
 import { query, transaction } from '@/lib/server/db';
 import { externalUrl } from '@/lib/server/email';
+import { resolvePostLoginDestination } from '@/lib/dashboard-navigation';
 
 const GOOGLE_KEYS = createRemoteJWKSet(new URL('https://www.googleapis.com/oauth2/v3/certs'));
 const OAUTH_COOKIE = 'yahnu_oauth_state';
@@ -21,8 +23,15 @@ type GoogleClaims = {
 
 type GoogleUserRow = UserRow & { google_sub: string | null };
 
-function redirectWithError(code: string) {
-  const response = NextResponse.redirect(externalUrl(`/login?auth=${encodeURIComponent(code)}`));
+function redirectWithError(code: string, returnTo?: string) {
+  const parameters = new URLSearchParams({ auth: code });
+  const safeReturnTo = safeAppReturnTo(returnTo);
+  if (safeReturnTo) {
+    parameters.set('next', safeReturnTo);
+    if (safeReturnTo.startsWith('/dashboard/admin')) parameters.set('entry', 'admin');
+  }
+
+  const response = NextResponse.redirect(externalUrl(`/login?${parameters}`));
   response.cookies.set(OAUTH_COOKIE, '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -41,6 +50,8 @@ export async function GET(request: NextRequest) {
     return redirectWithError('google_state_invalid');
   }
 
+  let requestedReturnTo: string | undefined;
+
   try {
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -53,6 +64,7 @@ export async function GET(request: NextRequest) {
     `, [hashToken(state)]);
     const flow = flowResult.rows[0];
     if (!flow) return redirectWithError('google_state_invalid');
+    requestedReturnTo = flow.return_to;
 
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
@@ -67,9 +79,9 @@ export async function GET(request: NextRequest) {
       }),
       signal: AbortSignal.timeout(10_000),
     });
-    if (!tokenResponse.ok) return redirectWithError('google_exchange_failed');
+    if (!tokenResponse.ok) return redirectWithError('google_exchange_failed', requestedReturnTo);
     const tokens = await tokenResponse.json() as { id_token?: string };
-    if (!tokens.id_token) return redirectWithError('google_exchange_failed');
+    if (!tokens.id_token) return redirectWithError('google_exchange_failed', requestedReturnTo);
 
     const verified = await jwtVerify(tokens.id_token, GOOGLE_KEYS, {
       audience: clientId,
@@ -77,7 +89,7 @@ export async function GET(request: NextRequest) {
     });
     const claims = verified.payload as unknown as GoogleClaims;
     if (!claims.sub || !claims.email || !claims.email_verified || claims.nonce !== flow.nonce) {
-      return redirectWithError('google_identity_invalid');
+      return redirectWithError('google_identity_invalid', requestedReturnTo);
     }
 
     const email = claims.email.toLowerCase();
@@ -132,18 +144,25 @@ export async function GET(request: NextRequest) {
       return row;
     });
 
-    if (!user) return redirectWithError('google_registration_required');
-    if (user.status === 'pending') return redirectWithError(user.role === 'graduate' ? 'pending_graduate' : 'pending_org');
-    if (user.status === 'suspended' || user.status === 'declined') return redirectWithError(user.status);
+    if (!user) return redirectWithError('google_registration_required', requestedReturnTo);
+    if (user.status === 'pending') return redirectWithError(
+      user.role === 'graduate' ? 'pending_graduate' : 'pending_org',
+      requestedReturnTo,
+    );
+    if (user.status === 'suspended' || user.status === 'declined') {
+      return redirectWithError(user.status, requestedReturnTo);
+    }
 
     await query('UPDATE users SET last_login_at = now() WHERE id = $1', [user.id]);
     const session = await createSession(user.id, request);
-    const response = NextResponse.redirect(externalUrl(flow.return_to));
+    const response = NextResponse.redirect(externalUrl(
+      resolvePostLoginDestination(user.role, flow.return_to),
+    ));
     response.cookies.set(OAUTH_COOKIE, '', { path: '/api/auth/google/callback', maxAge: 0 });
     setSessionCookie(response, session);
     return response;
   } catch (error) {
     console.error('Google authentication failed:', error);
-    return redirectWithError('google_signin_failed');
+    return redirectWithError('google_signin_failed', requestedReturnTo);
   }
 }
