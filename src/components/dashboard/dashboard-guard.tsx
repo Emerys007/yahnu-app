@@ -5,7 +5,7 @@ import { ShieldAlert } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth-context";
-import { canAccessDashboardRoute } from "@/lib/dashboard-navigation";
+import { canAccessDashboardRoute, getRoleDashboardHome } from "@/lib/dashboard-navigation";
 
 export function DashboardGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -22,7 +22,7 @@ export function DashboardGuard({ children }: { children: React.ReactNode }) {
   }
 
   if (!canAccessDashboardRoute(currentPathname, role)) {
-    return <main className="grid min-h-screen place-items-center bg-background p-6"><div className="max-w-md text-center"><span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-destructive/10 text-destructive"><ShieldAlert className="h-6 w-6" aria-hidden="true" /></span><h1 className="mt-5 text-2xl font-semibold tracking-tight">Accès réservé</h1><p className="mt-2 text-sm leading-6 text-muted-foreground">Votre compte n’a pas accès à cet espace. Si cela vous semble incorrect, contactez l’équipe Yahnu.</p><Button className="mt-6 rounded-xl" onClick={() => router.replace('/dashboard')}>Revenir au tableau de bord</Button></div></main>;
+    return <main className="grid min-h-screen place-items-center bg-background p-6"><div className="max-w-md text-center"><span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-destructive/10 text-destructive"><ShieldAlert className="h-6 w-6" aria-hidden="true" /></span><h1 className="mt-5 text-2xl font-semibold tracking-tight">Accès réservé</h1><p className="mt-2 text-sm leading-6 text-muted-foreground">Votre compte n’a pas accès à cet espace. Si cela vous semble incorrect, contactez l’équipe Yahnu.</p><Button className="mt-6 rounded-xl" onClick={() => router.replace(getRoleDashboardHome(role))}>Revenir au tableau de bord</Button></div></main>;
   }
 
   return <>{children}</>;

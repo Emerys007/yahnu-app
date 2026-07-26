@@ -18,11 +18,15 @@ import {
 import { useLocalization } from '@/context/localization-context';
 
 const navLinks = [
-  { href: '/jobs', fr: 'Opportunités', en: 'Opportunities' },
+  { href: '/be-the-change', fr: 'BE THE CHANGE', en: 'BE THE CHANGE' },
+  { href: '/students', fr: 'Jeunes', en: 'Graduates' },
+  { href: '/schools', fr: 'Établissements', en: 'Schools' },
   { href: '/companies', fr: 'Entreprises', en: 'Employers' },
-  { href: '/schools', fr: 'Établissements', en: 'Institutions' },
-  { href: '/blog', fr: 'Conseils carrière', en: 'Career advice' },
-  { href: '/about', fr: 'Notre mission', en: 'Our mission' },
+  { href: '/institutions', fr: 'Institutions', en: 'Institutions' },
+  { href: '/jobs', fr: 'Opportunités', en: 'Opportunities' },
+  { href: '/impact', fr: 'Impact', en: 'Impact' },
+  { href: '/blog', fr: 'Ressources', en: 'Resources' },
+  { href: '/contact?intent=pilot', fr: 'Pilote', en: 'Pilot' },
 ];
 
 export function MainNav() {
@@ -40,7 +44,7 @@ export function MainNav() {
         <Link
           key={link.href}
           href={link.href}
-          className="rounded-lg px-3 py-2 text-sm font-semibold text-foreground/70 transition-colors hover:bg-primary/[0.07] hover:text-primary"
+          className="rounded-lg px-2 py-2 text-[0.78rem] font-semibold text-foreground/70 transition-colors hover:bg-primary/[0.07] hover:text-primary 2xl:px-3 2xl:text-sm"
         >
           {isFrench ? link.fr : link.en}
         </Link>
@@ -59,11 +63,11 @@ export function MainNav() {
           </span>
         </Link>
 
-        <nav className="ml-auto hidden items-center gap-0.5 lg:flex" aria-label="Navigation principale">
+        <nav className="ml-auto hidden items-center gap-0.5 xl:flex" aria-label="Navigation principale">
           {links}
         </nav>
 
-        <div className="ml-auto hidden items-center gap-2 lg:ml-3 lg:flex">
+        <div className="ml-auto hidden items-center gap-1.5 xl:ml-2 xl:flex">
           <Button
             type="button"
             variant="ghost"
@@ -90,7 +94,7 @@ export function MainNav() {
 
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="ml-auto lg:hidden" aria-label="Ouvrir le menu">
+            <Button variant="outline" size="icon" className="ml-auto xl:hidden" aria-label="Ouvrir le menu">
               <Menu />
             </Button>
           </SheetTrigger>

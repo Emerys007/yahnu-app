@@ -74,7 +74,7 @@ export function PublicOrganizationProfile({ organization, role, jobs = [] }: Pub
                           </CardDescription>
                         </div>
                         <Button asChild variant="outline">
-                          <Link href={`/jobs/${encodeURIComponent(job.id)}`}>Voir l’offre <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                          <Link href={`/login?next=${encodeURIComponent(`/jobs/${job.id}`)}`}>Voir l’offre <ArrowRight className="ml-2 h-4 w-4" /></Link>
                         </Button>
                       </CardContent>
                     </Card>

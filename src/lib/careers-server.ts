@@ -62,6 +62,15 @@ export function serializeJob(row: JobRow): Job {
   };
 }
 
+export function serializePublicJob(row: JobRow): Job {
+  return {
+    ...serializeJob(row),
+    // Official application links are released only after authentication.
+    // This keeps public discovery useful while preserving Yahnu's guided flow.
+    applicationUrl: null,
+  };
+}
+
 export type ApplicationRow = {
   id: string;
   job_id: string | null;

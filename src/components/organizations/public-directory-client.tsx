@@ -16,6 +16,7 @@ import {
 
 import { Footer } from "@/components/landing/footer";
 import { MainNav } from "@/components/landing/main-nav";
+import { InstitutionReferences } from "@/components/market/institution-references";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -392,6 +393,8 @@ export function PublicOrganizationDirectory({
             </aside>
           </div>
         </section>
+
+        {!isCompany ? <InstitutionReferences /> : null}
 
         <section className="page-shell py-10 sm:py-14" aria-labelledby={`${kind}-directory-title`}>
           {unavailable ? (

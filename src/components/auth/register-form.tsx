@@ -30,6 +30,7 @@ import { useAuth, type UserProfile } from "@/context/auth-context";
 import { useLocalization } from "@/context/localization-context";
 import { useToast } from "@/hooks/use-toast";
 import { apiFetch, ApiClientError } from "@/lib/api-client";
+import { safeAppReturnTo } from "@/lib/auth-navigation";
 
 type SchoolOption = {
   id: string;
@@ -144,6 +145,10 @@ export function RegisterForm() {
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const requestedReturnTo = safeAppReturnTo(searchParams.get("next"));
+  const loginHref = requestedReturnTo
+    ? `/login?next=${encodeURIComponent(requestedReturnTo)}`
+    : "/login";
   const [isLoading, setIsLoading] = React.useState(false);
   const [schoolsLoading, setSchoolsLoading] = React.useState(true);
   const [schools, setSchools] = React.useState<SchoolOption[]>([]);
@@ -260,7 +265,7 @@ export function RegisterForm() {
         window.location.assign(registration.debugUrl);
         return;
       }
-      router.push("/login");
+      router.push(loginHref);
     } catch (error: unknown) {
       const code = error instanceof ApiClientError ? error.code : "request_failed";
       const messages: Record<string, { fr: string; en: string }> = {
@@ -587,7 +592,7 @@ export function RegisterForm() {
 
         <p className="border-t border-border/70 pt-5 text-center text-sm text-muted-foreground">
           {fr ? "Vous avez déjà un compte ?" : "Already have an account?"}{" "}
-          <Link href="/login" className="font-semibold text-primary underline-offset-4 hover:underline">
+          <Link href={loginHref} className="font-semibold text-primary underline-offset-4 hover:underline">
             {fr ? "Se connecter" : "Sign in"}
           </Link>
         </p>
