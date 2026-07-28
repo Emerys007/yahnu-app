@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
+  BadgeCheck,
   Banknote,
   BrainCircuit,
   BriefcaseBusiness,
@@ -127,6 +128,32 @@ export default function AssessmentsPage() {
           </div>
         </div>
       </motion.section>
+
+      <section className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/[0.09] via-background to-lagoon/[0.09] p-5 sm:p-6">
+        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex max-w-2xl gap-4">
+            <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-soft">
+              <BadgeCheck className="size-6" aria-hidden="true" />
+            </span>
+            <div>
+              <p className="section-kicker">Deuxième parcours</p>
+              <h2 className="mt-1 font-display text-xl font-semibold">
+                Yahnu Skills Check — verified conditions
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Pour créer une Yahnu skills attestation privée : questions randomisées,
+                temps serveur et notation sans exposer les réponses correctes au navigateur.
+              </p>
+            </div>
+          </div>
+          <Button asChild className="shrink-0">
+            <Link href="/dashboard/skills-checks">
+              Découvrir les Skills Checks
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+          </Button>
+        </div>
+      </section>
 
       <section aria-labelledby="practice-notice" className="rounded-2xl border border-lagoon/20 bg-lagoon/5 p-5">
         <div className="flex gap-3">

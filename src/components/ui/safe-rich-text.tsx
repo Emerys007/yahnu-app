@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 
 const sanitizerOptions = {
   ALLOWED_TAGS: ['a', 'p', 'br', 'strong', 'em', 'u', 's', 'blockquote', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li'],
-  ALLOWED_ATTR: ['href', 'title', 'class'],
-  ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|\/|#)/i,
+  ALLOWED_ATTR: ['href', 'title'],
+  ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|\/(?!\/)|#)/i,
   FORBID_TAGS: ['style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'script'],
 };
 

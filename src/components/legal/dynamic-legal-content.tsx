@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { SafeRichText } from '@/components/ui/safe-rich-text';
 import { apiFetch } from '@/lib/api-client';
 
@@ -35,7 +35,7 @@ export function DynamicLegalContent({ pageId, fallback }: { pageId: 'privacy-pol
   return (
     <Card className="p-6 md:p-8">
       <CardHeader>
-        <CardTitle className="text-4xl font-bold">{content.title}</CardTitle>
+        <h1 className="font-headline text-4xl font-bold tracking-[-0.035em]">{content.title}</h1>
         <CardDescription>{content.lastUpdated}</CardDescription>
       </CardHeader>
       <CardContent>

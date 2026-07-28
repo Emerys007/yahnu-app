@@ -15,7 +15,7 @@ import { RoleDashboard } from "@/components/dashboard/role-dashboard-ui"
 export function CompanyDashboard() {
   return (
     <RoleDashboard
-      closingDescription="Une offre claire, un processus respectueux et un retour utile font déjà la différence auprès des jeunes talents. Bientôt : profil entreprise, vivier de talents, événements et rapports."
+      closingDescription="Une offre claire, un processus respectueux et un retour utile font déjà la différence. Votre profil public, le vivier consenti, les événements et les rapports en direct sont prêts à soutenir ce travail."
       closingTitle="Faites de chaque recrutement une rencontre qui compte."
       description="Attirez de jeunes talents ivoiriens avec un recrutement clair, humain et adapté aux réalités de votre équipe."
       localNotes={[

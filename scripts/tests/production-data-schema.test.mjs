@@ -73,6 +73,9 @@ const migrations = [
   '005_quarantined_firestore_references.sql',
   '006_finalize_ivorian_launch_content.sql',
   '007_pilot_inquiries.sql',
+  '008_verified_skills.sql',
+  '009_unified_job_discovery.sql',
+  '010_role_workspaces.sql',
 ]
 const sourceHash = 'a'.repeat(64)
 

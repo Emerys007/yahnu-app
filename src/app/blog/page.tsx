@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowRight, BookOpen, RefreshCw } from 'lucide-react';
 
 import { BlogCoverImage } from '@/components/blog/blog-cover-image';
@@ -10,13 +10,30 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import type { BlogPost } from '@/lib/blog';
 import { getPublishedBlogPosts } from '@/lib/blog-server';
+import { publicPageMetadata } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'Blog | Yahnu',
-  description: 'Conseils concrets pour les jeunes diplômés, établissements et employeurs de Côte d’Ivoire.',
-};
+function parsePage(value?: string) {
+  const requestedPage = Number.parseInt(value ?? '1', 10);
+  return Number.isSafeInteger(requestedPage) && requestedPage > 0
+    ? Math.min(requestedPage, 4_167)
+    : 1;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const page = parsePage((await searchParams).page);
+  return publicPageMetadata({
+    title: page === 1 ? 'Journal carrière en Côte d’Ivoire' : `Journal carrière — page ${page}`,
+    description:
+      'Conseils concrets pour les jeunes diplômés, établissements et employeurs de Côte d’Ivoire.',
+    path: page === 1 ? '/blog' : `/blog?page=${page}`,
+  });
+}
 
 const dateFormatter = new Intl.DateTimeFormat('fr-CI', {
   day: 'numeric',
@@ -82,10 +99,7 @@ export default async function BlogPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  const requestedPage = Number.parseInt((await searchParams).page ?? '1', 10);
-  const page = Number.isSafeInteger(requestedPage) && requestedPage > 0
-    ? Math.min(requestedPage, 4_167)
-    : 1;
+  const page = parsePage((await searchParams).page);
   let posts: BlogPost[] = [];
   let loadFailed = false;
   try {
@@ -98,6 +112,8 @@ export default async function BlogPage({
   const hasNextPage = posts.length > PAGE_SIZE;
   const visiblePosts = posts.slice(0, PAGE_SIZE);
   const [featured, ...remaining] = visiblePosts;
+
+  if (!loadFailed && page > 1 && !featured) notFound();
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

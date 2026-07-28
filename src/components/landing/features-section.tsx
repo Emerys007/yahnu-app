@@ -3,7 +3,6 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Building2, Check, GraduationCap, School, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -84,7 +83,6 @@ const tabIcons = { graduates: GraduationCap, companies: Building2, schools: Scho
 
 export function FeaturesSection() {
   const { language } = useLocalization();
-  const reducedMotion = useReducedMotion();
   const page = content[language === "fr" ? "fr" : "en"];
   const [active, setActive] = React.useState<Audience>("graduates");
   const selected = page.tabs[active];
@@ -155,17 +153,12 @@ export function FeaturesSection() {
               })}
             </div>
 
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
+              <div
                 key={active}
                 id={`feature-panel-${active}`}
                 role="tabpanel"
                 aria-labelledby={`feature-tab-${active}`}
-                initial={reducedMotion ? false : { opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reducedMotion ? undefined : { opacity: 0, y: -8 }}
-                transition={{ duration: reducedMotion ? 0 : 0.22 }}
-                className="pt-10"
+                className="animate-soft-rise pt-10"
               >
                 <h3 className="max-w-xl font-display text-3xl font-semibold leading-tight sm:text-4xl">{selected.title}</h3>
                 <p className="mt-5 max-w-xl text-base leading-7 text-white/70">{selected.body}</p>
@@ -185,8 +178,7 @@ export function FeaturesSection() {
                     <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
                   </Link>
                 </Button>
-              </motion.div>
-            </AnimatePresence>
+              </div>
           </div>
         </div>
       </div>

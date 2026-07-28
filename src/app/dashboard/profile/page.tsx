@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useFieldArray } from "react-hook-form"
 import { z } from "zod"
 import { useAuth, type EducationEntry } from "@/context/auth-context";
-import { parseResume, type ParseResumeOutput } from "@/ai/flows/resume-parser"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -17,11 +16,14 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Progress } from "@/components/ui/progress"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Upload, Loader2, PlusCircle, Trash2, Award, User as UserIcon } from "lucide-react"
+import { CheckCircle2, Circle, Loader2, PlusCircle, Trash2, User as UserIcon } from "lucide-react"
 import { useLocalization } from "@/context/localization-context"
+import { TalentPreferencesPanel } from "@/components/dashboard/talent-preferences-panel"
+import { SkillsAttestationsPanel } from "@/components/skills/skills-attestations-panel"
 
 const educationSchema = z.object({
   degree: z.string().min(2, "Le diplôme est requis."),
@@ -39,13 +41,10 @@ const profileSchema = z.object({
   skills: z.string().optional(),
 })
 
-const MAX_RESUME_SIZE_BYTES = 4 * 1024 * 1024
-
 export default function ProfilePage() {
   const { t } = useLocalization();
   const { toast } = useToast()
   const { user, loading, updateProfile } = useAuth();
-  const [isParsing, setIsParsing] = useState(false)
   const [isSaving, setIsSaving] = useState(false);
 
   const form = useForm<z.infer<typeof profileSchema>>({
@@ -78,81 +77,37 @@ export default function ProfilePage() {
     }
   }, [user, form]);
 
-  function fileToDataURI(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-
-  const handleResumeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    if (file.type !== "application/pdf") {
-      toast({
-        title: "Format PDF requis",
-        description: "Ajoutez votre CV au format PDF.",
-        variant: "destructive",
-      })
-      event.target.value = ""
-      return
-    }
-
-    if (file.size > MAX_RESUME_SIZE_BYTES) {
-      toast({
-        title: "CV trop volumineux",
-        description: "Choisissez un fichier PDF de moins de 4 Mo.",
-        variant: "destructive",
-      })
-      event.target.value = ""
-      return
-    }
-
-    setIsParsing(true)
-    toast({
-      title: "Lecture du CV en cours…",
-      description: "Yahnu analyse le document pour préremplir votre profil. Cela peut prendre un instant.",
-    })
-
-    try {
-      const resumeDataUri = await fileToDataURI(file)
-      const result: ParseResumeOutput = await parseResume({ resumeDataUri })
-      
-      form.setValue("name", result.name || "")
-      form.setValue("phone", result.phone || "")
-      form.setValue("experience", result.experience?.join("\n\n") || "")
-      if (result.education && result.education.length > 0) {
-        const firstEdu = result.education[0];
-        const [degree, field] = firstEdu.split(',').map(s => s.trim());
-        const gradYearMatch = firstEdu.match(/\d{4}/);
-        
-        if (fields.length > 0) {
-            remove(0);
-        }
-        append({ degree: degree || "", field: field || "", gradYear: gradYearMatch ? gradYearMatch[0] : "", verified: false });
-
-      }
-      form.setValue("skills", result.skills?.join(", ") || "")
-
-      toast({
-        title: "Profil prérempli",
-        description: "Relisez les informations extraites de votre CV avant de les enregistrer.",
-        variant: "default",
-      })
-    } catch (error) {
-      console.error("Resume parsing failed:", error)
-      toast({
-        title: "Le CV n’a pas pu être lu",
-        description: "Vérifiez le fichier puis réessayez, ou complétez le profil manuellement.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsParsing(false)
-    }
-  }
+  const profileValues = form.watch()
+  const completionItems = [
+    {
+      label: "Identité professionnelle",
+      complete: profileValues.name.trim().length >= 2 && profileValues.email.includes("@"),
+    },
+    {
+      label: "Coordonnées",
+      complete: Boolean(profileValues.phone?.trim()),
+    },
+    {
+      label: "Formation",
+      complete: profileValues.education.some(
+        (entry) => entry.degree.trim() && entry.field.trim() && entry.gradYear.trim(),
+      ),
+    },
+    {
+      label: "Expériences ou projets",
+      complete: (profileValues.experience?.trim().length ?? 0) >= 80,
+    },
+    {
+      label: "Au moins trois compétences",
+      complete:
+        (profileValues.skills
+          ?.split(",")
+          .map((skill) => skill.trim())
+          .filter(Boolean).length ?? 0) >= 3,
+    },
+  ]
+  const completedItems = completionItems.filter((item) => item.complete).length
+  const completion = Math.round((completedItems / completionItems.length) * 100)
 
   async function onSubmit(values: z.infer<typeof profileSchema>) {
     if (!user) {
@@ -202,20 +157,6 @@ export default function ProfilePage() {
                 <h1 className="text-3xl font-bold tracking-tight">Mon profil professionnel</h1>
                 <p className="text-muted-foreground mt-1">Présentez votre parcours, vos compétences et votre projet avec des mots qui vous ressemblent.</p>
             </div>
-        </div>
-        <div className="relative shrink-0 w-full sm:w-auto">
-            <Button disabled={isParsing} className="w-full">
-                <Upload className="mr-2 h-4 w-4" />
-                {isParsing ? "Lecture en cours…" : "Importer mon CV"}
-            </Button>
-            <input
-                type="file"
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                onChange={handleResumeUpload}
-                accept="application/pdf,.pdf"
-                disabled={isParsing}
-                aria-label="Importer un CV au format PDF"
-            />
         </div>
       </div>
       
@@ -384,28 +325,61 @@ export default function ProfilePage() {
                 </Card>
               
               <div className="flex justify-end">
-                <Button type="submit" disabled={isSaving || isParsing} data-hs-event-name="profile_updated">
+                <Button type="submit" disabled={isSaving} data-hs-event-name="profile_updated">
                   {isSaving ? "Enregistrement…" : "Enregistrer mon profil"}
                 </Button>
               </div>
             </div>
             <div className="lg:col-span-1 space-y-6">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Award /> Certifications et badges</CardTitle>
-                        <CardDescription>Les badges vérifiés associés à votre compte apparaîtront ici.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="rounded-lg border border-dashed bg-muted/20 p-5 text-center">
-                            <Award className="mx-auto h-7 w-7 text-muted-foreground" />
-                            <p className="mt-3 text-sm font-medium">Aucun badge vérifié à afficher</p>
-                            <p className="mt-1 text-sm text-muted-foreground">Cette section n’affichera que des badges réellement enregistrés sur votre compte.</p>
-                        </div>
-                    </CardContent>
+                <Card className="border-primary/20 bg-primary/[0.035]">
+                  <CardHeader>
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <CardTitle className="text-lg">Force du profil</CardTitle>
+                        <CardDescription className="mt-1">
+                          Les profils précis sont plus faciles à comprendre pour un recruteur.
+                        </CardDescription>
+                      </div>
+                      <span className="font-display text-2xl font-semibold text-primary">
+                        {completion} %
+                      </span>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <Progress
+                      aria-label={`Profil complété à ${completion} %`}
+                      value={completion}
+                    />
+                    <ul className="mt-5 space-y-3 text-sm">
+                      {completionItems.map((item) => (
+                        <li className="flex items-center gap-2.5" key={item.label}>
+                          {item.complete ? (
+                            <CheckCircle2
+                              aria-hidden="true"
+                              className="size-4 shrink-0 text-primary"
+                            />
+                          ) : (
+                            <Circle
+                              aria-hidden="true"
+                              className="size-4 shrink-0 text-muted-foreground/60"
+                            />
+                          )}
+                          <span className={item.complete ? "text-foreground" : "text-muted-foreground"}>
+                            {item.label}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mt-5 rounded-xl border border-border/70 bg-background/70 p-3 text-xs leading-5 text-muted-foreground">
+                      Yahnu ne transmet pas votre profil au vivier d’entreprises sans votre consentement explicite ci-dessous.
+                    </p>
+                  </CardContent>
                 </Card>
+                <SkillsAttestationsPanel />
             </div>
         </form>
       </Form>
+      <TalentPreferencesPanel />
     </div>
   )
 }

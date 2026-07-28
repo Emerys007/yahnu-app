@@ -55,7 +55,11 @@ export function MainNav() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/92 backdrop-blur-xl">
       <div className="page-shell flex h-[4.75rem] items-center gap-4">
-        <Link href="/" className="group flex items-center gap-2.5" aria-label="Accueil Yahnu">
+        <Link
+          href="/"
+          className="group flex items-center gap-2.5"
+          aria-label={isFrench ? "Accueil Yahnu" : "Yahnu home"}
+        >
           <Logo className="h-11 w-11 text-foreground transition-transform duration-200 group-hover:rotate-3" />
           <span className="leading-none">
             <span className="block font-headline text-xl font-bold tracking-[-0.03em]">Yahnu</span>
@@ -63,7 +67,10 @@ export function MainNav() {
           </span>
         </Link>
 
-        <nav className="ml-auto hidden items-center gap-0.5 xl:flex" aria-label="Navigation principale">
+        <nav
+          className="ml-auto hidden items-center gap-0.5 xl:flex"
+          aria-label={isFrench ? "Navigation principale" : "Main navigation"}
+        >
           {links}
         </nav>
 
@@ -83,8 +90,12 @@ export function MainNav() {
             size="icon"
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
             aria-label={mounted
-              ? (isDark ? 'Activer le thème clair' : 'Activer le thème sombre')
-              : 'Changer de thème'}
+              ? (
+                isDark
+                  ? (isFrench ? "Activer le thème clair" : "Use light theme")
+                  : (isFrench ? "Activer le thème sombre" : "Use dark theme")
+              )
+              : (isFrench ? "Changer de thème" : "Change theme")}
           >
             {isDark ? <Sun /> : <Moon />}
           </Button>
@@ -94,11 +105,20 @@ export function MainNav() {
 
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="ml-auto xl:hidden" aria-label="Ouvrir le menu">
+            <Button
+              variant="outline"
+              size="icon"
+              className="ml-auto xl:hidden"
+              aria-label={isFrench ? "Ouvrir le menu" : "Open menu"}
+            >
               <Menu />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="flex w-[min(90vw,24rem)] flex-col bg-background p-0">
+          <SheetContent
+            side="right"
+            closeLabel={isFrench ? "Fermer le menu" : "Close menu"}
+            className="flex w-[min(90vw,24rem)] flex-col bg-background p-0"
+          >
             <SheetHeader className="border-b p-5 text-left">
               <SheetTitle>
                 <SheetClose asChild>
@@ -114,7 +134,10 @@ export function MainNav() {
                   : 'Main navigation, preferences, and Yahnu account access.'}
               </SheetDescription>
             </SheetHeader>
-            <nav className="flex flex-1 flex-col gap-1 p-4" aria-label="Navigation mobile">
+            <nav
+              className="flex flex-1 flex-col gap-1 p-4"
+              aria-label={isFrench ? "Navigation mobile" : "Mobile navigation"}
+            >
               {navLinks.map((link) => (
                 <SheetClose asChild key={link.href}>
                   <Link href={link.href} className="rounded-xl px-4 py-3 text-lg font-semibold hover:bg-primary/[0.08]">
@@ -128,7 +151,13 @@ export function MainNav() {
                 <Button variant="outline" onClick={() => setLanguage(isFrench ? 'en' : 'fr')}><Languages />{isFrench ? 'English' : 'Français'}</Button>
                 <Button variant="outline" onClick={() => setTheme(isDark ? 'light' : 'dark')}>
                   {isDark ? <Sun /> : <Moon />}
-                  {mounted ? (isDark ? 'Clair' : 'Sombre') : 'Thème'}
+                  {mounted
+                    ? (
+                      isDark
+                        ? (isFrench ? "Clair" : "Light")
+                        : (isFrench ? "Sombre" : "Dark")
+                    )
+                    : (isFrench ? "Thème" : "Theme")}
                 </Button>
               </div>
               <SheetClose asChild><Button variant="outline" className="w-full" asChild><Link href="/login">{isFrench ? 'Se connecter' : 'Sign in'}</Link></Button></SheetClose>

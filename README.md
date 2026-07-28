@@ -1,16 +1,17 @@
 # Yahnu
 
-Yahnu is a Next.js application for graduates, schools, employers, content teams, and support staff. The target production architecture is a Render Node service with Render PostgreSQL, Yahnu-owned authentication, Resend email, and Google OpenID Connect. Firebase is still the live production system until the cutover checklist below is completed.
+Yahnu is a Next.js application for graduates, schools, employers, content teams, and support staff. Production runs on a Render Node service with Render PostgreSQL, Yahnu-owned authentication, Resend email, and Google OpenID Connect. Firebase is retained only as a frozen, time-bounded rollback source; it is not the live application runtime.
 
-## Current production and target
+## Current production
 
-- Live Firebase project: `yahnu-50c61`
-- Live App Hosting backend: `yahnu-app` in `europe-west4`
-- Live URL: `https://yahnu-app--yahnu-50c61.europe-west4.hosted.app`
-- Live source: `main` at `ed982f3`
+- Live application: `https://yahnu.org`
+- Runtime: Render service `yahnu-web` in Frankfurt
+- Database: Render PostgreSQL `yahnu-postgres-live`
+- Release source: GitHub `main`, promoted manually after validation
 - Firebase rollback tag: `firebase-live-main-2026-07-13`
-- Render release branch: `agent/render-production-main`
-- Production hostname: `yahnu.org`, with `www.yahnu.org` redirected to it after the Render release is healthy
+- Frozen Firebase project: `yahnu-50c61`
+- Archived App Hosting backend: `yahnu-app` in `europe-west4`
+- Production hostname: `yahnu.org`, with `www.yahnu.org` redirected to it
 - Render region: Frankfurt
 - Budgeted Render footprint: **about $13.30/month** (Starter web service $7, Basic-256 MB PostgreSQL $6, and 1 GB database storage at $0.30/GB). This stays below the owner's $25/month ceiling; no automatic storage scaling is enabled.
 
@@ -40,8 +41,16 @@ npm run test:migration
 npm run test:db-config
 npm run test:image-processing
 npm run test:password-recovery
+npm run test:auth-navigation
+npm run test:market-opportunity-security
+npm run test:pilot-inquiries
+npm run test:job-discovery
+npm run test:skills-checks
+npm run test:interview-prep
+npm run test:role-workspaces
+npm run test:http-security
 npm run build
-npm audit
+npm audit --omit=dev --audit-level=high
 git diff --check
 ```
 
@@ -60,13 +69,20 @@ Important environment variables:
 - `APP_URL`: the exact public origin, without a trailing slash
 - `RESEND_API_KEY` and `EMAIL_FROM`: mandatory production email configuration
 - `YAHNU_ALLOW_LOCAL_EMAIL_DEBUG`: optional explicit local-development escape hatch. It is ignored unless `NODE_ENV=development` and `APP_URL` points to `localhost`, `127.0.0.1`, or `::1`; never enable it on Render or staging.
+- `YAHNU_SKILLS_BANK_PATH`: absolute path to the protected, versioned assessment bank. The file contains question content and answer keys, must never be committed, and is required before migrations can publish a skills-bank release.
 - `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`: optional Google sign-in; callback is `${APP_URL}/api/auth/google/callback`
 - `NEXT_PUBLIC_OPENCAGE_API_KEY`: optional address autocomplete
 - `YAHNU_ENABLE_AI`, `GEMINI_API_KEY`, and `YAHNU_GEMINI_MODEL`: optional AI features
 
-## Production cutover approval gates
+### Protected skills bank on Render
 
-Before production provisioning, verify these three choices against the current Render pricing page:
+Create a Render Secret File named `yahnu-skills-bank.v1.json`, paste the audited bank into that secret file, and keep `YAHNU_SKILLS_BANK_PATH=/etc/secrets/yahnu-skills-bank.v1.json`. Render mounts secret files at runtime without storing their content in Git. The pre-deploy migration imports the bank transactionally and fails the deployment if the file is absent, malformed, incomplete, or conflicts with an immutable release already stored in PostgreSQL.
+
+Never print the bank, its answer keys, or its digest inputs in logs. Use `npm run test:skills-checks` with the synthetic fixture for local and CI validation.
+
+## Archived production cutover runbook
+
+The remaining sections preserve the tested Firebase-to-Render migration and rollback procedure. They are not instructions to reconnect the live site to Firebase. Before any future reprovisioning, verify these three choices against the current Render pricing page:
 
 1. Recurring Render spend remains at or below `$25/month`.
 2. Frankfurt is the immutable web/database region.
@@ -251,4 +267,4 @@ After Render accepts writes: a simple DNS rollback can lose production data. Fre
 - State-changing routes enforce same-origin checks, body limits, strict schemas, rate limits, and audit logging.
 - `/api/health` reports only the non-secret `emailReady` boolean and returns `503` until both PostgreSQL and account-recovery email are ready.
 - Public media is image-signature checked and immutable; migrated private objects remain non-public and require explicit authorization paths.
-- Production responses set restrictive security headers in `next.config.ts`.
+- Production responses set restrictive security headers in `next.config.js`.

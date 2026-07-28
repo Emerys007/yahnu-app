@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
-
 import { PilotInquiryPage } from "@/components/contact/pilot-inquiry-page";
 import type { PilotInquirySubmission } from "@/lib/pilot-inquiries";
+import { publicPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Contact & pilote",
+export const metadata = publicPageMetadata({
+  title: "Contact et pilote en Côte d’Ivoire",
   description:
     "Proposer un pilote, un partenariat ou un projet d’insertion professionnelle à l’équipe Yahnu.",
-};
+  path: "/contact",
+});
 
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;

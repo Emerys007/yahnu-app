@@ -229,11 +229,11 @@ export function LoginForm({ adminEntry = false }: LoginFormProps) {
   return (
     <>
       <div className="text-left">
-        <h1 className="font-headline text-3xl font-semibold leading-tight tracking-[-0.04em]">
+        <h2 className="font-headline text-3xl font-semibold leading-tight tracking-[-0.04em]">
           {adminEntry
             ? (fr ? "Administration Yahnu" : "Yahnu administration")
             : (fr ? "Ravi de vous revoir" : "Welcome back")}
-        </h1>
+        </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           {adminEntry
             ? (

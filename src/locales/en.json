@@ -917,15 +917,15 @@
   "An overview of all the jobs you have applied for": {
     "": ""
   },
-  "Camera Access Denied": "Camera Access Denied",
-  "Please enable camera and microphone permissions in your browser settings to continue": {
+  "No camera or microphone access": "No camera or microphone access",
+  "Yahnu Skills Checks never request camera or microphone permissions": {
     "": ""
   },
   "Assessment Setup": "Assessment Setup",
-  "Please complete the following steps to begin your proctored assessment": {
+  "Please review the verified conditions before starting the Yahnu Skills Check": {
     "": ""
   },
-  "Camera Access": "Camera Access",
+  "Privacy-first check": "Privacy-first check",
   "Enabled": "Enabled",
   "Disabled": "Disabled",
   "Assessment Rules": "Assessment Rules",
@@ -945,9 +945,9 @@
   "Question {current} of {total}": "Question {current} of {total}",
   "Next Question": "Next Question",
   "Finish & Submit": "Finish & Submit",
-  "Proctoring Enabled": "Proctoring Enabled",
-  "Your session is being monitored": {
-    " Please remain focused on the test": {
+  "Verified conditions enabled": "Verified conditions enabled",
+  "Focus and visibility signals": {
+    " These signals support human review and never cause automatic failure": {
       "": ""
     }
   },
@@ -968,8 +968,8 @@
     }
   },
   "Return to My Profile": "Return To My Profile",
-  "Skill Certifications": "Skill Certifications",
-  "Prove your skills by taking our proctored assessments and earn badges for your profile": {
+  "Yahnu skills attestations": "Yahnu skills attestations",
+  "Show your skills with Yahnu Skills Checks under verified conditions": {
     "": ""
   },
   "{count} questions": "{count} questions",

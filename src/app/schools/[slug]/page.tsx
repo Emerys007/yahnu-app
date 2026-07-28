@@ -1,35 +1,95 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { cache } from "react";
 import { ArrowLeft, GraduationCap, RefreshCw } from "lucide-react";
 
 import { Footer } from "@/components/landing/footer";
 import { MainNav } from "@/components/landing/main-nav";
 import { PublicOrganizationProfile } from "@/components/organizations/public-organization-profile";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getPublicOrganizationById } from "@/lib/public-organizations-server";
+import { resolvePublicOrganization } from "@/lib/public-organizations-server";
+import { absoluteUrl, privatePageMetadata, publicPageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
+const resolveSchool = cache((slug: string) => resolvePublicOrganization("school", slug));
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const result = await resolveSchool(slug);
+    if (!result) return privatePageMetadata("Établissement introuvable");
+    const school = result.organization;
+    return publicPageMetadata({
+      title: `${school.name} — établissement en Côte d’Ivoire`,
+      description: school.description.slice(0, 220),
+      path: `/schools/${school.slug}`,
+      image: school.coverUrl || school.logoUrl,
+      keywords: [school.name, "enseignement supérieur Côte d’Ivoire", school.organizationType || ""].filter(Boolean),
+    });
+  } catch {
+    return privatePageMetadata("Profil établissement momentanément indisponible");
+  }
+}
+
 export default async function SchoolPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  let school: Awaited<ReturnType<typeof getPublicOrganizationById>> = null;
+  let school: Awaited<ReturnType<typeof resolvePublicOrganization>> = null;
   let unavailable = false;
 
   try {
-    school = await getPublicOrganizationById("school", slug);
+    school = await resolveSchool(slug);
   } catch (error) {
     unavailable = true;
     console.error("Unable to load the public school profile.", error);
   }
 
+  if (school?.matchedLegacyId) redirect(`/schools/${encodeURIComponent(school.organization.slug)}`);
   if (!unavailable && !school) notFound();
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <MainNav />
       <main className="container mx-auto flex-1 px-4 py-6 sm:py-10 lg:py-12">
+        {school ? (
+          <JsonLd
+            data={{
+              "@context": "https://schema.org",
+              "@type": "EducationalOrganization",
+              "@id": absoluteUrl(`/schools/${school.organization.slug}#organization`),
+              name: school.organization.name,
+              description: school.organization.description,
+              url: absoluteUrl(`/schools/${school.organization.slug}`),
+              ...(school.organization.verificationStatus === 'verified' && school.organization.websiteUrl
+                ? { sameAs: [school.organization.websiteUrl] }
+                : {}),
+              ...(school.organization.logoUrl
+                ? { logo: absoluteUrl(school.organization.logoUrl) }
+                : {}),
+              ...(school.organization.locations.length
+                ? {
+                    location: school.organization.locations.map((location) => ({
+                      "@type": "Place",
+                      name: location,
+                      address: {
+                        "@type": "PostalAddress",
+                        addressCountry: "CI",
+                        addressLocality: location,
+                      },
+                    })),
+                  }
+                : {}),
+            }}
+          />
+        ) : null}
         <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-emerald-200/70 bg-gradient-to-r from-emerald-50/80 to-orange-50/70 p-4 dark:border-emerald-900/40 dark:from-emerald-950/20 dark:to-orange-950/20 sm:flex-row sm:items-center sm:justify-between sm:p-5">
           <div className="flex items-center gap-3">
             <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-600 text-white">
@@ -57,7 +117,7 @@ export default async function SchoolPage({ params }: { params: Promise<{ slug: s
             </CardContent>
           </Card>
         ) : (
-          <PublicOrganizationProfile organization={school} role="school" />
+          <PublicOrganizationProfile organization={school.organization} role="school" />
         )}
       </main>
       <Footer />

@@ -5,12 +5,14 @@ import { ArrowLeft, Clock3, RefreshCw } from 'lucide-react';
 import { BlogCoverImage } from '@/components/blog/blog-cover-image';
 import { Footer } from '@/components/landing/footer';
 import { MainNav } from '@/components/landing/main-nav';
+import { JsonLd } from '@/components/seo/json-ld';
 import { SafeRichText } from '@/components/ui/safe-rich-text';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { blogHtmlToPlainText } from '@/lib/blog';
 import { getPublishedBlogPostBySlug } from '@/lib/blog-server';
+import { absoluteUrl, privatePageMetadata, publicPageMetadata } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,7 +22,36 @@ const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
   year: 'numeric',
 });
 
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+type BlogPostPageProps = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: BlogPostPageProps) {
+  const { slug } = await params;
+  try {
+    const post = await getPublishedBlogPostBySlug(slug);
+    if (!post) return privatePageMetadata('Article introuvable');
+
+    const base = publicPageMetadata({
+      title: post.title,
+      description: post.excerpt,
+      path: `/blog/${post.slug}`,
+      image: post.imageUrl,
+    });
+    return {
+      ...base,
+      openGraph: {
+        ...base.openGraph,
+        type: 'article' as const,
+        publishedTime: post.publishedAt ?? post.createdAt,
+        modifiedTime: post.updatedAt,
+        authors: [post.author],
+      },
+    };
+  } catch {
+    return privatePageMetadata('Article momentanément indisponible');
+  }
+}
+
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
   let post;
   let loadFailed = false;
@@ -56,9 +87,33 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const date = post.publishedAt ?? post.createdAt;
   const wordCount = blogHtmlToPlainText(post.contentHtml).split(/\s+/).filter(Boolean).length;
   const readingMinutes = Math.max(1, Math.ceil(wordCount / 220));
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': absoluteUrl(`/blog/${post.slug}#article`),
+    headline: post.title,
+    description: post.excerpt,
+    image: post.imageUrl ? absoluteUrl(post.imageUrl) : absoluteUrl('/opengraph-image'),
+    datePublished: post.publishedAt ?? post.createdAt,
+    dateModified: post.updatedAt,
+    inLanguage: 'fr-CI',
+    author: { '@type': 'Person', name: post.author },
+    publisher: { '@id': absoluteUrl('/#organization') },
+    mainEntityOfPage: absoluteUrl(`/blog/${post.slug}`),
+  };
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: absoluteUrl('/') },
+      { '@type': 'ListItem', position: 2, name: 'Journal', item: absoluteUrl('/blog') },
+      { '@type': 'ListItem', position: 3, name: post.title, item: absoluteUrl(`/blog/${post.slug}`) },
+    ],
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
+      <JsonLd data={[articleJsonLd, breadcrumbJsonLd]} />
       <MainNav />
       <main className="flex-1">
         <header className="border-b bg-gradient-to-b from-primary/10 to-background">
