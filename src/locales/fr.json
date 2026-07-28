@@ -133,8 +133,8 @@
   "Build and maintain your professional identity": {
     "": "Construisez et maintenez votre identité professionnelle."
   },
-  "Camera Access": "Accès caméra",
-  "Camera Access Denied": "Accès caméra refusé",
+  "No camera or microphone access": "Aucun accès à la caméra ou au micro",
+  "Privacy-first check": "Skills Check respectueux de la vie privée",
   "Candidates": "Candidats",
   "Career Fair": "Salon de l'emploi",
   "Certifications": "Certifications",
@@ -622,11 +622,11 @@
   "Please check your new email address to verify the change": {
     "": "Veuillez vérifier votre nouvelle adresse e-mail pour valider le changement."
   },
-  "Please complete the following steps to begin your proctored assessment": {
-    "": "Veuillez suivre les étapes suivantes pour commencer votre évaluation surveillée."
+  "Please review the verified conditions before starting the Yahnu Skills Check": {
+    "": "Lisez les conditions vérifiées avant de commencer le Yahnu Skills Check."
   },
-  "Please enable camera and microphone permissions in your browser settings to continue": {
-    "": "Veuillez activer les autorisations de caméra et de microphone dans les paramètres de votre navigateur pour continuer."
+  "Yahnu Skills Checks never request camera or microphone permissions": {
+    "": "Les Yahnu Skills Checks ne demandent jamais l’accès à la caméra ou au micro."
   },
   "Please enter an email to send an invite": {
     "": "Veuillez saisir une adresse e-mail pour envoyer une invitation."
@@ -639,7 +639,7 @@
   "Prep Material Generated!": "Matériel de préparation généré !",
   "Primary Contact Name": "Nom du contact principal",
   "Privacy Policy": "Politique de confidentialité",
-  "Proctoring Enabled": "Surveillance activée",
+  "Verified conditions enabled": "Conditions vérifiées activées",
   "Professional Profile": "Profil professionnel",
   "Profile": "Profil",
   "Profile Completion": "Achèvement du profil",
@@ -648,8 +648,8 @@
   "Progression of candidates through hiring stages": {
     "": "Progression des candidats à travers les étapes de recrutement."
   },
-  "Prove your skills by taking our proctored assessments and earn badges for your profile": {
-    "": "Prouvez vos compétences en passant nos évaluations surveillées et obtenez des badges pour votre profil."
+  "Show your skills with Yahnu Skills Checks under verified conditions": {
+    "": "Montrez vos compétences avec les Yahnu Skills Checks sous conditions vérifiées."
   },
   "Provide the job description for the role you are interviewing for": {
     "": "Fournissez la description du poste pour lequel vous passez l'entretien."
@@ -1048,9 +1048,9 @@
     "": "Votre réponse a été enregistrée."
   },
   "Your school": "Votre école",
-  "Your session is being monitored": {
-    " Please remain focused on the test": {
-      "": "Votre session est surveillée. Veuillez rester concentré(e) sur le test."
+  "Focus and visibility signals": {
+    " These signals support human review and never cause automatic failure": {
+      "": "Les changements de focus et de visibilité sont des signaux de revue et ne provoquent jamais un échec automatique."
     }
   },
   "ZIP / Postal Code": "Code postal",

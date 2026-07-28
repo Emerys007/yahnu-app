@@ -14,7 +14,7 @@ import { RoleDashboard } from "@/components/dashboard/role-dashboard-ui"
 export function SchoolDashboard() {
   return (
     <RoleDashboard
-      closingDescription="Un profil diplômé bien accompagné et un partenariat bien ciblé peuvent ouvrir une vraie prochaine étape. Bientôt : profil établissement, événements et rapports."
+      closingDescription="Un profil diplômé bien accompagné et un partenariat bien ciblé peuvent ouvrir une vraie prochaine étape. Votre profil public, vos événements et vos rapports d’insertion sont maintenant reliés aux données réelles."
       closingTitle="Prolongez l’impact de l’école au-delà du diplôme."
       description="Reliez vos diplômés au monde professionnel ivoirien et animez une communauté qui continue d’avancer après le campus."
       localNotes={[

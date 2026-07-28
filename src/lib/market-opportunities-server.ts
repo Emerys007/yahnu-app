@@ -115,10 +115,23 @@ function defaultOpportunities() {
 }
 
 export async function getManagedMarketOpportunities(): Promise<ManagedMarketOpportunities> {
-  const result = await query<MarketOpportunityPageRow>(
-    "SELECT data, updated_at FROM pages WHERE id = $1",
-    ["market-opportunities"],
-  );
+  let result;
+  try {
+    result = await query<MarketOpportunityPageRow>(
+      "SELECT data, updated_at FROM pages WHERE id = $1",
+      ["market-opportunities"],
+    );
+  } catch (error) {
+    console.error(
+      "Unable to load managed market opportunities; using the audited fallback catalog.",
+      error,
+    );
+    return {
+      opportunities: defaultOpportunities(),
+      updatedAt: null,
+      managed: false,
+    };
+  }
   const row = result.rows[0];
 
   if (!row) {

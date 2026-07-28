@@ -24,9 +24,10 @@ export async function POST(request: Request) {
         pending_email: string | null;
         current_email: string;
         name: string;
+        role: string;
       }>(`
         SELECT t.user_id, t.purpose, t.target_email, u.pending_email,
-          u.email AS current_email, u.name
+          u.email AS current_email, u.name, u.role
         FROM auth_tokens t
         JOIN users u ON u.id = t.user_id AND u.deleted_at IS NULL
         WHERE t.token_hash = $1
@@ -52,6 +53,30 @@ export async function POST(request: Request) {
         } catch (error) {
           if ((error as { code?: string }).code === '23505') throw new ApiError(409, 'email_in_use', 'That email address is already in use.');
           throw error;
+        }
+        if (record.role === 'company' || record.role === 'school') {
+          const revoked = await client.query(`
+            UPDATE organization_profiles
+            SET verification_status = 'unverified',
+              verified_at = NULL,
+              verification_requested_at = NULL,
+              verification_reviewed_at = NULL,
+              verification_reviewed_by = NULL,
+              verification_note = NULL
+            WHERE user_id = $1
+              AND verification_status <> 'unverified'
+          `, [record.user_id]);
+          if (revoked.rowCount) {
+            await writeAuditLog(
+              client,
+              request,
+              record.user_id,
+              'organization_verification.revoked',
+              'organization_profile',
+              record.user_id,
+              { reason: 'account_email_changed' },
+            );
+          }
         }
         await client.query('DELETE FROM sessions WHERE user_id = $1', [record.user_id]);
         await client.query('UPDATE auth_tokens SET used_at = now() WHERE user_id = $1 AND used_at IS NULL', [record.user_id]);

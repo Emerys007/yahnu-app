@@ -1,6 +1,6 @@
 'use client';
 
-import { type ChangeEvent, type FormEvent, useCallback, useEffect, useState } from 'react';
+import { type ChangeEvent, type FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -256,17 +256,28 @@ function JobCard({ job, dashboard }: { job: Job; dashboard: boolean }) {
   );
 }
 
-export function JobBrowser({ dashboard = false }: { dashboard?: boolean }) {
-  const [jobs, setJobs] = useState<Job[]>([]);
+export function JobBrowser({
+  dashboard = false,
+  initialJobs,
+  initialHasMore = false,
+  initialNextOffset = 0,
+}: {
+  dashboard?: boolean;
+  initialJobs?: Job[];
+  initialHasMore?: boolean;
+  initialNextOffset?: number;
+}) {
+  const [jobs, setJobs] = useState<Job[]>(initialJobs ?? []);
   const [q, setQ] = useState('');
   const [location, setLocation] = useState('');
   const [employmentType, setEmploymentType] = useState('all');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialJobs);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState('');
-  const [hasMore, setHasMore] = useState(false);
-  const [nextOffset, setNextOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(initialHasMore);
+  const [nextOffset, setNextOffset] = useState(initialNextOffset);
   const [reloadKey, setReloadKey] = useState(0);
+  const skipInitialFetch = useRef(Boolean(initialJobs));
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -279,6 +290,10 @@ export function JobBrowser({ dashboard = false }: { dashboard?: boolean }) {
   }, []);
 
   useEffect(() => {
+    if (skipInitialFetch.current) {
+      skipInitialFetch.current = false;
+      return;
+    }
     const controller = new AbortController();
     const timer = window.setTimeout(async () => {
       setLoading(true);

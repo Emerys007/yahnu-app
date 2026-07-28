@@ -3,6 +3,11 @@ import 'server-only';
 import { createHmac } from 'node:crypto';
 import { ZodError } from 'zod';
 
+import {
+  expectedRequestOrigin,
+  OriginConfigurationError,
+} from '@/lib/server/origin-policy.mjs';
+
 export class ApiError extends Error {
   status: number;
   code: string;
@@ -41,7 +46,18 @@ export function handleApiError(error: unknown) {
     }, { status: 422, headers: { 'Cache-Control': 'no-store, max-age=0' } });
   }
 
-  console.error('Unhandled API error:', error);
+  // Do not emit request bodies, database values, credentials, or provider
+  // responses through a generic error object. Operational logs retain only
+  // enough structured context to group the failure.
+  const safeError = error instanceof Error
+    ? {
+        name: error.name,
+        code: typeof (error as Error & { code?: unknown }).code === 'string'
+          ? (error as Error & { code: string }).code
+          : undefined,
+      }
+    : { name: typeof error };
+  console.error('Unhandled API error', safeError);
   return Response.json({ error: { code: 'internal_error', message: 'Something went wrong. Please try again.' } }, {
     status: 500,
     headers: { 'Cache-Control': 'no-store, max-age=0' },
@@ -74,15 +90,30 @@ export function assertSameOrigin(request: Request) {
 
   const origin = request.headers.get('origin');
   if (!origin) return;
-  const expectedHost = request.headers.get('x-forwarded-host') ?? request.headers.get('host');
-  if (!expectedHost) throw new ApiError(403, 'invalid_origin', 'Request origin could not be verified.');
-  let originHost: string;
+  let requestOrigin: string;
   try {
-    originHost = new URL(origin).host;
+    requestOrigin = new URL(origin).origin;
   } catch {
     throw new ApiError(403, 'invalid_origin', 'Request origin could not be verified.');
   }
-  if (originHost !== expectedHost) throw new ApiError(403, 'invalid_origin', 'Request origin could not be verified.');
+
+  let expectedOrigin: string;
+  try {
+    expectedOrigin = expectedRequestOrigin({
+      appUrl: process.env.APP_URL,
+      nodeEnv: process.env.NODE_ENV,
+      requestUrl: request.url,
+    });
+  } catch (error) {
+    if (error instanceof OriginConfigurationError) {
+      throw new ApiError(503, error.code, 'Request origin verification is unavailable.');
+    }
+    throw error;
+  }
+
+  if (requestOrigin !== expectedOrigin) {
+    throw new ApiError(403, 'invalid_origin', 'Request origin could not be verified.');
+  }
 }
 
 export function clientAddress(request: Request) {

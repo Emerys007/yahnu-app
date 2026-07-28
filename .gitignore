@@ -32,6 +32,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+/.npm-cache*/
+/.tools/
+/.lock-rebuild/
 
 # vercel
 .vercel
@@ -54,3 +57,9 @@ next-env.d.ts
 /storage-manifest*.json
 /media-url-rewrites*.json
 /migration-data/
+
+# Skills-check banks contain protected assessment content. Production banks
+# belong in a Render Secret File, never in source control.
+/skills-bank*.json
+/secrets/
+/db/private-skills/

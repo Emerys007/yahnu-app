@@ -1,14 +1,6 @@
-import { FeatureUnavailable } from "@/components/dashboard/feature-unavailable"
+import { TalentProfileClient } from "@/components/dashboard/talent-profile-client"
 
-export default function TalentProfilePage() {
-  return (
-    <FeatureUnavailable
-      title="Les profils individuels ne sont pas encore disponibles"
-      description="Les coordonnées et les invitations directes restent masquées tant que le service de talents ne garantit pas le consentement et les contrôles d’accès nécessaires."
-      actions={[
-        { href: "/dashboard/talent-pool", label: "Voir l’état du vivier" },
-        { href: "/dashboard/job-postings", label: "Gérer les offres" },
-      ]}
-    />
-  )
+export default async function TalentProfilePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  return <TalentProfileClient id={slug} />
 }

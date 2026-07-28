@@ -79,6 +79,21 @@ jobs:
       - name: Test pilot inquiry validation
         run: npm run test:pilot-inquiries
 
+      - name: Test official job discovery
+        run: npm run test:job-discovery
+
+      - name: Test verified skills checks
+        run: npm run test:skills-checks
+
+      - name: Test role workspaces
+        run: npm run test:role-workspaces
+
+      - name: Test no-cost interview preparation
+        run: npm run test:interview-prep
+
+      - name: Test canonical origin policy
+        run: npm run test:http-security
+
       - name: Build production application
         env:
           NODE_ENV: production

@@ -122,11 +122,48 @@ export async function PATCH(request: Request) {
       }
 
       if (!sets.length) return current;
+      const organizationIdentityChanged = (
+        current.role === 'company'
+        && (
+          (input.companyName !== undefined && input.companyName !== (current.company_name ?? ''))
+          || (input.name !== undefined && input.name !== current.name)
+        )
+      ) || (
+        current.role === 'school'
+        && (
+          (input.schoolName !== undefined && input.schoolName !== (current.school_name ?? ''))
+          || (input.name !== undefined && input.name !== current.name)
+        )
+      );
       values.push(current.id);
       const result = await client.query<UserRow>(`
         UPDATE users SET ${sets.join(', ')} WHERE id = $${values.length}
         RETURNING ${returningFields}
       `, values);
+      if (organizationIdentityChanged) {
+        const revoked = await client.query(`
+          UPDATE organization_profiles
+          SET verification_status = 'unverified',
+            verified_at = NULL,
+            verification_requested_at = NULL,
+            verification_reviewed_at = NULL,
+            verification_reviewed_by = NULL,
+            verification_note = NULL
+          WHERE user_id = $1
+            AND verification_status <> 'unverified'
+        `, [current.id]);
+        if (revoked.rowCount) {
+          await writeAuditLog(
+            client,
+            request,
+            current.id,
+            'organization_verification.revoked',
+            'organization_profile',
+            current.id,
+            { reason: 'organization_name_changed' },
+          );
+        }
+      }
       await writeAuditLog(client, request, current.id, 'profile.update', 'user', current.id, { fields: updatedFields });
       return result.rows[0];
     });

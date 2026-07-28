@@ -8,8 +8,8 @@ databases:
     user: yahnu_app
     # Keeps the initial Render deployment below the owner's $25/month ceiling.
     plan: basic-256mb
-    # Proposed production region. Confirm before first Blueprint creation; Render
-    # does not allow an in-place region change after provisioning.
+    # The live production database is provisioned in Frankfurt. Render does not
+    # allow an in-place region change after provisioning.
     region: frankfurt
     postgresMajorVersion: "17"
     # The Firebase source export is small; 1 GB is the minimum durable volume
@@ -28,7 +28,10 @@ services:
     plan: starter
     region: frankfurt
     buildCommand: npm ci --include=dev && npm run build
-    preDeployCommand: npm run db:migrate
+    # The protected assessment bank is mounted in Render as the Secret File
+    # yahnu-skills-bank.v1.json. Deployment fails closed if it is absent,
+    # malformed, incomplete, or conflicts with an immutable prior release.
+    preDeployCommand: npm run db:deploy
     startCommand: npm start
     healthCheckPath: /api/health
     maxShutdownDelaySeconds: 30
@@ -65,6 +68,8 @@ services:
         sync: false
       - key: YAHNU_ALLOW_LOCAL_EMAIL_DEBUG
         value: "false"
+      - key: YAHNU_SKILLS_BANK_PATH
+        value: /etc/secrets/yahnu-skills-bank.v1.json
       - key: GOOGLE_CLIENT_ID
         sync: false
       - key: GOOGLE_CLIENT_SECRET

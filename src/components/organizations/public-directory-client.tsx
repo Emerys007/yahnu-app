@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 
 export type DirectoryOrganization = {
   id: string;
+  slug: string;
   name: string;
   industry: string | null;
   openJobCount: number;
@@ -88,9 +89,9 @@ const copy: Record<Locale, Record<DirectoryKind, DirectoryCopy>> = {
           body: "Présentez votre activité, publiez des besoins clairs et laissez les candidats se positionner en connaissance de cause.",
         },
       ],
-      activeAccount: "Compte actif",
-      networkOrganization: "Entreprise du réseau",
-      cardDescription: "Profil employeur du réseau Yahnu",
+      activeAccount: "Profil publié",
+      networkOrganization: "Entreprise ivoirienne",
+      cardDescription: "Profil employeur publié sur Yahnu",
       oneJob: "1 offre ouverte",
       manyJobs: (count) => `${count} offres ouvertes`,
       discover: "Découvrir l’entreprise",
@@ -100,7 +101,7 @@ const copy: Record<Locale, Record<DirectoryKind, DirectoryCopy>> = {
       directoryLabel: "Annuaire Yahnu",
       oneResult: "1 entreprise à découvrir",
       manyResults: (count) => `${count} entreprises à découvrir`,
-      alphabetical: "Comptes actifs affichés par ordre alphabétique",
+      alphabetical: "Profils publiés par ordre alphabétique",
       emptyTitle: "L’annuaire se construit",
       emptyBody: "Les premiers comptes d’entreprises ivoiriennes apparaîtront ici dès leur publication.",
       ctaTitle: "Faites découvrir votre entreprise aux talents ivoiriens",
@@ -129,8 +130,8 @@ const copy: Record<Locale, Record<DirectoryKind, DirectoryCopy>> = {
           body: "Présentez vos formations, valorisez votre communauté diplômée et rapprochez-la des employeurs de Côte d’Ivoire.",
         },
       ],
-      activeAccount: "Compte actif",
-      networkOrganization: "Établissement du réseau",
+      activeAccount: "Profil publié",
+      networkOrganization: "Établissement ivoirien",
       cardDescription: "Découvrez son profil institutionnel et son engagement auprès de sa communauté diplômée.",
       oneJob: "1 opportunité ouverte",
       manyJobs: (count) => `${count} opportunités ouvertes`,
@@ -141,7 +142,7 @@ const copy: Record<Locale, Record<DirectoryKind, DirectoryCopy>> = {
       directoryLabel: "Annuaire Yahnu",
       oneResult: "1 établissement à découvrir",
       manyResults: (count) => `${count} établissements à découvrir`,
-      alphabetical: "Comptes actifs affichés par ordre alphabétique",
+      alphabetical: "Profils publiés par ordre alphabétique",
       emptyTitle: "L’annuaire se construit",
       emptyBody: "Les premiers comptes d’établissements ivoiriens apparaîtront ici dès leur publication.",
       ctaTitle: "Accompagnez vos diplômés au-delà du campus",
@@ -172,9 +173,9 @@ const copy: Record<Locale, Record<DirectoryKind, DirectoryCopy>> = {
           body: "Explain your work, publish clear needs and let candidates make an informed decision about where they can contribute.",
         },
       ],
-      activeAccount: "Active account",
-      networkOrganization: "Network employer",
-      cardDescription: "Employer profile in the Yahnu network",
+      activeAccount: "Published profile",
+      networkOrganization: "Ivorian employer",
+      cardDescription: "Employer profile published on Yahnu",
       oneJob: "1 open role",
       manyJobs: (count) => `${count} open roles`,
       discover: "View employer",
@@ -184,7 +185,7 @@ const copy: Record<Locale, Record<DirectoryKind, DirectoryCopy>> = {
       directoryLabel: "Yahnu directory",
       oneResult: "1 employer to discover",
       manyResults: (count) => `${count} employers to discover`,
-      alphabetical: "Active accounts shown in alphabetical order",
+      alphabetical: "Published profiles shown in alphabetical order",
       emptyTitle: "The directory is growing",
       emptyBody: "The first Ivorian employer accounts will appear here as soon as they are published.",
       ctaTitle: "Introduce your organisation to Ivorian talent",
@@ -213,8 +214,8 @@ const copy: Record<Locale, Record<DirectoryKind, DirectoryCopy>> = {
           body: "Present your programmes, champion your graduate community and connect it with employers across Côte d’Ivoire.",
         },
       ],
-      activeAccount: "Active account",
-      networkOrganization: "Network institution",
+      activeAccount: "Published profile",
+      networkOrganization: "Ivorian institution",
       cardDescription: "Explore its institutional profile and commitment to its graduate community.",
       oneJob: "1 open opportunity",
       manyJobs: (count) => `${count} open opportunities`,
@@ -225,7 +226,7 @@ const copy: Record<Locale, Record<DirectoryKind, DirectoryCopy>> = {
       directoryLabel: "Yahnu directory",
       oneResult: "1 institution to discover",
       manyResults: (count) => `${count} institutions to discover`,
-      alphabetical: "Active accounts shown in alphabetical order",
+      alphabetical: "Published profiles shown in alphabetical order",
       emptyTitle: "The directory is growing",
       emptyBody: "The first Ivorian institution accounts will appear here as soon as they are published.",
       ctaTitle: "Support your graduates beyond campus",
@@ -298,7 +299,7 @@ function OrganizationCard({
       </CardHeader>
       <CardContent className="mt-auto px-5 pb-5 sm:px-6 sm:pb-6">
         <Button asChild className="w-full" variant="outline">
-          <Link href={`/${isCompany ? "companies" : "schools"}/${encodeURIComponent(organization.id)}`}>
+          <Link href={`/${isCompany ? "companies" : "schools"}/${encodeURIComponent(organization.slug)}`}>
             {text.discover}
             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
           </Link>

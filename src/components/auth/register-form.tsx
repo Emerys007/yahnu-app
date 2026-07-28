@@ -316,9 +316,9 @@ export function RegisterForm() {
   return (
     <Form {...form}>
       <div className="text-left">
-        <h1 className="font-headline text-3xl font-semibold tracking-[-0.04em]">
+        <h2 className="font-headline text-3xl font-semibold tracking-[-0.04em]">
           {fr ? "Créer mon espace Yahnu" : "Create my Yahnu space"}
-        </h1>
+        </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           {fr
             ? "Choisissez le profil qui correspond à votre rôle dans l’écosystème ivoirien."

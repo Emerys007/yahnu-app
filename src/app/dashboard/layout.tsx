@@ -5,6 +5,12 @@ import { DashboardGuard } from "@/components/dashboard/dashboard-guard"
 import { DashboardHeader } from "@/components/dashboard/header"
 import { DashboardSidebar, SidebarProvider } from "@/components/dashboard/sidebar"
 import { ScrollToTop } from "@/components/ui/scroll-to-top"
+import { privatePageMetadata } from "@/lib/seo"
+
+export const metadata = privatePageMetadata(
+  "Espace sécurisé",
+  "Espace personnel Yahnu réservé aux membres authentifiés.",
+)
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (

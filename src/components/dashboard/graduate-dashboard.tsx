@@ -1,7 +1,7 @@
 "use client"
 
 import {
-  Award,
+  BadgeCheck,
   BookOpenCheck,
   BriefcaseBusiness,
   Building2,
@@ -75,10 +75,10 @@ export function GraduateDashboard() {
           icon: FileText,
         },
         {
-          title: "Évaluations",
-          description: "Mettez vos compétences en pratique avec les évaluations disponibles.",
-          href: "/dashboard/assessments",
-          icon: Award,
+          title: "Compétences vérifiées",
+          description: "Passez un Skills Check et créez une attestation Yahnu privée.",
+          href: "/dashboard/skills-checks",
+          icon: BadgeCheck,
         },
         {
           title: "Préparation entretien",

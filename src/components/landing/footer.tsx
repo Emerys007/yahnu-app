@@ -26,6 +26,7 @@ const linkGroups = [
     title: 'Ressources & confiance',
     links: [
       ['Ressources carrière', '/blog'],
+      ['Méthodologie & confiance', '/methodologie'],
       ['Notre mission', '/about'],
       ['Se connecter', '/login'],
       ['Confidentialité', '/privacy-policy'],

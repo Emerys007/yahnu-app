@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "bankId": "synthetic-skills-bank",
+  "bankVersion": 1,
+  "checks": [
+    {
+      "checkId": "service-client-ci",
+      "checkVersion": 1,
+      "questions": [
+        {
+          "id": "synthetic-service-01",
+          "promptFr": "Question synthétique numéro un pour vérifier le parcours de test.",
+          "promptEn": "Synthetic question number one used to verify the test workflow.",
+          "optionsFr": ["Option alpha", "Option bêta", "Option gamma", "Option delta"],
+          "optionsEn": ["Alpha option", "Beta option", "Gamma option", "Delta option"],
+          "correctIndex": 0,
+          "active": true
+        },
+        {
+          "id": "synthetic-service-02",
+          "promptFr": "Question synthétique numéro deux pour vérifier le parcours de test.",
+          "promptEn": "Synthetic question number two used to verify the test workflow.",
+          "optionsFr": ["Option alpha", "Option bêta", "Option gamma", "Option delta"],
+          "optionsEn": ["Alpha option", "Beta option", "Gamma option", "Delta option"],
+          "correctIndex": 1,
+          "active": true
+        },
+        {
+          "id": "synthetic-service-03",
+          "promptFr": "Question synthétique numéro trois pour vérifier le parcours de test.",
+          "promptEn": "Synthetic question number three used to verify the test workflow.",
+          "optionsFr": ["Option alpha", "Option bêta", "Option gamma", "Option delta"],
+          "optionsEn": ["Alpha option", "Beta option", "Gamma option", "Delta option"],
+          "correctIndex": 2,
+          "active": true
+        },
+        {
+          "id": "synthetic-service-04",
+          "promptFr": "Question synthétique numéro quatre pour vérifier le parcours de test.",
+          "promptEn": "Synthetic question number four used to verify the test workflow.",
+          "optionsFr": ["Option alpha", "Option bêta", "Option gamma", "Option delta"],
+          "optionsEn": ["Alpha option", "Beta option", "Gamma option", "Delta option"],
+          "correctIndex": 3,
+          "active": true
+        },
+        {
+          "id": "synthetic-service-05",
+          "promptFr": "Question synthétique numéro cinq pour vérifier le parcours de test.",
+          "promptEn": "Synthetic question number five used to verify the test workflow.",
+          "optionsFr": ["Option alpha", "Option bêta", "Option gamma", "Option delta"],
+          "optionsEn": ["Alpha option", "Beta option", "Gamma option", "Delta option"],
+          "correctIndex": 0,
+          "active": true
+        },
+        {
+          "id": "synthetic-service-06",
+          "promptFr": "Question synthétique numéro six pour vérifier le parcours de test.",
+          "promptEn": "Synthetic question number six used to verify the test workflow.",
+          "optionsFr": ["Option alpha", "Option bêta", "Option gamma", "Option delta"],
+          "optionsEn": ["Alpha option", "Beta option", "Gamma option", "Delta option"],
+          "correctIndex": 1,
+          "active": true
+        }
+      ]
+    }
+  ]
+}

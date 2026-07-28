@@ -120,3 +120,43 @@ export async function sendEmailChangeNotice(to: string, name: string, newEmail: 
     text: `${copy}\n\n${securityCopy}\n\nOuvrir Yahnu : ${url}`,
   });
 }
+
+export async function sendAccountReviewEmail(
+  to: string,
+  name: string,
+  role: 'graduate' | 'company' | 'school',
+  status: 'active' | 'pending' | 'declined',
+) {
+  const isActive = status === 'active';
+  const isDeclined = status === 'declined';
+  const roleLabel = role === 'graduate'
+    ? 'jeune diplômé'
+    : role === 'company'
+      ? 'entreprise'
+      : 'établissement';
+  const heading = isActive
+    ? 'Votre espace Yahnu est activé'
+    : isDeclined
+      ? 'Décision concernant votre inscription Yahnu'
+      : 'Votre accès Yahnu est de nouveau en vérification';
+  const copy = isActive
+    ? `Bonjour ${name}, votre espace ${roleLabel} a été validé. Vous pouvez maintenant vous connecter et utiliser les outils Yahnu autorisés pour votre rôle.`
+    : isDeclined
+      ? `Bonjour ${name}, votre inscription comme ${roleLabel} n’a pas été validée à cette étape. Contactez l’équipe Yahnu si vous souhaitez comprendre la décision ou fournir des informations complémentaires.`
+      : `Bonjour ${name}, votre espace ${roleLabel} nécessite une nouvelle vérification avant de pouvoir être utilisé.`;
+  const url = externalUrl(isActive ? '/login' : '/contact?intent=account-review&source=other');
+  const action = isActive ? 'Ouvrir mon espace Yahnu' : 'Contacter l’équipe Yahnu';
+
+  return sendEmail({
+    to,
+    subject: heading,
+    html: layout(
+      heading,
+      copy,
+      action,
+      url,
+      'Ce message concerne uniquement l’état de votre compte Yahnu. Ne partagez jamais votre mot de passe.',
+    ),
+    text: `${copy}\n\n${action} : ${url}`,
+  });
+}

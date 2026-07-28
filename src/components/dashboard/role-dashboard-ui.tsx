@@ -91,17 +91,17 @@ export function RoleDashboard({
       <motion.section
         animate={{ opacity: 1, y: 0 }}
         aria-labelledby="role-dashboard-title"
-        className="relative isolate overflow-hidden rounded-[1.75rem] bg-[#10261c] px-5 py-6 text-white shadow-[0_24px_70px_-36px_rgba(16,38,28,0.8)] sm:px-8 sm:py-9 lg:px-10"
+        className="relative isolate overflow-hidden rounded-[1.75rem] bg-[hsl(var(--sidebar-background))] px-5 py-6 text-white shadow-lift sm:px-8 sm:py-9 lg:px-10"
         initial={reduceMotion ? false : { opacity: 0, y: 12 }}
         transition={{ duration: reduceMotion ? 0 : 0.36, ease: [0.16, 1, 0.3, 1] }}
       >
         <div
           aria-hidden="true"
-          className="absolute -right-20 -top-28 h-80 w-80 rounded-full border-[54px] border-[#f5a623]/15"
+          className="absolute -right-20 -top-28 h-80 w-80 rounded-full border-[54px] border-terra/15"
         />
         <div
           aria-hidden="true"
-          className="absolute -bottom-36 right-20 h-72 w-72 rounded-full border-[46px] border-[#0f8a4b]/20"
+          className="absolute -bottom-36 right-20 h-72 w-72 rounded-full border-[46px] border-primary/20"
         />
 
         <div className="relative grid items-end gap-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(260px,0.65fr)]">
@@ -124,7 +124,7 @@ export function RoleDashboard({
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Button
                 asChild
-                className="h-12 justify-center bg-[#f5a623] px-5 text-[#10261c] shadow-none hover:bg-[#ffb738] focus-visible:ring-[#f5a623] sm:w-auto"
+                className="h-12 justify-center bg-terra px-5 text-terra-foreground shadow-none hover:bg-terra/90 focus-visible:ring-terra sm:w-auto"
                 size="lg"
               >
                 <Link href={primaryAction.href}>
@@ -149,11 +149,11 @@ export function RoleDashboard({
 
           <div className="rounded-2xl border border-white/15 bg-white/[0.07] p-5 backdrop-blur-sm sm:p-6">
             <div className="flex items-start gap-3">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#f5a623] text-[#10261c]">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-terra text-terra-foreground">
                 <MapPin aria-hidden="true" className="size-5" />
               </span>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#ffc96b]">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-terra">
                   Votre terrain de jeu
                 </p>
                 <p className="mt-2 text-base font-semibold leading-6 text-white">
@@ -205,7 +205,7 @@ export function RoleDashboard({
                       className="group flex min-h-24 items-start gap-4 rounded-2xl border border-transparent p-3 transition-colors duration-200 hover:border-primary/25 hover:bg-secondary/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:items-center sm:p-4"
                       href={item.href}
                     >
-                      <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#10261c] text-white dark:bg-[#f5a623] dark:text-[#10261c]">
+                      <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--sidebar-background))] text-white dark:bg-terra dark:text-terra-foreground">
                         <Icon aria-hidden="true" className="size-5" />
                       </span>
                       <span className="min-w-0 flex-1">
@@ -233,7 +233,7 @@ export function RoleDashboard({
 
         <Card className="border-border/80 shadow-sm">
           <CardHeader className="p-5 sm:p-6">
-            <div className="flex size-11 items-center justify-center rounded-xl bg-[#0f8a4b]/10 text-[#08723d] dark:bg-[#38c979]/15 dark:text-[#72e5a2]">
+            <div className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <Sparkles aria-hidden="true" className="size-5" />
             </div>
             <CardTitle className="pt-2 font-headline text-2xl tracking-tight">
@@ -255,20 +255,20 @@ export function RoleDashboard({
 
               return (
                 <Link
-                  className="group block rounded-2xl border border-border/80 p-4 transition-colors duration-200 hover:border-[#0f8a4b]/45 hover:bg-[#0f8a4b]/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="group block rounded-2xl border border-border/80 p-4 transition-colors duration-200 hover:border-primary/45 hover:bg-primary/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   href={note.href}
                   key={note.title}
                 >
                   <span className="flex items-start gap-3">
                     <Icon
                       aria-hidden="true"
-                      className="mt-0.5 size-5 shrink-0 text-[#08723d] dark:text-[#72e5a2]"
+                      className="mt-0.5 size-5 shrink-0 text-primary"
                     />
                     <span className="min-w-0">
                       <span className="text-xs font-bold uppercase tracking-[0.13em] text-muted-foreground">
                         {note.tag}
                       </span>
-                      <span className="mt-1 block font-semibold text-foreground group-hover:text-[#08723d] dark:group-hover:text-[#72e5a2]">
+                      <span className="mt-1 block font-semibold text-foreground group-hover:text-primary">
                         {note.title}
                       </span>
                       <span className="mt-1 block text-sm leading-5 text-muted-foreground">
@@ -343,9 +343,9 @@ export function RoleDashboard({
         </div>
       </section>
 
-      <section className="flex flex-col gap-5 rounded-[1.5rem] border border-[#0f8a4b]/20 bg-[#f7f1e3] p-5 dark:bg-[#17271f] sm:flex-row sm:items-center sm:justify-between sm:p-7">
+      <section className="flex flex-col gap-5 rounded-[1.5rem] border border-primary/20 bg-secondary/60 p-5 dark:bg-secondary/45 sm:flex-row sm:items-center sm:justify-between sm:p-7">
         <div className="flex items-start gap-4">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#0f8a4b] text-white">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <CheckCircle2 aria-hidden="true" className="size-5" />
           </span>
           <div>
@@ -357,7 +357,7 @@ export function RoleDashboard({
         </div>
         <Button
           asChild
-          className="h-12 w-full shrink-0 bg-[#10261c] text-white shadow-none hover:bg-[#173a2a] dark:bg-[#f5a623] dark:text-[#10261c] dark:hover:bg-[#ffb738] sm:w-auto"
+          className="h-12 w-full shrink-0 bg-[hsl(var(--sidebar-background))] text-white shadow-none hover:bg-[hsl(var(--sidebar-accent))] dark:bg-terra dark:text-terra-foreground dark:hover:bg-terra/90 sm:w-auto"
         >
           <Link href={primaryAction.href}>
             {primaryAction.title}

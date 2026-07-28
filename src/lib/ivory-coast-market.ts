@@ -63,7 +63,7 @@ export const ivorianInstitutionReferences: readonly IvorianInstitutionReference[
       fr: "Ingénierie, industrie, agronomie et management.",
       en: "Engineering, industry, agronomy and management.",
     },
-    officialUrl: "https://inphb.edu.ci/",
+    officialUrl: "https://main.inphb.ci/",
   },
   {
     slug: "universite-nangui-abrogoua",
